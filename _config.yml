@@ -114,4 +114,4 @@ backup:
   message: Back up my www.npfs06.top blog
   repository:
     github: git@github.com:npfs06/npfs06.github.io.git,backup
-    gitcafe: git@github.com:npfs06/npfs06.github.io.git,backup
+   
