@@ -113,5 +113,5 @@ backup:
   theme: next-reloaded
   message: Back up my www.npfs06.top blog
   repository:
-    origin: https://github.com/npfs06/npfs06.github.io.git,backup
+    origin: https://github.com/npfs06/npfs06.github.io.git,Backup
    
