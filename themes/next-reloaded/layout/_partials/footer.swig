@@ -1,3 +1,18 @@
+
+<div class="copyright">
+  {% set copyright_year = date(null, 'YYYY') %}
+  &copy; {% if theme.footer.since and theme.footer.since != copyright_year %}{{ theme.footer.since }} – {% endif %}
+  <span itemprop="copyrightYear">{{ copyright_year }}</span>
+
+
+<!--
+ <span class="with-love">
+    <i class="{{ theme.footer.icon.name }}"></i>
+  </span>
+-->
+
+
+  <span class="author" itemprop="copyrightHolder">{{ theme.footer.copyright or author }}</span>
 {%- if theme.footer.beian.enable %}
   <div class="beian">
     {{- next_url('https://beian.miit.gov.cn', theme.footer.beian.icp + ' ') }}
@@ -9,18 +24,6 @@
     {%- endif %}
   </div>
 {%- endif %}
-
-<div class="copyright">
-  {% set copyright_year = date(null, 'YYYY') %}
-  &copy; {% if theme.footer.since and theme.footer.since != copyright_year %}{{ theme.footer.since }} – {% endif %}
-  <span itemprop="copyrightYear">{{ copyright_year }}</span>
-<!--
- <span class="with-love">
-    <i class="{{ theme.footer.icon.name }}"></i>
-  </span>
--->
-  <span class="author" itemprop="copyrightHolder">{{ theme.footer.copyright or author }}</span>
-
   {%- if config.symbols_count_time.total_symbols %}
     <span class="post-meta-divider">|</span>
     <span class="post-meta-item-icon">
@@ -43,6 +46,7 @@
     <span title="{{ __('symbols_count_time.time_total') }}">{{ symbolsTimeTotal(site, config.symbols_count_time.awl, config.symbols_count_time.wpm, __('symbols_count_time.time_minutes')) }}</span>
   {%- endif %}
 </div>
+
 
 {%- if theme.footer.powered %}
   <div class="powered-by">
