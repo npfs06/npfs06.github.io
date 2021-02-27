@@ -14,7 +14,7 @@ categories: web入门
 
 
 
-<a href='https://www.cnblogs.com/NPFS/p/13279815.html' target='_blank'>命令执行小技巧</a>  可以先看下这篇文章，方便接下来的做题
+<a href='http://npfs06.top/2021/02/26/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E7%BB%95%E8%BF%87%E5%B0%8F%E6%8A%80%E5%B7%A7/' target='_blank'>命令执行小技巧</a>  可以先看下这篇文章，方便接下来的做题
 
 
 ## web 29
