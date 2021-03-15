@@ -4,7 +4,7 @@ date: 2020-10-11 15:24:34
 categories: web入门
 ---
 
-CTFshow web入门之信息收集篇
+CTFshow web入门之爆破
 
 <!--more-->
 
