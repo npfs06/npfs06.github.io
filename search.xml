@@ -11199,7 +11199,8 @@ payload:
   <entry>
     <title>单片机程序题</title>
     <url>/2021/06/22/%E5%8D%95%E7%89%87%E6%9C%BA%E7%A8%8B%E5%BA%8F%E9%A2%98/</url>
-    <content><![CDATA[<p>1、晶振为12Mhz，编写延迟时间为1ms的延迟子程序</p>
+    <content><![CDATA[<p>单片机期末考试的五道程序题<a id="more"></a></p>
+<p>1、晶振为12Mhz，编写延迟时间为1ms的延迟子程序</p>
 <figure class="highlight avrasm"><table><tr><td class="code"><pre><span class="line"><span class="symbol">DELAY:</span> <span class="keyword">MOV</span> <span class="built_in">R5</span>,<span class="meta">#10H</span></span><br><span class="line"><span class="symbol">LOOP1:</span> <span class="keyword">MOV</span> <span class="built_in">R6</span>,<span class="meta">#250H</span></span><br><span class="line"><span class="symbol">LOOP2:</span> DJMZ <span class="built_in">R6</span>,LOOP2</span><br><span class="line">	   DJMZ <span class="built_in">R5</span>,LOOP1</span><br><span class="line">	   <span class="keyword">RETI</span></span><br><span class="line">END</span><br></pre></td></tr></table></figure>
 
 
