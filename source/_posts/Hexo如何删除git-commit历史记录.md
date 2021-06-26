@@ -12,8 +12,6 @@ categories: problems
 
 在 Git Bash 或终端中执行命令：
 
-
-
 ```
 hexo clean
 ```

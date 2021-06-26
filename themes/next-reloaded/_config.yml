@@ -121,6 +121,7 @@ menu:
   #tags: /tags/ || fa fa-tags
   categories: /categories/|| fa fa-th
   archives: /archives/|| fa fa-archive
+  #Links : /Links/|| fa fa-link
   #schedule: /schedule/ || fa fa-calendar
   #sitemap: /sitemap.xml || fa fa-sitemap
   #commonweal: /404/ || fa fa-heartbeat
@@ -193,16 +194,20 @@ social_icons:
   icons_only: false
   transition: false
 
-# Blog rolls
+#Blog rolls
 links_settings:
   icon: fa fa-link
   title: Links
-  # Available values: block | inline
-  layout: block
+#  Available values: inline
+  layout: inline
+
 
 links:
-  #Title: http://yoursite.com
-
+  Luz: https://hyluz.cn/
+  xianyu123: https://0clickjacking0.github.io/
+  JiangNiao: https://jiang-niao.github.io/
+  xiaolong: https://xiaolong22333.top/
+  iwyc: https://iwyc.top/
 # Table of Contents in the Sidebar
 # Front-matter variable (unsupport wrap expand_all).
 toc:
@@ -461,6 +466,9 @@ index_with_subtitle: false
 # Automatically add external URL with Base64 encrypt & decrypt.
 exturl: false
 
+encrypt:
+    enable: true
+
 # Google Webmaster tools verification.
 # See: https://www.google.com/webmasters
 google_site_verification:
@@ -615,7 +623,7 @@ valine:
   appkey: F9l5INUqgwxvbJOfC1X7OMnr
   notify: false # Mail notifier
   verify: false # Verification code
-  placeholder: 欢迎在这里留言！我看到一定会及时回复的噢 # Comment box placeholder
+  placeholder: 欢迎在这里留言！我看到一定会及时回复的噢 （PS：回复信息会自动发送到你所填写的邮箱噢）
   avatar:  # Gravatar style
   guest_info: nick,mail,link # Custom comment header
   pageSize: 6 # Pagination size
@@ -805,7 +813,7 @@ tabs:
 # So, you have to install the dependency of pdf.js if you want to use pdf tag and make it available to all browsers.
 # See: https://github.com/theme-next/theme-next-pdf
 pdf:
-  enable: false
+  enable: true
   # Default height
   height: 500px
 
