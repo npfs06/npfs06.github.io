@@ -21,12 +21,12 @@
     var CONFIG = {"hostname":"npfs06.top","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
   </script>
 
-  <meta name="description" content="基础知识系统变量（超全局变量）在全部作用域中始终可用的内置变量 123456789$GLOBALS &#x2F;&#x2F; 引用全局作用域中可用的全部变量$_POST &#x2F;&#x2F; 获取 post 数据，是一个字典$_GET &#x2F;&#x2F; 获取 get 数据，是一个字典$_COOKIE &#x2F;&#x2F; 获取 cookie$_SESSION &#x2F;&#x2F; 获取 session$_FILES &#x2F;&#x2F; 获取上传的文件$_REQUEST &#x2F;&#x2F; 获取 $_GE">
+  <meta name="description" content="ctf中php常见知识点总结">
 <meta property="og:type" content="article">
 <meta property="og:title" content="ctf中php常见知识点总结">
 <meta property="og:url" content="https://npfs06.top/2020/07/20/ctf%E4%B8%ADphp%E5%B8%B8%E8%A7%81%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93/index.html">
 <meta property="og:site_name" content="npfs&#39;s blog">
-<meta property="og:description" content="基础知识系统变量（超全局变量）在全部作用域中始终可用的内置变量 123456789$GLOBALS &#x2F;&#x2F; 引用全局作用域中可用的全部变量$_POST &#x2F;&#x2F; 获取 post 数据，是一个字典$_GET &#x2F;&#x2F; 获取 get 数据，是一个字典$_COOKIE &#x2F;&#x2F; 获取 cookie$_SESSION &#x2F;&#x2F; 获取 session$_FILES &#x2F;&#x2F; 获取上传的文件$_REQUEST &#x2F;&#x2F; 获取 $_GE">
+<meta property="og:description" content="ctf中php常见知识点总结">
 <meta property="og:locale" content="en_US">
 <meta property="article:published_time" content="2020-07-20T07:23:41.000Z">
 <meta property="article:modified_time" content="2020-07-20T07:23:41.000Z">
@@ -249,7 +249,8 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <h1 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h1><h2 id="系统变量（超全局变量）"><a href="#系统变量（超全局变量）" class="headerlink" title="系统变量（超全局变量）"></a>系统变量（超全局变量）</h2><p>在全部作用域中始终可用的内置变量</p>
+        <p>ctf中php常见知识点总结<a id="more"></a></p>
+<h1 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h1><h2 id="系统变量（超全局变量）"><a href="#系统变量（超全局变量）" class="headerlink" title="系统变量（超全局变量）"></a>系统变量（超全局变量）</h2><p>在全部作用域中始终可用的内置变量</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$GLOBALS</span> <span class="comment">// 引用全局作用域中可用的全部变量</span></span><br><span class="line"><span class="variable">$_POST</span> <span class="comment">// 获取 post 数据，是一个字典</span></span><br><span class="line"><span class="variable">$_GET</span> <span class="comment">// 获取 get 数据，是一个字典</span></span><br><span class="line"><span class="variable">$_COOKIE</span> <span class="comment">// 获取 cookie</span></span><br><span class="line"><span class="variable">$_SESSION</span> <span class="comment">// 获取 session</span></span><br><span class="line"><span class="variable">$_FILES</span> <span class="comment">// 获取上传的文件</span></span><br><span class="line"><span class="variable">$_REQUEST</span> <span class="comment">// 获取 $_GET，$_POST，$_COOKIE 中的数据</span></span><br><span class="line"><span class="variable">$_ENV</span> <span class="comment">// 环境变量</span></span><br><span class="line"><span class="variable">$_SERVER</span> <span class="comment">// 服务器和执行环境信息</span></span><br></pre></td></tr></table></figure>
 <h2 id="可变变量"><a href="#可变变量" class="headerlink" title="可变变量"></a>可变变量</h2><p>可变变量是 php 独有的特性，可变变量指的是变量名可变，将一个普通变量的值作为可变变量的变量名，而变量（即普通变量）指的是变量值可变。</p>
 <figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$a</span>=<span class="string">&quot;hello&quot;</span>;</span><br><span class="line"><span class="comment">// 定义可变变量时，可以加上大括号</span></span><br><span class="line">$&#123;<span class="variable">$a</span>&#125;=<span class="string">&quot;world&quot;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> $&#123;<span class="variable">$a</span>&#125;;</span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$$a</span>; <span class="comment">// 将普通变量的值 hello，作为可变变量的变量名，即 $a</span></span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$hello</span>;</span><br></pre></td></tr></table></figure>
@@ -682,7 +683,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">70</span>
+          <span class="site-state-item-count">71</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
