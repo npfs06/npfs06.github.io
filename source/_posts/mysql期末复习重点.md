@@ -3,7 +3,7 @@ title: General Introductory of Database System
 date: 2021-06-26 21:06:32
 updated: 2021-06-26 21:06:32
 categories: 数据库
-password: npfs2333
+password: Npfs2333
 ---
 
 《数据库系统概论》期末复习要点<!--more-->
