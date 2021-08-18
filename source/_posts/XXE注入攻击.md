@@ -20,7 +20,7 @@ XXE注入攻击<!--more-->
 3. XML必须正确嵌套
 4. XML属性值必须加引号
 5. 实体引用
-6. 在XML中，空格会被保留（案例如：<p>a空格B</p>，这时候a和B之间的空格就会被保留）
+6. 在XML中，空格会被保留（案例如：\<p>a空格B\</p>，这时候a和B之间的空格就会被保留）
 
 
 
@@ -272,7 +272,7 @@ go,抓包
 
 将json修改为xml,并构造外部引用
 
-![](https://images.cnblogs.com/cnblogs_com/NPFS/1757701/o_200505085208$U4YCM74%7D$1GDZW6%601E3YE2.png)
+<img src="http://img.npfs06.top/20210730191317.png" style="zoom:80%;" />
 
 ```
 <?xml version="1.0" encoding="utf-8"?> 

