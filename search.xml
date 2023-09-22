@@ -14572,4 +14572,24 @@ payload:
         <category>Write up</category>
       </categories>
   </entry>
+  <entry>
+    <title>hexo d时发生error:spawn failed报错的解决方法</title>
+    <url>/2023/09/22/hexo-d%E6%97%B6%E5%8F%91%E7%94%9Ferror-spawn-failed%E6%8A%A5%E9%94%99%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>hexo d时发生error:spawn failed报错的解决方法</p>
+<a id="more"></a>
+
+<p>博客<code>hexo d</code>上传GitHub时出现报错：</p>
+<figure class="highlight taggerscript"><table><tr><td class="code"><pre><span class="line">FATAL &#123;</span><br><span class="line">  err: Error: Spawn failed</span><br><span class="line">      at ChildProcess.&lt;anonymous&gt; (D:<span class="symbol">\P</span>rogram Files<span class="symbol">\b</span>log<span class="symbol">\h</span>exo<span class="symbol">\n</span>ode_modules<span class="symbol">\h</span>exo-util<span class="symbol">\l</span>ib<span class="symbol">\s</span>pawn.js:51:21)</span><br><span class="line">      at ChildProcess.emit (events.js:315:20)</span><br><span class="line">      at ChildProcess.cp.emit (D:<span class="symbol">\P</span>rogram Files<span class="symbol">\b</span>log<span class="symbol">\h</span>exo<span class="symbol">\n</span>ode_modules<span class="symbol">\c</span>ross-spawn<span class="symbol">\l</span>ib<span class="symbol">\e</span>noent.js:34:29)</span><br><span class="line">      at Process.ChildProcess._handle.onexit (internal/child_process.js:277:12) &#123;</span><br><span class="line">    code: 128</span><br><span class="line">  &#125;</span><br><span class="line">&#125; Something&#x27;s wrong. Maybe you can find the solution here: <span class="variable">%s https://hexo.io/docs/troubleshooting.html</span></span><br><span class="line"><span class="variable">INFO  See you again</span></span><br><span class="line"><span class="variable"></span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><figure class="highlight autohotkey"><table><tr><td class="code"><pre><span class="line">问题大多是因为git进行push或者hexo d的时候改变了一些`.deploy_git`文件下的内容</span><br></pre></td></tr></table></figure>
+
+<p>直接将hexo目录下的<code>.deploy_git</code>和<code>public</code>删除</p>
+<p><img src="https://img.npfs06.top/20230922145123.png"></p>
+<p>（不用担心删除会导致博客出错，hexo g的时候会重新生成这两个文件）</p>
+]]></content>
+      <categories>
+        <category>problems</category>
+      </categories>
+  </entry>
 </search>
