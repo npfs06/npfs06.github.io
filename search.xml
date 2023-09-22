@@ -4412,7 +4412,17 @@
 <figure class="highlight mipsasm"><table><tr><td class="code"><pre><span class="line">小贴士: rbash是一种功能受限的<span class="keyword">bash </span><span class="keyword">shell,即它可以执行的命令被人为限制了，只有特</span></span><br><span class="line"><span class="keyword">定几种，也就是说，rbash是一 </span>种白名单限制<span class="keyword">shell,使用rbash </span>登录的用户只允许使用管理员预</span><br><span class="line">先设定好的命令，可见rbash的权限很低。如果rbash中限定的命令种类设置存在疏忽，就可能</span><br><span class="line">导致恶意攻击者可以利用某些被错误允许执行的命令运行出一个不受限的<span class="keyword">bash </span><span class="keyword">shell,该操作被</span></span><br><span class="line"><span class="keyword">成为rbash逃逸</span></span><br></pre></td></tr></table></figure>
 <p>在rbash中输入“?” ，会获得当前shell允许执行的所有命令列表</p>
 <p><img src="https://img.npfs06.top/20230922161952.png"></p>
-<p>在rbash中，如果遇到了如下常见的命令被允许执行，就可以直接凭借对应的构造命令成功地实现rbash逃逸。换言之，如果想设置一个相对安全的rbash环境，以下命令不应该轻易被允许使用。<br>❑ 针对<code>ftp</code>、<code>more</code>、<code>less</code>、<code>man</code>、<code>vi</code>、<code>vim</code>，可在输入点输入<code>！/bin/sh</code>或<code>！/bin/bash</code>命令实现逃逸。<br>❑ <code>awk</code>可以使用<code>awk &#39;BEGIN&#123;system(&quot;/bin/sh&quot;)&#125;&#39;</code>或<code>awk &#39;BEGIN&#123;system(&quot;/bin/bash&quot;)&#125;&#39;</code>。<br>❑ <code>find</code>命令可以通过输入<code>find/-name SomeName-exec/bin/sh\；</code>和<code>find/-name SomeName-exec/bin/bash\；</code>实现逃逸。<br>❑ Python可以使用<code>python-c &#39;import os;os.system(&quot;/bin/sh&quot;)&#39;</code>命令实现逃逸。<br>❑ php可以使用<code>php-a then exec(&quot;sh-i&quot;)；</code>命令实现逃逸。<br>❑ Perl可以使用<code>perl-e &#39;exec&quot;/bin/sh&quot;;&#39;</code>命令实现逃逸。<br>❑ lua可以使用<code>os.execute（&#39;/bin/sh&#39;）</code>命令实现逃逸。<br>❑ ruby可以使用<code>exec&quot;/bin/sh&quot;</code>命令实现逃逸。</p>
+<p>在rbash中，如果遇到了如下常见的命令被允许执行，就可以直接凭借对应的构造命令成功地实现rbash逃逸。换言之，如果想设置一个相对安全的rbash环境，以下命令不应该轻易被允许使用。</p>
+<ul>
+<li>针对<code>ftp</code>、<code>more</code>、<code>less</code>、<code>man</code>、<code>vi</code>、<code>vim</code>，可在输入点输入<code>！/bin/sh</code>或<code>！/bin/bash</code>命令实现逃逸。</li>
+<li><code>awk</code>可以使用<code>awk &#39;BEGIN&#123;system(&quot;/bin/sh&quot;)&#125;&#39;</code>或<code>awk &#39;BEGIN&#123;system(&quot;/bin/bash&quot;)&#125;&#39;</code>。</li>
+<li> <code>find</code>命令可以通过输入<code>find/-name SomeName-exec/bin/sh\；</code>和<code>find/-name SomeName-exec/bin/bash\；</code>实现逃逸。</li>
+<li> Python可以使用<code>python-c &#39;import os;os.system(&quot;/bin/sh&quot;)&#39;</code>命令实现逃逸。</li>
+<li> php可以使用<code>php-a then exec(&quot;sh-i&quot;)；</code>命令实现逃逸。</li>
+<li> Perl可以使用<code>perl-e &#39;exec&quot;/bin/sh&quot;;&#39;</code>命令实现逃逸。</li>
+<li> lua可以使用<code>os.execute（&#39;/bin/sh&#39;）</code>命令实现逃逸。</li>
+<li> ruby可以使用<code>exec&quot;/bin/sh&quot;</code>命令实现逃逸。</li>
+</ul>
 <p>这里只罗列了常见的部分，若想获得更多信息，建议进一步学习如下资料。<br>《Linux Restricted Shell Bypass》：<a href="https://www.exploit-db.com/docs/english/44592-linux-restricted-shell-bypass-guide.pdf%E3%80%82">https://www.exploit-db.com/docs/english/44592-linux-restricted-shell-bypass-guide.pdf。</a></p>
 <h2 id="Point-7"><a href="#Point-7" class="headerlink" title="Point 7"></a>Point 7</h2><figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line">小贴士: sudo是Linux系统下的管理指令，普通用户可以通过sudo命令以root权限执行管理员设定的几</span><br><span class="line">个或全部程序。设定不同，每个用户被允许使用sudo执行的命令种类和数量也不同。用户可以通过sudo -l命令查看当前用户被允许使用的程序列表。此外，有些用户在使用sudo -l命令的时候也需要提供当前用户的密码，这是因为管理员对用户的设置不同。如果需要密码，那么对于使用反弹<span class="keyword">shell</span><span class="bash">获得的用户身份而言，可能就无法直接查看和使用sudo命令了。</span></span><br></pre></td></tr></table></figure>
 <h2 id="Point-8"><a href="#Point-8" class="headerlink" title="Point 8"></a>Point 8</h2><p>拥有修改敏感文件的权限时（比如sudo ht），我们可以直接在<code>/etc/passwd</code>文件中新增用户，并且把密码直接写在/etc/passwd文件里。</p>
