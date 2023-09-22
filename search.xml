@@ -14587,10 +14587,23 @@ payload:
 <p>直接将hexo目录下的<code>.deploy_git</code>和<code>public</code>删除</p>
 <p><img src="https://img.npfs06.top/20230922145123.png"></p>
 <p>（不用担心删除会导致博客出错，hexo g的时候会重新生成这两个文件）</p>
-<p>如果这样做了还不行，那就再本地cmd开个命令窗口，清下缓存</p>
+]]></content>
+      <categories>
+        <category>problems</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>git连接报错 fatal: unable to access ‘https://github.com……‘: Failed to connect to</title>
+    <url>/2023/09/22/git%E8%BF%9E%E6%8E%A5%E6%8A%A5%E9%94%99-fatal-unable-to-access-%E2%80%98https-github-com%E2%80%A6%E2%80%A6%E2%80%98-Failed-to-connect-to/</url>
+    <content><![CDATA[<p>git 连接报错 fatal: unable to access ‘<a href="https://github.com/xxxxxx.git/&#39;">https://github.com/xxxxxx.git/&#39;</a>: Failed to connect to github.com port 443: Timed out 解决办法</p>
+<a id="more"></a>
+
+<p>但是我把这两个文件删除，重新执行<code>hexo g -d</code>命令之后，出现了新的报错</p>
+<figure class="highlight pgsql"><table><tr><td class="code"><pre><span class="line">fatal: unable <span class="keyword">to</span> <span class="keyword">access</span> <span class="string">&#x27;https://github.com/npfs06/npfs06.github.io.git/&#x27;</span>: Failed <span class="keyword">to</span> <span class="keyword">connect</span> <span class="keyword">to</span> github.com port <span class="number">443</span>: Timed <span class="keyword">out</span></span><br></pre></td></tr></table></figure>
+<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>本地cmd开个命令窗口，清下缓存</p>
 <figure class="highlight dos"><table><tr><td class="code"><pre><span class="line"><span class="built_in">ipconfig</span> /flushdns </span><br></pre></td></tr></table></figure>
-
-
+<p>请问缓存等个30秒</p>
+<p>再执行<code>hexo g -d</code> 就不会报超时了</p>
 ]]></content>
       <categories>
         <category>problems</category>
