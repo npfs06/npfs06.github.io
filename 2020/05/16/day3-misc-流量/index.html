@@ -1,0 +1,666 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"npfs06.top","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="在CTF比赛中，对于流量包的分析取证是一种十分重要的题型。通常这类题目都是会提供一个包含流量数据的pcap文件">
+<meta property="og:type" content="article">
+<meta property="og:title" content="day3 misc(流量)">
+<meta property="og:url" content="https://npfs06.top/2020/05/16/day3-misc-%E6%B5%81%E9%87%8F/index.html">
+<meta property="og:site_name" content="安小琪&#39;s blog">
+<meta property="og:description" content="在CTF比赛中，对于流量包的分析取证是一种十分重要的题型。通常这类题目都是会提供一个包含流量数据的pcap文件">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img.npfs06.top/20210325160246.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210325160311.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210325160328.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210325160345.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210325160403.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210325160420.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="http://img.npfs06.top/20210325160435.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="http://img.npfs06.top/20210325160454.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="http://img.npfs06.top/20210325160505.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="article:published_time" content="2020-05-16T07:27:54.000Z">
+<meta property="article:modified_time" content="2020-05-16T07:27:54.000Z">
+<meta property="article:author" content="安小琪">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.npfs06.top/20210325160246.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+
+<link rel="canonical" href="https://npfs06.top/2020/05/16/day3-misc-%E6%B5%81%E9%87%8F/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>day3 misc(流量) | 安小琪's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">安小琪's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">少年有梦，不应止于心动</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://npfs06.top/2020/05/16/day3-misc-%E6%B5%81%E9%87%8F/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="安小琪">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="安小琪's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          day3 misc(流量)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-05-16 15:27:54" itemprop="dateCreated datePublished" datetime="2020-05-16T15:27:54+08:00">2020-05-16</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/misc/" itemprop="url" rel="index"><span itemprop="name">misc</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2020/05/16/day3-misc-%E6%B5%81%E9%87%8F/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/05/16/day3-misc-%E6%B5%81%E9%87%8F/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>在CTF比赛中，对于流量包的分析取证是一种十分重要的题型。通常这类题目都是会提供一个包含流量数据的pcap文件<a id="more"></a></p>
+<h1 id="WireShark"><a href="#WireShark" class="headerlink" title="WireShark"></a>WireShark</h1><h2 id="常用过滤命令："><a href="#常用过滤命令：" class="headerlink" title="常用过滤命令："></a>常用过滤命令：</h2><p><strong>过滤IP，如源IP或者目标x.x.x.x</strong></p>
+<figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">ip.src <span class="keyword">eq</span> <span class="keyword">x</span>.<span class="keyword">x</span>.<span class="keyword">x</span>.<span class="keyword">x</span> <span class="keyword">or</span> ip.dst <span class="keyword">eq</span> <span class="keyword">x</span>.<span class="keyword">x</span>.<span class="keyword">x</span>.<span class="keyword">x</span></span><br><span class="line">或者</span><br><span class="line">ip.addr <span class="keyword">eq</span> <span class="keyword">x</span>.<span class="keyword">x</span>.<span class="keyword">x</span>.<span class="keyword">x</span> </span><br></pre></td></tr></table></figure>
+<p>也可以：点击任意一个符合筛选条件的数据包，找到IPv4下的Destination字          段，右键点击Source字段，作为过滤器应用 – 选中。</p>
+<p><strong>过滤端口</strong></p>
+<figure class="highlight elm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">tcp</span>.<span class="keyword">port</span> eq 80 // 不管端口是来源的还是目标的都显示</span><br><span class="line"><span class="title">tcp</span>.<span class="keyword">port</span> eq 80 or udp.<span class="keyword">port</span> eq 80</span><br><span class="line"><span class="title">tcp</span>.dst<span class="keyword">port</span> == 80 // 只显tcp协议的目标端口80</span><br><span class="line"><span class="title">tcp</span>.src<span class="keyword">port</span> == 80 // 只显tcp协议的来源端口80</span><br><span class="line">过滤端口范围</span><br><span class="line"><span class="title">tcp</span>.<span class="keyword">port</span> &gt;= 1 and tcp.<span class="keyword">port</span> &lt;= 80</span><br></pre></td></tr></table></figure>
+<p><strong>过滤协议</strong></p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">tcp<span class="regexp">/udp/</span>arp<span class="regexp">/icmp/</span>http<span class="regexp">/smtp/</span>ftp<span class="regexp">/dns/m</span>snms<span class="regexp">/ip/</span>ssl......</span><br><span class="line"></span><br><span class="line">排除tcp包，如!tcp   或者   not tcp</span><br></pre></td></tr></table></figure>
+<p><strong>http模式过滤</strong></p>
+<figure class="highlight accesslog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">http.request.method == <span class="string">&quot;<span class="keyword">GET</span>&quot;</span></span><br><span class="line">http.request.method == <span class="string">&quot;<span class="keyword">POST</span>&quot;</span></span><br><span class="line">http.request.uri == <span class="string">&quot;/img/logo-edu.gif&quot;</span></span><br><span class="line">http contains <span class="string">&quot;<span class="keyword">GET</span>&quot;</span></span><br><span class="line">http contains <span class="string">&quot;HTTP/1.&quot;</span></span><br><span class="line"></span><br><span class="line">// GET包</span><br><span class="line">http.request.method == <span class="string">&quot;<span class="keyword">GET</span>&quot;</span> &amp;&amp; http contains <span class="string">&quot;Host: &quot;</span></span><br><span class="line">http.request.method == <span class="string">&quot;<span class="keyword">GET</span>&quot;</span> &amp;&amp; http contains <span class="string">&quot;User-Agent: &quot;</span></span><br><span class="line"></span><br><span class="line">// POST包</span><br><span class="line">http.request.method == <span class="string">&quot;<span class="keyword">POST</span>&quot;</span> &amp;&amp; http contains <span class="string">&quot;Host: &quot;</span></span><br><span class="line">http.request.method == <span class="string">&quot;<span class="keyword">POST</span>&quot;</span> &amp;&amp; http contains <span class="string">&quot;User-Agent: &quot;</span></span><br><span class="line"></span><br><span class="line">// 响应包</span><br><span class="line">http contains <span class="string">&quot;HTTP/1.1 200 OK&quot;</span> &amp;&amp; http contains <span class="string">&quot;Content-Type: &quot;</span></span><br><span class="line">http contains <span class="string">&quot;HTTP/1.0 200 OK&quot;</span> &amp;&amp; http contains <span class="string">&quot;Content-Type: &quot;</span></span><br><span class="line">一定包含如下</span><br><span class="line">`Content-Type:`</span><br></pre></td></tr></table></figure>
+
+<p>其他过滤命令参见<a href="https://blog.csdn.net/wojiaopanpan/article/details/69944970" target="_blank">wireshark过滤规则及使用方法</a></p>
+<h2 id="协议分级"><a href="#协议分级" class="headerlink" title="协议分级"></a>协议分级</h2><p>可以查看当前数据包中包含那些协议</p>
+<blockquote>
+<p>统计 -&gt; 协议分级</p>
+</blockquote>
+<p>根据数据包特征进行筛选：右键-&gt;作为过滤器应用 -&gt;选中/非选中</p>
+<h2 id="数据流跟踪"><a href="#数据流跟踪" class="headerlink" title="数据流跟踪"></a>数据流跟踪</h2><p>在关注的http数据包或tcp数据包中选择流汇聚，可以将HTTP流或TCP流汇聚或还原成数据，在弹出的框中可以看到数据内容。</p>
+<blockquote>
+<p>选中数据分组后   右键 -&gt;追踪流 -&gt;TCP/HTTP流</p>
+</blockquote>
+<p>HTTP流常见关键内容：</p>
+<p>1.打开即可看到flag</p>
+<p>2.上传/下载文件内容，内容包括文件名、hash值等</p>
+<p>3.一句话木马</p>
+<p>而TCP流通常是命令行操作</p>
+<h2 id="数据提取"><a href="#数据提取" class="headerlink" title="数据提取"></a>数据提取</h2><p>使用wireshark可以自动提取通过http传输的文件内容，方法如下：</p>
+<blockquote>
+<p>文件-&gt;导出对象-&gt;HTTP</p>
+</blockquote>
+<p>在打开的对象列表中找到有价值的文件，如压缩文件、文本文件、音频文件、图片等，点击save进行保存，或者saveall保存所有对象再进入文件夹进行分析。</p>
+<blockquote>
+<p>media type -&gt;右键-&gt;导出分组字节流</p>
+</blockquote>
+<blockquote>
+<p>文件-&gt;导出分组字节流</p>
+</blockquote>
+<blockquote>
+<p>选中http文件传输流量包，在分组详情中找到data或者Line-based text data:text/html层，鼠标右键点击 – 选中 导出分组字节流。</p>
+</blockquote>
+<h1 id="无线wifi流量包"><a href="#无线wifi流量包" class="headerlink" title="无线wifi流量包"></a>无线wifi流量包</h1><p>协议分级发现只有wireless LAN协议，很可能是WPA或者WEP加密的无线数据包</p>
+<p><strong>aircrack-ng</strong></p>
+<p>Linux下用aircrack-ng检查cap包</p>
+<p><code>aircrack-ng  xxx.cap -w 字典</code></p>
+<h1 id="USB流量包分析"><a href="#USB流量包分析" class="headerlink" title="USB流量包分析"></a>USB流量包分析</h1><p>USB流量指的是USB设备接口的流量，攻击者能够通过监听usb接口流量获取键盘敲击键、鼠标移动与点击、存储设备的铭文传输通信、USB无线网卡网络传输内容等等。在CTF中，USB流量分析主要以键盘和鼠标流量为主。</p>
+<h2 id="键盘流量"><a href="#键盘流量" class="headerlink" title="键盘流量"></a>键盘流量</h2><p>USB协议数据部分在Leftover Capture Data域中，数据长度为<code>八个字节</code>。其中键盘击键信息集中在第三个字节中。<br><img src="https://img.npfs06.top/20210325160246.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p>如图，发现击键信息为0x06，即对应的按键为<code>C</code><br>键位映射关系参考：<a target="_blank" rel="noopener" href="https://wenku.baidu.com/view/9050c3c3af45b307e971971e.html">《USB键盘协议中键码》中的HID Usage ID</a></p>
+<h3 id="题型："><a href="#题型：" class="headerlink" title="题型："></a>题型：</h3><p>flag隐藏在usb流量中，通过USB协议数据中的键盘键码转换成键位。</p>
+<h3 id="解题思路："><a href="#解题思路：" class="headerlink" title="解题思路："></a>解题思路：</h3><p>1.使用kali linux中的tshark 命令把cap data提取出来：</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tshark -r usb.pcap -T fields -e usb.capdata &gt; usbdata.txt</span><br><span class="line">tshark -r usb.pcap -T fields -e usb.capdata | sed &#x27;/^\s*$/d&#x27; &gt; usbdata.txt #提取并去除空行</span><br></pre></td></tr></table></figure>
+<p>2.根据《USB键盘协议中键码》中的HID Usage ID将数据还原成键位，可写一个Python脚本进行快速转换。</p>
+<h3 id="题目示例："><a href="#题目示例：" class="headerlink" title="题目示例："></a>题目示例：</h3><p><a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1bGEIPeXDCbhybmWOyGr8Og">【NSCTF】安全评测人员在对某银行卡密码输入系统进行渗透测试，截获了一段通过USB键盘输入6位数字密码的流量，其中也包含了一些其他无关的USB设备的流量，你能从中恢复出6位数字密码吗？最终提交的flag格式为flag</a><br>提取码：q6ro<br>（1）使用tshark 命令把pcap的数据提取并去除空行到<code>usbdata.txt</code></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tshark -r usb.pcap -T fields -e usb.capdata | sed &#x27;/^\s*$/d&#x27; &gt; usbdata.txt</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.npfs06.top/20210325160311.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"><br>（2）提取出来的数据可能会带冒号，也可能不带（有可能和wireshark的版本相关），但是一般的脚本都会按照有冒号的数据来识别</p>
+<blockquote>
+<p>有冒号时提取数据的<code>[6:8]</code><br>无冒号时数据在<code>[4:6]</code></p>
+</blockquote>
+<p>可以用脚本来加上冒号</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">f=<span class="built_in">open</span>(<span class="string">&#x27;usbdata.txt&#x27;</span>,<span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">fi=<span class="built_in">open</span>(<span class="string">&#x27;out.txt&#x27;</span>,<span class="string">&#x27;w&#x27;</span>)</span><br><span class="line"><span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">    a=f.readline().strip()</span><br><span class="line">    <span class="keyword">if</span> a:</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(a)==<span class="number">16</span>: <span class="comment"># 鼠标流量的话len改为8</span></span><br><span class="line">            out=<span class="string">&#x27;&#x27;</span></span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="built_in">len</span>(a),<span class="number">2</span>):</span><br><span class="line">                <span class="keyword">if</span> i+<span class="number">2</span> != <span class="built_in">len</span>(a):</span><br><span class="line">                    out+=a[i]+a[i+<span class="number">1</span>]+<span class="string">&quot;:&quot;</span></span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    out+=a[i]+a[i+<span class="number">1</span>]</span><br><span class="line">            fi.write(out)</span><br><span class="line">            fi.write(<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">fi.close()</span><br></pre></td></tr></table></figure>
+<p>此时对应的第三字节，也就是[6:8]就代表了击键信息<br>（3）提取出键盘流量后需要用脚本还原数据对应的信息。同时找到两个还原信息的脚本（python2）：<br><code>keyboard1.py</code></p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br></pre></td><td class="code"><pre><span class="line">mappings = &#123; <span class="number">0x04</span>:<span class="string">&quot;A&quot;</span>,  <span class="number">0x05</span>:<span class="string">&quot;B&quot;</span>,  <span class="number">0x06</span>:<span class="string">&quot;C&quot;</span>, <span class="number">0x07</span>:<span class="string">&quot;D&quot;</span>, <span class="number">0x08</span>:<span class="string">&quot;E&quot;</span>, <span class="number">0x09</span>:<span class="string">&quot;F&quot;</span>, <span class="number">0x0A</span>:<span class="string">&quot;G&quot;</span>,  <span class="number">0x0B</span>:<span class="string">&quot;H&quot;</span>, <span class="number">0x0C</span>:<span class="string">&quot;I&quot;</span>,  <span class="number">0x0D</span>:<span class="string">&quot;J&quot;</span>, <span class="number">0x0E</span>:<span class="string">&quot;K&quot;</span>, <span class="number">0x0F</span>:<span class="string">&quot;L&quot;</span>, <span class="number">0x10</span>:<span class="string">&quot;M&quot;</span>, <span class="number">0x11</span>:<span class="string">&quot;N&quot;</span>,<span class="number">0x12</span>:<span class="string">&quot;O&quot;</span>,  <span class="number">0x13</span>:<span class="string">&quot;P&quot;</span>, <span class="number">0x14</span>:<span class="string">&quot;Q&quot;</span>, <span class="number">0x15</span>:<span class="string">&quot;R&quot;</span>, <span class="number">0x16</span>:<span class="string">&quot;S&quot;</span>, <span class="number">0x17</span>:<span class="string">&quot;T&quot;</span>, <span class="number">0x18</span>:<span class="string">&quot;U&quot;</span>,<span class="number">0x19</span>:<span class="string">&quot;V&quot;</span>, <span class="number">0x1A</span>:<span class="string">&quot;W&quot;</span>, <span class="number">0x1B</span>:<span class="string">&quot;X&quot;</span>, <span class="number">0x1C</span>:<span class="string">&quot;Y&quot;</span>, <span class="number">0x1D</span>:<span class="string">&quot;Z&quot;</span>, <span class="number">0x1E</span>:<span class="string">&quot;1&quot;</span>, <span class="number">0x1F</span>:<span class="string">&quot;2&quot;</span>, <span class="number">0x20</span>:<span class="string">&quot;3&quot;</span>, <span class="number">0x21</span>:<span class="string">&quot;4&quot;</span>, <span class="number">0x22</span>:<span class="string">&quot;5&quot;</span>,  <span class="number">0x23</span>:<span class="string">&quot;6&quot;</span>, <span class="number">0x24</span>:<span class="string">&quot;7&quot;</span>, <span class="number">0x25</span>:<span class="string">&quot;8&quot;</span>, <span class="number">0x26</span>:<span class="string">&quot;9&quot;</span>, <span class="number">0x27</span>:<span class="string">&quot;0&quot;</span>, <span class="number">0x28</span>:<span class="string">&quot;\n&quot;</span>, <span class="number">0x2a</span>:<span class="string">&quot;[DEL]&quot;</span>,  <span class="number">0X2B</span>:<span class="string">&quot;    &quot;</span>, <span class="number">0x2C</span>:<span class="string">&quot; &quot;</span>,  <span class="number">0x2D</span>:<span class="string">&quot;-&quot;</span>, <span class="number">0x2E</span>:<span class="string">&quot;=&quot;</span>, <span class="number">0x2F</span>:<span class="string">&quot;[&quot;</span>,  <span class="number">0x30</span>:<span class="string">&quot;]&quot;</span>,  <span class="number">0x31</span>:<span class="string">&quot;\\&quot;</span>, <span class="number">0x32</span>:<span class="string">&quot;~&quot;</span>, <span class="number">0x33</span>:<span class="string">&quot;;&quot;</span>,  <span class="number">0x34</span>:<span class="string">&quot;&#x27;&quot;</span>, <span class="number">0x36</span>:<span class="string">&quot;,&quot;</span>,  <span class="number">0x37</span>:<span class="string">&quot;.&quot;</span> &#125;</span><br><span class="line"></span><br><span class="line">nums = []</span><br><span class="line">keys = <span class="built_in">open</span>(<span class="string">&#x27;out.txt&#x27;</span>)</span><br><span class="line"><span class="keyword">for</span> line <span class="keyword">in</span> keys:</span><br><span class="line">    <span class="keyword">if</span> line[<span class="number">0</span>]!=<span class="string">&#x27;0&#x27;</span> <span class="keyword">or</span> line[<span class="number">1</span>]!=<span class="string">&#x27;0&#x27;</span> <span class="keyword">or</span> line[<span class="number">3</span>]!=<span class="string">&#x27;0&#x27;</span> <span class="keyword">or</span> line[<span class="number">4</span>]!=<span class="string">&#x27;0&#x27;</span> <span class="keyword">or</span> line[<span class="number">9</span>]!=<span class="string">&#x27;0&#x27;</span> <span class="keyword">or</span> line[<span class="number">10</span>]!=<span class="string">&#x27;0&#x27;</span> <span class="keyword">or</span> line[<span class="number">12</span>]!=<span class="string">&#x27;0&#x27;</span> <span class="keyword">or</span> line[<span class="number">13</span>]!=<span class="string">&#x27;0&#x27;</span> <span class="keyword">or</span> line[<span class="number">15</span>]!=<span class="string">&#x27;0&#x27;</span> <span class="keyword">or</span> line[<span class="number">16</span>]!=<span class="string">&#x27;0&#x27;</span> <span class="keyword">or</span> line[<span class="number">18</span>]!=<span class="string">&#x27;0&#x27;</span> <span class="keyword">or</span> line[<span class="number">19</span>]!=<span class="string">&#x27;0&#x27;</span> <span class="keyword">or</span> line[<span class="number">21</span>]!=<span class="string">&#x27;0&#x27;</span> <span class="keyword">or</span> line[<span class="number">22</span>]!=<span class="string">&#x27;0&#x27;</span>:</span><br><span class="line">         <span class="keyword">continue</span></span><br><span class="line">    nums.append(<span class="built_in">int</span>(line[<span class="number">6</span>:<span class="number">8</span>],<span class="number">16</span>))</span><br><span class="line"></span><br><span class="line">keys.close()</span><br><span class="line"></span><br><span class="line">output = <span class="string">&quot;&quot;</span></span><br><span class="line"><span class="keyword">for</span> n <span class="keyword">in</span> nums:</span><br><span class="line">    <span class="keyword">if</span> n == <span class="number">0</span> :</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    <span class="keyword">if</span> n <span class="keyword">in</span> mappings:</span><br><span class="line">        output += mappings[n]</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        output += <span class="string">&#x27;[unknown]&#x27;</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span> <span class="string">&#x27;output :\n&#x27;</span> + output</span><br><span class="line">keyboard2.py</span><br><span class="line">normalKeys = &#123;</span><br><span class="line">    <span class="string">&quot;04&quot;</span>:<span class="string">&quot;a&quot;</span>, <span class="string">&quot;05&quot;</span>:<span class="string">&quot;b&quot;</span>, <span class="string">&quot;06&quot;</span>:<span class="string">&quot;c&quot;</span>, <span class="string">&quot;07&quot;</span>:<span class="string">&quot;d&quot;</span>, <span class="string">&quot;08&quot;</span>:<span class="string">&quot;e&quot;</span>,</span><br><span class="line">    <span class="string">&quot;09&quot;</span>:<span class="string">&quot;f&quot;</span>, <span class="string">&quot;0a&quot;</span>:<span class="string">&quot;g&quot;</span>, <span class="string">&quot;0b&quot;</span>:<span class="string">&quot;h&quot;</span>, <span class="string">&quot;0c&quot;</span>:<span class="string">&quot;i&quot;</span>, <span class="string">&quot;0d&quot;</span>:<span class="string">&quot;j&quot;</span>,</span><br><span class="line">     <span class="string">&quot;0e&quot;</span>:<span class="string">&quot;k&quot;</span>, <span class="string">&quot;0f&quot;</span>:<span class="string">&quot;l&quot;</span>, <span class="string">&quot;10&quot;</span>:<span class="string">&quot;m&quot;</span>, <span class="string">&quot;11&quot;</span>:<span class="string">&quot;n&quot;</span>, <span class="string">&quot;12&quot;</span>:<span class="string">&quot;o&quot;</span>,</span><br><span class="line">      <span class="string">&quot;13&quot;</span>:<span class="string">&quot;p&quot;</span>, <span class="string">&quot;14&quot;</span>:<span class="string">&quot;q&quot;</span>, <span class="string">&quot;15&quot;</span>:<span class="string">&quot;r&quot;</span>, <span class="string">&quot;16&quot;</span>:<span class="string">&quot;s&quot;</span>, <span class="string">&quot;17&quot;</span>:<span class="string">&quot;t&quot;</span>,</span><br><span class="line">       <span class="string">&quot;18&quot;</span>:<span class="string">&quot;u&quot;</span>, <span class="string">&quot;19&quot;</span>:<span class="string">&quot;v&quot;</span>, <span class="string">&quot;1a&quot;</span>:<span class="string">&quot;w&quot;</span>, <span class="string">&quot;1b&quot;</span>:<span class="string">&quot;x&quot;</span>, <span class="string">&quot;1c&quot;</span>:<span class="string">&quot;y&quot;</span>,</span><br><span class="line">        <span class="string">&quot;1d&quot;</span>:<span class="string">&quot;z&quot;</span>,<span class="string">&quot;1e&quot;</span>:<span class="string">&quot;1&quot;</span>, <span class="string">&quot;1f&quot;</span>:<span class="string">&quot;2&quot;</span>, <span class="string">&quot;20&quot;</span>:<span class="string">&quot;3&quot;</span>, <span class="string">&quot;21&quot;</span>:<span class="string">&quot;4&quot;</span>,</span><br><span class="line">         <span class="string">&quot;22&quot;</span>:<span class="string">&quot;5&quot;</span>, <span class="string">&quot;23&quot;</span>:<span class="string">&quot;6&quot;</span>,<span class="string">&quot;24&quot;</span>:<span class="string">&quot;7&quot;</span>,<span class="string">&quot;25&quot;</span>:<span class="string">&quot;8&quot;</span>,<span class="string">&quot;26&quot;</span>:<span class="string">&quot;9&quot;</span>,</span><br><span class="line">         <span class="string">&quot;27&quot;</span>:<span class="string">&quot;0&quot;</span>,<span class="string">&quot;28&quot;</span>:<span class="string">&quot;&lt;RET&gt;&quot;</span>,<span class="string">&quot;29&quot;</span>:<span class="string">&quot;&lt;ESC&gt;&quot;</span>,<span class="string">&quot;2a&quot;</span>:<span class="string">&quot;&lt;DEL&gt;&quot;</span>, <span class="string">&quot;2b&quot;</span>:<span class="string">&quot;\t&quot;</span>,</span><br><span class="line">         <span class="string">&quot;2c&quot;</span>:<span class="string">&quot;&lt;SPACE&gt;&quot;</span>,<span class="string">&quot;2d&quot;</span>:<span class="string">&quot;-&quot;</span>,<span class="string">&quot;2e&quot;</span>:<span class="string">&quot;=&quot;</span>,<span class="string">&quot;2f&quot;</span>:<span class="string">&quot;[&quot;</span>,<span class="string">&quot;30&quot;</span>:<span class="string">&quot;]&quot;</span>,<span class="string">&quot;31&quot;</span>:<span class="string">&quot;\\&quot;</span>,</span><br><span class="line">         <span class="string">&quot;32&quot;</span>:<span class="string">&quot;&lt;NON&gt;&quot;</span>,<span class="string">&quot;33&quot;</span>:<span class="string">&quot;;&quot;</span>,<span class="string">&quot;34&quot;</span>:<span class="string">&quot;&#x27;&quot;</span>,<span class="string">&quot;35&quot;</span>:<span class="string">&quot;&lt;GA&gt;&quot;</span>,<span class="string">&quot;36&quot;</span>:<span class="string">&quot;,&quot;</span>,<span class="string">&quot;37&quot;</span>:<span class="string">&quot;.&quot;</span>,</span><br><span class="line">         <span class="string">&quot;38&quot;</span>:<span class="string">&quot;/&quot;</span>,<span class="string">&quot;39&quot;</span>:<span class="string">&quot;&lt;CAP&gt;&quot;</span>,<span class="string">&quot;3a&quot;</span>:<span class="string">&quot;&lt;F1&gt;&quot;</span>,<span class="string">&quot;3b&quot;</span>:<span class="string">&quot;&lt;F2&gt;&quot;</span>, <span class="string">&quot;3c&quot;</span>:<span class="string">&quot;&lt;F3&gt;&quot;</span>,<span class="string">&quot;3d&quot;</span>:<span class="string">&quot;&lt;F4&gt;&quot;</span>,</span><br><span class="line">         <span class="string">&quot;3e&quot;</span>:<span class="string">&quot;&lt;F5&gt;&quot;</span>,<span class="string">&quot;3f&quot;</span>:<span class="string">&quot;&lt;F6&gt;&quot;</span>,<span class="string">&quot;40&quot;</span>:<span class="string">&quot;&lt;F7&gt;&quot;</span>,<span class="string">&quot;41&quot;</span>:<span class="string">&quot;&lt;F8&gt;&quot;</span>,<span class="string">&quot;42&quot;</span>:<span class="string">&quot;&lt;F9&gt;&quot;</span>,<span class="string">&quot;43&quot;</span>:<span class="string">&quot;&lt;F10&gt;&quot;</span>,</span><br><span class="line">         <span class="string">&quot;44&quot;</span>:<span class="string">&quot;&lt;F11&gt;&quot;</span>,<span class="string">&quot;45&quot;</span>:<span class="string">&quot;&lt;F12&gt;&quot;</span>&#125;</span><br><span class="line">shiftKeys = &#123;</span><br><span class="line">    <span class="string">&quot;04&quot;</span>:<span class="string">&quot;A&quot;</span>, <span class="string">&quot;05&quot;</span>:<span class="string">&quot;B&quot;</span>, <span class="string">&quot;06&quot;</span>:<span class="string">&quot;C&quot;</span>, <span class="string">&quot;07&quot;</span>:<span class="string">&quot;D&quot;</span>, <span class="string">&quot;08&quot;</span>:<span class="string">&quot;E&quot;</span>,</span><br><span class="line">     <span class="string">&quot;09&quot;</span>:<span class="string">&quot;F&quot;</span>, <span class="string">&quot;0a&quot;</span>:<span class="string">&quot;G&quot;</span>, <span class="string">&quot;0b&quot;</span>:<span class="string">&quot;H&quot;</span>, <span class="string">&quot;0c&quot;</span>:<span class="string">&quot;I&quot;</span>, <span class="string">&quot;0d&quot;</span>:<span class="string">&quot;J&quot;</span>,</span><br><span class="line">      <span class="string">&quot;0e&quot;</span>:<span class="string">&quot;K&quot;</span>, <span class="string">&quot;0f&quot;</span>:<span class="string">&quot;L&quot;</span>, <span class="string">&quot;10&quot;</span>:<span class="string">&quot;M&quot;</span>, <span class="string">&quot;11&quot;</span>:<span class="string">&quot;N&quot;</span>, <span class="string">&quot;12&quot;</span>:<span class="string">&quot;O&quot;</span>,</span><br><span class="line">       <span class="string">&quot;13&quot;</span>:<span class="string">&quot;P&quot;</span>, <span class="string">&quot;14&quot;</span>:<span class="string">&quot;Q&quot;</span>, <span class="string">&quot;15&quot;</span>:<span class="string">&quot;R&quot;</span>, <span class="string">&quot;16&quot;</span>:<span class="string">&quot;S&quot;</span>, <span class="string">&quot;17&quot;</span>:<span class="string">&quot;T&quot;</span>,</span><br><span class="line">        <span class="string">&quot;18&quot;</span>:<span class="string">&quot;U&quot;</span>, <span class="string">&quot;19&quot;</span>:<span class="string">&quot;V&quot;</span>, <span class="string">&quot;1a&quot;</span>:<span class="string">&quot;W&quot;</span>, <span class="string">&quot;1b&quot;</span>:<span class="string">&quot;X&quot;</span>, <span class="string">&quot;1c&quot;</span>:<span class="string">&quot;Y&quot;</span>,</span><br><span class="line">         <span class="string">&quot;1d&quot;</span>:<span class="string">&quot;Z&quot;</span>,<span class="string">&quot;1e&quot;</span>:<span class="string">&quot;!&quot;</span>, <span class="string">&quot;1f&quot;</span>:<span class="string">&quot;@&quot;</span>, <span class="string">&quot;20&quot;</span>:<span class="string">&quot;#&quot;</span>, <span class="string">&quot;21&quot;</span>:<span class="string">&quot;$&quot;</span>,</span><br><span class="line">          <span class="string">&quot;22&quot;</span>:<span class="string">&quot;%&quot;</span>, <span class="string">&quot;23&quot;</span>:<span class="string">&quot;^&quot;</span>,<span class="string">&quot;24&quot;</span>:<span class="string">&quot;&amp;&quot;</span>,<span class="string">&quot;25&quot;</span>:<span class="string">&quot;*&quot;</span>,<span class="string">&quot;26&quot;</span>:<span class="string">&quot;(&quot;</span>,<span class="string">&quot;27&quot;</span>:<span class="string">&quot;)&quot;</span>,</span><br><span class="line">          <span class="string">&quot;28&quot;</span>:<span class="string">&quot;&lt;RET&gt;&quot;</span>,<span class="string">&quot;29&quot;</span>:<span class="string">&quot;&lt;ESC&gt;&quot;</span>,<span class="string">&quot;2a&quot;</span>:<span class="string">&quot;&lt;DEL&gt;&quot;</span>, <span class="string">&quot;2b&quot;</span>:<span class="string">&quot;\t&quot;</span>,<span class="string">&quot;2c&quot;</span>:<span class="string">&quot;&lt;SPACE&gt;&quot;</span>,</span><br><span class="line">          <span class="string">&quot;2d&quot;</span>:<span class="string">&quot;_&quot;</span>,<span class="string">&quot;2e&quot;</span>:<span class="string">&quot;+&quot;</span>,<span class="string">&quot;2f&quot;</span>:<span class="string">&quot;&#123;&quot;</span>,<span class="string">&quot;30&quot;</span>:<span class="string">&quot;&#125;&quot;</span>,<span class="string">&quot;31&quot;</span>:<span class="string">&quot;|&quot;</span>,<span class="string">&quot;32&quot;</span>:<span class="string">&quot;&lt;NON&gt;&quot;</span>,<span class="string">&quot;33&quot;</span>:<span class="string">&quot;\&quot;&quot;</span>,</span><br><span class="line">          <span class="string">&quot;34&quot;</span>:<span class="string">&quot;:&quot;</span>,<span class="string">&quot;35&quot;</span>:<span class="string">&quot;&lt;GA&gt;&quot;</span>,<span class="string">&quot;36&quot;</span>:<span class="string">&quot;&lt;&quot;</span>,<span class="string">&quot;37&quot;</span>:<span class="string">&quot;&gt;&quot;</span>,<span class="string">&quot;38&quot;</span>:<span class="string">&quot;?&quot;</span>,<span class="string">&quot;39&quot;</span>:<span class="string">&quot;&lt;CAP&gt;&quot;</span>,<span class="string">&quot;3a&quot;</span>:<span class="string">&quot;&lt;F1&gt;&quot;</span>,</span><br><span class="line">          <span class="string">&quot;3b&quot;</span>:<span class="string">&quot;&lt;F2&gt;&quot;</span>, <span class="string">&quot;3c&quot;</span>:<span class="string">&quot;&lt;F3&gt;&quot;</span>,<span class="string">&quot;3d&quot;</span>:<span class="string">&quot;&lt;F4&gt;&quot;</span>,<span class="string">&quot;3e&quot;</span>:<span class="string">&quot;&lt;F5&gt;&quot;</span>,<span class="string">&quot;3f&quot;</span>:<span class="string">&quot;&lt;F6&gt;&quot;</span>,<span class="string">&quot;40&quot;</span>:<span class="string">&quot;&lt;F7&gt;&quot;</span>,</span><br><span class="line">          <span class="string">&quot;41&quot;</span>:<span class="string">&quot;&lt;F8&gt;&quot;</span>,<span class="string">&quot;42&quot;</span>:<span class="string">&quot;&lt;F9&gt;&quot;</span>,<span class="string">&quot;43&quot;</span>:<span class="string">&quot;&lt;F10&gt;&quot;</span>,<span class="string">&quot;44&quot;</span>:<span class="string">&quot;&lt;F11&gt;&quot;</span>,<span class="string">&quot;45&quot;</span>:<span class="string">&quot;&lt;F12&gt;&quot;</span>&#125;</span><br><span class="line">output = []</span><br><span class="line">keys = <span class="built_in">open</span>(<span class="string">&#x27;out.txt&#x27;</span>)</span><br><span class="line"><span class="keyword">for</span> line <span class="keyword">in</span> keys:</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">if</span> line[<span class="number">0</span>]!=<span class="string">&#x27;0&#x27;</span> <span class="keyword">or</span> (line[<span class="number">1</span>]!=<span class="string">&#x27;0&#x27;</span> <span class="keyword">and</span> line[<span class="number">1</span>]!=<span class="string">&#x27;2&#x27;</span>) <span class="keyword">or</span> line[<span class="number">3</span>]!=<span class="string">&#x27;0&#x27;</span> <span class="keyword">or</span> line[<span class="number">4</span>]!=<span class="string">&#x27;0&#x27;</span> <span class="keyword">or</span> line[<span class="number">9</span>]!=<span class="string">&#x27;0&#x27;</span> <span class="keyword">or</span> line[<span class="number">10</span>]!=<span class="string">&#x27;0&#x27;</span> <span class="keyword">or</span> line[<span class="number">12</span>]!=<span class="string">&#x27;0&#x27;</span> <span class="keyword">or</span> line[<span class="number">13</span>]!=<span class="string">&#x27;0&#x27;</span> <span class="keyword">or</span> line[<span class="number">15</span>]!=<span class="string">&#x27;0&#x27;</span> <span class="keyword">or</span> line[<span class="number">16</span>]!=<span class="string">&#x27;0&#x27;</span> <span class="keyword">or</span> line[<span class="number">18</span>]!=<span class="string">&#x27;0&#x27;</span> <span class="keyword">or</span> line[<span class="number">19</span>]!=<span class="string">&#x27;0&#x27;</span> <span class="keyword">or</span> line[<span class="number">21</span>]!=<span class="string">&#x27;0&#x27;</span> <span class="keyword">or</span> line[<span class="number">22</span>]!=<span class="string">&#x27;0&#x27;</span> <span class="keyword">or</span> line[<span class="number">6</span>:<span class="number">8</span>]==<span class="string">&quot;00&quot;</span>:</span><br><span class="line">             <span class="keyword">continue</span></span><br><span class="line">        <span class="keyword">if</span> line[<span class="number">6</span>:<span class="number">8</span>] <span class="keyword">in</span> normalKeys.keys():</span><br><span class="line">            output += [[normalKeys[line[<span class="number">6</span>:<span class="number">8</span>]]],[shiftKeys[line[<span class="number">6</span>:<span class="number">8</span>]]]][line[<span class="number">1</span>]==<span class="string">&#x27;2&#x27;</span>]</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            output += [<span class="string">&#x27;[unknown]&#x27;</span>]</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line">keys.close()</span><br><span class="line"></span><br><span class="line">flag=<span class="number">0</span></span><br><span class="line">print(<span class="string">&quot;&quot;</span>.join(output))</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(output)):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        a=output.index(<span class="string">&#x27;&lt;DEL&gt;&#x27;</span>)</span><br><span class="line">        <span class="keyword">del</span> output[a]</span><br><span class="line">        <span class="keyword">del</span> output[a-<span class="number">1</span>]</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="built_in">len</span>(output)):</span><br><span class="line">    <span class="keyword">try</span>:</span><br><span class="line">        <span class="keyword">if</span> output[i]==<span class="string">&quot;&lt;CAP&gt;&quot;</span>:</span><br><span class="line">            flag+=<span class="number">1</span></span><br><span class="line">            output.pop(i)</span><br><span class="line">            <span class="keyword">if</span> flag==<span class="number">2</span>:</span><br><span class="line">                flag=<span class="number">0</span></span><br><span class="line">        <span class="keyword">if</span> flag!=<span class="number">0</span>:</span><br><span class="line">            output[i]=output[i].upper()</span><br><span class="line">    <span class="keyword">except</span>:</span><br><span class="line">        <span class="keyword">pass</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">print</span> (<span class="string">&#x27;output :&#x27;</span> + <span class="string">&quot;&quot;</span>.join(output))</span><br></pre></td></tr></table></figure>
+<p>运行第一个脚本得到<br><img src="https://img.npfs06.top/20210325160328.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">BCFGIJGFEDCABACFEDCA7200[DEL]53[DEL]93</span><br><span class="line">因为[DEL]是删除键,恢复出6位数字。所以flag: 720593</span><br></pre></td></tr></table></figure>
+<h2 id="鼠标流量"><a href="#鼠标流量" class="headerlink" title="鼠标流量"></a>鼠标流量</h2><p>USB协议鼠标数据部分在Leftover Capture Data域中，数据长度为<code>四个字节</code>。</p>
+<blockquote>
+<p>其中第一个字节代表按键，当取0x00时，代表没有按键、为0x01时，代表按左键，为0x02时，代表当前按键为右键。<br>第二个字节可以看成是一个signed byte类型，其最高位为符号位，当这个值为正时，代表鼠标水平右移多少像素，为负时，代表水平左移多少像素。<br>第三个字节与第二字节类似，代表垂直上下移动的偏移。</p>
+</blockquote>
+<p><img src="https://img.npfs06.top/20210325160345.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"><br>如图，数据信息为0x00002000，表示鼠标垂直向上移动20。</p>
+<h3 id="题型：-1"><a href="#题型：-1" class="headerlink" title="题型："></a>题型：</h3><p>flag隐藏在usb流量中，通过USB协议数据中的鼠标移动轨迹转换成flag。</p>
+<h3 id="解题思路：-1"><a href="#解题思路：-1" class="headerlink" title="解题思路："></a>解题思路：</h3><p>1.使用kali linux中的tshark 命令把cap data提取出来，并去除空行</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">tshark -r usb2.pcap -T fields -e usb.capdata &gt; usbdata.txt</span><br><span class="line">tshark -r usb2.pcap -T fields -e usb.capdata | sed &#x27;/^\s*$/d&#x27; &gt; usbdata.txt #提取并去除空行</span><br></pre></td></tr></table></figure>
+<p>2.根据usb协议鼠标数据还原鼠标移动轨迹，可写一个Python脚本进行快速还原。</p>
+<h3 id="题目示例：-1"><a href="#题目示例：-1" class="headerlink" title="题目示例："></a>题目示例：</h3><p><a target="_blank" rel="noopener" href="https://pan.baidu.com/s/1bGEIPeXDCbhybmWOyGr8Og">【NSCTF】这是一道鼠标流量分析题。</a><br>提取码：q6ro<br>（1）使用tshark 命令把pcap的数据提取并去除空行到<code>usbdata.txt</code></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tshark -r usb2.pcap -T fields -e usb.capdata | sed &#x27;/^\s*$/d&#x27; &gt; usbdata.txt</span><br></pre></td></tr></table></figure>
+<p>（2）使用上面提到过的加冒号的脚本，并将脚本里提到的<code>16</code>改为<code>8</code>，得到</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 maohao.py</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.npfs06.top/20210325160403.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"><br>（3）使用mouse.py测试信息隐藏位置</p>
+<figure class="highlight py"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">nums = []</span><br><span class="line">keys = <span class="built_in">open</span>(<span class="string">&#x27;out.txt&#x27;</span>,<span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">f = <span class="built_in">open</span>(<span class="string">&#x27;xy.txt&#x27;</span>,<span class="string">&#x27;w&#x27;</span>)</span><br><span class="line">posx = <span class="number">0</span></span><br><span class="line">posy = <span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> line <span class="keyword">in</span> keys:</span><br><span class="line">    <span class="keyword">if</span> <span class="built_in">len</span>(line) != <span class="number">12</span> :</span><br><span class="line">        <span class="keyword">continue</span></span><br><span class="line">    x = <span class="built_in">int</span>(line[<span class="number">3</span>:<span class="number">5</span>],<span class="number">16</span>)</span><br><span class="line">    y = <span class="built_in">int</span>(line[<span class="number">6</span>:<span class="number">8</span>],<span class="number">16</span>)</span><br><span class="line">    <span class="keyword">if</span> x &gt; <span class="number">127</span> :</span><br><span class="line">        x -= <span class="number">256</span></span><br><span class="line">    <span class="keyword">if</span> y &gt; <span class="number">127</span> :</span><br><span class="line">        y -= <span class="number">256</span></span><br><span class="line">    posx += x</span><br><span class="line">    posy += y</span><br><span class="line">    btn_flag = <span class="built_in">int</span>(line[<span class="number">0</span>:<span class="number">2</span>],<span class="number">16</span>)  <span class="comment"># 1 for left , 2 for right , 0 for nothing</span></span><br><span class="line">    <span class="keyword">if</span> btn_flag == <span class="number">2</span> : <span class="comment"># 1 代表左键</span></span><br><span class="line">        f.write(<span class="built_in">str</span>(posx))</span><br><span class="line">        f.write(<span class="string">&#x27; &#x27;</span>)</span><br><span class="line">        f.write(<span class="built_in">str</span>(posy))</span><br><span class="line">        f.write(<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line"></span><br><span class="line">f.close()</span><br></pre></td></tr></table></figure>
+<p>测试发现flag信息藏在右键中，即当脚本中btn_flag取2时可以得到一系列坐标<br><img src="https://img.npfs06.top/20210325160420.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"><br>（4）用gnuplot将<code>xy.txt</code>里的坐标转化成图像</p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">gnuplot</span><br><span class="line"><span class="meta">gnuplot&gt;</span><span class="bash">plot <span class="string">&quot;xy.txt&quot;</span></span></span><br></pre></td></tr></table></figure>
+<p><img src="http://img.npfs06.top/20210325160435.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">发现方向反了，使用windows上的”画图”垂直翻转一下即可。<br><img src="http://img.npfs06.top/20210325160454.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"><br>最终得到flag<br><img src="http://img.npfs06.top/20210325160505.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p>参考 <a href="https://blog.csdn.net/qq_43625917/article/details/107723635" target="_blank">https://blog.csdn.net/qq_43625917/article/details/107723635</a></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>安小琪
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="https://npfs06.top/2020/05/16/day3-misc-%E6%B5%81%E9%87%8F/" title="day3 misc(流量)">https://npfs06.top/2020/05/16/day3-misc-流量/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/05/16/day2-misc-%E5%8E%8B%E7%BC%A9%E5%8C%85/" rel="prev" title="day2 misc(压缩包)">
+      <i class="fa fa-chevron-left"></i> day2 misc(压缩包)
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/05/31/%E7%99%BE%E5%BA%A6%E6%9D%AF-YeSerCMS/" rel="next" title="百度杯 YeSerCMS">
+      百度杯 YeSerCMS <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#WireShark"><span class="nav-number">1.</span> <span class="nav-text">WireShark</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B8%B8%E7%94%A8%E8%BF%87%E6%BB%A4%E5%91%BD%E4%BB%A4%EF%BC%9A"><span class="nav-number">1.1.</span> <span class="nav-text">常用过滤命令：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8D%8F%E8%AE%AE%E5%88%86%E7%BA%A7"><span class="nav-number">1.2.</span> <span class="nav-text">协议分级</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%B5%81%E8%B7%9F%E8%B8%AA"><span class="nav-number">1.3.</span> <span class="nav-text">数据流跟踪</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E6%8D%AE%E6%8F%90%E5%8F%96"><span class="nav-number">1.4.</span> <span class="nav-text">数据提取</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%97%A0%E7%BA%BFwifi%E6%B5%81%E9%87%8F%E5%8C%85"><span class="nav-number">2.</span> <span class="nav-text">无线wifi流量包</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#USB%E6%B5%81%E9%87%8F%E5%8C%85%E5%88%86%E6%9E%90"><span class="nav-number">3.</span> <span class="nav-text">USB流量包分析</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%94%AE%E7%9B%98%E6%B5%81%E9%87%8F"><span class="nav-number">3.1.</span> <span class="nav-text">键盘流量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E5%9E%8B%EF%BC%9A"><span class="nav-number">3.1.1.</span> <span class="nav-text">题型：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF%EF%BC%9A"><span class="nav-number">3.1.2.</span> <span class="nav-text">解题思路：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E7%A4%BA%E4%BE%8B%EF%BC%9A"><span class="nav-number">3.1.3.</span> <span class="nav-text">题目示例：</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%BC%A0%E6%A0%87%E6%B5%81%E9%87%8F"><span class="nav-number">3.2.</span> <span class="nav-text">鼠标流量</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E5%9E%8B%EF%BC%9A-1"><span class="nav-number">3.2.1.</span> <span class="nav-text">题型：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E8%A7%A3%E9%A2%98%E6%80%9D%E8%B7%AF%EF%BC%9A-1"><span class="nav-number">3.2.2.</span> <span class="nav-text">解题思路：</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E9%A2%98%E7%9B%AE%E7%A4%BA%E4%BE%8B%EF%BC%9A-1"><span class="nav-number">3.2.3.</span> <span class="nav-text">题目示例：</span></a></li></ol></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="安小琪"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">安小琪</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">101</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/npfs06" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;npfs06" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:npfs066@gmail.com" title="E-Mail → mailto:npfs066@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://hyluz.cn/" title="https:&#x2F;&#x2F;hyluz.cn&#x2F;" rel="noopener" target="_blank">Luz</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://0clickjacking0.github.io/" title="https:&#x2F;&#x2F;0clickjacking0.github.io&#x2F;" rel="noopener" target="_blank">xianyu123</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://jiang-niao.github.io/" title="https:&#x2F;&#x2F;jiang-niao.github.io&#x2F;" rel="noopener" target="_blank">JiangNiao</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://xiaolong22333.top/" title="https:&#x2F;&#x2F;xiaolong22333.top&#x2F;" rel="noopener" target="_blank">xiaolong</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+
+
+<!--
+ <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+-->
+
+
+  <span class="author" itemprop="copyrightHolder">安小琪</span>
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">浙ICP备2020030100号 </a>
+  </div>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'nhITwFwMLqOi81E1nOPXx9Iw-MdYXbMMI',
+      appKey     : 'F9l5INUqgwxvbJOfC1X7OMnr',
+      placeholder: "欢迎在这里留言！我看到一定会及时回复的噢 （PS：回复信息会自动发送到你所填写的邮箱噢）",
+      avatar     : '',
+      meta       : guest,
+      pageSize   : '6' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

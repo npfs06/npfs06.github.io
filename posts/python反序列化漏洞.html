@@ -1,0 +1,579 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"npfs06.top","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="好久没做到过python反序列化的题目了，忘得差不多了。刚好在前几天的[HFCTF 2021 Final]easyflask遇到了python反序列化的相关考点，重新学习了一遍相关知识，特此记录">
+<meta property="og:type" content="website">
+<meta property="og:title" content="python反序列化漏洞">
+<meta property="og:url" content="https://npfs06.top/posts/python%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E.html">
+<meta property="og:site_name" content="安小琪&#39;s blog">
+<meta property="og:description" content="好久没做到过python反序列化的题目了，忘得差不多了。刚好在前几天的[HFCTF 2021 Final]easyflask遇到了python反序列化的相关考点，重新学习了一遍相关知识，特此记录">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-04-29T14:04:15.000Z">
+<meta property="article:modified_time" content="2021-04-29T14:04:15.000Z">
+<meta property="article:author" content="安小琪">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://npfs06.top/posts/python%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E6%BC%8F%E6%B4%9E">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : false,
+    lang   : 'en'
+  };
+</script>
+
+  <title>python反序列化漏洞 | 安小琪's blog
+</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">安小琪's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">少年有梦，不应止于心动</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+  
+  
+
+          <div class="content page posts-expand">
+            
+
+    
+    
+    
+    <div class="post-block" lang="en">
+      <header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">python反序列化漏洞
+</h1>
+
+<div class="post-meta">
+  
+
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <p>好久没做到过python反序列化的题目了，忘得差不多了。刚好在前几天的<code>[HFCTF 2021 Final]easyflask</code>遇到了python反序列化的相关考点，重新学习了一遍相关知识，特此记录<a id="more"></a></p>
+<h1 id="pickle"><a href="#pickle" class="headerlink" title="pickle"></a>pickle</h1><p>pickle是python语言的一个标准模块，实现了基本的数据序列化和反序列化。pickle模块是以二进制的形式序列化后保存到文件中（保存文件的后缀为<code>.pkl</code>），不能直接打开进行预览。</p>
+<h2 id="序列化过程"><a href="#序列化过程" class="headerlink" title="序列化过程"></a>序列化过程</h2><ul>
+<li>从对象中提取所有属性（__dict__），并将属性转为键值对</li>
+<li>写入对象的类名</li>
+<li>写入键值对</li>
+</ul>
+<h2 id="反序列化过程"><a href="#反序列化过程" class="headerlink" title="反序列化过程"></a>反序列化过程</h2><ul>
+<li>获取 pickle 输入流</li>
+<li>重建属性列表</li>
+<li>根据保存的类名创建一个新的对象</li>
+<li>将属性复制到新的对象中</li>
+</ul>
+<table>
+<thead>
+<tr>
+<th align="center">函数</th>
+<th align="center">说明</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="center">dumps</td>
+<td align="center">对象反序列化为bytes对象</td>
+</tr>
+<tr>
+<td align="center">dump</td>
+<td align="center">对象反序列化到文件对象，存入文件</td>
+</tr>
+<tr>
+<td align="center">loads</td>
+<td align="center">从bytes对象反序列化</td>
+</tr>
+<tr>
+<td align="center">load</td>
+<td align="center">对象反序列化，从文件中读取数据</td>
+</tr>
+</tbody></table>
+<p>下面，我们举一个例子来说明其工作方式：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">//python3</span><br><span class="line"><span class="keyword">import</span> pickle</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">name</span>():</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__init__</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.name = <span class="string">&#x27;npfs&#x27;</span></span><br><span class="line">        self.date = <span class="number">123456</span></span><br><span class="line"></span><br><span class="line">flag = name()</span><br><span class="line">a = pickle.dumps(flag)</span><br><span class="line">print(a)</span><br><span class="line">b = pickle.loads(a)</span><br><span class="line">print(b.name)</span><br></pre></td></tr></table></figure>
+<p>输出结果为:</p>
+<figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">b&#x27;\<span class="keyword">x</span><span class="number">80</span>\<span class="keyword">x</span><span class="number">04</span>\<span class="keyword">x</span><span class="number">952</span>\<span class="keyword">x</span><span class="number">00</span>\<span class="keyword">x</span><span class="number">00</span>\<span class="keyword">x</span><span class="number">00</span>\<span class="keyword">x</span><span class="number">00</span>\<span class="keyword">x</span><span class="number">00</span>\<span class="keyword">x</span><span class="number">00</span>\<span class="keyword">x</span><span class="number">00</span>\<span class="keyword">x</span><span class="number">8</span><span class="keyword">c</span>\<span class="keyword">x</span><span class="number">08</span>__main__\<span class="keyword">x</span><span class="number">94</span>\<span class="keyword">x</span><span class="number">8</span><span class="keyword">c</span>\<span class="keyword">x</span><span class="number">04</span>name\<span class="keyword">x</span><span class="number">94</span>\<span class="keyword">x</span><span class="number">93</span>\<span class="keyword">x</span><span class="number">94</span>)\<span class="keyword">x</span><span class="number">81</span>\<span class="keyword">x</span><span class="number">94</span>&#125;\<span class="keyword">x</span><span class="number">94</span>(h\<span class="keyword">x</span><span class="number">01</span>\<span class="keyword">x</span><span class="number">8</span><span class="keyword">c</span>\<span class="keyword">x</span><span class="number">04</span>npfs\<span class="keyword">x</span><span class="number">94</span>\<span class="keyword">x</span><span class="number">8</span><span class="keyword">c</span>\<span class="keyword">x</span><span class="number">04</span>date\<span class="keyword">x</span><span class="number">94</span>J@\xe<span class="number">2</span>\<span class="keyword">x</span><span class="number">01</span>\<span class="keyword">x</span><span class="number">00</span>ub.&#x27;</span><br><span class="line">npfs</span><br></pre></td></tr></table></figure>
+<p>可以看到，我们成功通过反序列化的方式恢复了之前我们序列化进去的类对象并成功的执行了对象的方法.<br>我们需要注意以下两点:</p>
+<p> <strong>1.</strong>  如果我在反序列化以前删除了name()这个类，那么我们在反序列化的过程中因为对象在当前的运行环境中没有找到这个类就会报错，从而反序列化失败。<br> <strong>2.</strong>  对于我们自己定义的class，如果直接以形如下面这种形式:</p>
+<figure class="highlight angelscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">class</span> <span class="symbol">name</span>():</span><br><span class="line">    <span class="symbol">name</span> = &#x27;<span class="symbol">npfs</span>&#x27;</span><br><span class="line">    <span class="symbol">date</span> = <span class="symbol">123456</span></span><br></pre></td></tr></table></figure>
+<p>那么序列化时这两个数据将不会被打包,只有以上面第一个例子中一样写一个__init__方法才能被进行打包.</p>
+<h1 id="反序列化的底层实现"><a href="#反序列化的底层实现" class="headerlink" title="反序列化的底层实现"></a>反序列化的底层实现</h1><h2 id="PVM"><a href="#PVM" class="headerlink" title="PVM"></a>PVM</h2><p>这里简单了解一下就可以了</p>
+<p>PVM(Python 虚拟机)是实现Pickle反序列化最本质的东西。在反序列化的过程中，我们可以把它理解成字符串经过PVM处理后，被转化成一个对象的过程。 而字符串本身就是一串PVM指令。 Pickle实际上是一门栈语言，他有不同的几种编写方式，pickle构造出的字符串，有很多个版本。在pickle.loads时，可以用Protocol参数指定协议版本，例如指定为0号版本：</p>
+<figure class="highlight sqf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">class <span class="built_in">name</span>():</span><br><span class="line">    def <span class="variable">__init__</span>(self):</span><br><span class="line">        self.<span class="built_in">date</span> = <span class="number">123456</span></span><br><span class="line"></span><br><span class="line"><span class="built_in">flag</span> = <span class="built_in">name</span>()</span><br><span class="line">a = pickle.dumps(<span class="built_in">flag</span>,protocol=<span class="number">0</span>)</span><br></pre></td></tr></table></figure>
+
+
+<p>PVM 由三部分组成：</p>
+<ul>
+<li><p>指令处理器</p>
+<p>从流中读取 opcode 和参数，并对其进行解释处理。重复这个动作，直到遇到 . 这个结束符后停止。</p>
+<p>最终留在栈顶的值将被作为反序列化对象返回。</p>
+</li>
+<li><p>stack</p>
+<p>由 Python 的 list 实现，被用来临时存储数据、参数以及对象。</p>
+</li>
+<li><p>memo</p>
+<p>由 Python 的 dict 实现，为 PVM 的整个生命周期提供存储。</p>
+</li>
+</ul>
+<p>PS：注意下 stack、memo 的实现方式，方便理解下面的指令。</p>
+<blockquote>
+<p>当前用于 pickling 的协议共有 5 种。使用的协议版本越高，读取生成的 pickle 所需的 Python 版本就要越新。</p>
+<ul>
+<li>v0 版协议是原始的 “人类可读” 协议，并且向后兼容早期版本的 Python。</li>
+<li>v1 版协议是较早的二进制格式，它也与早期版本的 Python 兼容。</li>
+<li>v2 版协议是在 Python 2.3 中引入的。它为存储 <a target="_blank" rel="noopener" href="https://docs.python.org/zh-cn/3/glossary.html#term-new-style-class">new-style class</a> 提供了更高效的机制。欲了解有关第 2 版协议带来的改进，请参阅 <a target="_blank" rel="noopener" href="https://www.python.org/dev/peps/pep-0307">PEP 307</a>。</li>
+<li>v3 版协议添加于 Python 3.0。它具有对 <a target="_blank" rel="noopener" href="https://docs.python.org/zh-cn/3/library/stdtypes.html#bytes">bytes</a> 对象的显式支持，且无法被 Python 2.x 打开。这是目前默认使用的协议，也是在要求与其他 Python 3 版本兼容时的推荐协议。</li>
+<li>v4 版协议添加于 Python 3.4。它支持存储非常大的对象，能存储更多种类的对象，还包括一些针对数据格式的优化。有关第 4 版协议带来改进的信息，请参阅 <a target="_blank" rel="noopener" href="https://www.python.org/dev/peps/pep-3154">PEP 3154</a>。</li>
+</ul>
+</blockquote>
+<h3 id="指令集"><a href="#指令集" class="headerlink" title="指令集"></a>指令集</h3><blockquote>
+<p>本文重点说明 0 号协议，不明白的指令建议直接看对应实现！</p>
+</blockquote>
+<figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br></pre></td><td class="code"><pre><span class="line"><span class="attr">MARK</span>           = b<span class="string">&#x27;(&#x27;</span>   <span class="comment"># push special markobject on stack</span></span><br><span class="line"><span class="attr">STOP</span>           = b<span class="string">&#x27;.&#x27;</span>   <span class="comment"># every pickle ends with STOP</span></span><br><span class="line"><span class="attr">POP</span>            = b<span class="string">&#x27;0&#x27;</span>   <span class="comment"># discard topmost stack item</span></span><br><span class="line"><span class="attr">POP_MARK</span>       = b<span class="string">&#x27;1&#x27;</span>   <span class="comment"># discard stack top through topmost markobject</span></span><br><span class="line"><span class="attr">DUP</span>            = b<span class="string">&#x27;2&#x27;</span>   <span class="comment"># duplicate top stack item</span></span><br><span class="line"><span class="attr">FLOAT</span>          = b<span class="string">&#x27;F&#x27;</span>   <span class="comment"># push float object; decimal string argument</span></span><br><span class="line"><span class="attr">INT</span>            = b<span class="string">&#x27;I&#x27;</span>   <span class="comment"># push integer or bool; decimal string argument</span></span><br><span class="line"><span class="attr">BININT</span>         = b<span class="string">&#x27;J&#x27;</span>   <span class="comment"># push four-byte signed int</span></span><br><span class="line"><span class="attr">BININT1</span>        = b<span class="string">&#x27;K&#x27;</span>   <span class="comment"># push 1-byte unsigned int</span></span><br><span class="line"><span class="attr">LONG</span>           = b<span class="string">&#x27;L&#x27;</span>   <span class="comment"># push long; decimal string argument</span></span><br><span class="line"><span class="attr">BININT2</span>        = b<span class="string">&#x27;M&#x27;</span>   <span class="comment"># push 2-byte unsigned int</span></span><br><span class="line"><span class="attr">NONE</span>           = b<span class="string">&#x27;N&#x27;</span>   <span class="comment"># push None</span></span><br><span class="line"><span class="attr">PERSID</span>         = b<span class="string">&#x27;P&#x27;</span>   <span class="comment"># push persistent object; id is taken from string arg</span></span><br><span class="line"><span class="attr">BINPERSID</span>      = b<span class="string">&#x27;Q&#x27;</span>   <span class="comment">#  &quot;       &quot;         &quot;  ;  &quot;  &quot;   &quot;     &quot;  stack</span></span><br><span class="line"><span class="attr">REDUCE</span>         = b<span class="string">&#x27;R&#x27;</span>   <span class="comment"># apply callable to argtuple, both on stack</span></span><br><span class="line"><span class="attr">STRING</span>         = b<span class="string">&#x27;S&#x27;</span>   <span class="comment"># push string; NL-terminated string argument</span></span><br><span class="line"><span class="attr">BINSTRING</span>      = b<span class="string">&#x27;T&#x27;</span>   <span class="comment"># push string; counted binary string argument</span></span><br><span class="line"><span class="attr">SHORT_BINSTRING</span>= b<span class="string">&#x27;U&#x27;</span>   <span class="comment">#  &quot;     &quot;   ;    &quot;      &quot;       &quot;      &quot; &lt; 256 bytes</span></span><br><span class="line"><span class="attr">UNICODE</span>        = b<span class="string">&#x27;V&#x27;</span>   <span class="comment"># push Unicode string; raw-unicode-escaped&#x27;d argument</span></span><br><span class="line"><span class="attr">BINUNICODE</span>     = b<span class="string">&#x27;X&#x27;</span>   <span class="comment">#   &quot;     &quot;       &quot;  ; counted UTF-8 string argument</span></span><br><span class="line"><span class="attr">APPEND</span>         = b<span class="string">&#x27;a&#x27;</span>   <span class="comment"># append stack top to list below it</span></span><br><span class="line"><span class="attr">BUILD</span>          = b<span class="string">&#x27;b&#x27;</span>   <span class="comment"># call __setstate__ or __dict__.update()</span></span><br><span class="line"><span class="attr">GLOBAL</span>         = b<span class="string">&#x27;c&#x27;</span>   <span class="comment"># push self.find_class(modname, name); 2 string args</span></span><br><span class="line"><span class="attr">DICT</span>           = b<span class="string">&#x27;d&#x27;</span>   <span class="comment"># build a dict from stack items</span></span><br><span class="line"><span class="attr">EMPTY_DICT</span>     = b<span class="string">&#x27;&#125;&#x27;</span>   <span class="comment"># push empty dict</span></span><br><span class="line"><span class="attr">APPENDS</span>        = b<span class="string">&#x27;e&#x27;</span>   <span class="comment"># extend list on stack by topmost stack slice</span></span><br><span class="line"><span class="attr">GET</span>            = b<span class="string">&#x27;g&#x27;</span>   <span class="comment"># push item from memo on stack; index is string arg</span></span><br><span class="line"><span class="attr">BINGET</span>         = b<span class="string">&#x27;h&#x27;</span>   <span class="comment">#   &quot;    &quot;    &quot;    &quot;   &quot;   &quot;  ;   &quot;    &quot; 1-byte arg</span></span><br><span class="line"><span class="attr">INST</span>           = b<span class="string">&#x27;i&#x27;</span>   <span class="comment"># build &amp; push class instance</span></span><br><span class="line"><span class="attr">LONG_BINGET</span>    = b<span class="string">&#x27;j&#x27;</span>   <span class="comment"># push item from memo on stack; index is 4-byte arg</span></span><br><span class="line"><span class="attr">LIST</span>           = b<span class="string">&#x27;l&#x27;</span>   <span class="comment"># build list from topmost stack items</span></span><br><span class="line"><span class="attr">EMPTY_LIST</span>     = b<span class="string">&#x27;]&#x27;</span>   <span class="comment"># push empty list</span></span><br><span class="line"><span class="attr">OBJ</span>            = b<span class="string">&#x27;o&#x27;</span>   <span class="comment"># build &amp; push class instance</span></span><br><span class="line"><span class="attr">PUT</span>            = b<span class="string">&#x27;p&#x27;</span>   <span class="comment"># store stack top in memo; index is string arg</span></span><br><span class="line"><span class="attr">BINPUT</span>         = b<span class="string">&#x27;q&#x27;</span>   <span class="comment">#   &quot;     &quot;    &quot;   &quot;   &quot; ;   &quot;    &quot; 1-byte arg</span></span><br><span class="line"><span class="attr">LONG_BINPUT</span>    = b<span class="string">&#x27;r&#x27;</span>   <span class="comment">#   &quot;     &quot;    &quot;   &quot;   &quot; ;   &quot;    &quot; 4-byte arg</span></span><br><span class="line"><span class="attr">SETITEM</span>        = b<span class="string">&#x27;s&#x27;</span>   <span class="comment"># add key+value pair to dict</span></span><br><span class="line"><span class="attr">TUPLE</span>          = b<span class="string">&#x27;t&#x27;</span>   <span class="comment"># build tuple from topmost stack items</span></span><br><span class="line"><span class="attr">EMPTY_TUPLE</span>    = b<span class="string">&#x27;)&#x27;</span>   <span class="comment"># push empty tuple</span></span><br><span class="line"><span class="attr">SETITEMS</span>       = b<span class="string">&#x27;u&#x27;</span>   <span class="comment"># modify dict by adding topmost key+value pairs</span></span><br><span class="line"><span class="attr">BINFLOAT</span>       = b<span class="string">&#x27;G&#x27;</span>   <span class="comment"># push float; arg is 8-byte float encoding</span></span><br><span class="line"></span><br><span class="line"><span class="attr">TRUE</span>           = b<span class="string">&#x27;I01\n&#x27;</span>  <span class="comment"># not an opcode; see INT docs in pickletools.py</span></span><br><span class="line"><span class="attr">FALSE</span>          = b<span class="string">&#x27;I00\n&#x27;</span>  <span class="comment"># not an opcode; see INT docs in pickletools.py</span></span><br></pre></td></tr></table></figure>
+<p>这里有几个需要重点了解一下</p>
+<p> <strong>c</strong> : 读取本行的内容作为模块名(module),读取下一行的内容作为对象名(object),然后将 module.object作为可调用对象压入到栈中。<br><strong>(</strong> : 将一个标记对象压入到栈中,用于确定命令执行的位置,该标记常常搭配t指令一起使用,以便产生一个元组。<br><strong>0</strong> ：弹出栈项的元素并丢弃。<br><strong>S</strong> : 后面跟字符串,PVM会读取引号中的内容,直到遇见换行符,然后将读取到的内容压入到栈中。(结果要有\n分隔)<br><strong>0</strong> ：弹出栈项的元素并丢弃<br><strong>t</strong> : 从栈中不断弹出数据,弹射顺序与压栈时相同,直到弹出左括号.此时弹出的内容形成了一个元组,然后,该元组会被压入栈中。<br><strong>R</strong> : 将之前压入栈中的元组和可调用对象全部弹出,然后将该元组作为可调用参数的对象并执行该对象,最后将结果压入到栈中。<br><strong>b</strong> : 使用栈中的第一个元素（储存多个属性名: 属性值的字典）对第二个元素（对象实例）进行属性设置<br><strong>.</strong>  : 结束整个Pickle反序列化过程。</p>
+<h2 id="如何生成-pickle？"><a href="#如何生成-pickle？" class="headerlink" title="如何生成 pickle？"></a>如何生成 pickle？</h2><h3 id="手写"><a href="#手写" class="headerlink" title="手写"></a>手写</h3><p>基本模式：</p>
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">c<span class="tag">&lt;<span class="name">module</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">callable</span>&gt;</span></span><br><span class="line">(<span class="tag">&lt;<span class="name">args</span>&gt;</span></span><br><span class="line">tR</span><br></pre></td></tr></table></figure>
+<p>看个小例子：</p>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line">cos</span><br><span class="line"><span class="keyword">system</span></span><br><span class="line">(S<span class="string">&#x27;ls&#x27;</span></span><br><span class="line">tR.</span><br><span class="line"></span><br><span class="line">&lt;=&gt; __import__(<span class="string">&#x27;os&#x27;</span>).<span class="keyword">system</span>(*(<span class="string">&#x27;ls&#x27;</span>,))</span><br><span class="line"></span><br><span class="line"># 分解一下：</span><br><span class="line">cos</span><br><span class="line"><span class="keyword">system</span>  =&gt;  引入 <span class="keyword">system</span>，并将函数添加到 stack</span><br><span class="line"></span><br><span class="line">(S<span class="string">&#x27;ls&#x27;</span>  =&gt;  把当前 stack 存到 metastack，清空 stack，再将 <span class="string">&#x27;ls&#x27;</span> 压入 stack</span><br><span class="line">t       =&gt;  stack 中的值弹出并转为 tuple，把 metastack 还原到 stack，再将 tuple 压入 stack</span><br><span class="line"># 简单来说，(,t 之间的内容形成了一个 tuple，stack 目前是 [&lt;built-<span class="keyword">in</span> function <span class="keyword">system</span>&gt;, (<span class="string">&#x27;ls&#x27;</span>,)]</span><br><span class="line">R       =&gt;  <span class="keyword">system</span>(*(<span class="string">&#x27;ls&#x27;</span>,))</span><br><span class="line">.       =&gt;  结束，返回当前栈顶元素</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="reduce"><a href="#reduce" class="headerlink" title="__reduce__"></a>__reduce__</h1><p> <code>__reduce__() </code>魔术方法类似于 PHP 对象中的 <code>__wakeup()</code> 方法，会在反序列化时自动调用<code>__reduce__() </code>魔术方法可以返回一个字符串或者时一个元组。简单说来,就是如果当<code>__reduce__</code>返回值为一个元组(2到5个参数),第一个参数是可调用(callable)的对象,第二个是该对象所需的参数元组.在这种情况下,反序列化时会自动执行__reduce__里面的操作.其中返回元组时，第一个参数为<code>一个可调用对象</code>，第二个参数为<code>该对象所需要的参数</code></p>
+<p>例：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pickle</span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">Rce</span>(<span class="params"><span class="built_in">object</span></span>):</span> </span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__reduce__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">return</span> (os.system,(<span class="string">&#x27;ls&#x27;</span>,))</span><br><span class="line"></span><br><span class="line">a = Rce()</span><br><span class="line">b = pickle.dumps(a)</span><br><span class="line">pickle.loads(b)  <span class="comment"># 执行该语句进行反序列化，自动执行 __reduce__ 方法，并且执行 os.system(&#x27;ls&#x27;)</span></span><br></pre></td></tr></table></figure>
+
+      </div>
+      
+      
+      
+    </div>
+    
+
+    
+    
+    
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#pickle"><span class="nav-number">1.</span> <span class="nav-text">pickle</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%BA%8F%E5%88%97%E5%8C%96%E8%BF%87%E7%A8%8B"><span class="nav-number">1.1.</span> <span class="nav-text">序列化过程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E8%BF%87%E7%A8%8B"><span class="nav-number">1.2.</span> <span class="nav-text">反序列化过程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%8D%E5%BA%8F%E5%88%97%E5%8C%96%E7%9A%84%E5%BA%95%E5%B1%82%E5%AE%9E%E7%8E%B0"><span class="nav-number">2.</span> <span class="nav-text">反序列化的底层实现</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#PVM"><span class="nav-number">2.1.</span> <span class="nav-text">PVM</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%8C%87%E4%BB%A4%E9%9B%86"><span class="nav-number">2.1.1.</span> <span class="nav-text">指令集</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%A6%82%E4%BD%95%E7%94%9F%E6%88%90-pickle%EF%BC%9F"><span class="nav-number">2.2.</span> <span class="nav-text">如何生成 pickle？</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%89%8B%E5%86%99"><span class="nav-number">2.2.1.</span> <span class="nav-text">手写</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reduce"><span class="nav-number">3.</span> <span class="nav-text">__reduce__</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="安小琪"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">安小琪</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">101</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/npfs06" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;npfs06" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:npfs066@gmail.com" title="E-Mail → mailto:npfs066@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://hyluz.cn/" title="https:&#x2F;&#x2F;hyluz.cn&#x2F;" rel="noopener" target="_blank">Luz</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://0clickjacking0.github.io/" title="https:&#x2F;&#x2F;0clickjacking0.github.io&#x2F;" rel="noopener" target="_blank">xianyu123</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://jiang-niao.github.io/" title="https:&#x2F;&#x2F;jiang-niao.github.io&#x2F;" rel="noopener" target="_blank">JiangNiao</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://xiaolong22333.top/" title="https:&#x2F;&#x2F;xiaolong22333.top&#x2F;" rel="noopener" target="_blank">xiaolong</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+
+
+<!--
+ <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+-->
+
+
+  <span class="author" itemprop="copyrightHolder">安小琪</span>
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">浙ICP备2020030100号 </a>
+  </div>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'nhITwFwMLqOi81E1nOPXx9Iw-MdYXbMMI',
+      appKey     : 'F9l5INUqgwxvbJOfC1X7OMnr',
+      placeholder: "欢迎在这里留言！我看到一定会及时回复的噢 （PS：回复信息会自动发送到你所填写的邮箱噢）",
+      avatar     : '',
+      meta       : guest,
+      pageSize   : '6' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

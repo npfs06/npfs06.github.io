@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"npfs06.top","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="Ciphey–解密神器">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Ciphey--解密神器">
+<meta property="og:url" content="https://npfs06.top/posts/Ciphey-%E8%A7%A3%E5%AF%86%E7%A5%9E%E5%99%A8.html">
+<meta property="og:site_name" content="安小琪&#39;s blog">
+<meta property="og:description" content="Ciphey–解密神器">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://github.com/Ciphey/Ciphey/raw/master/Pictures_for_README/python.png">
+<meta property="og:image" content="https://github.com/Ciphey/Ciphey/raw/master/Pictures_for_README/docker.png">
+<meta property="og:image" content="https://github.com/Ciphey/Ciphey/raw/master/Pictures_for_README/macports.png">
+<meta property="og:image" content="https://github.com/Ciphey/Ciphey/raw/master/Pictures_for_README/homebrew.png">
+<meta property="og:image" content="http://img.npfs06.top/20211010003132.png">
+<meta property="og:image" content="http://img.npfs06.top/20211010003329.png">
+<meta property="article:published_time" content="2021-10-09T16:24:27.000Z">
+<meta property="article:modified_time" content="2021-10-09T16:24:27.000Z">
+<meta property="article:author" content="安小琪">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://github.com/Ciphey/Ciphey/raw/master/Pictures_for_README/python.png">
+
+<link rel="canonical" href="https://npfs06.top/posts/Ciphey-%E8%A7%A3%E5%AF%86%E7%A5%9E%E5%99%A8">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : false,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Ciphey--解密神器 | 安小琪's blog
+</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">安小琪's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">少年有梦，不应止于心动</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+  
+  
+
+          <div class="content page posts-expand">
+            
+
+    
+    
+    
+    <div class="post-block" lang="en">
+      <header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">Ciphey--解密神器
+</h1>
+
+<div class="post-meta">
+  
+
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <p>Ciphey–解密神器<a id="more"></a></p>
+<h1 id="Ciphey是什么？"><a href="#Ciphey是什么？" class="headerlink" title="Ciphey是什么？"></a>Ciphey是什么？</h1><p>输入加密文本，取回解密文本。</p>
+<blockquote>
+<p>“什么类型的加密？”</p>
+</blockquote>
+<p>这才是重点。你不知道，<strong>你只知道它可能是加密的。Ciphey 会为你解决这个问题</strong>。</p>
+<p>Ciphey 可以在 3 秒或更短的时间内解决大多数事情。</p>
+<p><strong>使用自然语言处理和人工智能以及一些常识的全自动解密/解码/破解工具。</strong></p>
+<p>Ciphey 旨在成为自动化许多解密和解码的工具，例如多基编码、经典密码、散列或更高级的密码学。</p>
+<p>如果您对密码学不太了解，或者您想在自己动手之前快速检查密文，那么 Ciphey 适合您。</p>
+<p>Ciphey 使用自定义构建的人工智能模块 ( <em>AuSearch</em> ) 和<em>密码检测接口</em>来近似加密的内容。然后是定制的、可定制的自然语言处理<em>语言检查器界面</em>，它可以检测给定文本何时变为纯文本。</p>
+<p>这里没有神经网络或臃肿的人工智能。我们只使用快速和最小的东西。</p>
+<p>而这只是冰山一角。有关完整的技术说明，请查看我们的<a target="_blank" rel="noopener" href="https://github.com/Ciphey/Ciphey/wiki">文档</a>。</p>
+<h2 id="支持破解的密码列表"><a href="#支持破解的密码列表" class="headerlink" title="支持破解的密码列表"></a>支持破解的密码列表</h2><h3 id="基本加密"><a href="#基本加密" class="headerlink" title="基本加密"></a>基本加密</h3><ul>
+<li>Caesar Cipher-凯撒密码</li>
+<li>ROT47（使用 ROT47 字母高达 ROT94）</li>
+<li>ASCII 移位（高达 ROT127，带有完整的 ASCII 字母表）</li>
+<li>Vigenère Cipher-维吉尼亚密码</li>
+<li>Affine Cipher-仿射密码</li>
+<li>Binary Substitution Cipher-二进制替换密码 (XY-Cipher)</li>
+<li>Baconian Cipher -培根密码（两种变体）</li>
+<li>Soundex</li>
+<li>Transposition Cipher-转置密码</li>
+<li>Pig Latin-猪拉丁语</li>
+</ul>
+<h3 id="现代密码学"><a href="#现代密码学" class="headerlink" title="现代密码学"></a>现代密码学</h3><ul>
+<li>Repeating-key XOR-重复键异或</li>
+<li>Single XOR-单异或</li>
+</ul>
+<h3 id="编码"><a href="#编码" class="headerlink" title="编码"></a>编码</h3><p><a target="_blank" rel="noopener" href="https://github.com/Ciphey/Ciphey/wiki/Common-Issues-&-Their-Solutions#why-do-you-have-a-lot-of-encodings-you-should-work-on-real-world-ciphers-more">为什么你有很多解码器？</a></p>
+<ul>
+<li>Base2（二进制）</li>
+<li>Base8（八进制）</li>
+<li>Base10（十进制）</li>
+<li>Base16（十六进制）</li>
+<li>Base32</li>
+<li>Base58 比特币</li>
+<li>Base58 Flickr（发布候选阶段）</li>
+<li>Base58 Ripple</li>
+<li>Base62</li>
+<li>Base64</li>
+<li>Base64 URL（发布候选阶段）</li>
+<li>Base69</li>
+<li>Base85</li>
+<li>Z85（发布候选阶段）</li>
+<li>ASCII Base85</li>
+<li>Base91</li>
+<li>Base65536（发布候选阶段）</li>
+<li>ASCII</li>
+<li>Reversed text-<strong>反转文字</strong></li>
+<li>Morse Code-摩尔斯电码</li>
+<li>DNA codons-DNA 密码子（释放候选阶段）</li>
+<li>Atbash</li>
+<li>Standard Galactic Alphabet-标准银河字母表（又名 Minecraft Enchanting Language）</li>
+<li>Leetspeak</li>
+<li>Baudot ITA2</li>
+<li>URL encoding-网址编码</li>
+<li>SMS Multi-tap</li>
+<li>DMTF（发布候选阶段）</li>
+<li>A1Z26（发布候选阶段）</li>
+<li>Prisoner’s Tap Code-囚犯的窃听代码</li>
+<li>UUencode</li>
+<li>Braille-盲文（1 级）</li>
+</ul>
+<h3 id="深奥的语言-EsoLang"><a href="#深奥的语言-EsoLang" class="headerlink" title="深奥的语言 (EsoLang)"></a>深奥的语言 (EsoLang)</h3><ul>
+<li>Brainfuck-脑残</li>
+</ul>
+<h3 id="压缩方法"><a href="#压缩方法" class="headerlink" title="压缩方法"></a>压缩方法</h3><ul>
+<li>GZip</li>
+</ul>
+<h3 id="哈希值"><a href="#哈希值" class="headerlink" title="哈希值"></a>哈希值</h3><p><strong>注意：由于我们无法控制的外部服务的一些错误，哈希现在被关闭。</strong></p>
+<p>Ciphey 支持 272 个哈希。</p>
+<ul>
+<li>MD5</li>
+<li>SHA-1</li>
+<li>SHA-256</li>
+<li>SHA-384</li>
+<li>SHA-512</li>
+</ul>
+<h1 id="Ciphey安装方法"><a href="#Ciphey安装方法" class="headerlink" title="Ciphey安装方法"></a>Ciphey安装方法</h1><table>
+<thead>
+<tr>
+<th><a target="_blank" rel="noopener" href="https://pypi.org/project/ciphey">🐍 Python</a></th>
+<th><a target="_blank" rel="noopener" href="https://hub.docker.com/r/remnux/ciphey">🐋 Docker (Universal)</a></th>
+<th><a target="_blank" rel="noopener" href="https://ports.macports.org/port/ciphey/summary">🍎 MacPorts (macOS)</a></th>
+<th><a target="_blank" rel="noopener" href="https://formulae.brew.sh/formula/ciphey">🍺 Homebrew (macOS/Linux)</a></th>
+</tr>
+</thead>
+<tbody><tr>
+<td><a target="_blank" rel="noopener" href="https://github.com/Ciphey/Ciphey/raw/master/Pictures_for_README/python.png"><img src="https://github.com/Ciphey/Ciphey/raw/master/Pictures_for_README/python.png" alt="img"></a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/Ciphey/Ciphey/raw/master/Pictures_for_README/docker.png"><img src="https://github.com/Ciphey/Ciphey/raw/master/Pictures_for_README/docker.png" alt="img"></a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/Ciphey/Ciphey/raw/master/Pictures_for_README/macports.png"><img src="https://github.com/Ciphey/Ciphey/raw/master/Pictures_for_README/macports.png" alt="img"></a></td>
+<td><a target="_blank" rel="noopener" href="https://github.com/Ciphey/Ciphey/raw/master/Pictures_for_README/homebrew.png"><img src="https://github.com/Ciphey/Ciphey/raw/master/Pictures_for_README/homebrew.png" alt="img"></a></td>
+</tr>
+<tr>
+<td><code>python3 -m pip install ciphey --upgrade</code></td>
+<td><code>docker run -it --rm remnux/ciphey</code></td>
+<td><code>sudo port install ciphey</code></td>
+<td><code>brew install ciphey</code></td>
+</tr>
+</tbody></table>
+<p>要安装 Ciphey，您需要 2 个核心内容：</p>
+<ol>
+<li>Python3.7或以上</li>
+<li>Pip（在 Python 3 上）</li>
+</ol>
+<p>检查 Python 是否已经安装。运行这两个命令：</p>
+<figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -<span class="keyword">c</span> <span class="string">&quot;import sys; print(sys.version)&quot;</span></span><br></pre></td></tr></table></figure>
+<p>或</p>
+<figure class="highlight gcode"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pytho<span class="symbol">n3</span> -c <span class="string">&quot;import sys; print(sys.version)&quot;</span></span><br></pre></td></tr></table></figure>
+<p>如果安装了 Python，这些命令之一将运行并输出版本号。Ciphey 只支持大于 3.7 的数字。如果您看到“2”或“3.7”以下的任何内容，我们将需要安装更新的版本。</p>
+<h2 id="安装Ciphey"><a href="#安装Ciphey" class="headerlink" title="安装Ciphey"></a>安装Ciphey</h2><p>在 Linux 上运行以下命令：</p>
+<figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 -m pip <span class="keyword">install</span> -U ciphey</span><br></pre></td></tr></table></figure>
+<p><strong>Ciphey 仅支持 Python3.7 及以上版本。如果您的版本低于 3.7，请升级 Python 或使用 Docker 镜像。</strong></p>
+<p><strong>⚠️ Windows Python 默认安装 32 位。Ciphey 仅支持 64 位。确保您使用的是 64 位 Python。</strong></p>
+<h1 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h1><h2 id="ciphey命令参数"><a href="#ciphey命令参数" class="headerlink" title="ciphey命令参数"></a>ciphey命令参数</h2><figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">ciphey <span class="comment">--help</span></span><br><span class="line">用法: ciphey [选项] [TEXT_STDIN]</span><br><span class="line"></span><br><span class="line">  Ciphey - 自动解密工具</span><br><span class="line"></span><br><span class="line">  文档地址: <span class="keyword">https</span>://github.com/Ciphey/Ciphey/wiki</span><br><span class="line"></span><br><span class="line">  Discord (这里支持，我们大部分时间都在线):</span><br><span class="line">  <span class="keyword">https</span>://discord.ciphey.online/</span><br><span class="line"></span><br><span class="line">  GitHub: <span class="keyword">https</span>://github.com/ciphey/ciphey</span><br><span class="line"></span><br><span class="line"> cipher是一种使用智能人工智能的自动解密工具</span><br><span class="line">和自然语言处理。输入加密文本，获取解密文本</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  例如:</span><br><span class="line"></span><br><span class="line">      基本用法: ciphey -t <span class="string">&quot;aGVsbG8gbXkgbmFtZSBpcyBiZWU=&quot;</span></span><br><span class="line"></span><br><span class="line">选项:</span><br><span class="line">  -t, <span class="comment">--text TEXT            您想要解密的密文。</span></span><br><span class="line">  -q, <span class="comment">--quiet                减少冗长的显示,直接给结果</span></span><br><span class="line">  -g, <span class="comment">--greppable            只输出答案(对于grep很有用)</span></span><br><span class="line">  -v, <span class="comment">--verbose</span></span><br><span class="line">  -C, <span class="comment">--checker TEXT         使用给定的检查器</span></span><br><span class="line">  -c, <span class="comment">--config TEXT          使用给定的配置文件。默认为</span></span><br><span class="line">                             appdirs.user_config_dir(<span class="string">&#x27;ciphey&#x27;</span>,</span><br><span class="line">                             <span class="string">&#x27;ciphey&#x27;</span>)/<span class="string">&#x27;config.yml&#x27;</span></span><br><span class="line"></span><br><span class="line">  -w, <span class="comment">--wordlist TEXT        使用给定的密码字典</span></span><br><span class="line">  -p, <span class="comment">--param TEXT           将参数传递给语言检查器</span></span><br><span class="line">  -l, <span class="comment">--list-params BOOLEAN  列出所选模块的参数</span></span><br><span class="line">  <span class="comment">--searcher TEXT            选择要使用的搜索算法</span></span><br><span class="line">  -b, <span class="comment">--bytes                强制密码使用二进制模式作为输入</span></span><br><span class="line">  <span class="comment">--default-dist TEXT        设置默认的字符/字节分布</span></span><br><span class="line">  -m, <span class="comment">--module PATH          从给定路径添加模块</span></span><br><span class="line">  -A, <span class="comment">--appdirs              输出密码到想要的文件位置</span></span><br><span class="line"></span><br><span class="line">  -f, <span class="comment">--file FILENAME</span></span><br><span class="line">  <span class="comment">--help                     显示此帮助消息并退出。</span></span><br></pre></td></tr></table></figure>
+
+
+<p>这里以前几天鹤城杯的一道题目为例进行演示</p>
+<img src="http://img.npfs06.top/20211010003132.png" style="zoom:80%;">
+
+
+
+<img src="http://img.npfs06.top/20211010003329.png" style="zoom:80%;">
+
+<p>成功解密</p>
+
+      </div>
+      
+      
+      
+    </div>
+    
+
+    
+    
+    
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#Ciphey%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.</span> <span class="nav-text">Ciphey是什么？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%94%AF%E6%8C%81%E7%A0%B4%E8%A7%A3%E7%9A%84%E5%AF%86%E7%A0%81%E5%88%97%E8%A1%A8"><span class="nav-number">1.1.</span> <span class="nav-text">支持破解的密码列表</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%9F%BA%E6%9C%AC%E5%8A%A0%E5%AF%86"><span class="nav-number">1.1.1.</span> <span class="nav-text">基本加密</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%8E%B0%E4%BB%A3%E5%AF%86%E7%A0%81%E5%AD%A6"><span class="nav-number">1.1.2.</span> <span class="nav-text">现代密码学</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E7%BC%96%E7%A0%81"><span class="nav-number">1.1.3.</span> <span class="nav-text">编码</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E6%B7%B1%E5%A5%A5%E7%9A%84%E8%AF%AD%E8%A8%80-EsoLang"><span class="nav-number">1.1.4.</span> <span class="nav-text">深奥的语言 (EsoLang)</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%8B%E7%BC%A9%E6%96%B9%E6%B3%95"><span class="nav-number">1.1.5.</span> <span class="nav-text">压缩方法</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%93%88%E5%B8%8C%E5%80%BC"><span class="nav-number">1.1.6.</span> <span class="nav-text">哈希值</span></a></li></ol></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Ciphey%E5%AE%89%E8%A3%85%E6%96%B9%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">Ciphey安装方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%89%E8%A3%85Ciphey"><span class="nav-number">2.1.</span> <span class="nav-text">安装Ciphey</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BD%BF%E7%94%A8%E6%96%B9%E6%B3%95"><span class="nav-number">3.</span> <span class="nav-text">使用方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#ciphey%E5%91%BD%E4%BB%A4%E5%8F%82%E6%95%B0"><span class="nav-number">3.1.</span> <span class="nav-text">ciphey命令参数</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="安小琪"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">安小琪</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">101</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/npfs06" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;npfs06" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:npfs066@gmail.com" title="E-Mail → mailto:npfs066@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://hyluz.cn/" title="https:&#x2F;&#x2F;hyluz.cn&#x2F;" rel="noopener" target="_blank">Luz</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://0clickjacking0.github.io/" title="https:&#x2F;&#x2F;0clickjacking0.github.io&#x2F;" rel="noopener" target="_blank">xianyu123</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://jiang-niao.github.io/" title="https:&#x2F;&#x2F;jiang-niao.github.io&#x2F;" rel="noopener" target="_blank">JiangNiao</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://xiaolong22333.top/" title="https:&#x2F;&#x2F;xiaolong22333.top&#x2F;" rel="noopener" target="_blank">xiaolong</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+
+
+<!--
+ <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+-->
+
+
+  <span class="author" itemprop="copyrightHolder">安小琪</span>
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">浙ICP备2020030100号 </a>
+  </div>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'nhITwFwMLqOi81E1nOPXx9Iw-MdYXbMMI',
+      appKey     : 'F9l5INUqgwxvbJOfC1X7OMnr',
+      placeholder: "欢迎在这里留言！我看到一定会及时回复的噢 （PS：回复信息会自动发送到你所填写的邮箱噢）",
+      avatar     : '',
+      meta       : guest,
+      pageSize   : '6' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

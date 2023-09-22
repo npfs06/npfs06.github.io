@@ -1,0 +1,584 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"npfs06.top","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="JavaScript是一门非常灵活的语言，我感觉在某些方面可能比PHP更加灵活。所以，除了传统的SQL注入、代码执行等注入型漏洞外，也会有一些独有的安全问题，比如今天要说这个prototype污染。">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Nodejs原型链污染">
+<meta property="og:url" content="https://npfs06.top/posts/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93.html">
+<meta property="og:site_name" content="安小琪&#39;s blog">
+<meta property="og:description" content="JavaScript是一门非常灵活的语言，我感觉在某些方面可能比PHP更加灵活。所以，除了传统的SQL注入、代码执行等注入型漏洞外，也会有一些独有的安全问题，比如今天要说这个prototype污染。">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://www.leavesongs.com/media/attachment/2019/04/03/46109c07-bfa1-4b92-93a2-d86049274035.0dcd4f4c4400.png">
+<meta property="og:image" content="https://www.leavesongs.com/media/attachment/2019/04/03/3c4ed224-ae7b-4c8c-b16d-12b56524efee.e270c75493b0.png">
+<meta property="og:image" content="https://www.leavesongs.com/media/attachment/2019/04/03/08c5d5d0-62da-40f9-9e2c-77831fa7488e.51324dd04eef.png">
+<meta property="og:image" content="https://www.leavesongs.com/media/attachment/2019/04/03/4b63f1ef-6ed8-4448-9644-f11620822aaf.2b2425c31fdb.png">
+<meta property="og:image" content="https://www.leavesongs.com/media/attachment/2019/04/03/ba16d965-3112-4f69-bf5e-4eddb034e6dc.c5e82ea6e4f5.png">
+<meta property="og:image" content="https://www.leavesongs.com/media/attachment/2019/04/03/5e05a46f-3c7b-4ab4-869c-fe6fd19422b7.64db1b9bbae7.png">
+<meta property="og:image" content="https://www.leavesongs.com/content/uploadfile/201409/a0171411234653.jpg">
+<meta property="og:image" content="https://www.leavesongs.com/content/uploadfile/201409/11f51411234890.jpg">
+<meta property="article:published_time" content="2020-12-29T10:13:07.000Z">
+<meta property="article:modified_time" content="2020-12-29T10:13:07.000Z">
+<meta property="article:author" content="安小琪">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://www.leavesongs.com/media/attachment/2019/04/03/46109c07-bfa1-4b92-93a2-d86049274035.0dcd4f4c4400.png">
+
+<link rel="canonical" href="https://npfs06.top/posts/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : false,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Nodejs原型链污染 | 安小琪's blog
+</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">安小琪's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">少年有梦，不应止于心动</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+  
+  
+
+          <div class="content page posts-expand">
+            
+
+    
+    
+    
+    <div class="post-block" lang="en">
+      <header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">Nodejs原型链污染
+</h1>
+
+<div class="post-meta">
+  
+
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <h2 id><a href="#" class="headerlink" title></a></h2><p>JavaScript是一门非常灵活的语言，我感觉在某些方面可能比PHP更加灵活。所以，除了传统的SQL注入、代码执行等注入型漏洞外，也会有一些独有的安全问题，比如今天要说这个prototype污染。<a id="more"></a></p>
+<h3 id="prototype和-proto-分别是什么？"><a href="#prototype和-proto-分别是什么？" class="headerlink" title="prototype和__proto__分别是什么？"></a><code>prototype</code>和<code>__proto__</code>分别是什么？</h3><p>JavaScript中，我们如果要定义一个类，需要以定义“构造函数”的方式来定义：</p>
+<figure class="highlight actionscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Foo</span><span class="params">()</span> </span>&#123;</span><br><span class="line">    <span class="keyword">this</span>.bar = <span class="number">1</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">new</span> Foo()</span><br></pre></td></tr></table></figure>
+<p><code>Foo</code>函数的内容，就是<code>Foo</code>类的构造函数，而<code>this.bar</code>就是<code>Foo</code>类的一个属性。</p>
+<blockquote>
+<p>为了简化编写JavaScript代码，ECMAScript 6后增加了<code>class</code>语法，但<code>class</code>其实只是一个语法糖。</p>
+</blockquote>
+<p>一个类必然有一些方法，类似属性<code>this.bar</code>，我们也可以将方法定义在构造函数内部：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">this</span>.bar = <span class="number">1</span></span><br><span class="line">    <span class="built_in">this</span>.show = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">        <span class="built_in">console</span>.log(<span class="built_in">this</span>.bar)</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">(<span class="keyword">new</span> Foo()).show()</span><br></pre></td></tr></table></figure>
+<p>但这样写有一个问题，就是每当我们新建一个Foo对象时，<code>this.show = function...</code>就会执行一次，这个<code>show</code>方法实际上是绑定在对象上的，而不是绑定在“类”中。</p>
+<p>我希望在创建类的时候只创建一次<code>show</code>方法，这时候就则需要使用原型（prototype）了：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Foo</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">this</span>.bar = <span class="number">1</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Foo.prototype.show = <span class="function"><span class="keyword">function</span> <span class="title">show</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">console</span>.log(<span class="built_in">this</span>.bar)</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> foo = <span class="keyword">new</span> Foo()</span><br><span class="line">foo.show()</span><br></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://www.leavesongs.com/media/attachment/2019/04/03/46109c07-bfa1-4b92-93a2-d86049274035.png"><img src="https://www.leavesongs.com/media/attachment/2019/04/03/46109c07-bfa1-4b92-93a2-d86049274035.0dcd4f4c4400.png" alt="image.png"></a></p>
+<p>我们可以认为原型<code>prototype</code>是类<code>Foo</code>的一个属性，而所有用<code>Foo</code>类实例化的对象，都将拥有这个属性中的所有内容，包括变量和方法。比如上图中的<code>foo</code>对象，其天生就具有<code>foo.show()</code>方法。</p>
+<p>我们可以通过<code>Foo.prototype</code>来访问<code>Foo</code>类的原型，但<code>Foo</code>实例化出来的对象，是不能通过prototype访问原型的。这时候，就该<code>__proto__</code>登场了。</p>
+<p>一个Foo类实例化出来的foo对象，可以通过<code>foo.__proto__</code>属性来访问Foo类的原型，也就是说：</p>
+<figure class="highlight elm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="title">foo</span>.__proto__ == <span class="type">Foo</span>.proto<span class="keyword">type</span></span><br></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://www.leavesongs.com/media/attachment/2019/04/03/3c4ed224-ae7b-4c8c-b16d-12b56524efee.png"><img src="https://www.leavesongs.com/media/attachment/2019/04/03/3c4ed224-ae7b-4c8c-b16d-12b56524efee.e270c75493b0.png" alt="image.png"></a></p>
+<p>所以，总结一下：</p>
+<ol>
+<li><code>prototype</code>是一个类的属性，所有类对象在实例化的时候将会拥有<code>prototype</code>中的属性和方法</li>
+<li>一个对象的<code>__proto__</code>属性，指向这个对象所在的类的<code>prototype</code>属性</li>
+</ol>
+<h3 id="JavaScript原型链继承"><a href="#JavaScript原型链继承" class="headerlink" title="JavaScript原型链继承"></a>JavaScript原型链继承</h3><p>所有类对象在实例化的时候将会拥有<code>prototype</code>中的属性和方法，这个特性被用来实现JavaScript中的继承机制。</p>
+<p>比如：</p>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Father</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">this</span>.first_name = <span class="string">&#x27;Donald&#x27;</span></span><br><span class="line">    <span class="built_in">this</span>.last_name = <span class="string">&#x27;Trump&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">Son</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">    <span class="built_in">this</span>.first_name = <span class="string">&#x27;Melania&#x27;</span></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line">Son.prototype = <span class="keyword">new</span> Father()</span><br><span class="line"></span><br><span class="line"><span class="keyword">let</span> son = <span class="keyword">new</span> Son()</span><br><span class="line"><span class="built_in">console</span>.log(<span class="string">`Name: <span class="subst">$&#123;son.first_name&#125;</span> <span class="subst">$&#123;son.last_name&#125;</span>`</span>)</span><br></pre></td></tr></table></figure>
+<p>Son类继承了Father类的<code>last_name</code>属性，最后输出的是<code>Name: Melania Trump</code>。</p>
+<p>总结一下，对于对象son，在调用<code>son.last_name</code>的时候，实际上JavaScript引擎会进行如下操作：</p>
+<ol>
+<li>在对象son中寻找last_name</li>
+<li>如果找不到，则在<code>son.__proto__</code>中寻找last_name</li>
+<li>如果仍然找不到，则继续在<code>son.__proto__.__proto__</code>中寻找last_name</li>
+<li>依次寻找，直到找到<code>null</code>结束。比如，<code>Object.prototype</code>的<code>__proto__</code>就是<code>null</code></li>
+</ol>
+<p><a target="_blank" rel="noopener" href="https://www.leavesongs.com/media/attachment/2019/04/03/08c5d5d0-62da-40f9-9e2c-77831fa7488e.png"><img src="https://www.leavesongs.com/media/attachment/2019/04/03/08c5d5d0-62da-40f9-9e2c-77831fa7488e.51324dd04eef.png" alt="image.png"></a></p>
+<p>JavaScript的这个查找的机制，被运用在面向对象的继承中，被称作prototype继承链。</p>
+<p>以上就是最基础的JavaScript面向对象编程，我们并不深入研究更细节的内容，只要牢记以下几点即可：</p>
+<ol>
+<li>每个构造函数(constructor)都有一个原型对象(prototype)</li>
+<li>对象的<code>__proto__</code>属性，指向类的原型对象<code>prototype</code></li>
+<li>JavaScript使用prototype链实现继承机制</li>
+</ol>
+<h3 id="原型链污染是什么"><a href="#原型链污染是什么" class="headerlink" title="原型链污染是什么"></a>原型链污染是什么</h3><p>第一章中说到，<code>foo.__proto__</code>指向的是<code>Foo</code>类的<code>prototype</code>。那么，如果我们修改了<code>foo.__proto__</code>中的值，是不是就可以修改Foo类呢？</p>
+<p>做个简单的实验：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="regexp">//</span> foo是一个简单的JavaScript对象</span><br><span class="line">let foo = &#123;bar: <span class="number">1</span>&#125;</span><br><span class="line"></span><br><span class="line"><span class="regexp">//</span> foo.bar 此时为<span class="number">1</span></span><br><span class="line">console.log(foo.bar)</span><br><span class="line"></span><br><span class="line"><span class="regexp">//</span> 修改foo的原型（即Object）</span><br><span class="line">foo.__proto__.bar = <span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="regexp">//</span> 由于查找顺序的原因，foo.bar仍然是<span class="number">1</span></span><br><span class="line">console.log(foo.bar)</span><br><span class="line"></span><br><span class="line"><span class="regexp">//</span> 此时再用Object创建一个空的zoo对象</span><br><span class="line">let zoo = &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="regexp">//</span> 查看zoo.bar</span><br><span class="line">console.log(zoo.bar)</span><br></pre></td></tr></table></figure>
+<p>最后，虽然zoo是一个<strong>空</strong>对象<code>&#123;&#125;</code>，但<code>zoo.bar</code>的结果居然是2：</p>
+<p><a target="_blank" rel="noopener" href="https://www.leavesongs.com/media/attachment/2019/04/03/4b63f1ef-6ed8-4448-9644-f11620822aaf.png"><img src="https://www.leavesongs.com/media/attachment/2019/04/03/4b63f1ef-6ed8-4448-9644-f11620822aaf.2b2425c31fdb.png" alt="image.png"></a></p>
+<p>原因也显而易见：因为前面我们修改了foo的原型<code>foo.__proto__.bar = 2</code>，而foo是一个Object类的实例，所以实际上是修改了Object这个类，给这个类增加了一个属性bar，值为2。</p>
+<p>后来，我们又用Object类创建了一个zoo对象<code>let zoo = &#123;&#125;</code>，zoo对象自然也有一个bar属性了。</p>
+<p>那么，在一个应用中，如果攻击者控制并修改了一个对象的原型，那么将可以影响所有和这个对象来自同一个类、父祖类的对象。这种攻击方式就是<strong>原型链污染</strong>。</p>
+<h3 id="哪些情况下原型链会被污染？"><a href="#哪些情况下原型链会被污染？" class="headerlink" title="哪些情况下原型链会被污染？"></a>哪些情况下原型链会被污染？</h3><p>在实际应用中，哪些情况下可能存在原型链能被攻击者修改的情况呢？</p>
+<p>我们思考一下，哪些情况下我们可以设置<code>__proto__</code>的值呢？其实找找能够控制数组（对象）的“键名”的操作即可：</p>
+<ul>
+<li>对象merge</li>
+<li>对象clone（其实内核就是将待操作的对象merge到一个空对象中）</li>
+</ul>
+<p>以对象merge为例，我们想象一个简单的merge函数：</p>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">function <span class="keyword">merge</span>(target, source) &#123;</span><br><span class="line">    <span class="keyword">for</span> (<span class="keyword">let</span> <span class="keyword">key</span> <span class="keyword">in</span> source) &#123;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">key</span> <span class="keyword">in</span> source &amp;&amp; <span class="keyword">key</span> <span class="keyword">in</span> target) &#123;</span><br><span class="line">            <span class="keyword">merge</span>(target[<span class="keyword">key</span>], source[<span class="keyword">key</span>])</span><br><span class="line">        &#125; <span class="keyword">else</span> &#123;</span><br><span class="line">            target[<span class="keyword">key</span>] = source[<span class="keyword">key</span>]</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>在合并的过程中，存在赋值的操作<code>target[key] = source[key]</code>，那么，这个key如果是<code>__proto__</code>，是不是就可以原型链污染呢？</p>
+<p>我们用如下代码实验一下：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">let</span> o<span class="number">1</span> = &#123;&#125;</span><br><span class="line"><span class="attribute">let</span> o<span class="number">2</span> = &#123;a: <span class="number">1</span>, <span class="string">&quot;__proto__&quot;</span>: &#123;b: <span class="number">2</span>&#125;&#125;</span><br><span class="line"><span class="attribute">merge</span>(o<span class="number">1</span>, o<span class="number">2</span>)</span><br><span class="line"><span class="attribute">console</span>.log(o<span class="number">1</span>.a, o<span class="number">1</span>.b)</span><br><span class="line"></span><br><span class="line"><span class="attribute">o3</span> = &#123;&#125;</span><br><span class="line"><span class="attribute">console</span>.log(o<span class="number">3</span>.b)</span><br></pre></td></tr></table></figure>
+<p>结果是，合并虽然成功了，但原型链没有被污染：</p>
+<p><a target="_blank" rel="noopener" href="https://www.leavesongs.com/media/attachment/2019/04/03/ba16d965-3112-4f69-bf5e-4eddb034e6dc.png"><img src="https://www.leavesongs.com/media/attachment/2019/04/03/ba16d965-3112-4f69-bf5e-4eddb034e6dc.c5e82ea6e4f5.png" alt="image.png"></a></p>
+<p>这是因为，我们用JavaScript创建o2的过程（<code>let o2 = &#123;a: 1, &quot;__proto__&quot;: &#123;b: 2&#125;&#125;</code>）中，<code>__proto__</code>已经代表o2的原型了，此时遍历o2的所有键名，你拿到的是<code>[a, b]</code>，<code>__proto__</code>并不是一个key，自然也不会修改Object的原型。</p>
+<p>那么，如何让<code>__proto__</code>被认为是一个键名呢？</p>
+<p>我们将代码改成如下：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">let</span> o<span class="number">1</span> = &#123;&#125;</span><br><span class="line"><span class="attribute">let</span> o<span class="number">2</span> = JSON.parse(&#x27;&#123;<span class="string">&quot;a&quot;</span>: <span class="number">1</span>, <span class="string">&quot;__proto__&quot;</span>: &#123;<span class="string">&quot;b&quot;</span>: <span class="number">2</span>&#125;&#125;&#x27;)</span><br><span class="line"><span class="attribute">merge</span>(o<span class="number">1</span>, o<span class="number">2</span>)</span><br><span class="line"><span class="attribute">console</span>.log(o<span class="number">1</span>.a, o<span class="number">1</span>.b)</span><br><span class="line"></span><br><span class="line"><span class="attribute">o3</span> = &#123;&#125;</span><br><span class="line"><span class="attribute">console</span>.log(o<span class="number">3</span>.b)</span><br></pre></td></tr></table></figure>
+<p>可见，新建的o3对象，也存在b属性，说明Object已经被污染：</p>
+<p><a target="_blank" rel="noopener" href="https://www.leavesongs.com/media/attachment/2019/04/03/5e05a46f-3c7b-4ab4-869c-fe6fd19422b7.png"><img src="https://www.leavesongs.com/media/attachment/2019/04/03/5e05a46f-3c7b-4ab4-869c-fe6fd19422b7.64db1b9bbae7.png" alt="image.png"></a></p>
+<p>这是因为，JSON解析的情况下，<code>__proto__</code>会被认为是一个真正的“键名”，而不代表“原型”，所以在遍历o2的时候会存在这个键。</p>
+<p>merge操作是最常见可能控制键名的操作，也最能被原型链攻击，很多常见的库都存在这个问题。</p>
+<hr>
+<h2 id="Fuzz中的javascript大小写特性"><a href="#Fuzz中的javascript大小写特性" class="headerlink" title="Fuzz中的javascript大小写特性"></a>Fuzz中的javascript大小写特性</h2><p>某比赛实在有点坑人，题目涉嫌抄袭不说，还不停改来改去。算了不吐槽了，说一则javascript小特性吧。</p>
+<p>​    toUpperCase()是javascript中将小写转换成大写的函数。toLowerCase()是javascript中将大写转换成小写的函数。但是这俩函数真的只有这两个功能么？</p>
+<p>​    不如我们来fuzz一下，看看toUpperCase功能如何？</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (!<span class="keyword">String</span>.fromCodePoint) &#123;</span><br><span class="line">	(<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">		<span class="keyword">var</span> defineProperty = (<span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">			<span class="comment">// IE 8 only supports `Object.defineProperty` on DOM elements</span></span><br><span class="line">			<span class="keyword">try</span> &#123;</span><br><span class="line">				<span class="keyword">var</span> <span class="keyword">object</span> = &#123;&#125;;</span><br><span class="line">				<span class="keyword">var</span> <span class="variable">$defineProperty</span> = <span class="keyword">Object</span>.defineProperty;</span><br><span class="line">				<span class="keyword">var</span> result = <span class="variable">$defineProperty</span>(<span class="keyword">object</span>, <span class="keyword">object</span>, <span class="keyword">object</span>) &amp;&amp; <span class="variable">$defineProperty</span>;</span><br><span class="line">			&#125; <span class="keyword">catch</span>(<span class="built_in">error</span>) &#123;&#125;</span><br><span class="line">			<span class="keyword">return</span> result;</span><br><span class="line">		&#125;());</span><br><span class="line">		<span class="keyword">var</span> stringFromCharCode = <span class="keyword">String</span>.fromCharCode;</span><br><span class="line">		<span class="keyword">var</span> floor = Math.floor;</span><br><span class="line">		<span class="keyword">var</span> fromCodePoint = <span class="function"><span class="keyword">function</span>(<span class="params"></span>) </span>&#123;</span><br><span class="line">			<span class="keyword">var</span> MAX_SIZE = <span class="number">0x4000</span>;</span><br><span class="line">			<span class="keyword">var</span> codeUnits = [];</span><br><span class="line">			<span class="keyword">var</span> highSurrogate;</span><br><span class="line">			<span class="keyword">var</span> lowSurrogate;</span><br><span class="line">			<span class="keyword">var</span> index = <span class="number">-1</span>;</span><br><span class="line">			<span class="keyword">var</span> length = arguments.length;</span><br><span class="line">			<span class="keyword">if</span> (!length) &#123;</span><br><span class="line">				<span class="keyword">return</span> <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">var</span> result = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">			<span class="keyword">while</span> (++index &lt; length) &#123;</span><br><span class="line">				<span class="keyword">var</span> codePoint = Number(arguments[index]);</span><br><span class="line">				<span class="keyword">if</span> (</span><br><span class="line">					!isFinite(codePoint) || <span class="comment">// `NaN`, `+Infinity`, or `-Infinity`</span></span><br><span class="line">					codePoint &lt; <span class="number">0</span> || <span class="comment">// not a valid Unicode code point</span></span><br><span class="line">					codePoint &gt; <span class="number">0x10FFFF</span> || <span class="comment">// not a valid Unicode code point</span></span><br><span class="line">					floor(codePoint) != codePoint <span class="comment">// not an integer</span></span><br><span class="line">				) &#123;</span><br><span class="line">					<span class="keyword">throw</span> RangeError(<span class="string">&#x27;Invalid code point: &#x27;</span> + codePoint);</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">if</span> (codePoint &lt;= <span class="number">0xFFFF</span>) &#123; <span class="comment">// BMP code point</span></span><br><span class="line">					codeUnits.push(codePoint);</span><br><span class="line">				&#125; <span class="keyword">else</span> &#123; <span class="comment">// Astral code point; split in surrogate halves</span></span><br><span class="line">					<span class="comment">// http://mathiasbynens.be/notes/javascript-encoding#surrogate-formulae</span></span><br><span class="line">					codePoint -= <span class="number">0x10000</span>;</span><br><span class="line">					highSurrogate = (codePoint &gt;&gt; <span class="number">10</span>) + <span class="number">0xD800</span>;</span><br><span class="line">					lowSurrogate = (codePoint % <span class="number">0x400</span>) + <span class="number">0xDC00</span>;</span><br><span class="line">					codeUnits.push(highSurrogate, lowSurrogate);</span><br><span class="line">				&#125;</span><br><span class="line">				<span class="keyword">if</span> (index + <span class="number">1</span> == length || codeUnits.length &gt; MAX_SIZE) &#123;</span><br><span class="line">					result += stringFromCharCode.apply(<span class="literal">null</span>, codeUnits);</span><br><span class="line">					codeUnits.length = <span class="number">0</span>;</span><br><span class="line">				&#125;</span><br><span class="line">			&#125;</span><br><span class="line">			<span class="keyword">return</span> result;</span><br><span class="line">		&#125;;</span><br><span class="line">		<span class="keyword">if</span> (defineProperty) &#123;</span><br><span class="line">			defineProperty(<span class="keyword">String</span>, <span class="string">&#x27;fromCodePoint&#x27;</span>, &#123;</span><br><span class="line">				<span class="string">&#x27;value&#x27;</span>: fromCodePoint,</span><br><span class="line">				<span class="string">&#x27;configurable&#x27;</span>: <span class="literal">true</span>,</span><br><span class="line">				<span class="string">&#x27;writable&#x27;</span>: <span class="literal">true</span></span><br><span class="line">			&#125;);</span><br><span class="line">		&#125; <span class="keyword">else</span> &#123;</span><br><span class="line">			<span class="keyword">String</span>.fromCodePoint = fromCodePoint;</span><br><span class="line">		&#125;</span><br><span class="line">	&#125;());</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">for</span> (<span class="keyword">var</span> j = <span class="string">&#x27;A&#x27;</span>.charCodeAt(); j &lt;= <span class="string">&#x27;Z&#x27;</span>.charCodeAt(); j++)&#123;</span><br><span class="line">	<span class="keyword">var</span> s = <span class="keyword">String</span>.fromCodePoint(j);</span><br><span class="line">	<span class="keyword">for</span> (<span class="keyword">var</span> i = <span class="number">0</span>; i &lt; <span class="number">0x10FFFF</span>; i++) &#123;</span><br><span class="line">		<span class="keyword">var</span> e = <span class="keyword">String</span>.fromCodePoint(i);</span><br><span class="line">		<span class="keyword">if</span> (s == e.toUpperCase() &amp;&amp; s != e) &#123;</span><br><span class="line">			document.write(<span class="string">&quot;char: &quot;</span>+e+<span class="string">&quot;&lt;br/&gt;&quot;</span>);</span><br><span class="line">	&#125;;</span><br><span class="line">&#125;;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>​    结果我们可以看到：</p>
+<p>​    <a target="_blank" rel="noopener" href="https://www.leavesongs.com/content/uploadfile/201409/a0171411234653.jpg"><img src="https://www.leavesongs.com/content/uploadfile/201409/a0171411234653.jpg" alt="001.jpg"></a></p>
+<p>​    其中混入了两个奇特的字符”ı”、”ſ”。</p>
+<p>​    <strong>这两个字符的“大写”是I和S。也就是说”ı”.toUpperCase() == ‘I’，”ſ”.toUpperCase() == ‘S’。通过这个小特性可以绕过一些限制。</strong></p>
+<p>​    同样，toLowerCase也有同样的字符：</p>
+<p>​    <a target="_blank" rel="noopener" href="https://www.leavesongs.com/content/uploadfile/201409/11f51411234890.jpg"><img src="https://www.leavesongs.com/content/uploadfile/201409/11f51411234890.jpg" alt="002.jpg"></a></p>
+<p>​    <strong>这个”K”的“小写”字符是k，也就是”K”.toLowerCase() == ‘k’.</strong></p>
+<p>​    用这个特性可以完成 <a target="_blank" rel="noopener" href="http://prompt.ml/9">http://prompt.ml/9</a> 。还有某比赛的神题，当然有更简单的方法。</p>
+<p>转载自：P神的<a href="https://www.leavesongs.com/PENETRATION/javascript-prototype-pollution-attack.html#0x02-javascript" target="_blank">深入理解 JavaScript Prototype 污染攻击</a></p>
+
+      </div>
+      
+      
+      
+    </div>
+    
+
+    
+    
+    
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link"><span class="nav-number">1.</span> <span class="nav-text"></span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#prototype%E5%92%8C-proto-%E5%88%86%E5%88%AB%E6%98%AF%E4%BB%80%E4%B9%88%EF%BC%9F"><span class="nav-number">1.1.</span> <span class="nav-text">prototype和__proto__分别是什么？</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#JavaScript%E5%8E%9F%E5%9E%8B%E9%93%BE%E7%BB%A7%E6%89%BF"><span class="nav-number">1.2.</span> <span class="nav-text">JavaScript原型链继承</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93%E6%98%AF%E4%BB%80%E4%B9%88"><span class="nav-number">1.3.</span> <span class="nav-text">原型链污染是什么</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#%E5%93%AA%E4%BA%9B%E6%83%85%E5%86%B5%E4%B8%8B%E5%8E%9F%E5%9E%8B%E9%93%BE%E4%BC%9A%E8%A2%AB%E6%B1%A1%E6%9F%93%EF%BC%9F"><span class="nav-number">1.4.</span> <span class="nav-text">哪些情况下原型链会被污染？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Fuzz%E4%B8%AD%E7%9A%84javascript%E5%A4%A7%E5%B0%8F%E5%86%99%E7%89%B9%E6%80%A7"><span class="nav-number">2.</span> <span class="nav-text">Fuzz中的javascript大小写特性</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="安小琪"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">安小琪</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">101</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/npfs06" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;npfs06" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:npfs066@gmail.com" title="E-Mail → mailto:npfs066@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://hyluz.cn/" title="https:&#x2F;&#x2F;hyluz.cn&#x2F;" rel="noopener" target="_blank">Luz</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://0clickjacking0.github.io/" title="https:&#x2F;&#x2F;0clickjacking0.github.io&#x2F;" rel="noopener" target="_blank">xianyu123</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://jiang-niao.github.io/" title="https:&#x2F;&#x2F;jiang-niao.github.io&#x2F;" rel="noopener" target="_blank">JiangNiao</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://xiaolong22333.top/" title="https:&#x2F;&#x2F;xiaolong22333.top&#x2F;" rel="noopener" target="_blank">xiaolong</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+
+
+<!--
+ <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+-->
+
+
+  <span class="author" itemprop="copyrightHolder">安小琪</span>
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">浙ICP备2020030100号 </a>
+  </div>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'nhITwFwMLqOi81E1nOPXx9Iw-MdYXbMMI',
+      appKey     : 'F9l5INUqgwxvbJOfC1X7OMnr',
+      placeholder: "欢迎在这里留言！我看到一定会及时回复的噢 （PS：回复信息会自动发送到你所填写的邮箱噢）",
+      avatar     : '',
+      meta       : guest,
+      pageSize   : '6' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

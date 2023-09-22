@@ -1,0 +1,695 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"npfs06.top","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="rsa算法及其常见攻击方法总结">
+<meta property="og:type" content="article">
+<meta property="og:title" content="RSA算法">
+<meta property="og:url" content="https://npfs06.top/2020/07/27/RSA%E7%AE%97%E6%B3%95/index.html">
+<meta property="og:site_name" content="安小琪&#39;s blog">
+<meta property="og:description" content="rsa算法及其常见攻击方法总结">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img2020.cnblogs.com/blog/1999159/202007/1999159-20200712082911929-729980764.png">
+<meta property="article:published_time" content="2020-07-27T10:19:39.000Z">
+<meta property="article:modified_time" content="2020-07-27T10:19:39.000Z">
+<meta property="article:author" content="安小琪">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img2020.cnblogs.com/blog/1999159/202007/1999159-20200712082911929-729980764.png">
+
+<link rel="canonical" href="https://npfs06.top/2020/07/27/RSA%E7%AE%97%E6%B3%95/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>RSA算法 | 安小琪's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">安小琪's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">少年有梦，不应止于心动</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://npfs06.top/2020/07/27/RSA%E7%AE%97%E6%B3%95/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="安小琪">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="安小琪's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          RSA算法
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-07-27 18:19:39" itemprop="dateCreated datePublished" datetime="2020-07-27T18:19:39+08:00">2020-07-27</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Crypto/" itemprop="url" rel="index"><span itemprop="name">Crypto</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2020/07/27/RSA%E7%AE%97%E6%B3%95/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/07/27/RSA%E7%AE%97%E6%B3%95/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>rsa算法及其常见攻击方法总结<a id="more"></a></p>
+<h1 id="RSA-算法"><a href="#RSA-算法" class="headerlink" title="RSA 算法"></a>RSA 算法</h1><p>1.<strong>质数（素数)**是指在大于1的自然数中，除了1和它本身以外不再有其他因数的自然数。<br>2.**合数</strong>是指比1大但不是素数的数<br>3.<strong>约数（因数）</strong>整数a除以整数b(b≠0) 除得的商正好是整数而没有余数，我们就说a能被b整除，或b能整除a。a称为  b的倍数，b称为a的约数<br>4.<strong>互质数</strong>：如果两个整数a,b的最大公因数（greatest common divisor）为1，即gcb(a,b)=1，那么称a,b两数互质<br>5.<strong>欧拉函数</strong>是指设m为正整数，则1,2,3,4…….,m中与m互素的整数的个数记为φ(m)，叫做欧拉函</p>
+<hr>
+<h2 id="RSA加解密涉及变量"><a href="#RSA加解密涉及变量" class="headerlink" title="RSA加解密涉及变量"></a>RSA加解密涉及变量</h2><figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">N</span>(n):模数（<span class="selector-tag">modulus</span>）</span><br><span class="line"></span><br><span class="line"><span class="selector-tag">p</span> 和 <span class="selector-tag">q</span> ：<span class="selector-tag">N</span>的两个因子（<span class="selector-tag">factor</span>）</span><br><span class="line"></span><br><span class="line"><span class="selector-tag">e</span> 和 <span class="selector-tag">d</span>：(密钥) 互为模反数的两个指数（<span class="selector-tag">exponent</span>）</span><br><span class="line"></span><br><span class="line"><span class="selector-tag">c</span> 和 <span class="selector-tag">m</span>：分别是密文和明文，这里一般指的是一个十进制的数还有一个就是<span class="selector-tag">n</span>的欧拉函数值</span><br><span class="line"></span><br><span class="line">欧拉函数值：<span class="selector-tag">r</span></span><br><span class="line"></span><br><span class="line"><span class="selector-tag">pow</span>(x, y, z)：效果等效<span class="selector-tag">pow</span>(x, y)<span class="selector-tag">1</span> % <span class="selector-tag">z</span>， 先计算<span class="selector-tag">x</span>的<span class="selector-tag">y</span>次方，如果存在另一个参数<span class="selector-tag">z</span>，需要再对结果进行取模。</span><br></pre></td></tr></table></figure>
+
+
+<hr>
+<h2 id="RSA-密钥流程"><a href="#RSA-密钥流程" class="headerlink" title="RSA 密钥流程"></a>RSA 密钥流程</h2><figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">1</span>.选择两个大的参数，计算出模数 N = p * q</span><br><span class="line"></span><br><span class="line"><span class="attribute">2</span>.计算欧拉函数 φ = (p-<span class="number">1</span>) * (q-<span class="number">1</span>)，然后选择一个e(<span class="number">1</span>&lt;e&lt;φ)，并且e和φ互质（互质：公约数只有<span class="number">1</span>的两个整数）</span><br><span class="line"></span><br><span class="line"><span class="attribute">3</span>.选一个整数e,满足条件<span class="number">1</span>&lt;e&lt;φ(m),且gcd(φ(m),e)=<span class="number">1</span>。</span><br><span class="line"></span><br><span class="line"><span class="attribute">4</span>.取e的模反数d，计算方法为:e * d ≡ <span class="number">1</span> (mod φ) （模反元素：如果两个正整数e和n互质，那么一定可以找到整数d，使得 e * d - <span class="number">1</span> 被n整除，或者说e * d被n除的余数是<span class="number">1</span>。这时，d就叫做e的“模反元素”。欧拉定理可以用来证明模反元素必然存在。两个整数a,b，它们除以整数M所得的余数相等：a ≡ b(mod m)，比如说<span class="number">5</span>除<span class="number">3</span>余数为<span class="number">2</span>，<span class="number">11</span>除<span class="number">3</span>余数也为<span class="number">2</span>，于是可写成<span class="number">11</span> ≡ <span class="number">5</span>(mod <span class="number">3</span>)。）</span><br><span class="line"></span><br><span class="line"><span class="attribute">5</span>.对明文m进行加密：c = pow(m, e, N),可以得到密文c。</span><br><span class="line"></span><br><span class="line"><span class="attribute">6</span>.对密文c进行解密：m = pow(c, d, N),可以得到明文m。</span><br><span class="line"></span><br><span class="line"><span class="attribute">7</span>.以&#123;e,n&#125;为公开密钥，&#123;d,n&#125;为秘密密钥。</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<pre><code>      **对于RSA加密算法，公钥&#123;e，n&#125;为公钥，可以任意公开，破解RSA最直接（亦或是暴力）的方法就是分解整数N，然后计算欧拉函数φ(n)=(p-1) * (q-1),再通过d * e ≡ 1 mod φ(N)，即可计算出 d，然后就可以使用私钥&#123;d,n&#125;通过m = pow(c,d,N)解密明文。**
+</code></pre>
+<h1 id="常见攻击方法"><a href="#常见攻击方法" class="headerlink" title="常见攻击方法"></a>常见攻击方法</h1><h2 id="已知p、q、e或者已知n、e求出d"><a href="#已知p、q、e或者已知n、e求出d" class="headerlink" title="已知p、q、e或者已知n、e求出d"></a><strong>已知<code>p</code>、<code>q</code>、<code>e</code>或者已知<code>n</code>、<code>e</code>求出<code>d</code></strong></h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> gmpy2</span><br><span class="line">p = gmpy2.mpz(<span class="number">18443</span>)<span class="comment">#初始化大整数</span></span><br><span class="line">q = gmpy2.mpz(<span class="number">49891</span>)</span><br><span class="line">e = gmpy2.mpz(<span class="number">19</span>)</span><br><span class="line">phi_n = (p-<span class="number">1</span>)*(q-<span class="number">1</span>)</span><br><span class="line">d = gmpy2.invert(e,phi_n)  <span class="comment"># invert（e，r）返回d使得e * d == 1 mod r，如果不存在d，则返回0</span></span><br><span class="line">print(<span class="string">&quot;p=&#123;0&#125;,q=&#123;1&#125;,e=&#123;2&#125;&quot;</span>.<span class="built_in">format</span>(p,q,e))</span><br><span class="line">print(<span class="string">&quot;d is:\n%s&quot;</span>%d)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>注：gmpy2：开源的高精度算数运算库<a target="_blank" rel="noopener" href="https://blog.csdn.net/x_yhy/article/details/83903367">https://blog.csdn.net/x_yhy/article/details/83903367</a></p>
+<pre><code>    分解`Ｎ`得到`p` `q`可以通过在线网站http://www.factordb.com/index.php
+</code></pre>
+<h2 id="已经求出d、n、c，然后可以求出相应的明文m"><a href="#已经求出d、n、c，然后可以求出相应的明文m" class="headerlink" title="已经求出d、n、c，然后可以求出相应的明文m"></a><strong>已经求出<code>d</code>、<code>n</code>、<code>c</code>，然后可以求出相应的明文m</strong></h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#求明文</span></span><br><span class="line"><span class="keyword">import</span> gmpy2</span><br><span class="line">n = <span class="number">920139713</span>   <span class="comment">#模数</span></span><br><span class="line">d = <span class="number">96849619</span>    <span class="comment">#密钥</span></span><br><span class="line">c = <span class="string">&quot;&quot;&quot;</span></span><br><span class="line"><span class="string">704796792</span></span><br><span class="line"><span class="string">752211152</span></span><br><span class="line"><span class="string">274704164</span></span><br><span class="line"><span class="string"><span class="meta">... </span> #密文</span></span><br><span class="line"><span class="string">&quot;&quot;&quot;</span></span><br><span class="line">result = <span class="string">&quot;&quot;</span></span><br><span class="line">c_list = c.split()</span><br><span class="line"><span class="comment">#print(c_list)</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> c_list:</span><br><span class="line">    result += <span class="built_in">chr</span>(<span class="built_in">pow</span>(<span class="built_in">int</span>(i),d,n))</span><br><span class="line">print(result)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="已知c、e、n求m"><a href="#已知c、e、n求m" class="headerlink" title="已知c、e、n求m"></a><strong>已知<code>c</code>、<code>e</code>、<code>n</code>求m</strong></h2><p>结合以上两种方法，在知道<code>n</code>的前提下可求·<code>p</code>、<code>q</code>,利用<code>p</code>、<code>q</code>、<code>e</code>可以求出<code>d</code>，，从而因为已知<code>d</code>、<code>n</code>、<code>c</code>，求出相应的明文m</p>
+<hr>
+<h2 id="利用n的公约数"><a href="#利用n的公约数" class="headerlink" title="利用n的公约数"></a><strong>利用n的公约数</strong></h2><p>当题目给出若干个模数n1,n2……,且模数很大。如果两次加密的<code>n1</code>和<code>n2</code>具有相同的素因子，那么我们可以利用<code>欧几里德算法</code>直接分解<code>n1</code>和<code>n2</code>.从而计算出两个<code>n</code>的最大公约数<code>p</code>：</p>
+<blockquote>
+<p>素因子的定义：对于一个数n来说，将它的因子拆到若干个素数相乘，这些素数被称为n的素因子。<br>比如 12可以被拆为2 6<br>6不是质数，可以继续拆为2*3<br>所以最后12的素因子就是 2, 3（不计重复元素）</p>
+</blockquote>
+<p>识别此类题目，通常会发现题目给了若干个n，均不相同，并且都是2048bit，4096bit级别，无法直接分解<a target="_blank" rel="noopener" href="http://www.factordb.com/index.php%EF%BC%8C%E5%B9%B6%E4%B8%94%E6%98%8E%E6%96%87%E9%83%BD%E6%B2%A1%E4%BB%80%E4%B9%88%E8%81%94%E7%B3%BB%EF%BC%8Ce%E4%B9%9F%E4%B8%80%E8%88%AC%E5%8F%9665537%E3%80%82">http://www.factordb.com/index.php，并且明文都没什么联系，e也一般取65537。</a></p>
+<p><img src="https://img2020.cnblogs.com/blog/1999159/202007/1999159-20200712082911929-729980764.png"></p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">#-*-coding:utf-8-*-</span></span><br><span class="line"><span class="string">&#x27;&#x27;</span><span class="string">&#x27;</span></span><br><span class="line"><span class="string">求两个数的最大公约数</span></span><br><span class="line"><span class="string">算法参考:https://zhidao.baidu.com/question/36550887.html</span></span><br><span class="line"><span class="string">by:reborn</span></span><br><span class="line"><span class="string">&#x27;</span><span class="string">&#x27;&#x27;</span></span><br><span class="line">import gmpy2</span><br><span class="line">n1=</span><br><span class="line">n2=</span><br><span class="line">def gys1(n1,n2):    #辗转相除法(欧几里德算法)</span><br><span class="line">    <span class="keyword">if</span> n1&lt;n2:</span><br><span class="line">        n1,<span class="attribute">n2</span>=n2,n1</span><br><span class="line">    <span class="keyword">while</span> n2!=0:</span><br><span class="line">        <span class="attribute">temp</span>=n1%n2</span><br><span class="line">        <span class="attribute">n1</span>=n2</span><br><span class="line">        <span class="attribute">n2</span>=temp</span><br><span class="line">    return n1</span><br><span class="line">def gys2(n1,n2):    #更相减损法</span><br><span class="line">    <span class="keyword">while</span> n1!=n2:</span><br><span class="line">        <span class="keyword">if</span> n1&lt;n2:</span><br><span class="line">            n1,<span class="attribute">n2</span>=n2,n1</span><br><span class="line">        <span class="attribute">temp</span>=n1-n2</span><br><span class="line">        <span class="attribute">n1</span>=temp</span><br><span class="line">    return n1</span><br><span class="line"><span class="attribute">p</span>=gys2(n1,n2)</span><br><span class="line"><span class="builtin-name">print</span> (<span class="string">&quot;p=&quot;</span>,p)</span><br><span class="line"></span><br><span class="line"><span class="comment">#求q1,q2</span></span><br><span class="line"></span><br><span class="line"><span class="attribute">q1</span>=n1//p</span><br><span class="line"><span class="attribute">q2</span>=n2//p</span><br><span class="line"><span class="builtin-name">print</span>(<span class="string">&quot;q1=&quot;</span>,q1)</span><br><span class="line"><span class="builtin-name">print</span>(<span class="string">&quot;q2=&quot;</span>,q2)</span><br><span class="line"></span><br><span class="line"><span class="comment">#求d_1,d_2</span></span><br><span class="line"></span><br><span class="line">p0 = gmpy2.mpz(p)#初始化大整数</span><br><span class="line">q_1 = gmpy2.mpz(q1)</span><br><span class="line">q_2 = gmpy2.mpz(q2)</span><br><span class="line">e = gmpy2.mpz(65537)</span><br><span class="line">r_1 = (p0-1)*(q_1-1)</span><br><span class="line">r_2 = (p0-1)*(q_2-1)</span><br><span class="line">d_1 = gmpy2.invert(e,r_1)  # invert（e，r）返回d使得e * d == 1 mod r，如果不存在d，则返回0</span><br><span class="line">d_2 = gmpy2.invert(e,r_2)</span><br><span class="line"><span class="builtin-name">print</span>(<span class="string">&quot;d_1=&quot;</span>,d_1)</span><br><span class="line"><span class="builtin-name">print</span>(<span class="string">&quot;d_2=&quot;</span>,d_2)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 求c1,c2</span></span><br><span class="line"></span><br><span class="line">c1=</span><br><span class="line">c2=</span><br><span class="line">m1 = pow(c1, d_1, n1)</span><br><span class="line">m2 = pow(c2, d_2, n2)</span><br><span class="line"><span class="builtin-name">print</span>(<span class="string">&quot;m1=&quot;</span>,m1)</span><br><span class="line"><span class="builtin-name">print</span>(<span class="string">&quot;m2=&quot;</span>,m2)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>根据<code>欧几里德算法</code>算出的<code>p</code>之后，再用<code>n</code>除以<code>p</code>即可求出<code>q</code>，由此可以得到的参数有<code>p</code>、<code>q</code>、<code>n</code>、<code>e</code>，再使用常规方法计算出<code>d</code>，即可破解密文。</p>
+<p>m = pow(c, d, N),可以得到明文m</p>
+<hr>
+<h2 id="共模攻击"><a href="#共模攻击" class="headerlink" title="共模攻击"></a><strong>共模攻击</strong></h2><p>如果在RSA的使用中使用了相同的模n对相同的明文m进行了加密，那么就可以在不分解n的情况下还原出明文m的值。</p>
+<blockquote>
+<p>c1 = m^e1 mod n<br>c2 = m^e2 mod n</p>
+</blockquote>
+<p>识别：非常简单，若干次加密，每次n都一样，明文根据题意也一样即可。</p>
+<hr>
+<h2 id="已知私钥文件、c求m"><a href="#已知私钥文件、c求m" class="headerlink" title="已知私钥文件、c求m"></a><strong>已知私钥文件、c求m</strong></h2><p>题目中给出了私钥文件private.pem和flag.enc </p>
+<p>pem文件通常是包含了—–BEGIN PRIVATE KEY—–和—–END PRIVATE KEY—–，是 Base64 编码的二进制内容<br>使用私钥解密密文的方式</p>
+<p>使用openssl工具<br>利用如下命令：</p>
+<blockquote>
+<p>rsautl -decrypt -in flag.enc(密文名称) -inkey private.pem</p>
+</blockquote>
+<hr>
+<h2 id="已知公钥文件、c求m"><a href="#已知公钥文件、c求m" class="headerlink" title="已知公钥文件、c求m"></a><strong>已知公钥文件、c求m</strong></h2><p>题目中给出了public.pem和密文flag.enc</p>
+<blockquote>
+<p>openssl rsa -pubin -text -modulus -in warmup -in pubkey.pem<br>  [提取出pubkey.pem中的参数]</p>
+</blockquote>
+<blockquote>
+<p>得到n，化为十进制</p>
+</blockquote>
+<blockquote>
+<p>将n分解为P，q</p>
+</blockquote>
+<blockquote>
+<p>python rsatool.py -o private.pem -e 65537 -p 275127860351348928173285174381581152299 -q 319576316814478949870590164193048041239</p>
+<p>[使用rsatool生成私钥文件: private.pem]</p>
+</blockquote>
+<blockquote>
+<p>openssl rsautl -decrypt -in flag.enc -inkey private.pem</p>
+</blockquote>
+<hr>
+<h2 id="低加密指数攻击"><a href="#低加密指数攻击" class="headerlink" title="低加密指数攻击"></a><strong>低加密指数攻击</strong></h2><p>在RSA中e也称为加密指数。由于e是可以随意选取的，选取小一点的e可以缩短加密时间，但是选取不当的话，就会造成安全问题。</p>
+<p><strong>e=3时的小明文攻击</strong></p>
+<p>当e=3时，如果明文过小，导致明文的三次方仍然小于n，那么通过直接对密文三次开方，即可得到明文。</p>
+<blockquote>
+<p>(1)m^3&lt;n,也就是说m^3=c;<br>(2)m^3&gt;n，即(m^3+kn)mod n=c（爆破k，不知道k取什么值）。</p>
+</blockquote>
+<ul>
+<li>第一种情况   根据 <code>c = pow(m, e, N) </code>可知：</li>
+</ul>
+<p>当e=3时，如果明文过小，导致<strong>明文的三次方</strong>仍然小于n，那么通过直接对密文三次开方，即可得到明文。</p>
+<ul>
+<li>第二种情况  如果<strong>明文的三次方</strong>比n大，但是不够大，那么设k，有：    c=(m^3+kn)mod n</li>
+</ul>
+<p>爆破k，如果（c-kn）能开三次根式，那么可以直接得到明文。</p>
+<p><strong>识别：</strong></p>
+<p>推荐在e=3的时候首先尝试这种方法。</p>
+<blockquote>
+<p> openssl  rsa  -pubin  -in  pubkey.pem  （读取公钥内容）<br> openssl  rsa   -pubin  in  pubkey.pem -text（以文本格式输出公钥内容),从这一步可以知道e的值</p>
+</blockquote>
+<p>从而判断为低加密指数攻击</p>
+<hr>
+<h2 id="低加密指数广播攻击"><a href="#低加密指数广播攻击" class="headerlink" title="低加密指数广播攻击"></a><strong>低加密指数广播攻击</strong></h2><p>低加密指数广播攻击，即如果选取的加密指数较低，并且使用了相同的加密指数给一个接收者发送了相同的信息（或者给一群接收者发送了相同的信息），那么可以进行广播攻击得到明文。</p>
+<p>假如我们需要将一份明文进行多份加密，但是每份使用不同的密钥，密钥中的模数n不同但指数e相同且很小，我们只要拿到多份密文和对应的n就可以利用<a target="_blank" rel="noopener" href="https://www.cnblogs.com/freinds/p/6388992.html">中国剩余定理</a>进行解密。</p>
+<p> <strong>适用</strong></p>
+<p>只要满足以下情况，我们就可以考虑实用低加密指数广播攻击：</p>
+<blockquote>
+<p>1.加密指数e非常小<br>2.一份明文使用不同的模数n，相同的加密指数e进行多次加密<br>3.可以拿到每一份加密后的密文和对应的模数n、加密指数e</p>
+</blockquote>
+<p>低加密指数广播攻击脚本</p>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br></pre></td><td class="code"><pre><span class="line"># codin<span class="variable">g:utf8</span></span><br><span class="line"></span><br><span class="line">from struct import pack,unpack</span><br><span class="line">import zlib</span><br><span class="line">import gmpy</span><br><span class="line">def my_parse_number(<span class="keyword">number</span>):</span><br><span class="line">    <span class="built_in">string</span> = <span class="string">&quot;%x&quot;</span> % <span class="keyword">number</span></span><br><span class="line">    #if <span class="built_in">len</span>(<span class="built_in">string</span>) != <span class="number">64</span>:</span><br><span class="line">    #    <span class="keyword">return</span> <span class="string">&quot;&quot;</span></span><br><span class="line">    erg = []</span><br><span class="line">    <span class="keyword">while</span> <span class="built_in">string</span> != <span class="string">&#x27;&#x27;</span>:</span><br><span class="line">        erg = erg + [chr(<span class="keyword">int</span>(<span class="built_in">string</span>[:<span class="number">2</span>], <span class="number">16</span>))]</span><br><span class="line">        <span class="built_in">string</span> = <span class="built_in">string</span>[<span class="number">2</span>:]</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;&#x27;</span>.<span class="keyword">join</span>(erg)</span><br><span class="line">def extended_gcd(<span class="keyword">a</span>, <span class="keyword">b</span>):</span><br><span class="line">    <span class="keyword">x</span>,<span class="keyword">y</span> = <span class="number">0</span>, <span class="number">1</span></span><br><span class="line">    lastx, lasty = <span class="number">1</span>, <span class="number">0</span></span><br><span class="line">    <span class="keyword">while</span> <span class="variable">b:</span></span><br><span class="line">        <span class="keyword">a</span>, (q, <span class="keyword">b</span>) = <span class="keyword">b</span>, divmod(<span class="keyword">a</span>,<span class="keyword">b</span>)</span><br><span class="line">        <span class="keyword">x</span>, lastx = lastx-q*<span class="keyword">x</span>, <span class="keyword">x</span></span><br><span class="line">        <span class="keyword">y</span>, lasty = lasty-q*<span class="keyword">y</span>, <span class="keyword">y</span></span><br><span class="line">    <span class="keyword">return</span> (lastx, lasty, <span class="keyword">a</span>)</span><br><span class="line">def chinese_remainder_theorem(<span class="built_in">items</span>):</span><br><span class="line">  <span class="keyword">N</span> = <span class="number">1</span></span><br><span class="line">  <span class="keyword">for</span> <span class="keyword">a</span>, n in item<span class="variable">s:</span></span><br><span class="line">    <span class="keyword">N</span> *= n</span><br><span class="line">  result = <span class="number">0</span></span><br><span class="line">  <span class="keyword">for</span> <span class="keyword">a</span>, n in item<span class="variable">s:</span></span><br><span class="line">    <span class="keyword">m</span> = <span class="keyword">N</span>/n</span><br><span class="line">    r, s, d = extended_gcd(n, <span class="keyword">m</span>)</span><br><span class="line">    <span class="keyword">if</span> d != <span class="number">1</span>:</span><br><span class="line">      <span class="keyword">N</span>=<span class="keyword">N</span>/n</span><br><span class="line">      <span class="keyword">continue</span></span><br><span class="line">      #raise <span class="string">&quot;Input not pairwise co-prime&quot;</span></span><br><span class="line">    result += <span class="keyword">a</span>*s*<span class="keyword">m</span></span><br><span class="line">  <span class="keyword">return</span> result % <span class="keyword">N</span>, <span class="keyword">N</span></span><br><span class="line">  //中国剩余定理 ， 输入多组<span class="keyword">c</span>和多组n，以及较小的指数<span class="keyword">e</span></span><br><span class="line">sessions=[</span><br><span class="line">&#123;<span class="string">&quot;c&quot;</span>: , <span class="string">&quot;e&quot;</span>: , <span class="string">&quot;n&quot;</span>: &#125;,</span><br><span class="line">&#123;<span class="string">&quot;c&quot;</span>: , <span class="string">&quot;e&quot;</span>: , <span class="string">&quot;n&quot;</span>: &#125;,</span><br><span class="line">&#123;<span class="string">&quot;c&quot;</span>: , <span class="string">&quot;e&quot;</span>: , <span class="string">&quot;n&quot;</span>: &#125;</span><br><span class="line">]</span><br><span class="line"></span><br><span class="line">data = []</span><br><span class="line"><span class="keyword">for</span> session in session<span class="variable">s:</span></span><br><span class="line">    <span class="keyword">e</span>=session[<span class="string">&#x27;e&#x27;</span>]</span><br><span class="line">    n=session[<span class="string">&#x27;n&#x27;</span>]</span><br><span class="line">    msg=session[<span class="string">&#x27;c&#x27;</span>]</span><br><span class="line">    data = data + [(msg, n)]</span><br><span class="line"><span class="keyword">print</span> <span class="string">&quot;Please wait, performing CRT&quot;</span></span><br><span class="line"><span class="keyword">x</span>, n = chinese_remainder_theorem(data)</span><br><span class="line"><span class="keyword">e</span>=session[<span class="string">&#x27;e&#x27;</span>]</span><br><span class="line">realnum = gmpy.mpz(<span class="keyword">x</span>).root(<span class="keyword">e</span>)[<span class="number">0</span>].digits()</span><br><span class="line"><span class="keyword">print</span> my_parse_number(<span class="keyword">int</span>(realnum))</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="n可以分解为多个素数"><a href="#n可以分解为多个素数" class="headerlink" title="n可以分解为多个素数"></a><strong>n可以分解为多个素数</strong></h2><p>使用公钥加密和使用私钥解密流程（中国剩余定理）：<br>准备<br>首先，我们需要在在生成私钥公钥时，多生成几个数：<br>我们的d是e对phi(n)的逆元，我们现在需要另外2个逆元（分别是对(p-1)和(q-1)的），既<br>1：计算dp，使得dp * e = 1 mod(p-1)<br>2：计算dq，使得dq * e = 1 mod(q-1)<br>此外需要第三个元素，既q对p的逆元<br>3：计算qInv，使得qInv * q = 1 mod p<br>        1 2 3 都作为私钥的一部分。</p>
+<blockquote>
+<p>dp = d mod p-1<br>dq = d mod q-1</p>
+</blockquote>
+<p><strong>计算：</strong></p>
+<p>使用公钥加密：<br>若要加密明文m,则需要计算c = m^e mod n，c为密文。</p>
+<p>使用私钥解密：<br>1:m1=c^dp mod p<br>2:m2=c^dq mod q<br>3:h= (qInv*((m1 - m2)mod p)) mod p<br>4:m = m2 + h*q<br>m就是明文。</p>
+<p>例：n=17947<br>           e=3<br>           c=8363<br>           m=???</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line">import gmpy2</span><br><span class="line"><span class="attribute">n</span>=17947</span><br><span class="line"><span class="attribute">p</span>=137</span><br><span class="line"><span class="attribute">q</span>=131</span><br><span class="line"><span class="attribute">e</span>=3</span><br><span class="line"><span class="attribute">c</span>=8363</span><br><span class="line"><span class="attribute">dp</span>=gmpy2.invert(e,p-1)</span><br><span class="line"><span class="attribute">dq</span>=gmpy2.invert(e,q-1)</span><br><span class="line"><span class="attribute">m1</span>=pow(c,dp,p)</span><br><span class="line"><span class="attribute">m2</span>=pow(c,dq,q)</span><br><span class="line"><span class="attribute">qInv</span>=gmpy2.invert(q,p)</span><br><span class="line">h=(qInv*((m1-m2)% p)) % p</span><br><span class="line"><span class="attribute">m</span>=m2+h*q</span><br><span class="line"><span class="builtin-name">print</span>(m)</span><br></pre></td></tr></table></figure>
+<p><strong>多素数</strong></p>
+<p>例:n=p1<em>p2</em>p3=2279269<br>     p1=137<br>     p2=131<br>     p3=127<br>     e=19</p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line">预先计算:</span><br><span class="line"><span class="attr">dp</span> = <span class="number">19</span>^-<span class="number">1</span> mod <span class="number">137</span><span class="attr">-1</span> = <span class="number">43</span></span><br><span class="line"><span class="attr">dq</span> = <span class="number">19</span>^-<span class="number">1</span> mod <span class="number">131</span><span class="attr">-1</span> = <span class="number">89</span></span><br><span class="line"><span class="attr">dr</span> = <span class="number">19</span>^-<span class="number">1</span> mod <span class="number">127</span><span class="attr">-1</span> = <span class="number">73</span></span><br><span class="line"></span><br><span class="line">若要解密密文 <span class="number">768924</span>，则先计算</span><br><span class="line"><span class="number">1</span>:<span class="attr">m1=768924^43</span> mod <span class="number">137</span> = <span class="number">102</span></span><br><span class="line"><span class="number">2</span>:<span class="attr">m2=768924^89</span> mod <span class="number">131</span> = <span class="number">120</span></span><br><span class="line"><span class="number">3</span>:<span class="attr">m3=768924^73</span> mod <span class="number">127</span> = <span class="number">5</span></span><br><span class="line"></span><br><span class="line">等式<span class="number">1</span>与等式<span class="number">2</span>连列方程组计算：</span><br><span class="line"><span class="attr">qInv</span> = <span class="number">114</span></span><br><span class="line"><span class="attr">h</span> = (qInv*((m1 - m2)mod p)) mod <span class="attr">p</span> = <span class="number">3</span></span><br><span class="line"><span class="attr">m12</span> = m2 + h*<span class="attr">q</span> = <span class="number">120</span> + <span class="number">3</span>*<span class="number">131</span> = <span class="number">513</span></span><br><span class="line"></span><br><span class="line">所以等式<span class="number">1</span>与等式<span class="number">2</span>的通用解为：<span class="number">513</span>+k1*(<span class="number">131</span>*<span class="number">137</span>)</span><br><span class="line">所以结合等式<span class="number">3</span>问题可以变为：</span><br><span class="line"><span class="attr">m1=513</span>  <span class="attr">p=17947</span></span><br><span class="line"><span class="attr">m2=5</span>    <span class="attr">q=127</span></span><br><span class="line">qInv*q≡ <span class="number">1</span> mod p    ——&gt;<span class="attr">qInv=10316</span></span><br><span class="line"><span class="attr">h</span> = (<span class="number">10316</span>*((<span class="number">513</span> - <span class="number">5</span>)mod <span class="number">17947</span>)) mod <span class="number">17947</span> =<span class="number">4</span></span><br><span class="line"><span class="attr">m</span> = <span class="number">5</span> + <span class="number">4</span>*<span class="number">127</span> = <span class="number">513</span></span><br><span class="line">......</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>jiaoben</p>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">import</span> gmpy<span class="number">2</span></span><br><span class="line"><span class="attribute">n</span>=<span class="number">2279269</span></span><br><span class="line"><span class="attribute">p1</span>=<span class="number">137</span></span><br><span class="line"><span class="attribute">p2</span>=<span class="number">131</span></span><br><span class="line"><span class="attribute">p3</span>=<span class="number">127</span></span><br><span class="line"><span class="attribute">e</span>=<span class="number">19</span></span><br><span class="line"><span class="attribute">c</span>=<span class="number">768924</span></span><br><span class="line"><span class="attribute">dp1</span>=gmpy<span class="number">2</span>.invert(e,p<span class="number">1</span>-<span class="number">1</span>)</span><br><span class="line"><span class="attribute">dp2</span>=gmpy<span class="number">2</span>.invert(e,p<span class="number">2</span>-<span class="number">1</span>)</span><br><span class="line"><span class="attribute">dp3</span>=gmpy<span class="number">2</span>.invert(e,p<span class="number">3</span>-<span class="number">1</span>)</span><br><span class="line"><span class="attribute">m1</span>=pow(c,dp<span class="number">1</span>,p<span class="number">1</span>)</span><br><span class="line"><span class="attribute">m2</span>=pow(c,dp<span class="number">2</span>,p<span class="number">2</span>)</span><br><span class="line"><span class="attribute">m3</span>=pow(c,dp<span class="number">3</span>,p<span class="number">3</span>)</span><br><span class="line"><span class="attribute">qInv1</span>=gmpy<span class="number">2</span>.invert(p<span class="number">2</span>,p<span class="number">1</span>)</span><br><span class="line"><span class="attribute">h1</span>=(qInv<span class="number">1</span>*((m<span class="number">1</span>-m<span class="number">2</span>) % p<span class="number">1</span>)) % p<span class="number">1</span></span><br><span class="line"><span class="attribute">m4</span>=m<span class="number">2</span>+h<span class="number">1</span>*p<span class="number">2</span></span><br><span class="line"><span class="attribute">p4</span>=p<span class="number">1</span>*p<span class="number">2</span></span><br><span class="line"><span class="attribute">qInv2</span>=gmpy<span class="number">2</span>.invert(p<span class="number">3</span>,p<span class="number">4</span>)</span><br><span class="line"><span class="attribute">h2</span>=(qInv<span class="number">2</span>*((m<span class="number">4</span>-m<span class="number">3</span>)% p<span class="number">4</span>)) % p<span class="number">4</span></span><br><span class="line"><span class="attribute">m</span>=m<span class="number">3</span>+h<span class="number">2</span>*p<span class="number">3</span></span><br><span class="line"><span class="attribute">print</span>(m)</span><br></pre></td></tr></table></figure>
+<hr>
+<h2 id="dp、dq泄露"><a href="#dp、dq泄露" class="headerlink" title="dp、dq泄露"></a><strong>dp、dq泄露</strong></h2><blockquote>
+<p>dp = d mod p-1<br>dq = d mod q-1</p>
+</blockquote>
+<p>这种参数是为了让解密的时候更快速而产生的</p>
+<p>已知p,q,dp,dq,c求m</p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">import</span> gmpy2</span><br><span class="line"><span class="built_in">import</span> binascii</span><br><span class="line"><span class="built_in">import</span> libnum</span><br><span class="line">def decrypt(dp,dq,p,q,c):</span><br><span class="line">    <span class="attr">InvQ</span> = gmpy2.invert(q,p)</span><br><span class="line">    <span class="attr">mp</span> = pow(c,dp,p)</span><br><span class="line">    <span class="attr">mq</span> = pow(c,dq,q)                   <span class="comment">#求幂取模运算</span></span><br><span class="line">    <span class="attr">m=(((mp-mq)*InvQ)%p)*q+mq</span>          <span class="comment">#求明文公式</span></span><br><span class="line">    print (binascii.unhexlify(hex(m)[<span class="number">2</span>:]))</span><br><span class="line">    print(libnum.n2s(m))</span><br><span class="line"><span class="attr">p</span> = </span><br><span class="line"><span class="attr">q</span> = </span><br><span class="line"><span class="attr">dp</span> = </span><br><span class="line"><span class="attr">dq</span> = </span><br><span class="line"><span class="attr">c</span> = </span><br><span class="line">decrypt(dp,dq,p,q,c)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><strong>已知e,n,dp,c求m</strong></p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">import</span> gmpy2</span><br><span class="line"><span class="built_in">import</span> libnum</span><br><span class="line"><span class="built_in">import</span> binascii</span><br><span class="line">def getd(n,e,dp):</span><br><span class="line">    for i <span class="keyword">in</span> range(<span class="number">1</span>,e):            <span class="comment">#在范围(1,e)之间进行遍历</span></span><br><span class="line">        <span class="keyword">if</span> (dp*e-<span class="number">1</span>)%<span class="attr">i</span> == <span class="number">0</span>:</span><br><span class="line">            <span class="keyword">if</span> n%(((dp*e-<span class="number">1</span>)/i)+<span class="number">1</span>)==<span class="number">0</span>:    <span class="comment">#存在p，使得n能被p整除</span></span><br><span class="line">                <span class="attr">p=((dp*e-1)/i)+1</span></span><br><span class="line">                <span class="attr">q=n/(((dp*e-1)/i)+1)</span></span><br><span class="line">                <span class="attr">phi</span> = (p-<span class="number">1</span>)*(q-<span class="number">1</span>)         <span class="comment">#欧拉定理</span></span><br><span class="line">                <span class="attr">d</span> = gmpy2.invert(e,phi)%phi        <span class="comment">#求模逆</span></span><br><span class="line">                return d</span><br><span class="line"><span class="attr">e</span> =</span><br><span class="line"><span class="attr">n</span> = </span><br><span class="line"><span class="attr">dp</span> = </span><br><span class="line"><span class="attr">c</span> = </span><br><span class="line"><span class="attr">d=getd(n,e,dp)</span></span><br><span class="line"><span class="attr">m=pow(c,d,n)</span>                            <span class="comment">#快速求幂取模运算</span></span><br><span class="line">print(binascii.unhexlify(hex(m)[<span class="number">2</span>:]))       <span class="comment">#16进制转文本</span></span><br><span class="line">print(libnum.n2s(m))</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/qq_42939527/article/details/105202716">https://blog.csdn.net/qq_42939527/article/details/105202716</a></p>
+<hr>
+<h2 id="已知n-r求p-q"><a href="#已知n-r求p-q" class="headerlink" title="已知n,r求p,q"></a><strong>已知n,r求p,q</strong></h2><p>核心是通过n和r解出p和q</p>
+<figure class="highlight gcode"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1.</span>二分法，求得p，q</span><br><span class="line"></span><br><span class="line"><span class="number">2.</span>RSATool<span class="number">2</span>v<span class="number">17</span>中，输入p，q，r，e，得到d  <span class="comment">(脚本也可)</span></span><br><span class="line"></span><br><span class="line"><span class="number">3.</span>通过m=pow<span class="comment">(c,d,n)</span></span><br><span class="line">注意：有时题目有要求，解出的可能是m乘上某一个参数，这是需要仔细审题</span><br><span class="line"></span><br><span class="line"><span class="number">4.</span>转字符，得到flag</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>脚本</p>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">import</span> gmpy2</span><br><span class="line"><span class="built_in">import</span> numpy as np</span><br><span class="line">np.set_printoptions(<span class="attr">suppress=True)</span></span><br><span class="line"></span><br><span class="line"><span class="attr">n=gmpy2.mpz(14057332139537395701238463644827948204030576528558543283405966933509944444681257521108769303999679955371474546213196051386802936343092965202519504111238572269823072199...)</span></span><br><span class="line"><span class="attr">r=gmpy2.mpz(14057332139537395701238463644827948204030576528558543283405966933509944444681257521108769303999679955371474546213196051386802936343092965202519504111238572269823072199...)</span></span><br><span class="line"></span><br><span class="line"><span class="attr">c1=n-r+1</span></span><br><span class="line">print (c1)</span><br><span class="line"></span><br><span class="line"><span class="attr">l=c1/2</span></span><br><span class="line"><span class="attr">r=c1</span></span><br><span class="line"><span class="comment">#p=(l+r)/2</span></span><br><span class="line"><span class="comment">#y=p*(c1-p)</span></span><br><span class="line"></span><br><span class="line">while l&lt;r:</span><br><span class="line">	<span class="attr">p=(l+r)/2</span></span><br><span class="line">	<span class="attr">y=p*(c1-p)</span></span><br><span class="line">	<span class="keyword">if</span> <span class="attr">y==n:</span></span><br><span class="line">		print (p)</span><br><span class="line">		break</span><br><span class="line">	<span class="keyword">if</span> y&gt;n:</span><br><span class="line">		print (y&gt;n)</span><br><span class="line">		<span class="attr">l=p</span></span><br><span class="line">	<span class="keyword">else</span>:</span><br><span class="line">		print (y&lt;n)</span><br><span class="line">		<span class="attr">r=p</span></span><br><span class="line">		print (<span class="string">&quot;done&quot;</span>)</span><br><span class="line"><span class="attr">q=c1-p</span></span><br><span class="line">print q</span><br><span class="line"><span class="comment">/*</span></span><br><span class="line"><span class="comment">if p&gt;q:</span></span><br><span class="line"><span class="comment">    p,q=q,p</span></span><br><span class="line"><span class="comment">factor2 = 2021 * p + 2020 * q</span></span><br><span class="line"><span class="comment">if factor2 &lt; 0:</span></span><br><span class="line"><span class="comment">    factor2 = (-1) * factor2</span></span><br><span class="line"><span class="comment">    </span></span><br><span class="line"><span class="comment">_P=sympy.nextprime(factor2)</span></span><br><span class="line"><span class="comment">*/</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>安小琪
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="https://npfs06.top/2020/07/27/RSA%E7%AE%97%E6%B3%95/" title="RSA算法">https://npfs06.top/2020/07/27/RSA算法/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/07/20/ctf%E4%B8%ADphp%E5%B8%B8%E8%A7%81%E7%9F%A5%E8%AF%86%E7%82%B9%E6%80%BB%E7%BB%93/" rel="prev" title="ctf中php常见知识点总结">
+      <i class="fa fa-chevron-left"></i> ctf中php常见知识点总结
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/07/27/jwt%E6%94%BB%E5%87%BB/" rel="next" title="jwt攻击">
+      jwt攻击 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#RSA-%E7%AE%97%E6%B3%95"><span class="nav-number">1.</span> <span class="nav-text">RSA 算法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#RSA%E5%8A%A0%E8%A7%A3%E5%AF%86%E6%B6%89%E5%8F%8A%E5%8F%98%E9%87%8F"><span class="nav-number">1.1.</span> <span class="nav-text">RSA加解密涉及变量</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#RSA-%E5%AF%86%E9%92%A5%E6%B5%81%E7%A8%8B"><span class="nav-number">1.2.</span> <span class="nav-text">RSA 密钥流程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%B8%B8%E8%A7%81%E6%94%BB%E5%87%BB%E6%96%B9%E6%B3%95"><span class="nav-number">2.</span> <span class="nav-text">常见攻击方法</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%B2%E7%9F%A5p%E3%80%81q%E3%80%81e%E6%88%96%E8%80%85%E5%B7%B2%E7%9F%A5n%E3%80%81e%E6%B1%82%E5%87%BAd"><span class="nav-number">2.1.</span> <span class="nav-text">已知p、q、e或者已知n、e求出d</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%B2%E7%BB%8F%E6%B1%82%E5%87%BAd%E3%80%81n%E3%80%81c%EF%BC%8C%E7%84%B6%E5%90%8E%E5%8F%AF%E4%BB%A5%E6%B1%82%E5%87%BA%E7%9B%B8%E5%BA%94%E7%9A%84%E6%98%8E%E6%96%87m"><span class="nav-number">2.2.</span> <span class="nav-text">已经求出d、n、c，然后可以求出相应的明文m</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%B2%E7%9F%A5c%E3%80%81e%E3%80%81n%E6%B1%82m"><span class="nav-number">2.3.</span> <span class="nav-text">已知c、e、n求m</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%A9%E7%94%A8n%E7%9A%84%E5%85%AC%E7%BA%A6%E6%95%B0"><span class="nav-number">2.4.</span> <span class="nav-text">利用n的公约数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%85%B1%E6%A8%A1%E6%94%BB%E5%87%BB"><span class="nav-number">2.5.</span> <span class="nav-text">共模攻击</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%B2%E7%9F%A5%E7%A7%81%E9%92%A5%E6%96%87%E4%BB%B6%E3%80%81c%E6%B1%82m"><span class="nav-number">2.6.</span> <span class="nav-text">已知私钥文件、c求m</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%B2%E7%9F%A5%E5%85%AC%E9%92%A5%E6%96%87%E4%BB%B6%E3%80%81c%E6%B1%82m"><span class="nav-number">2.7.</span> <span class="nav-text">已知公钥文件、c求m</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%8E%E5%8A%A0%E5%AF%86%E6%8C%87%E6%95%B0%E6%94%BB%E5%87%BB"><span class="nav-number">2.8.</span> <span class="nav-text">低加密指数攻击</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BD%8E%E5%8A%A0%E5%AF%86%E6%8C%87%E6%95%B0%E5%B9%BF%E6%92%AD%E6%94%BB%E5%87%BB"><span class="nav-number">2.9.</span> <span class="nav-text">低加密指数广播攻击</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#n%E5%8F%AF%E4%BB%A5%E5%88%86%E8%A7%A3%E4%B8%BA%E5%A4%9A%E4%B8%AA%E7%B4%A0%E6%95%B0"><span class="nav-number">2.10.</span> <span class="nav-text">n可以分解为多个素数</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#dp%E3%80%81dq%E6%B3%84%E9%9C%B2"><span class="nav-number">2.11.</span> <span class="nav-text">dp、dq泄露</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%B7%B2%E7%9F%A5n-r%E6%B1%82p-q"><span class="nav-number">2.12.</span> <span class="nav-text">已知n,r求p,q</span></a></li></ol></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="安小琪"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">安小琪</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">101</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/npfs06" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;npfs06" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:npfs066@gmail.com" title="E-Mail → mailto:npfs066@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://hyluz.cn/" title="https:&#x2F;&#x2F;hyluz.cn&#x2F;" rel="noopener" target="_blank">Luz</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://0clickjacking0.github.io/" title="https:&#x2F;&#x2F;0clickjacking0.github.io&#x2F;" rel="noopener" target="_blank">xianyu123</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://jiang-niao.github.io/" title="https:&#x2F;&#x2F;jiang-niao.github.io&#x2F;" rel="noopener" target="_blank">JiangNiao</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://xiaolong22333.top/" title="https:&#x2F;&#x2F;xiaolong22333.top&#x2F;" rel="noopener" target="_blank">xiaolong</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+
+
+<!--
+ <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+-->
+
+
+  <span class="author" itemprop="copyrightHolder">安小琪</span>
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">浙ICP备2020030100号 </a>
+  </div>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'nhITwFwMLqOi81E1nOPXx9Iw-MdYXbMMI',
+      appKey     : 'F9l5INUqgwxvbJOfC1X7OMnr',
+      placeholder: "欢迎在这里留言！我看到一定会及时回复的噢 （PS：回复信息会自动发送到你所填写的邮箱噢）",
+      avatar     : '',
+      meta       : guest,
+      pageSize   : '6' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

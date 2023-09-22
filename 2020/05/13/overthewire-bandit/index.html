@@ -1,0 +1,629 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"npfs06.top","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="https:&#x2F;&#x2F;overthewire.org&#x2F;wargames&#x2F; The wargames offered by the OverTheWire community can help you to learn and practice security concepts in the form of fun-filled games.">
+<meta property="og:type" content="article">
+<meta property="og:title" content="overthewire(bandit)">
+<meta property="og:url" content="https://npfs06.top/2020/05/13/overthewire-bandit/index.html">
+<meta property="og:site_name" content="安小琪&#39;s blog">
+<meta property="og:description" content="https:&#x2F;&#x2F;overthewire.org&#x2F;wargames&#x2F; The wargames offered by the OverTheWire community can help you to learn and practice security concepts in the form of fun-filled games.">
+<meta property="og:locale" content="en_US">
+<meta property="article:published_time" content="2020-05-13T07:22:33.000Z">
+<meta property="article:modified_time" content="2020-05-13T07:22:33.000Z">
+<meta property="article:author" content="安小琪">
+<meta name="twitter:card" content="summary">
+
+<link rel="canonical" href="https://npfs06.top/2020/05/13/overthewire-bandit/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>overthewire(bandit) | 安小琪's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">安小琪's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">少年有梦，不应止于心动</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://npfs06.top/2020/05/13/overthewire-bandit/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="安小琪">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="安小琪's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          overthewire(bandit)
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2020-05-13 15:22:33" itemprop="dateCreated datePublished" datetime="2020-05-13T15:22:33+08:00">2020-05-13</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/Write-up/" itemprop="url" rel="index"><span itemprop="name">Write up</span></a>
+                </span>
+                  , 
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/linux/" itemprop="url" rel="index"><span itemprop="name">linux</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2020/05/13/overthewire-bandit/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2020/05/13/overthewire-bandit/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p><a target="_blank" rel="noopener" href="https://overthewire.org/wargames/">https://overthewire.org/wargames/</a></p>
+<p>The wargames offered by the OverTheWire community can help you to learn and practice security concepts in the form of fun-filled games.<a id="more"></a></p>
+<h3 id="level-0"><a href="#level-0" class="headerlink" title="level 0"></a>level 0</h3><p>xshell 连接</p>
+<blockquote>
+<p>主机 : bandit.labs.overthewire.org<br>Port: 2220</p>
+</blockquote>
+<h3 id="level-0-gt-level-1"><a href="#level-0-gt-level-1" class="headerlink" title="level 0 -&gt; level 1"></a>level 0 -&gt; level 1</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">bandit0@bandit:~$ ls</span><br><span class="line">readme</span><br><span class="line">bandit0@bandit:~$ cat readme</span><br><span class="line">boJ9jbbUNNfktd78OOpsqOltutMc3MY1</span><br></pre></td></tr></table></figure>
+<p>下一关用户名 bandit1 密码 boJ9jbbUNNfktd78OOpsqOltutMc3MY1</p>
+<h3 id="level-1-gt-level-2"><a href="#level-1-gt-level-2" class="headerlink" title="level 1 -&gt; level 2"></a>level 1 -&gt; level 2</h3><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">bandit1<span class="variable">@bandit</span><span class="symbol">:~</span><span class="variable">$ </span>ls</span><br><span class="line">-</span><br><span class="line">bandit1<span class="variable">@bandit</span><span class="symbol">:~</span><span class="variable">$ </span>pwd</span><br><span class="line">/home/bandit1</span><br><span class="line">bandit1<span class="variable">@bandit</span><span class="symbol">:~</span><span class="variable">$ </span>cat /home/bandit1/- </span><br><span class="line">CV1DtqXWVFXTvM2F0k09SHz0YwRINYA9</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>利用绝对路径进行读取</p>
+</blockquote>
+<h3 id="level-2-gt-level-3"><a href="#level-2-gt-level-3" class="headerlink" title="level 2 -&gt; level 3"></a>level 2 -&gt; level 3</h3><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bandit2@bandit:~$ cat spaces\ <span class="keyword">in</span>\ this\ filename</span><br><span class="line">UmHadQclWmgdLOKQ3YNgjWxGoRMb5luK</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p> 利用<code>\</code>进行转义空格</p>
+</blockquote>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">bandit2@bandit:~$ cat <span class="string">&quot;spaces in this filename&quot;</span></span><br><span class="line">UmHadQclWmgdLOKQ3YNgjWxGoRMb5luK</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p> 利用双引号进行读取</p>
+</blockquote>
+<h3 id="level-3-gt-level-4"><a href="#level-3-gt-level-4" class="headerlink" title="level 3 -&gt; level 4"></a>level 3 -&gt; level 4</h3><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">bandit3<span class="variable">@bandit</span><span class="symbol">:~</span><span class="variable">$ </span>ls</span><br><span class="line">inhere</span><br><span class="line">bandit3<span class="variable">@bandit</span><span class="symbol">:~</span><span class="variable">$ </span>cd inhere </span><br><span class="line">bandit3<span class="variable">@bandit</span><span class="symbol">:~/inhere</span><span class="variable">$ </span>ls</span><br><span class="line">bandit3<span class="variable">@bandit</span><span class="symbol">:~/inhere</span><span class="variable">$ </span>ls -a</span><br><span class="line">.  ..   .hidden </span><br><span class="line">bandit3<span class="variable">@bandit</span><span class="symbol">:~/inhere</span><span class="variable">$ </span>cat .hidden</span><br><span class="line">pIwrPrtPN36QITSp3EQaw936yaFoFgAB</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>隐藏文件读取</p>
+</blockquote>
+<h3 id="level-4-gt-level-5"><a href="#level-4-gt-level-5" class="headerlink" title="level 4 -&gt; level 5"></a>level 4 -&gt; level 5</h3><figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line">bandit4<span class="variable">@bandit</span><span class="symbol">:~</span><span class="variable">$ </span>ls</span><br><span class="line">inhere</span><br><span class="line">bandit4<span class="variable">@bandit</span><span class="symbol">:~</span><span class="variable">$ </span>cd inhere/</span><br><span class="line">bandit4<span class="variable">@bandit</span><span class="symbol">:~/inhere</span><span class="variable">$ </span>ls -a</span><br><span class="line">.   -file00  -file02  -file04  -file06  -file08</span><br><span class="line">..  -file01  -file03  -file05  -file07  -file09</span><br><span class="line">bandit4<span class="variable">@bandit</span><span class="symbol">:~/inhere</span><span class="variable">$ </span>pwd</span><br><span class="line">/home/bandit4/inhere</span><br><span class="line">bandit4<span class="variable">@bandit</span><span class="symbol">:~/inhere</span><span class="variable">$ </span>file /home/bandit4/inhere/*</span><br><span class="line">./-<span class="symbol">file00:</span> data</span><br><span class="line">./-<span class="symbol">file01:</span> data</span><br><span class="line">./-<span class="symbol">file02:</span> data</span><br><span class="line">./-<span class="symbol">file03:</span> data</span><br><span class="line">./-<span class="symbol">file04:</span> data</span><br><span class="line">./-<span class="symbol">file05:</span> data</span><br><span class="line">./-<span class="symbol">file06:</span> data</span><br><span class="line">./-<span class="symbol">file07:</span> ASCII text</span><br><span class="line">./-<span class="symbol">file08:</span> data</span><br><span class="line">./-<span class="symbol">file09:</span> data</span><br><span class="line">bandit4<span class="variable">@bandit</span><span class="symbol">:~/inhere</span><span class="variable">$ </span>cat ./-file07</span><br><span class="line">koReBOKuIDDepwhWk7jZC0RTdopnAYKh</span><br><span class="line">bandit4<span class="variable">@bandit</span><span class="symbol">:~/inhere</span>$</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Linux file命令用于辨识文件类型。<br>通过file指令，我们得以辨识该文件的类型。</p>
+</blockquote>
+<h3 id="level-5-gt-level-6"><a href="#level-5-gt-level-6" class="headerlink" title="level 5 -&gt; level 6"></a>level 5 -&gt; level 6</h3><ul>
+<li>human-readable</li>
+<li>1033 bytes in size</li>
+<li>not executable</li>
+</ul>
+<figure class="highlight elixir"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br></pre></td><td class="code"><pre><span class="line">bandit5<span class="variable">@bandit</span><span class="symbol">:~</span><span class="variable">$ </span>ls</span><br><span class="line">inhere</span><br><span class="line">bandit5<span class="variable">@bandit</span><span class="symbol">:~</span><span class="variable">$ </span>cd inhere/</span><br><span class="line">bandit5<span class="variable">@bandit</span><span class="symbol">:~/inhere</span><span class="variable">$ </span>ls -a</span><br><span class="line">.            maybehere02  maybehere06  maybehere10  maybehere14  maybehere18</span><br><span class="line">..           maybehere03  maybehere07  maybehere11  maybehere15  maybehere19</span><br><span class="line">            maybehere00  maybehere04  maybehere08  maybehere12  maybehere16</span><br><span class="line">            maybehere01  maybehere05  maybehere09  maybehere13  maybehere17</span><br><span class="line">bandit5<span class="variable">@bandit</span><span class="symbol">:~/inhere</span><span class="variable">$ </span>find . -size <span class="number">1033</span>c</span><br><span class="line">./maybehere07/.file2</span><br><span class="line">bandit5<span class="variable">@bandit</span><span class="symbol">:~/inhere</span><span class="variable">$ </span>cat ./maybehere07/.file2</span><br><span class="line">DXjZPULLxYr17uwoI01bNLQbtFemEgo7</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>find命令用来在指定目录下查找文件。任何位于参数之前的字符串都将被视为欲查找的目录名。如果使用该命令时，不设置任何参数，则find命令将在当前目录下查找子目录与文件。并且将查找到的子目录和文件全部进行显示。</p>
+<p>常用参数:</p>
+<p>-size n : 文件大小 是 n 单位，b 代表 512 位元组的区块，c 表示字元数，k 表示 kilo bytes，w 是二个位元组。<br>-type c : 文件类型是 c 的文件。<br>-name 文件名；<br>-group 文件所属组；<br>-perm权限(like 770)；</p>
+</blockquote>
+<h3 id="level-5-gt-level-6-1"><a href="#level-5-gt-level-6-1" class="headerlink" title="level 5 -&gt; level 6"></a>level 5 -&gt; level 6</h3><ul>
+<li>owned by user bandit7</li>
+<li>owned by group bandit6</li>
+<li>33 bytes in size</li>
+</ul>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">bandit6@bandit:~$ <span class="keyword">find</span> <span class="regexp">/ -size 33c -user bandit7 -group bandit6 2&gt;/</span>dev/<span class="keyword">null</span></span><br><span class="line"><span class="regexp">/var/</span>lib<span class="regexp">/dpkg/i</span>nfo/bandit7.password</span><br><span class="line">bandit6@bandit:~$ cat <span class="regexp">/var/</span>lib<span class="regexp">/dpkg/i</span>nfo/bandit7.password</span><br><span class="line">HKBPTKQnIay4Fw76bEy8PVxKEDQRKTzs</span><br></pre></td></tr></table></figure>
+<blockquote>
+<p>Linux系统预留可三个文件描述符：0、1和2，他们的意义如下所示：<br>0——标准输入（stdin）<br>1——标准输出（stdout）<br>2——标准错误（stderr）</p>
+<p>重定向的符号有两个：&gt;或&gt;&gt;，两者的区别是：前者会先清空文件，然后再写入内容，后者会将重定向的内容追加到现有文件的尾部。</p>
+<p>/dev/null是一个特殊的设备文件，这个文件接收到任何数据都会被丢弃。因此，null这个设备通常也被称为位桶（bit bucket）或黑洞。</p>
+<p>2&gt;/dev/null的意思就是将标准错误stderr删掉</p>
+</blockquote>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>安小琪
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="https://npfs06.top/2020/05/13/overthewire-bandit/" title="overthewire(bandit)">https://npfs06.top/2020/05/13/overthewire-bandit/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2020/05/05/XXE%E6%B3%A8%E5%85%A5%E6%94%BB%E5%87%BB/" rel="prev" title="XXE注入攻击">
+      <i class="fa fa-chevron-left"></i> XXE注入攻击
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2020/05/15/day1-misc-%E7%9B%B8%E5%85%B3%E5%B7%A5%E5%85%B7%E5%91%BD%E4%BB%A4/" rel="next" title="day1 misc(相关工具命令)">
+      day1 misc(相关工具命令) <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-3"><a class="nav-link" href="#level-0"><span class="nav-number">1.</span> <span class="nav-text">level 0</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#level-0-gt-level-1"><span class="nav-number">2.</span> <span class="nav-text">level 0 -&gt; level 1</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#level-1-gt-level-2"><span class="nav-number">3.</span> <span class="nav-text">level 1 -&gt; level 2</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#level-2-gt-level-3"><span class="nav-number">4.</span> <span class="nav-text">level 2 -&gt; level 3</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#level-3-gt-level-4"><span class="nav-number">5.</span> <span class="nav-text">level 3 -&gt; level 4</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#level-4-gt-level-5"><span class="nav-number">6.</span> <span class="nav-text">level 4 -&gt; level 5</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#level-5-gt-level-6"><span class="nav-number">7.</span> <span class="nav-text">level 5 -&gt; level 6</span></a></li><li class="nav-item nav-level-3"><a class="nav-link" href="#level-5-gt-level-6-1"><span class="nav-number">8.</span> <span class="nav-text">level 5 -&gt; level 6</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="安小琪"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">安小琪</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">101</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/npfs06" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;npfs06" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:npfs066@gmail.com" title="E-Mail → mailto:npfs066@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://hyluz.cn/" title="https:&#x2F;&#x2F;hyluz.cn&#x2F;" rel="noopener" target="_blank">Luz</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://0clickjacking0.github.io/" title="https:&#x2F;&#x2F;0clickjacking0.github.io&#x2F;" rel="noopener" target="_blank">xianyu123</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://jiang-niao.github.io/" title="https:&#x2F;&#x2F;jiang-niao.github.io&#x2F;" rel="noopener" target="_blank">JiangNiao</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://xiaolong22333.top/" title="https:&#x2F;&#x2F;xiaolong22333.top&#x2F;" rel="noopener" target="_blank">xiaolong</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+
+
+<!--
+ <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+-->
+
+
+  <span class="author" itemprop="copyrightHolder">安小琪</span>
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">浙ICP备2020030100号 </a>
+  </div>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'nhITwFwMLqOi81E1nOPXx9Iw-MdYXbMMI',
+      appKey     : 'F9l5INUqgwxvbJOfC1X7OMnr',
+      placeholder: "欢迎在这里留言！我看到一定会及时回复的噢 （PS：回复信息会自动发送到你所填写的邮箱噢）",
+      avatar     : '',
+      meta       : guest,
+      pageSize   : '6' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

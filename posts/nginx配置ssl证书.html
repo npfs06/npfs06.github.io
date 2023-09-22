@@ -1,0 +1,595 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"npfs06.top","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="本来想着将博客从github迁移到云服务器之后，访问速度能够快一点的，但是发现实际访问还是很慢。这是因为google浏览器会强制转换为https协议，意思就是说需要配置ssl证书啦">
+<meta property="og:type" content="website">
+<meta property="og:title" content="nginx配置ssl证书">
+<meta property="og:url" content="https://npfs06.top/posts/nginx%E9%85%8D%E7%BD%AEssl%E8%AF%81%E4%B9%A6.html">
+<meta property="og:site_name" content="安小琪&#39;s blog">
+<meta property="og:description" content="本来想着将博客从github迁移到云服务器之后，访问速度能够快一点的，但是发现实际访问还是很慢。这是因为google浏览器会强制转换为https协议，意思就是说需要配置ssl证书啦">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://img.npfs06.top/20210827212755.png">
+<meta property="og:image" content="http://img.npfs06.top/20210827212816.png">
+<meta property="og:image" content="http://img.npfs06.top/20210827213151.png">
+<meta property="og:image" content="http://img.npfs06.top/20210827213339.png">
+<meta property="og:image" content="http://img.npfs06.top/20210827213457.png">
+<meta property="og:image" content="http://img.npfs06.top/20210827213527.png">
+<meta property="og:image" content="http://img.npfs06.top/20210827213652.png">
+<meta property="og:image" content="http://img.npfs06.top/20210827213726.png">
+<meta property="og:image" content="http://img.npfs06.top/20210827214319.png">
+<meta property="og:image" content="http://img.npfs06.top/20210827213920.png">
+<meta property="og:image" content="http://img.npfs06.top/20210827214639.png">
+<meta property="article:published_time" content="2021-08-27T13:20:23.000Z">
+<meta property="article:modified_time" content="2021-08-27T13:20:23.000Z">
+<meta property="article:author" content="安小琪">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://img.npfs06.top/20210827212755.png">
+
+<link rel="canonical" href="https://npfs06.top/posts/nginx%E9%85%8D%E7%BD%AEssl%E8%AF%81%E4%B9%A6">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : false,
+    lang   : 'en'
+  };
+</script>
+
+  <title>nginx配置ssl证书 | 安小琪's blog
+</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">安小琪's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">少年有梦，不应止于心动</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+  
+  
+
+          <div class="content page posts-expand">
+            
+
+    
+    
+    
+    <div class="post-block" lang="en">
+      <header class="post-header">
+
+<h1 class="post-title" itemprop="name headline">nginx配置ssl证书
+</h1>
+
+<div class="post-meta">
+  
+
+</div>
+
+</header>
+
+      
+      
+      
+      <div class="post-body">
+          <p>本来想着将博客从github迁移到云服务器之后，访问速度能够快一点的，但是发现实际访问还是很慢。这是因为google浏览器会强制转换为https协议，意思就是说需要配置ssl证书啦<a id="more"></a></p>
+<h1 id="免费ssl证书获取"><a href="#免费ssl证书获取" class="headerlink" title="免费ssl证书获取"></a>免费ssl证书获取</h1><img src="http://img.npfs06.top/20210827212755.png" style="zoom:80%;">
+
+
+
+<p>在这里可以获得免费的ssl证书，使用期限一年</p>
+<img src="http://img.npfs06.top/20210827212816.png" style="zoom:80%;">
+
+
+
+<p>点击【立即购买】即可免费获得20张证书</p>
+<img src="http://img.npfs06.top/20210827213151.png" style="zoom:80%;">
+
+
+
+<p>购买之后，点击【创建证书】，就会生成下面框中的内容</p>
+<img src="http://img.npfs06.top/20210827213339.png" style="zoom:80%;">
+
+
+
+<p>点击【证书申请】</p>
+<img src="http://img.npfs06.top/20210827213457.png" style="zoom:80%;">
+
+
+
+<p>点击【下一步】。这里会自动添加DNS解析，我们直接点【验证】，提交即可</p>
+<img src="http://img.npfs06.top/20210827213527.png" style="zoom:80%;">
+
+
+
+<p>过了一会就会发现申请通过，就像这样</p>
+<img src="http://img.npfs06.top/20210827213652.png" style="zoom:80%;">
+
+
+
+<p>我们点击下载，选择nginx</p>
+<img src="http://img.npfs06.top/20210827213726.png" style="zoom:80%;">
+
+
+
+
+
+
+
+<h1 id="Nginx上的配置"><a href="#Nginx上的配置" class="headerlink" title="Nginx上的配置"></a>Nginx上的配置</h1><p>nginx的相关配置一般都在<code>/etc/nginx/</code>目录，因为nginx版本的不同，该目录中的内容一般都会不同，该目录在我机子上的内容如下所示：</p>
+<img src="http://img.npfs06.top/20210827214319.png" style="zoom:80%;">
+
+<p><code>nginx.conf</code>是最最最重要的配置文件，其中<code>nginx.conf</code>文件又会把<code>conf.d/</code>目录中<code>.conf</code>文件内容和<code>sites-enabled/</code>目录中的文件内容直接include进来，include语句主要是这几句：</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">include</span> <span class="regexp">/etc/</span>nginx<span class="regexp">/conf.d/</span>*.conf;</span><br><span class="line"><span class="keyword">include</span> <span class="regexp">/etc/</span>nginx<span class="regexp">/sites-enabled/</span>*;</span><br></pre></td></tr></table></figure>
+
+
+<p>下面介绍一下我机子上<code>nginx.conf</code>文件的内容，主要是一些基础配置。我们可以看到最后两行include的内容，就是上面的内容。<strong>个人建议把一些站点的配置都放到<code>./sites-enabled/</code>或者<code>./conf.d</code>目录中，方便日后管理</strong>（增删只有删除相应文件即可）。</p>
+<p>接下来开始正式配置。为了方便日后SSL证书的管理，我们在<code>etc/nginx</code>目录中创建一个<code>cert</code>目录，然后把下载下来的证书拷贝到<code>/etc/nginx/cert</code>目录中。为了方便，改了下证书名字</p>
+<img src="http://img.npfs06.top/20210827213920.png" style="zoom:80%;">
+
+
+
+<p>之后进入<code>./sites-enabled/</code>目录，创建一个文件为<code>www.npfs06.top</code>（取名为这个，是为了方便管理）</p>
+<img src="http://img.npfs06.top/20210827214639.png" style="zoom:80%;">
+
+
+
+<p>之后把下面的内容复制粘贴到 <code>www.npfs06.top</code>这个文件中</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">443</span> ssl;</span><br><span class="line">    <span class="comment">#配置HTTPS的默认访问端口为443。</span></span><br><span class="line">    <span class="comment">#如果未在此处配置HTTPS的默认访问端口，可能会造成Nginx无法启动。</span></span><br><span class="line">    <span class="comment">#如果您使用Nginx 1.15.0及以上版本，请使用listen 443 ssl代替listen 443和ssl on。</span></span><br><span class="line">    <span class="attribute">server_name</span> www.npfs06.top; <span class="comment">#需要将yourdomain.com替换成证书绑定的域名。</span></span><br><span class="line">    <span class="attribute">root</span> html;</span><br><span class="line">    <span class="attribute">index</span> index.html index.htm;</span><br><span class="line">    <span class="attribute">ssl_certificate</span> cert/www.npfs06.top.pem;  <span class="comment">#需要将cert-file-name.pem替换成已上传的证书文件的名称。</span></span><br><span class="line">    <span class="attribute">ssl_certificate_key</span> cert/www.npfs06.top.key; <span class="comment">#需要将cert-file-name.key替换成已上传的证书密钥文件的名称。</span></span><br><span class="line">    <span class="attribute">ssl_session_timeout</span> <span class="number">5m</span>;</span><br><span class="line">    <span class="attribute">ssl_ciphers</span> ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;</span><br><span class="line">    <span class="comment">#表示使用的加密套件的类型。</span></span><br><span class="line">    <span class="attribute">ssl_protocols</span> TLSv1 TLSv1.<span class="number">1</span> TLSv1.<span class="number">2</span>; <span class="comment">#表示使用的TLS协议的类型。</span></span><br><span class="line">    <span class="attribute">ssl_prefer_server_ciphers</span> <span class="literal">on</span>;</span><br><span class="line">    <span class="attribute">location</span> / &#123;</span><br><span class="line">        <span class="attribute">root</span> /var/www/html/npfs06.github.io;  <span class="comment">#站点目录。</span></span><br><span class="line">        <span class="attribute">index</span> index.html index.htm;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span> www.npfs06.top;</span><br><span class="line">    <span class="attribute">rewrite</span><span class="regexp"> ^(.*)$</span> https://www.npfs06.top;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+
+<p>同理配置<code>https://npfs06.top</code>,只需要在文件中增加一下内容</p>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">443</span> ssl;</span><br><span class="line">    <span class="comment">#配置HTTPS的默认访问端口为443。</span></span><br><span class="line">    <span class="comment">#如果未在此处配置HTTPS的默认访问端口，可能会造成Nginx无法启动。</span></span><br><span class="line">    <span class="comment">#如果您使用Nginx 1.15.0及以上版本，请使用listen 443 ssl代替listen 443和ssl on。</span></span><br><span class="line">    <span class="attribute">server_name</span> npfs06.top; <span class="comment">#需要将yourdomain.com替换成证书绑定的域名。</span></span><br><span class="line">    <span class="attribute">root</span> html;</span><br><span class="line">    <span class="attribute">index</span> index.html index.htm;</span><br><span class="line">    <span class="attribute">ssl_certificate</span> cert/www.npfs06.top.pem;  <span class="comment">#需要将cert-file-name.pem替换成已上传的证书文件的名称。</span></span><br><span class="line">    <span class="attribute">ssl_certificate_key</span> cert/www.npfs06.top.key; <span class="comment">#需要将cert-file-name.key替换成已上传的证书密钥文件的名称。</span></span><br><span class="line">    <span class="attribute">ssl_session_timeout</span> <span class="number">5m</span>;</span><br><span class="line">    <span class="attribute">ssl_ciphers</span> ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;</span><br><span class="line">    <span class="comment">#表示使用的加密套件的类型。</span></span><br><span class="line">    <span class="attribute">ssl_protocols</span> TLSv1 TLSv1.<span class="number">1</span> TLSv1.<span class="number">2</span>; <span class="comment">#表示使用的TLS协议的类型。</span></span><br><span class="line">    <span class="attribute">ssl_prefer_server_ciphers</span> <span class="literal">on</span>;</span><br><span class="line">    <span class="attribute">location</span> / &#123;</span><br><span class="line">        <span class="attribute">root</span> /var/www/html/npfs06.github.io;  <span class="comment">#站点目录。</span></span><br><span class="line">        <span class="attribute">index</span> index.html index.htm;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span> npfs06.top;</span><br><span class="line">    <span class="attribute">rewrite</span><span class="regexp"> ^(.*)$</span> https://npfs06.top;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+
+
+<p>需要注意一下几点：</p>
+<ul>
+<li><ul>
+<li><code>server_name</code>需要配置为你自己的域名；</li>
+<li><code>root /var/www/html/npfs06.github.io;</code> 这个是你网站的所在的目录；</li>
+<li><code>ssl_certificate cert/www.npfs06.top.pem;</code>pem文件的路径；</li>
+<li><code>ssl_certificate_key cert/www.npfs06.top.key;</code>ket文件的路径；</li>
+</ul>
+</li>
+</ul>
+<h2 id="http的重定向"><a href="#http的重定向" class="headerlink" title="http的重定向"></a>http的重定向</h2><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span> npfs06.top;</span><br><span class="line">    <span class="attribute">rewrite</span><span class="regexp"> ^(.*)$</span> https://npfs06.top;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>上面代码中的这样部分是为了在使用http访问站点时，能自动跳转到https访问</p>
+<p>nginx配置文件配置完成之后需要重启nginx</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">service nginx restart</span></span><br></pre></td></tr></table></figure>
+
+
+
+
+<h1 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h1><p>在重启配置nginx的时候，可以会遇到报错，这是因为在某些细节山有错误，不如说忘记加分号</p>
+<p>我们可以通过如下命令查看详细的报错信息</p>
+<figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">nginx -t</span></span><br></pre></td></tr></table></figure>
+
+      </div>
+      
+      
+      
+    </div>
+    
+
+    
+    
+    
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%85%8D%E8%B4%B9ssl%E8%AF%81%E4%B9%A6%E8%8E%B7%E5%8F%96"><span class="nav-number">1.</span> <span class="nav-text">免费ssl证书获取</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#Nginx%E4%B8%8A%E7%9A%84%E9%85%8D%E7%BD%AE"><span class="nav-number">2.</span> <span class="nav-text">Nginx上的配置</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#http%E7%9A%84%E9%87%8D%E5%AE%9A%E5%90%91"><span class="nav-number">2.1.</span> <span class="nav-text">http的重定向</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E8%A1%A5%E5%85%85"><span class="nav-number">3.</span> <span class="nav-text">补充</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="安小琪"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">安小琪</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">101</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/npfs06" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;npfs06" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:npfs066@gmail.com" title="E-Mail → mailto:npfs066@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://hyluz.cn/" title="https:&#x2F;&#x2F;hyluz.cn&#x2F;" rel="noopener" target="_blank">Luz</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://0clickjacking0.github.io/" title="https:&#x2F;&#x2F;0clickjacking0.github.io&#x2F;" rel="noopener" target="_blank">xianyu123</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://jiang-niao.github.io/" title="https:&#x2F;&#x2F;jiang-niao.github.io&#x2F;" rel="noopener" target="_blank">JiangNiao</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://xiaolong22333.top/" title="https:&#x2F;&#x2F;xiaolong22333.top&#x2F;" rel="noopener" target="_blank">xiaolong</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+
+
+<!--
+ <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+-->
+
+
+  <span class="author" itemprop="copyrightHolder">安小琪</span>
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">浙ICP备2020030100号 </a>
+  </div>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'nhITwFwMLqOi81E1nOPXx9Iw-MdYXbMMI',
+      appKey     : 'F9l5INUqgwxvbJOfC1X7OMnr',
+      placeholder: "欢迎在这里留言！我看到一定会及时回复的噢 （PS：回复信息会自动发送到你所填写的邮箱噢）",
+      avatar     : '',
+      meta       : guest,
+      pageSize   : '6' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

@@ -1,0 +1,948 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"npfs06.top","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="脚本开发之网络通信开发基础">
+<meta property="og:type" content="article">
+<meta property="og:title" content="网络通信开发基础">
+<meta property="og:url" content="https://npfs06.top/2021/09/26/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1%E5%BC%80%E5%8F%91%E5%9F%BA%E7%A1%80/index.html">
+<meta property="og:site_name" content="安小琪&#39;s blog">
+<meta property="og:description" content="脚本开发之网络通信开发基础">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="http://img.npfs06.top/20210925234213.png">
+<meta property="og:image" content="http://img.npfs06.top/20210925234357.png">
+<meta property="og:image" content="http://img.npfs06.top/20210926000228.png">
+<meta property="og:image" content="http://img.npfs06.top/20210926000314.png">
+<meta property="og:image" content="http://img.npfs06.top/20210926000502.png">
+<meta property="og:image" content="http://img.npfs06.top/20210926000723.png">
+<meta property="og:image" content="http://img.npfs06.top/20210926103601.png">
+<meta property="og:image" content="http://img.npfs06.top/20210926110944.png">
+<meta property="og:image" content="http://img.npfs06.top/20210926110253.png">
+<meta property="og:image" content="http://img.npfs06.top/20210926110311.png">
+<meta property="og:image" content="http://img.npfs06.top/20210926111505.png">
+<meta property="og:image" content="http://img.npfs06.top/20210926111717.png">
+<meta property="og:image" content="http://img.npfs06.top/20210926113213.png">
+<meta property="og:image" content="http://img.npfs06.top/20210926113247.png">
+<meta property="og:image" content="http://img.npfs06.top/20210926113308.png">
+<meta property="article:published_time" content="2021-09-26T12:29:45.000Z">
+<meta property="article:modified_time" content="2021-09-26T12:29:45.000Z">
+<meta property="article:author" content="安小琪">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="http://img.npfs06.top/20210925234213.png">
+
+<link rel="canonical" href="https://npfs06.top/2021/09/26/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1%E5%BC%80%E5%8F%91%E5%9F%BA%E7%A1%80/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>网络通信开发基础 | 安小琪's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">安小琪's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">少年有梦，不应止于心动</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://npfs06.top/2021/09/26/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1%E5%BC%80%E5%8F%91%E5%9F%BA%E7%A1%80/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="安小琪">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="安小琪's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          网络通信开发基础
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2021-09-26 20:29:45" itemprop="dateCreated datePublished" datetime="2021-09-26T20:29:45+08:00">2021-09-26</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/%E8%84%9A%E6%9C%AC%E5%BC%80%E5%8F%91/" itemprop="url" rel="index"><span itemprop="name">脚本开发</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2021/09/26/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1%E5%BC%80%E5%8F%91%E5%9F%BA%E7%A1%80/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2021/09/26/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1%E5%BC%80%E5%8F%91%E5%9F%BA%E7%A1%80/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>脚本开发之网络通信开发基础<a id="more"></a></p>
+<h1 id="任务标题：-网络通信开发基础"><a href="#任务标题：-网络通信开发基础" class="headerlink" title="任务标题： 网络通信开发基础"></a>任务标题： 网络通信开发基础</h1><h2 id="任务目标："><a href="#任务目标：" class="headerlink" title="任务目标："></a>任务目标：</h2><p>建立 socket 连接通道，可以相互之间传输数据</p>
+<h2 id="推荐语言："><a href="#推荐语言：" class="headerlink" title="推荐语言："></a>推荐语言：</h2><p>python、c、c#、powershell</p>
+<h2 id="任务描述："><a href="#任务描述：" class="headerlink" title="任务描述："></a>任务描述：</h2><p>在实际的渗透中，协议是建立据点网络通道的基础，可以通过网络通道对内部的服务器进行控制</p>
+<p>本关主要锻炼大家对于协议的理解和对网络通道建立的使用方法，有了这个基础可以实现一些比如远控木马、端口扫描、服务爆破方面的工具。</p>
+<h2 id="报告要求"><a href="#报告要求" class="headerlink" title="报告要求"></a>报告要求</h2><p>1、理解TCP、UDP协议的原理及特点</p>
+<p>2、分别使用 TCP、UDP 协议实现数据通讯</p>
+<h2 id="扩展任务"><a href="#扩展任务" class="headerlink" title="扩展任务"></a>扩展任务</h2><p>客户端发送命令，服务端接收命令并执行</p>
+<hr>
+<p>​        对TCP/IP、UDP、Socket编程这些词你不会很陌生吧？随着网络技术的发展，这些词充斥着我们的耳朵。我们深谙信息交流的价值，那网络中进程之间如何通信，如我们每天打开浏览器浏览网页时，浏览器的进程怎么与web服务器通信的？当你用QQ聊天时，QQ进程怎么与服务器或你好友所在的QQ进程通信？这些都得靠socket？那什么是socket？本文将围绕以下几方面开展</p>
+<ol>
+<li>什么是TCP/IP、UDP？</li>
+<li>Socket在哪里呢？</li>
+<li>Socket是什么呢？</li>
+<li>如何使用它们？</li>
+</ol>
+<h1 id="网络中进程之间如何通信？"><a href="#网络中进程之间如何通信？" class="headerlink" title="网络中进程之间如何通信？"></a>网络中进程之间如何通信？</h1><p>本地的进程间通信（IPC）有很多种方式，但可以总结为下面4类：</p>
+<ul>
+<li>消息传递（管道、FIFO、消息队列）</li>
+<li>同步（互斥量、条件变量、读写锁、文件和写记录锁、信号量）</li>
+<li>共享内存（匿名的和具名的）</li>
+<li>远程过程调用（Solaris门和Sun RPC）</li>
+</ul>
+<p>网络中进程之间如何通信？首要解决的问题是如何唯一标识一个进程，否则通信无从谈起！在本地可以通过进程PID来唯一标识一个进程，但是在网络中这是行不通的。其实TCP/IP协议族已经帮我们解决了这个问题，网络层的“<strong>ip地址</strong>”可以唯一标识网络中的主机，而传输层的“<strong>协议+端口</strong>”可以唯一标识主机中的应用程序（进程）。这样利用三元组（ip地址，协议，端口）就可以标识网络的进程了，网络中的进程通信就可以利用这个标志与其它进程进行交互。</p>
+<p>使用TCP/IP协议的应用程序通常采用应用编程接口：UNIX BSD的套接字（socket）和UNIX System V的TLI（已经被淘汰），来实现网络进程之间的通信。就目前而言，几乎所有的应用程序都是采用socket，而现在又是网络时代，网络中进程通信是无处不在，这就是我为什么说“一切皆socket”。</p>
+<h1 id="什么是Socket？"><a href="#什么是Socket？" class="headerlink" title="什么是Socket？"></a>什么是Socket？</h1><p>我们先通过一张图，大致的了解一下啊socket的位置</p>
+<img src="http://img.npfs06.top/20210925234213.png" style="zoom:80%;">
+
+<p>​        所谓套接字(Socket)，就是对网络中不同主机上的应用进程之间进行双向通信的端点的抽象。一个套接字就是网络上进程通信的一端，提供了应用层进程利用网络协议交换数据的机制。从所处的地位来讲，套接字上联应用进程，下联网络协议栈，是应用程序通过网络协议进行通信的接口，是应用程序与网络协议根进行交互的接口，它把复杂的TCP/IP协议族隐藏在Socket接口后面，对用户来说，一组简单的接口就是全部，让Socket去组织数据，以符合指定的协议。</p>
+<p>那么，如何去使用socket呢？</p>
+<p>​        前人已经给我们做了好多的事了，网络间的通信也就简单了许多，但毕竟还是有挺多工作要做的。以前听到Socket编程，觉得它是比较高深的编程知识，但是只要弄清Socket编程的工作原理，神秘的面纱也就揭开了。<br>​         举一个生活中的场景。你要打电话给一个朋友，先拨号，朋友听到电话铃声后提起电话，这时你和你的朋友就建立起了连接，就可以讲话了。等交流结束，挂断电话结束此次交谈。  生活中的场景就解释了这工作原理，也许TCP/IP协议族就是诞生于生活中，这也不一定。</p>
+<img src="http://img.npfs06.top/20210925234357.png" style="zoom:80%;">
+
+<p>​        先从服务器端说起。服务器端先初始化Socket，然后与端口绑定(bind)，对端口进行监听(listen)，调用accept阻塞，等待客户端连接。在这时如果有个客户端初始化一个Socket，然后连接服务器(connect)，如果连接成功，这时客户端与服务器端的连接就建立了。客户端发送数据请求，服务器端接收请求并处理请求，然后把回应数据发送给客户端，客户端读取数据，最后关闭连接，一次交互结束。</p>
+<h2 id="创建socket"><a href="#创建socket" class="headerlink" title="创建socket"></a>创建socket</h2><p>这里已python为例，讲解如何创建socket</p>
+<p>在python中，使用socket模块的函数就可以完成，基本格式如下：</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"> </span><br><span class="line">socket.socket(AddressFamily, Type, protocal=<span class="number">0</span>)</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 获取tcp/ip套接字</span></span><br><span class="line">tcpSock = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line"> </span><br><span class="line"><span class="comment"># 获取udp/ip套接字</span></span><br><span class="line">udpSock = socket.socket(socket.AF_INET, socket.SOCK_DGRAM)</span><br><span class="line"> </span><br><span class="line"><span class="comment"># ...这里是使用套接字的功能（省略）...</span></span><br><span class="line"> </span><br><span class="line"><span class="comment"># 不用的时候，关闭套接字</span></span><br><span class="line">s.close()</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="Socket-类型"><a href="#Socket-类型" class="headerlink" title="Socket 类型"></a>Socket 类型</h2><p>套接字格式：</p>
+<p>socket(family,type[,protocal]) 使用给定的地址族、套接字类型、协议编号（默认为0）来创建套接字。</p>
+<table>
+<thead>
+<tr>
+<th>socket类型</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>socket.AF_UNIX</td>
+<td>只能够用于单一的Unix系统进程间通信</td>
+</tr>
+<tr>
+<td>socket.AF_INET</td>
+<td>服务器之间网络通信</td>
+</tr>
+<tr>
+<td>socket.AF_INET6</td>
+<td>IPv6</td>
+</tr>
+<tr>
+<td>socket.SOCK_STREAM</td>
+<td>流式socket , for TCP</td>
+</tr>
+<tr>
+<td>socket.SOCK_DGRAM</td>
+<td>数据报式socket , for UDP</td>
+</tr>
+<tr>
+<td>socket.SOCK_RAW</td>
+<td>原始套接字，普通的套接字无法处理ICMP、IGMP等网络报文，而SOCK_RAW可以；其次，SOCK_RAW也可以处理特殊的IPv4报文；此外，利用原始套接字，可以通过IP_HDRINCL套接字选项由用户构造IP头。</td>
+</tr>
+<tr>
+<td>socket.SOCK_SEQPACKET</td>
+<td>可靠的连续数据包服务</td>
+</tr>
+<tr>
+<td>创建TCP Socket：</td>
+<td>s=socket.socket(socket.AF_INET,socket.SOCK_STREAM)</td>
+</tr>
+<tr>
+<td>创建UDP Socket：</td>
+<td>s=socket.socket(socket.AF_INET,socket.SOCK_DGRAM)</td>
+</tr>
+</tbody></table>
+<h2 id="Socket-函数"><a href="#Socket-函数" class="headerlink" title="Socket 函数"></a>Socket 函数</h2><p>注意点:</p>
+<p>1）TCP发送数据时，已建立好TCP连接，所以不需要指定地址。UDP是面向无连接的，每次发送要指定是发给谁。</p>
+<p>2）服务端与客户端不能直接发送列表，元组，字典。需要字符串化repr(data)。</p>
+<table>
+<thead>
+<tr>
+<th>socket函数</th>
+<th>描述</th>
+</tr>
+</thead>
+<tbody><tr>
+<td>服务端socket函数</td>
+<td></td>
+</tr>
+<tr>
+<td>s.bind(address)</td>
+<td>将套接字绑定到地址, 在AF_INET下,以元组（host,port）的形式表示地址.</td>
+</tr>
+<tr>
+<td>s.listen(backlog)</td>
+<td>开始监听TCP传入连接。backlog指定在拒绝连接之前，操作系统可以挂起的最大连接数量。该值至少为1，大部分应用程序设为5就可以了。</td>
+</tr>
+<tr>
+<td>s.accept()</td>
+<td>接受TCP连接并返回（conn,address）,其中conn是新的套接字对象，可以用来接收和发送数据。address是连接客户端的地址。</td>
+</tr>
+<tr>
+<td>客户端socket函数</td>
+<td></td>
+</tr>
+<tr>
+<td>s.connect(address)</td>
+<td>连接到address处的套接字。一般address的格式为元组（hostname,port），如果连接出错，返回socket.error错误。</td>
+</tr>
+<tr>
+<td>s.connect_ex(adddress)</td>
+<td>功能与connect(address)相同，但是成功返回0，失败返回errno的值。</td>
+</tr>
+<tr>
+<td>公共socket函数</td>
+<td></td>
+</tr>
+<tr>
+<td>s.recv(bufsize[,flag])</td>
+<td>接受TCP套接字的数据。数据以字符串形式返回，bufsize指定要接收的最大数据量。flag提供有关消息的其他信息，通常可以忽略。</td>
+</tr>
+<tr>
+<td>s.send(string[,flag])</td>
+<td>发送TCP数据。将string中的数据发送到连接的套接字。返回值是要发送的字节数量，该数量可能小于string的字节大小。</td>
+</tr>
+<tr>
+<td>s.sendall(string[,flag])</td>
+<td>完整发送TCP数据。将string中的数据发送到连接的套接字，但在返回之前会尝试发送所有数据。成功返回None，失败则抛出异常。</td>
+</tr>
+<tr>
+<td>s.recvfrom(bufsize[.flag])</td>
+<td>接受UDP套接字的数据。与recv()类似，但返回值是（data,address）。其中data是包含接收数据的字符串，address是发送数据的套接字地址。</td>
+</tr>
+<tr>
+<td>s.sendto(string[,flag],address)</td>
+<td>发送UDP数据。将数据发送到套接字，address是形式为（ipaddr，port）的元组，指定远程地址。返回值是发送的字节数。</td>
+</tr>
+<tr>
+<td>s.close()</td>
+<td>关闭套接字。</td>
+</tr>
+<tr>
+<td>s.getpeername()</td>
+<td>返回连接套接字的远程地址。返回值通常是元组（ipaddr,port）。</td>
+</tr>
+<tr>
+<td>s.getsockname()</td>
+<td>返回套接字自己的地址。通常是一个元组(ipaddr,port)</td>
+</tr>
+<tr>
+<td>s.setsockopt(level,optname,value)</td>
+<td>设置给定套接字选项的值。</td>
+</tr>
+<tr>
+<td>s.getsockopt(level,optname[.buflen])</td>
+<td>返回套接字选项的值。</td>
+</tr>
+<tr>
+<td>s.settimeout(timeout)</td>
+<td>设置套接字操作的超时期，timeout是一个浮点数，单位是秒。值为None表示没有超时期。一般，超时期应该在刚创建套接字时设置，因为它们可能用于连接的操作（如connect()）</td>
+</tr>
+<tr>
+<td>s.gettimeout()</td>
+<td>返回当前超时期的值，单位是秒，如果没有设置超时期，则返回None。</td>
+</tr>
+<tr>
+<td>s.fileno()</td>
+<td>返回套接字的文件描述符。</td>
+</tr>
+<tr>
+<td>s.setblocking(flag)</td>
+<td>如果flag为0，则将套接字设为非阻塞模式，否则将套接字设为阻塞模式（默认值）。非阻塞模式下，如果调用recv()没有发现任何数据，或send()调用无法立即发送数据，那么将引起socket.error异常。</td>
+</tr>
+<tr>
+<td>s.makefile()</td>
+<td>创建一个与该套接字相关连的文件</td>
+</tr>
+</tbody></table>
+<h1 id="TCP的原理及特点"><a href="#TCP的原理及特点" class="headerlink" title="TCP的原理及特点"></a>TCP的原理及特点</h1><p>TCP全称为 “传输控制协议(Transmission Control Protocol”). 从名字就能看出来,TCP协议 要对数据的传输进行一个详细的控制。</p>
+<p>TCP协议特点：面向连接，提供可靠的服务，有流量控制，拥塞控制，无重复、无丢失、无差错，面向字节流(把应用层传下来的报文看成字节流，把字节流组织成大小不等的数据块)，只能是点对点，首部 20 字节，全双工</p>
+<h2 id="tcp首部格式"><a href="#tcp首部格式" class="headerlink" title="tcp首部格式"></a>tcp首部格式</h2><img src="http://img.npfs06.top/20210926000228.png" style="zoom:80%;">
+
+
+
+<ul>
+<li><strong>序号</strong> <strong>：</strong>用于对字节流进行编号，例如序号为 301，表示第一个字节的编号为 301，如果携带的数据长度为 100 字节，那么下一个报文段的序号应为 401。</li>
+<li><strong>确认号</strong> <strong>：</strong>期望收到的下一个报文段的序号。例如 B 正确收到 A 发送来的一个报文段，序号为 501，携带的数据长度为 200 字节，因此 B 期望下一个报文段的序号为 701，B 发送给 A 的确认报文段中确认号就为 701。</li>
+<li><strong>数据偏移</strong> ：指的是数据部分距离报文段起始处的偏移量，实际上指的是首部的长度。</li>
+<li><strong>确认 ACK</strong> ：当 ACK=1 时确认号字段有效，否则无效。TCP 规定，在连接建立后所有传送的报文段都必须把 ACK 置 1。</li>
+<li><strong>同步 SYN</strong> <strong>：</strong>在连接建立时用来同步序号。当 SYN=1，ACK=0 时表示这是一个连接请求报文段。若对方同意建立连接，则响应报文中 SYN=1，ACK=1。</li>
+<li><strong>终止 FIN</strong> <strong>：</strong>用来释放一个连接，当 FIN=1 时，表示此报文段的发送方的数据已发送完毕，并要求释放运输连接。</li>
+<li><strong>窗口</strong> <strong>：</strong>窗口值作为接收方让发送方设置其发送窗口的依据。之所以要有这个限制，是因为接收方的数据缓存空间是有限的。</li>
+</ul>
+<p><strong>TCP连接:SYN ACK RST UTG PSH FIN</strong></p>
+<p><strong>SYN：同步标志</strong></p>
+<p>同步序列编号(Synchronize Sequence Numbers)栏有效。该标志仅在三次握手建立TCP连接时有效。它提示TCP连接的服务端检查序列编号，该序列编号为TCP连接初始端(一般是客户端)的初始序列编号。</p>
+<p><strong>ACK：确认标志</strong></p>
+<p>确认编号(Acknowledgement Number)栏有效。大多数情况下该标志位是置位的。TCP报头内的确认编号栏内包含的确认编号(w+1，Figure-1)为下一个预期的序列编号，同时提示远端系统已经成功接收所有数据。</p>
+<p><strong>RST：复位标志</strong></p>
+<p>复位标志有效。用于复位相应的TCP连接。</p>
+<p><strong>URG：紧急标志</strong></p>
+<p>紧急(The urgent pointer) 标志有效。紧急标志置位，</p>
+<p><strong>PSH：推标志</strong></p>
+<p>该标志置位时，接收端不将该数据进行队列处理，而是尽可能快将数据转由应用处理。在处理 telnet 或 rlogin 等交互模式的连接时，该标志总是置位的。</p>
+<p><strong>FIN：结束标志</strong></p>
+<p>带有该标志置位的数据包用来结束一个TCP回话，但对应端口仍处于开放状态，准备接收后续数据。</p>
+<p>在TCP层，有个FLAGS字段，这个字段有以下几个标识：SYN, FIN, ACK, PSH, RST, URG.其中，对于我们日常的分析有用的就是前面的五个字段。它们的含义是：SYN表示建立连接，FIN表示关闭连接，ACK表示响应，PSH表示有 DATA数据传输，RST表示连接重置。</p>
+<p>其中，ACK是可能与SYN，FIN等同时使用的，比如SYN和ACK可能同时为1，它表示的就是建立连接之后的响应，如果只是单个的一个SYN，它表示的只是建立连接。</p>
+<p>TCP的几次握手就是通过这样的ACK表现出来的。但SYN与FIN是不会同时为1的，因为前者表示的是建立连接，而后者表示的是断开连接。</p>
+<p>RST一般是在FIN之后才会出现为1的情况，表示的是连接重置。一般地，当出现FIN包或RST包时，我们便认为客户端与服务器端断开了连接；</p>
+<p>而当出现SYN和SYN＋ACK包时，我们认为客户端与服务器建立了一个连接。</p>
+<p>PSH为1的情况，一般只出现在DATA内容不为0的包中，也就是说PSH为1表示的是有真正的TCP数据包内容被传递。TCP的连接建立和连接关闭，都是通过请求－响应的模式完成的。</p>
+<p>WireShark抓包的情况</p>
+<img src="http://img.npfs06.top/20210926000314.png" style="zoom:80%;">
+
+
+
+<p>其中目的端口为0885（16进制），转换成10进制就为2181</p>
+<h2 id="三次握手"><a href="#三次握手" class="headerlink" title="三次握手"></a>三次握手</h2><p>所谓三次握手(Three-way Handshake)，是指建立一个 TCP 连接时，需要客户端和服务器总共发送3个报文。</p>
+<p>三次握手的目的是连接服务器指定端口，建立 TCP 连接，并同步连接双方的序列号和确认号，交换 TCP 窗口大小信息。在 socket 编程中，客户端执行 connect() 时。将触发三次握手。</p>
+<p>三次握手过程的示意图如下：</p>
+<img src="http://img.npfs06.top/20210926000502.png" style="zoom:80%;">
+
+
+<p>用下面的比喻就是</p>
+<blockquote>
+<p>C：约么？</p>
+<p>S：约</p>
+<p>C：好的</p>
+<p>约会</p>
+</blockquote>
+<ul>
+<li><strong>第一次握手</strong>：<br>客户端将TCP报文<strong>标志位SYN置为1</strong>，随机产生一个序号值seq=J，保存在TCP首部的序列号(Sequence Number)字段里，指明客户端打算连接的服务器的端口，并将该数据包发送给服务器端，发送完毕后，客户端进入<code>SYN_SENT</code>状态，等待服务器端确认。</li>
+<li><strong>第二次握手</strong>：<br>服务器端收到数据包后由标志位SYN=1知道客户端请求建立连接，服务器端将TCP报文<strong>标志位SYN和ACK都置为1</strong>，ack=J+1，随机产生一个序号值seq=K，并将该数据包发送给客户端以确认连接请求，服务器端进入<code>SYN_RCVD</code>状态。</li>
+<li><strong>第三次握手</strong>：<br>客户端收到确认后，检查ack是否为J+1，ACK是否为1，如果正确则将标志位ACK置为1，ack=K+1，并将该数据包发送给服务器端，服务器端检查ack是否为K+1，ACK是否为1，如果正确则连接建立成功，客户端和服务器端进入<code>ESTABLISHED</code>状态，完成三次握手，随后客户端与服务器端之间可以开始传输数据了。</li>
+</ul>
+<p>注意:我们上面写的ack和ACK，不是同一个概念：</p>
+<ul>
+<li>小写的ack代表的是头部的确认号Acknowledge number， 缩写ack，是对上一个包的序号进行确认的号，ack=seq+1。</li>
+<li>大写的ACK，则是我们上面说的TCP首部的标志位，用于标志的TCP包是否对上一个包进行了确认操作，如果确认了，则把ACK标志位设置成1。</li>
+</ul>
+<p>至此，三次握手完成，一个TCP连接建立完成，接下来就是双端传输数据了</p>
+<h3 id="为什么需要三次握手？"><a href="#为什么需要三次握手？" class="headerlink" title="为什么需要三次握手？"></a>为什么需要三次握手？</h3><p>我们假设client发出的第一个连接请求报文段并没有丢失，而是在某个网络结点长时间的滞留了，以致延误到连接释放以后的某个时间才到达server。</p>
+<p>本来这是一个早已失效的报文段。但server收到此失效的连接请求报文段后，就误认为是client再次发出的一个新的连接请求。于是就向client发出确认报文段，同意建立连接。</p>
+<p>假设不采用“三次握手”，那么只要server发出确认，新的连接就建立了。由于现在client并没有发出建立连接的请求，因此不会理睬server的确认，也不会向server发送数据。但server却以为新的运输连接已经建立，并一直等待client发来数据。这样，server的很多资源就白白浪费掉了。</p>
+<p>所以，采用“三次握手”的办法可以防止上述现象发生。例如刚才那种情况，client不会向server的确认发出确认。server由于收不到确认，就知道client并没有要求建立连接。</p>
+<h2 id="四次挥手"><a href="#四次挥手" class="headerlink" title="四次挥手"></a>四次挥手</h2><p>四次挥手即终止TCP连接，就是指断开一个TCP连接时，需要客户端和服务端总共发送4个包以确认连接的断开。在socket编程中，这一过程由客户端或服务端任一方执行close来触发。<br>由于TCP连接是全双工的，因此，每个方向都必须要单独进行关闭，这一原则是当一方完成数据发送任务后，发送一个FIN来终止这一方向的连接，收到一个FIN只是意味着这一方向上没有数据流动了，即不会再收到数据了，但是在这个TCP连接上仍然能够发送数据，直到这一方向也发送了FIN。首先进行关闭的一方将执行主动关闭，而另一方则执行被动关闭。</p>
+<p>四次挥手过程的示意图如下：</p>
+<img src="http://img.npfs06.top/20210926000723.png" style="zoom:80%;">
+
+<p>挥手请求可以是Client端，也可以是Server端发起的，我们假设是Client端发起：</p>
+<ul>
+<li><strong>第一次挥手</strong>： Client端发起挥手请求，向Server端发送标志位是FIN报文段，设置序列号seq，此时，Client端进入<code>FIN_WAIT_1</code>状态，这表示Client端没有数据要发送给Server端了。</li>
+<li><strong>第二次分手</strong>：Server端收到了Client端发送的FIN报文段，向Client端返回一个标志位是ACK的报文段，ack设为seq加1，Client端进入<code>FIN_WAIT_2</code>状态，Server端告诉Client端，我确认并同意你的关闭请求。</li>
+<li><strong>第三次分手</strong>： Server端向Client端发送标志位是FIN的报文段，请求关闭连接，同时Client端进入<code>LAST_ACK</code>状态。</li>
+<li><strong>第四次分手</strong> ： Client端收到Server端发送的FIN报文段，向Server端发送标志位是ACK的报文段，然后Client端进入<code>TIME_WAIT</code>状态。Server端收到Client端的ACK报文段以后，就关闭连接。此时，Client端等待<strong>2MSL</strong>的时间后依然没有收到回复，则证明Server端已正常关闭，那好，Client端也可以关闭连接了。</li>
+</ul>
+<h1 id="TCP实现socket的简单通信（python）"><a href="#TCP实现socket的简单通信（python）" class="headerlink" title="TCP实现socket的简单通信（python）"></a>TCP实现socket的简单通信（python）</h1><h2 id="客户端编程"><a href="#客户端编程" class="headerlink" title="客户端编程"></a>客户端编程</h2><p>    以下代码是客户端向新浪新闻服务器发送TCP请求，然后将接收到的信息输出。</p>
+<ol>
+<li>首先是创建一个socket连接，使用IPv4协议和TCP协议。</li>
+<li>然后连接百度服务器，80端口是Web服务的标准端口，其他服务都有对应的标准端口号，例如SMTP服务是25端口，FTP服务是21端口，等等。</li>
+<li>将接收到的数据进行输出。</li>
+</ol>
+<p>这里以百度为例</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment"># @Time    : 2021/9/26 10:23</span></span><br><span class="line"><span class="comment"># @Author  : npfs</span></span><br><span class="line"><span class="comment"># @FileName: 客户端</span></span><br><span class="line"><span class="comment"># @Blog    ：http://npfs06.top</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">import</span> socket</span><br><span class="line"></span><br><span class="line"><span class="comment"># 创建socket AF_INET指定使用IPv4协议（IPv6-AF_INET6） SOCK_STREAM指定使用面向流的TCP协议</span></span><br><span class="line">s = socket.socket(socket.AF_INET, socket.SOCK_STREAM)</span><br><span class="line"></span><br><span class="line"><span class="comment"># 80端口是Web服务的标准端口。</span></span><br><span class="line"><span class="comment"># 其他服务都有对应的标准端口号: SMTP服务是25端口，FTP服务是21端口。</span></span><br><span class="line">s.connect((<span class="string">&#x27;www.baidu.com&#x27;</span>, <span class="number">80</span>))</span><br><span class="line"></span><br><span class="line"><span class="comment"># 发送TCP数据。将string中的数据发送到连接的套接字。同时接收数据</span></span><br><span class="line">s.send(<span class="string">b&#x27;GET / HTTP/1.1\r\nHost: www.baidu.com\r\nConnection: close\r\n\r\n&#x27;</span>)</span><br><span class="line">buffer = []</span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span>  <span class="literal">True</span>:</span><br><span class="line">    d = s.recv(<span class="number">1024</span>)   <span class="comment">#接受TCP套接字的数据。数据以字符串形式返回，</span></span><br><span class="line">    <span class="keyword">if</span> d:</span><br><span class="line">        <span class="comment"># print(d)</span></span><br><span class="line">        buffer.append(d)</span><br><span class="line">    <span class="keyword">else</span>:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">data = <span class="string">b&#x27;&#x27;</span>.join(buffer)</span><br><span class="line">header, html = data.split(<span class="string">b&#x27;\r\n\r\n&#x27;</span>)</span><br><span class="line"></span><br><span class="line">print(data)</span><br><span class="line">print(header.decode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line">print(html.decode(<span class="string">&#x27;utf-8&#x27;</span>))</span><br><span class="line">s.close()</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<img src="http://img.npfs06.top/20210926103601.png" style="zoom:80%;">
+
+
+
+
+
+<h2 id="服务端编程"><a href="#服务端编程" class="headerlink" title="服务端编程"></a>服务端编程</h2><p>    以下代码是服务器端代码。</p>
+<ol>
+<li>首先创建一个基于IPv4和TCP协议的Socket。</li>
+<li>绑定了本地的21567端口（小于1024的端口号必须要有管理员权限才能绑定）。</li>
+<li>设置最大连接数为5，由于考虑到服务器可能同时响应多个客户端的请求，所以，每个连接都需要一个新的进程或者新的线程来处理。</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment"># @Time    : 2021/9/26 10:23</span></span><br><span class="line"><span class="comment"># @Author  : npfs</span></span><br><span class="line"><span class="comment"># @FileName: TCP服务端</span></span><br><span class="line"><span class="comment"># @Blog    ：http://npfs06.top</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> socket <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> time <span class="keyword">import</span> ctime</span><br><span class="line"></span><br><span class="line">print(<span class="string">&quot;=====================时间戳TCP服务器=====================&quot;</span>)</span><br><span class="line"></span><br><span class="line">HOST = <span class="string">&#x27;127.0.0.1&#x27;</span>  <span class="comment">#主机号为空白表示可以使用任何可用的地址。</span></span><br><span class="line">PORT = <span class="number">21567</span>  <span class="comment">#端口号</span></span><br><span class="line">BUFSIZ = <span class="number">1024</span>  <span class="comment">#接收数据缓冲大小</span></span><br><span class="line">ADDR = (HOST, PORT)</span><br><span class="line">tcpSerSock = socket(AF_INET, SOCK_STREAM) <span class="comment">#创建TCP服务器套接字</span></span><br><span class="line">tcpSerSock.bind(ADDR)  <span class="comment">#套接字与地址绑定</span></span><br><span class="line">tcpSerSock.listen(<span class="number">5</span>) <span class="comment">#监听连接，同时连接请求的最大数目</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">   print(<span class="string">&#x27;等待客户端的连接...&#x27;</span>)</span><br><span class="line">   tcpCliSock, addr = tcpSerSock.accept()   <span class="comment">#接收客户端连接请求</span></span><br><span class="line">   print(<span class="string">&#x27;取得连接:&#x27;</span>, addr)</span><br><span class="line">   <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">       data = tcpCliSock.recv(BUFSIZ)  <span class="comment">#连续接收指定字节的数据，接收到的是字节数组</span></span><br><span class="line">       <span class="keyword">if</span> <span class="keyword">not</span> data:  <span class="comment">#如果数据空白，则表示客户端退出，所以退出接收</span></span><br><span class="line">           <span class="keyword">break</span></span><br><span class="line">       <span class="comment">#tcpCliSock.send(&#x27;[%s] %s&#x27; % (bytes(ctime(), &#x27;utf-8&#x27;), data))</span></span><br><span class="line">       tcpCliSock.send(<span class="built_in">bytes</span>(<span class="string">&#x27;[%s] %s&#x27;</span> % (ctime(), data.decode(<span class="string">&#x27;utf-8&#x27;</span>)), <span class="string">&#x27;utf-8&#x27;</span>)) <span class="comment">#向客户端发送时间戳数据，必须发送字节数组</span></span><br><span class="line">   tcpCliSock.close()  <span class="comment">#关闭与客户端的连接</span></span><br><span class="line">tcpSerSock.close()  <span class="comment">#关闭服务器socket</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="客户端发送命令，服务端接收命令并执行"><a href="#客户端发送命令，服务端接收命令并执行" class="headerlink" title="客户端发送命令，服务端接收命令并执行"></a>客户端发送命令，服务端接收命令并执行</h2><p>    为了实现客户端与以上的服务端通信，我们创建一个客户端，向服务端发送数据。连接建立后，服务器显示取得连接，然后等待客户端数据，并以时间戳的格式再发送给客户端。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment"># @Time    : 2021/9/26 10:28</span></span><br><span class="line"><span class="comment"># @Author  : npfs</span></span><br><span class="line"><span class="comment"># @FileName: TCP客户端</span></span><br><span class="line"><span class="comment"># @Blog    ：http://npfs06.top</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> socket <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">print(<span class="string">&quot;=====================TCP客户端=====================&quot;</span>)</span><br><span class="line"></span><br><span class="line">HOST = <span class="string">&#x27;127.0.0.1&#x27;</span> <span class="comment">#服务器ip地址，等价于localhost</span></span><br><span class="line">PORT = <span class="number">21567</span>  <span class="comment">#通信端口号</span></span><br><span class="line">BUFSIZ = <span class="number">1024</span>  <span class="comment">#接收数据缓冲大小</span></span><br><span class="line">ADDR = (HOST, PORT)</span><br><span class="line">tcpCliSock = socket(AF_INET, SOCK_STREAM)  <span class="comment">#创建客户端套接字</span></span><br><span class="line">tcpCliSock.connect(ADDR)  <span class="comment">#发起TCP连接</span></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">   data = <span class="built_in">input</span>(<span class="string">&#x27;&gt; &#x27;</span>)   <span class="comment">#接收用户输入</span></span><br><span class="line">   <span class="keyword">if</span> <span class="keyword">not</span> data:  <span class="comment">#如果用户输入为空，直接回车就会发送&quot;&quot;，&quot;&quot;就是代表false</span></span><br><span class="line">       <span class="keyword">break</span></span><br><span class="line">   tcpCliSock.send(<span class="built_in">bytes</span>(data, <span class="string">&#x27;utf-8&#x27;</span>))   <span class="comment">#客户端发送消息，必须发送字节数组</span></span><br><span class="line">   data = tcpCliSock.recv(BUFSIZ)   <span class="comment">#接收回应消息，接收到的是字节数组</span></span><br><span class="line">   <span class="keyword">if</span> <span class="keyword">not</span> data:   <span class="comment">#如果接收服务器信息失败，或没有消息回应</span></span><br><span class="line">       <span class="keyword">break</span></span><br><span class="line">   print(data.decode(<span class="string">&#x27;utf-8&#x27;</span>))  <span class="comment">#打印回应消息，或者str(data,&quot;utf-8&quot;)</span></span><br><span class="line">tcpCliSock.close() <span class="comment">#关闭客户端socket</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<p>结果如下：</p>
+<p>我们先运行服务端程序</p>
+<img src="http://img.npfs06.top/20210926110944.png" style="zoom:80%;">
+
+
+
+<p>然后再运行客户端程序，回到服务端就可以看到取得连接了</p>
+<img src="http://img.npfs06.top/20210926110253.png" style="zoom:80%;">
+
+
+
+<p>在客服端输入内容，就可以成功得到服务端的响应</p>
+<img src="http://img.npfs06.top/20210926110311.png" style="zoom:80%;">
+
+
+
+
+
+<h1 id="UDP的原理及特点"><a href="#UDP的原理及特点" class="headerlink" title="UDP的原理及特点"></a>UDP的原理及特点</h1><pre><code>    UDP 是 User Datagram Protocol 的简称， 中文名用户数据报协议，是OSI（Open System Interconnection，开放式系统互联）参考模型中一种无连接的传输层协议，提供面向事务的简单不可靠信息传送服务，UDP 在 IP 报文的协议号是 17。
+
+    与 TCP（传输控制协议）协议一样，UDP 协议直接位于 IP（网际协议）协议的顶层。根据 TCP/IP 参考模型，UDP 和TCP 都属于传输层协议。UDP 协议的主要作用是将数据压缩成数据包的形式。一个典型的数据包就是一个二进制数据的传输单位。每一个数据包的前 8 个字节用来包含报头信息，剩余字节则用来包含具体的传输数据。
+</code></pre>
+<p>     UDP协议与TCP协议的不同在于，它是面向无连接，不可靠的数据报协议。而且不需要建立连接就可以，只需要知道对方的IP地址和端口号，就可以直接发数据包。但是，能不能到达就不知道了。</p>
+<p>UDP 报文的具体格式如下：</p>
+<img src="http://img.npfs06.top/20210926111505.png" style="zoom:80%;">
+
+<h2 id="UDP-通信过程"><a href="#UDP-通信过程" class="headerlink" title="UDP 通信过程"></a>UDP 通信过程</h2><p>UDP 协议的通信较 TCP 简单了很多，减少了 TCP 的握手、确认、窗口、重传、拥塞控制等机制，UDP 是一个无状态的传输协议。</p>
+<p>UDP 客户端在发送数据时并不判断主机是否可达，服务器是否开启等问题，同样它不能确定数据是否成功送达服务器。它只是将数据简单的封了一个包，之后就丢出去了。</p>
+<p>UDP通信的流程比较简单，因此要搭建这么一个常用的UDP通信框架也是比较简单的。以下是UDP的框架图</p>
+<img src="http://img.npfs06.top/20210926111717.png" style="zoom:80%;">
+
+<p>由以上框图可以看出，客户端要发起一次请求，仅仅需要两个步骤（socket和sendto），而服务器端也仅仅需要三个步骤即可接收到来自客户端的消息（socket、bind、recvfrom）</p>
+<h1 id="UDP实现socket的简单通信（python）"><a href="#UDP实现socket的简单通信（python）" class="headerlink" title="UDP实现socket的简单通信（python）"></a>UDP实现socket的简单通信（python）</h1><p>   和TCP类似，使用UDP的通信双方也分为客户端和服务器。</p>
+<h2 id="服务端编程-1"><a href="#服务端编程-1" class="headerlink" title="服务端编程"></a>服务端编程</h2><ol>
+<li>SOCK_DGRAM指定了这个Socket的类型是UDP。</li>
+<li>recvfrom()方法返回数据和客户端的地址与端口，服务器收到数据后，直接调用sendto()就可以把数据用UDP发给客户端。</li>
+</ol>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment"># @Time    : 2021/9/26 10:23</span></span><br><span class="line"><span class="comment"># @Author  : npfs</span></span><br><span class="line"><span class="comment"># @FileName: 服务端</span></span><br><span class="line"><span class="comment"># @Blog    ：http://npfs06.top</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> socket <span class="keyword">import</span> *</span><br><span class="line"><span class="keyword">from</span> time <span class="keyword">import</span> ctime</span><br><span class="line"></span><br><span class="line">host = <span class="string">&#x27;&#x27;</span>  <span class="comment"># 监听所有的ip</span></span><br><span class="line">port = <span class="number">21567</span>  <span class="comment"># 接口必须一致</span></span><br><span class="line">bufsize = <span class="number">1024</span></span><br><span class="line">addr = (host, port)</span><br><span class="line"></span><br><span class="line">udpServer = socket(AF_INET, SOCK_DGRAM)</span><br><span class="line">udpServer.bind(addr)  <span class="comment"># 开始监听</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    print(<span class="string">&#x27;等待客户端的连接...&#x27;</span>)</span><br><span class="line">    udpCliSock, addr = udpServer.recvfrom(bufsize)  <span class="comment"># 接收数据和返回地址</span></span><br><span class="line">    print(<span class="string">&#x27;取得连接:&#x27;</span>, addr)</span><br><span class="line">    <span class="comment"># 处理数据</span></span><br><span class="line">    <span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">        data = udpCliSock.decode(encoding=<span class="string">&#x27;utf-8&#x27;</span>).upper()</span><br><span class="line">        <span class="keyword">if</span> <span class="keyword">not</span> data:  <span class="comment"># 如果数据空白，则表示客户端退出，所以退出接收</span></span><br><span class="line">            <span class="keyword">break</span></span><br><span class="line">        data =<span class="string">&#x27;[%s] %s&#x27;</span> % (<span class="built_in">bytes</span>(ctime(), <span class="string">&#x27;utf-8&#x27;</span>), data)</span><br><span class="line">        udpServer.sendto(data.encode(encoding=<span class="string">&#x27;utf-8&#x27;</span>), addr)</span><br><span class="line">    <span class="comment"># 发送数据</span></span><br><span class="line">    <span class="comment"># print(&#x27;...recevied from and return to :&#x27;, addr)</span></span><br><span class="line"></span><br><span class="line">udpServer.close()</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="客户端发送命令，服务端接收命令并执行-1"><a href="#客户端发送命令，服务端接收命令并执行-1" class="headerlink" title="客户端发送命令，服务端接收命令并执行"></a>客户端发送命令，服务端接收命令并执行</h2><p>    为了实现客户端与以上的服务端通信，我们创建一个客户端，向服务端发送数据。连接建立后，服务器显示取得连接，然后等待客户端数据，并以时间戳的格式再发送给客户端。</p>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># -*- coding: utf-8 -*-</span></span><br><span class="line"><span class="comment"># @Time    : 2021/9/26 10:28</span></span><br><span class="line"><span class="comment"># @Author  : npfs</span></span><br><span class="line"><span class="comment"># @FileName: 客服端2</span></span><br><span class="line"><span class="comment"># @Blog    ：http://npfs06.top</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="keyword">from</span> socket <span class="keyword">import</span> *</span><br><span class="line"></span><br><span class="line">host = <span class="string">&#x27;127.0.0.1&#x27;</span>  <span class="comment"># 这是客户端的电脑的ip</span></span><br><span class="line">port = <span class="number">21567</span>  <span class="comment"># 接口选择大于10000的，避免冲突</span></span><br><span class="line">bufsize = <span class="number">1024</span>  <span class="comment"># 定义缓冲大小</span></span><br><span class="line"></span><br><span class="line">addr = (host, port)  <span class="comment"># 元祖形式</span></span><br><span class="line">udpClient = socket(AF_INET, SOCK_DGRAM)  <span class="comment"># 创建客户端</span></span><br><span class="line"></span><br><span class="line"><span class="keyword">while</span> <span class="literal">True</span>:</span><br><span class="line">    data = <span class="built_in">input</span>(<span class="string">&#x27;&gt;&gt;&gt; &#x27;</span>)</span><br><span class="line">    <span class="keyword">if</span> <span class="keyword">not</span> data:</span><br><span class="line">        <span class="keyword">break</span></span><br><span class="line">    data = data.encode(encoding=<span class="string">&quot;utf-8&quot;</span>)</span><br><span class="line">    udpClient.sendto(data, addr)  <span class="comment"># 发送数据</span></span><br><span class="line">    data, addr = udpClient.recvfrom(bufsize)  <span class="comment"># 接收数据和返回地址</span></span><br><span class="line">    print(data.decode(encoding=<span class="string">&quot;utf-8&quot;</span>), <span class="string">&#x27;from&#x27;</span>, addr)</span><br><span class="line"></span><br><span class="line">udpClient.close()</span><br></pre></td></tr></table></figure>
+
+
+<p>结果如下：</p>
+<p>我们先运行服务端程序</p>
+<img src="http://img.npfs06.top/20210926113213.png" style="zoom:80%;">
+
+
+
+<p>然后再运行客户端程序，回到服务端就可以看到取得连接了</p>
+<img src="http://img.npfs06.top/20210926113247.png" style="zoom:80%;">
+
+
+
+<p>在客服端输入内容，就可以成功得到服务端的响应</p>
+<img src="http://img.npfs06.top/20210926113308.png" style="zoom:80%;">
+
+
+
+
+
+<h1 id="后记"><a href="#后记" class="headerlink" title="后记"></a>后记</h1><p>之前只是跟着学校课程学习过TCP/IP、UDP等协议，但是从来没有实践过</p>
+<p>通过这次实践让我对通信协议有了更加深刻的理解，同时接下去准备利用所学的socket通信知识写一个简单的聊天室</p>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>安小琪
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="https://npfs06.top/2021/09/26/%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1%E5%BC%80%E5%8F%91%E5%9F%BA%E7%A1%80/" title="网络通信开发基础">https://npfs06.top/2021/09/26/网络通信开发基础/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2021/08/27/nginx%E9%85%8D%E7%BD%AEssl%E8%AF%81%E4%B9%A6/" rel="prev" title="nginx配置ssl证书">
+      <i class="fa fa-chevron-left"></i> nginx配置ssl证书
+    </a></div>
+      <div class="post-nav-item">
+    <a href="/2021/09/29/%E4%B8%BB%E6%9C%BA%E5%AD%98h%E6%B4%BB%E6%8E%A2%E6%B5%8B%E7%A8%8B%E5%BA%8F%E7%BC%96%E5%86%99/" rel="next" title="主机存活探测程序编写">
+      主机存活探测程序编写 <i class="fa fa-chevron-right"></i>
+    </a></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E6%A0%87%E9%A2%98%EF%BC%9A-%E7%BD%91%E7%BB%9C%E9%80%9A%E4%BF%A1%E5%BC%80%E5%8F%91%E5%9F%BA%E7%A1%80"><span class="nav-number">1.</span> <span class="nav-text">任务标题： 网络通信开发基础</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E7%9B%AE%E6%A0%87%EF%BC%9A"><span class="nav-number">1.1.</span> <span class="nav-text">任务目标：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8E%A8%E8%8D%90%E8%AF%AD%E8%A8%80%EF%BC%9A"><span class="nav-number">1.2.</span> <span class="nav-text">推荐语言：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%BB%BB%E5%8A%A1%E6%8F%8F%E8%BF%B0%EF%BC%9A"><span class="nav-number">1.3.</span> <span class="nav-text">任务描述：</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%8A%A5%E5%91%8A%E8%A6%81%E6%B1%82"><span class="nav-number">1.4.</span> <span class="nav-text">报告要求</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%89%A9%E5%B1%95%E4%BB%BB%E5%8A%A1"><span class="nav-number">1.5.</span> <span class="nav-text">扩展任务</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E7%BD%91%E7%BB%9C%E4%B8%AD%E8%BF%9B%E7%A8%8B%E4%B9%8B%E9%97%B4%E5%A6%82%E4%BD%95%E9%80%9A%E4%BF%A1%EF%BC%9F"><span class="nav-number">2.</span> <span class="nav-text">网络中进程之间如何通信？</span></a></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E4%BB%80%E4%B9%88%E6%98%AFSocket%EF%BC%9F"><span class="nav-number">3.</span> <span class="nav-text">什么是Socket？</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%88%9B%E5%BB%BAsocket"><span class="nav-number">3.1.</span> <span class="nav-text">创建socket</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Socket-%E7%B1%BB%E5%9E%8B"><span class="nav-number">3.2.</span> <span class="nav-text">Socket 类型</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#Socket-%E5%87%BD%E6%95%B0"><span class="nav-number">3.3.</span> <span class="nav-text">Socket 函数</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#TCP%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%89%B9%E7%82%B9"><span class="nav-number">4.</span> <span class="nav-text">TCP的原理及特点</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#tcp%E9%A6%96%E9%83%A8%E6%A0%BC%E5%BC%8F"><span class="nav-number">4.1.</span> <span class="nav-text">tcp首部格式</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B"><span class="nav-number">4.2.</span> <span class="nav-text">三次握手</span></a><ol class="nav-child"><li class="nav-item nav-level-3"><a class="nav-link" href="#%E4%B8%BA%E4%BB%80%E4%B9%88%E9%9C%80%E8%A6%81%E4%B8%89%E6%AC%A1%E6%8F%A1%E6%89%8B%EF%BC%9F"><span class="nav-number">4.2.1.</span> <span class="nav-text">为什么需要三次握手？</span></a></li></ol></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%9B%9B%E6%AC%A1%E6%8C%A5%E6%89%8B"><span class="nav-number">4.3.</span> <span class="nav-text">四次挥手</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#TCP%E5%AE%9E%E7%8E%B0socket%E7%9A%84%E7%AE%80%E5%8D%95%E9%80%9A%E4%BF%A1%EF%BC%88python%EF%BC%89"><span class="nav-number">5.</span> <span class="nav-text">TCP实现socket的简单通信（python）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E7%BC%96%E7%A8%8B"><span class="nav-number">5.1.</span> <span class="nav-text">客户端编程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF%E7%BC%96%E7%A8%8B"><span class="nav-number">5.2.</span> <span class="nav-text">服务端编程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%8F%91%E9%80%81%E5%91%BD%E4%BB%A4%EF%BC%8C%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%8E%A5%E6%94%B6%E5%91%BD%E4%BB%A4%E5%B9%B6%E6%89%A7%E8%A1%8C"><span class="nav-number">5.3.</span> <span class="nav-text">客户端发送命令，服务端接收命令并执行</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#UDP%E7%9A%84%E5%8E%9F%E7%90%86%E5%8F%8A%E7%89%B9%E7%82%B9"><span class="nav-number">6.</span> <span class="nav-text">UDP的原理及特点</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#UDP-%E9%80%9A%E4%BF%A1%E8%BF%87%E7%A8%8B"><span class="nav-number">6.1.</span> <span class="nav-text">UDP 通信过程</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#UDP%E5%AE%9E%E7%8E%B0socket%E7%9A%84%E7%AE%80%E5%8D%95%E9%80%9A%E4%BF%A1%EF%BC%88python%EF%BC%89"><span class="nav-number">7.</span> <span class="nav-text">UDP实现socket的简单通信（python）</span></a><ol class="nav-child"><li class="nav-item nav-level-2"><a class="nav-link" href="#%E6%9C%8D%E5%8A%A1%E7%AB%AF%E7%BC%96%E7%A8%8B-1"><span class="nav-number">7.1.</span> <span class="nav-text">服务端编程</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#%E5%AE%A2%E6%88%B7%E7%AB%AF%E5%8F%91%E9%80%81%E5%91%BD%E4%BB%A4%EF%BC%8C%E6%9C%8D%E5%8A%A1%E7%AB%AF%E6%8E%A5%E6%94%B6%E5%91%BD%E4%BB%A4%E5%B9%B6%E6%89%A7%E8%A1%8C-1"><span class="nav-number">7.2.</span> <span class="nav-text">客户端发送命令，服务端接收命令并执行</span></a></li></ol></li><li class="nav-item nav-level-1"><a class="nav-link" href="#%E5%90%8E%E8%AE%B0"><span class="nav-number">8.</span> <span class="nav-text">后记</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="安小琪"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">安小琪</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">101</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/npfs06" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;npfs06" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:npfs066@gmail.com" title="E-Mail → mailto:npfs066@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://hyluz.cn/" title="https:&#x2F;&#x2F;hyluz.cn&#x2F;" rel="noopener" target="_blank">Luz</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://0clickjacking0.github.io/" title="https:&#x2F;&#x2F;0clickjacking0.github.io&#x2F;" rel="noopener" target="_blank">xianyu123</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://jiang-niao.github.io/" title="https:&#x2F;&#x2F;jiang-niao.github.io&#x2F;" rel="noopener" target="_blank">JiangNiao</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://xiaolong22333.top/" title="https:&#x2F;&#x2F;xiaolong22333.top&#x2F;" rel="noopener" target="_blank">xiaolong</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+
+
+<!--
+ <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+-->
+
+
+  <span class="author" itemprop="copyrightHolder">安小琪</span>
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">浙ICP备2020030100号 </a>
+  </div>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'nhITwFwMLqOi81E1nOPXx9Iw-MdYXbMMI',
+      appKey     : 'F9l5INUqgwxvbJOfC1X7OMnr',
+      placeholder: "欢迎在这里留言！我看到一定会及时回复的噢 （PS：回复信息会自动发送到你所填写的邮箱噢）",
+      avatar     : '',
+      meta       : guest,
+      pageSize   : '6' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>
