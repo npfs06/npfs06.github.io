@@ -14654,4 +14654,26 @@ payload:
         <category>problems</category>
       </categories>
   </entry>
+  <entry>
+    <title>kali连接hackthebox的vpn失败的解决方法</title>
+    <url>/2023/09/25/kali%E8%BF%9E%E6%8E%A5hackthebox%E7%9A%84vpn%E5%A4%B1%E8%B4%A5%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/</url>
+    <content><![CDATA[<p>kali连接vpn失败,报错OpenSSL: error:0A000086:SSL routines::certificate verify failed的解决办法</p>
+<a id="more"></a>
+
+<p>本来想玩下htb的靶场的，但是kali连vpn的时候莫名其妙就报错了，前段时间还好好的。报错如下</p>
+<p><img src="https://img.npfs06.top/20230925093028.png"></p>
+<figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">2023</span>-<span class="number">09</span>-<span class="number">25</span> <span class="number">09</span>:<span class="number">30</span>:<span class="number">01</span> OpenSSL: error:<span class="number">0</span>A<span class="number">000086</span>:SSL routines::certificate verify failed</span><br><span class="line"><span class="attribute">2023</span>-<span class="number">09</span>-<span class="number">25</span> <span class="number">09</span>:<span class="number">30</span>:<span class="number">01</span> TLS_ERROR: BIO read tls_read_plaintext error</span><br><span class="line"><span class="attribute">2023</span>-<span class="number">09</span>-<span class="number">25</span> <span class="number">09</span>:<span class="number">30</span>:<span class="number">01</span> TLS Error: TLS object -&gt; incoming plaintext read error</span><br><span class="line"><span class="attribute">2023</span>-<span class="number">09</span>-<span class="number">25</span> <span class="number">09</span>:<span class="number">30</span>:<span class="number">01</span> TLS Error: TLS handshake failed</span><br><span class="line"><span class="attribute">2023</span>-<span class="number">09</span>-<span class="number">25</span> <span class="number">09</span>:<span class="number">30</span>:<span class="number">01</span> SIGUSR<span class="number">1</span>[soft,tls-error] received, process restarting</span><br><span class="line"><span class="attribute">2023</span>-<span class="number">09</span>-<span class="number">25</span> <span class="number">09</span>:<span class="number">30</span>:<span class="number">01</span> Restart pause, <span class="number">16</span> second(s)</span><br><span class="line"><span class="attribute">2023</span>-<span class="number">09</span>-<span class="number">25</span> <span class="number">09</span>:<span class="number">30</span>:<span class="number">17</span> TCP/UDP: Preserving recently used remote address:<span class="meta"> [AF_INET]142.234.200.47:1337</span></span><br><span class="line"><span class="meta">2023-09-25 09:30:17 Socket Buffers: R=[212992-&gt;212992] S=[212992-&gt;212992]</span></span><br><span class="line"><span class="attribute">2023</span>-<span class="number">09</span>-<span class="number">25</span> <span class="number">09</span>:<span class="number">30</span>:<span class="number">17</span> UDPv<span class="number">4</span> link local: (not bound)</span><br><span class="line"><span class="attribute">2023</span>-<span class="number">09</span>-<span class="number">25</span> <span class="number">09</span>:<span class="number">30</span>:<span class="number">17</span> UDPv<span class="number">4</span> link remote:<span class="meta"> [AF_INET]142.234.200.47:1337</span></span><br><span class="line"><span class="meta">2023-09-25 09:30:17 TLS: Initial packet from [AF_INET]142.234.200.47:1337, sid=f40f59c3 995f1c21</span></span><br><span class="line"><span class="meta">2023-09-25 09:30:17 VERIFY ERROR: depth=0, error=CA signature digest algorithm too weak: C=UK, ST=City, L=London, O=HackTheBox, CN=htb, name=htb, emailAddress=info@hackthebox.eu, serial=1</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>试了下本机是可以正常连上的，问题应该就是出在了kali上，网上找了半天资料，也没看到有相应的解决办法。</p>
+<p>以为是kali被我搞坏了，去官网下载了最新版的2023.3  ，但是发现还是报错</p>
+<p>原因可能是因为该操作系统移除了Openssl的MD5支持，但是openssl仍然默认以md5作为散列算法并且可以正确识别md5散列算法。</p>
+<p>所以我重新找了个老版本kali安装，发现可以成功连接openvpn</p>
+<p>kali安装包</p>
+<p>使用腾讯微云下载：<a href="https://share.weiyun.com/5i4WF8PE%EF%BC%88%E5%AF%86%E7%A0%81%EF%BC%9Ae83wzc%EF%BC%89%E3%80%82">https://share.weiyun.com/5i4WF8PE（密码：e83wzc）。</a><br>该链接包含了kali-linux-2020-2-vmware-amd64-7z.torrent种子文件，并提供了下载好的kali-linux-2020.2-vmware-amd64.7z虚拟机镜像文件以及用于校验sha256算法文件完整性的kali-linux-2020.2-vmware-amd64.7z.txt.sha256sum文件，下载后请自行校验文件的完整性。</p>
+]]></content>
+      <categories>
+        <category>problems</category>
+      </categories>
+  </entry>
 </search>
