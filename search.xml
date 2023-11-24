@@ -14728,6 +14728,243 @@ payload:
 
 
 <h2 id="web838"><a href="#web838" class="headerlink" title="web838"></a>web838</h2><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="regexp">/file/</span>download?<span class="keyword">file</span>=..<span class="regexp">/../</span>..<span class="regexp">/../</span>..<span class="regexp">/../</span>..<span class="regexp">/../</span>..<span class="regexp">/../</span>../flag</span><br></pre></td></tr></table></figure>
+
+
+<h2 id="ASCII编码"><a href="#ASCII编码" class="headerlink" title="ASCII编码"></a>ASCII编码</h2><p>简述：使用制定的7位或8位二进制数组合来表示128或256种可能的字符。使用7位二进制数（剩下的1位二进制为0）来表示所有的大写和小写字母，数字0到9、标点符号，以及在美式英语中使用的特殊控制字符。</p>
+<p><img src="https://img.npfs06.top/20231124100949.png"></p>
+<p>在线解密&amp;工具：<a href="https://www.sojson.com/ascii.html">ASCII 在线转换器 ，ASCII码，ASCII 转码—在线工具</a></p>
+<h2 id="URL编码"><a href="#URL编码" class="headerlink" title="URL编码"></a>URL编码</h2><figure class="highlight gcode"><table><tr><td class="code"><pre><span class="line">密文格式：<span class="meta">%</span><span class="number">66</span><span class="meta">%</span><span class="number">6</span>C<span class="meta">%</span><span class="number">61</span><span class="meta">%</span><span class="number">67</span><span class="meta">%</span><span class="number">7</span>B<span class="meta">%</span><span class="number">61</span><span class="meta">%</span><span class="number">6</span>E<span class="meta">%</span><span class="number">64</span><span class="meta">%</span><span class="number">20</span><span class="meta">%</span><span class="number">31</span><span class="meta">%</span><span class="number">3</span>D<span class="meta">%</span><span class="number">31</span><span class="meta">%</span><span class="number">7</span>D</span><br></pre></td></tr></table></figure>
+<p>在线解密&amp;工具：<a href="http://www.hiencode.com/url.html">CTF在线工具-在线URL编码|URL解码</a></p>
+<h2 id="MD5"><a href="#MD5" class="headerlink" title="MD5"></a>MD5</h2><p>16位或者32位的字符，由字母和数字组成，字母大小写统一</p>
+<figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">a8db1d82db78ed452ba0882fb9554<span class="built_in">fc</span></span><br></pre></td></tr></table></figure>
+<p>在线解密&amp;工具：<a href="https://www.somd5.com/">MD5免费在线解密破解_MD5在线加密-SOMD5</a></p>
+<h2 id="ROT加密"><a href="#ROT加密" class="headerlink" title="ROT加密"></a>ROT加密</h2><p>简介:rot密码可以看作是凯撒密码的一种变式，本质都是移位运算。可大致分为以下几类：</p>
+<p><strong>rot5</strong>:只将字符串的数字进行加密，步数为5，同时在0-9十个数字进行循环，如1在rot5加密后为6，而6在rot5加密后为1。</p>
+<p><strong>rot13</strong>：只将字符串中的字母进行加密，步数为13，加密方式上最接近凯撒密码，分别在A-Z或a-z之间循环，如A在rot13加密后为N,Z在rot加密后为M。</p>
+<p>在线解密&amp;工具：<a href="http://www.hiencode.com/rot13.html">http://www.hiencode.com/rot13.html</a></p>
+<p><strong>rot18</strong>:字面意思（5+13=18）即将上述两种加密方式结合，分别对数字和字母进行相应的操作。</p>
+<p><strong>rot47</strong>：由于无论是rot5、rot13或rot18都只能对数字和字母进行相应的加密，而对“@！#￥%&amp;”之类的符号却缺少加密，因此在此基础上引入ASCII码，所以rot47只是将步数改为47。对于数字、字母、常用符号进行编码，按照它们的ASCII值进行位置替换，用当前字符ASCII值往前数的第47位对应字符替换当前字符，例如当前为小写字母z,编码后就变成大写字母K,当前为数字0，编码后变成符号“_”。</p>
+<p>在线解密&amp;工具：<a href="https://www.qqxiuzi.cn/bianma/ROT5-13-18-47.php">https://www.qqxiuzi.cn/bianma/ROT5-13-18-47.php</a></p>
+<h2 id="凯撒密码"><a href="#凯撒密码" class="headerlink" title="凯撒密码"></a>凯撒密码</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">特征：和ROT13差不多。只会将字母加密。不过ROT13移13位。而凯撒密码可以自定义移位</span><br></pre></td></tr></table></figure>
+<p>在线解密&amp;工具：<a href="https://ctf.bugku.com/tool/caesar">凯撒(Caesar)加密/解密 - Bugku CTF</a></p>
+<h2 id="base"><a href="#base" class="headerlink" title="base"></a>base</h2><p>base64</p>
+<figure class="highlight routeros"><table><tr><td class="code"><pre><span class="line">由A-Za-z0-9+/==组成的64个字符。通常末尾有==的就是Base64</span><br><span class="line">Base64:SSBsb3ZlIHlvde+<span class="attribute">8gQ</span>==</span><br></pre></td></tr></table></figure>
+<p>base32</p>
+<figure class="highlight diff"><table><tr><td class="code"><pre><span class="line">由A-Z和2-7组成的32个字符。通常末尾有<span class="comment">===为Base32</span></span><br><span class="line">Base32:JEQGY33WMUQHS33V566IC<span class="comment">===</span></span><br></pre></td></tr></table></figure>
+<p>base16</p>
+<figure class="highlight avrasm"><table><tr><td class="code"><pre><span class="line">由<span class="number">0</span><span class="number">-9</span>和<span class="number">0</span>A-F组成的<span class="number">16</span>个字符。实质就是<span class="number">16</span>进制的字符串。</span><br><span class="line"><span class="symbol">Base16:</span><span class="number">49206</span>c6f766520796f75efbc81</span><br></pre></td></tr></table></figure>
+<p>base58</p>
+<figure class="highlight less"><table><tr><td class="code"><pre><span class="line"><span class="selector-tag">Base58</span>编码去掉了几个看起来会产生歧义的字符，如<span class="selector-tag">0</span>，<span class="selector-tag">O</span>(大写字母o),<span class="selector-tag">I</span>（大写的字母<span class="selector-tag">i</span>）和<span class="selector-tag">l</span>（小写的字母<span class="selector-tag">L</span>）,和几个影响双击选择的字符，如/,+</span><br></pre></td></tr></table></figure>
+<p>base62</p>
+<figure class="highlight subunit"><table><tr><td class="code"><pre><span class="line">大小写英文字母和数字0<span class="string">-9</span>组成，共62个字符。</span><br></pre></td></tr></table></figure>
+<p>base91</p>
+<figure class="highlight clean"><table><tr><td class="code"><pre><span class="line">由<span class="number">91</span>个字符（<span class="number">0</span><span class="number">-9</span>，a-z,A-Z，！#￥%&amp;（）*+，./:;&lt;=&gt;?@[]^_`&#123;|&#125;~”）组成。</span><br></pre></td></tr></table></figure>
+<p>base85</p>
+<figure class="highlight 1c"><table><tr><td class="code"><pre><span class="line">相比于Base94不带！<span class="string">&quot;#&amp;&#x27;&lt;=&gt;\这九个字符</span></span><br></pre></td></tr></table></figure>
+<p>base100</p>
+<figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line"><span class="section">一堆Emoji表情: 👝👣👘👞</span></span><br></pre></td></tr></table></figure>
+<p>在线解密&amp;工具：<a href="https://ctf.bugku.com/tool/base100">BASE100编码解码 - Bugku CTF</a></p>
+<p>base92</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">生成的编码字符串更短</span><br></pre></td></tr></table></figure>
+<h2 id="Shellcode编码"><a href="#Shellcode编码" class="headerlink" title="Shellcode编码"></a>Shellcode编码</h2><figure class="highlight llvm"><table><tr><td class="code"><pre><span class="line">特征：Shellcode编码中含有\<span class="keyword">x</span>，形如：\<span class="keyword">x</span><span class="number">66</span>\<span class="keyword">x</span><span class="number">6</span><span class="keyword">c</span>\<span class="keyword">x</span><span class="number">61</span>\<span class="keyword">x</span><span class="number">67</span></span><br></pre></td></tr></table></figure>
+<p>在线解密&amp;工具：<a href="https://www.toolhelper.cn/EncodeDecode/EncodeDecode">字符 编码/解码 - 在线工具</a></p>
+<h2 id="XXEncode编码"><a href="#XXEncode编码" class="headerlink" title="XXEncode编码"></a>XXEncode编码</h2><figure class="highlight brainfuck"><table><tr><td class="code"><pre><span class="line"><span class="comment">特征：大小写字母，数字以及</span><span class="literal">+</span><span class="literal">-</span><span class="comment">字符</span></span><br><span class="line"><span class="comment">2NalVNk</span>++</span><br></pre></td></tr></table></figure>
+<p>在线解密&amp;工具：<a href="http://www.hiencode.com/xxencode.html">CTF在线工具-在线XXencode编码|XX编码|XXencode解码|XXencode编码原理|XXencode编码算法</a></p>
+<h2 id="UUencode"><a href="#UUencode" class="headerlink" title="UUencode"></a>UUencode</h2><figure class="highlight makefile"><table><tr><td class="code"><pre><span class="line"><span class="section">对于长消息来说:每行开头都是M。</span></span><br><span class="line">对于短消息特征就是字符串有&#x27;(<span class="variable">$&lt;</span>&gt;)这类字符</span><br></pre></td></tr></table></figure>
+<p>在线解密&amp;工具：<a href="http://www.hiencode.com/uu.html">CTF在线工具-在线UUencode编码|UU编码|UUencode解码|UUencode编码原理|UUencode编码算法</a></p>
+<h2 id="Unicode编码"><a href="#Unicode编码" class="headerlink" title="Unicode编码"></a>Unicode编码</h2><figure class="highlight taggerscript"><table><tr><td class="code"><pre><span class="line"><span class="symbol">\u</span>5b89<span class="symbol">\u</span>5c0f<span class="symbol">\u</span>742a</span><br></pre></td></tr></table></figure>
+<p>在线解密&amp;工具：<a href="https://www.toolhelper.cn/EncodeDecode/UnicodeChineseEncodeDecode">Unicode与中文 编码/解码 - 在线工具</a></p>
+<h2 id="Quoted-printable编码"><a href="#Quoted-printable编码" class="headerlink" title="Quoted-printable编码"></a>Quoted-printable编码</h2><figure class="highlight mipsasm"><table><tr><td class="code"><pre><span class="line">特征：Quoted-printable编码中含有=，形如：=E9=<span class="number">82</span>=<span class="built_in">A3</span>=E4=<span class="keyword">BD=A0</span></span><br><span class="line"><span class="keyword">一般是对汉字进行加密</span></span><br></pre></td></tr></table></figure>
+<p>在线解密&amp;工具：<a href="http://www.metools.info/code/quotedprintable231.html">Quoted-Printable编码解码在线转换工具-ME2在线工具</a></p>
+<p><a href="https://ctf.bugku.com/tool/brainfuck">https://ctf.bugku.com/tool/brainfuck</a>)</p>
+<h2 id="社会主义核心价值观编码"><a href="#社会主义核心价值观编码" class="headerlink" title="社会主义核心价值观编码"></a>社会主义核心价值观编码</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">特征：由24核心价值观（富强、民主、文明、和谐，自由、平等、公正、法治，爱国、敬业、诚信、友善）组成。</span><br></pre></td></tr></table></figure>
+<p>在线解密&amp;工具：<a href="https://ctf.bugku.com/tool/cvecode">核心价值观编码 - Bugku CTF</a></p>
+<h2 id="与佛论禅"><a href="#与佛论禅" class="headerlink" title="与佛论禅"></a>与佛论禅</h2><p>特征：与佛论禅加密其密文特点就是与<strong>佛文</strong>有关。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">新佛曰：諸隸僧降吽諳諸陀摩隸諳僧缽薩諳願耨諳咤諳陀諳願兜諳咤諳如</span><br></pre></td></tr></table></figure>
+<p>在线解密&amp;工具：<a href="http://hi.pcmoe.net/Buddha.html">http://hi.pcmoe.net/Buddha.html</a></p>
+<h2 id="与熊论道"><a href="#与熊论道" class="headerlink" title="与熊论道"></a>与熊论道</h2><p>特征：与熊论道加密其密文特点都是以“<strong>熊曰：</strong>”开头。</p>
+<figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">熊曰：呋食食溫家和嘶啽更</span><br></pre></td></tr></table></figure>
+<p>在线解密&amp;工具：<a href="http://hi.pcmoe.net/index.html">http://hi.pcmoe.net/index.html</a></p>
+<h2 id="兽音"><a href="#兽音" class="headerlink" title="兽音"></a>兽音</h2><p>简介：兽音其密文特点就是动物发出的叫声“呜”、“啊”、“ 嗷”以及符号“~”组成。</p>
+<figure class="highlight haml"><table><tr><td class="code"><pre><span class="line">~呜嗷嗷嗷嗷呜啊嗷啊呜呜嗷呜呜~嗷嗷~啊嗷啊呜嗷嗷~嗷~嗷~呜呜嗷呜啊啊</span><br></pre></td></tr></table></figure>
+<p>在线解密&amp;工具：<a href="http://hi.pcmoe.net/roar.html">http://hi.pcmoe.net/roar.html</a></p>
+<h2 id="Escape编码"><a href="#Escape编码" class="headerlink" title="Escape编码"></a>Escape编码</h2><figure class="highlight cos"><table><tr><td class="code"><pre><span class="line">将除<span class="keyword">ASCII</span>字符外的所有的空格符，标点符号，特殊字符都被转化成<span class="built_in">%xx</span>格式的字符编码</span><br><span class="line"></span><br><span class="line">abc安小琪 -&gt;  abc<span class="built_in">%u</span>5B89<span class="built_in">%u</span>5C0F<span class="built_in">%u</span>742A</span><br></pre></td></tr></table></figure>
+<p>在线解密&amp;工具：<a href="http://www.esjson.com/escapeEncrypt.html">Escape加密、解密工具(ES JSON在线工具)</a></p>
+<h2 id="Rabbit密码"><a href="#Rabbit密码" class="headerlink" title="Rabbit密码"></a>Rabbit密码</h2><p><img src="https://img.npfs06.top/20231124104758.png"></p>
+<figure class="highlight nginx"><table><tr><td class="code"><pre><span class="line"><span class="attribute">U2FsdGVkX1</span> 开头</span><br></pre></td></tr></table></figure>
+<p><a href="https://www.sojson.com/encrypt_rabbit.html">在线Rabbit加密 | Rabbit解密- 在线工具</a></p>
+<h2 id="埃特巴什码"><a href="#埃特巴什码" class="headerlink" title="埃特巴什码"></a>埃特巴什码</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">原理：最后一个字母代表第一个字母，倒数第二个字母代表第二个字母。</span><br></pre></td></tr></table></figure>
+<p>在线解密&amp;工具：<a href="http://www.hiencode.com/atbash.html">CTF在线工具-在线埃特巴什码加密|在线埃特巴什码解密|埃特巴什码算法|Atbash Cipher</a></p>
+<h2 id="playfair密码"><a href="#playfair密码" class="headerlink" title="playfair密码"></a>playfair密码</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">特征：密文的字母数一定是偶数；任意两个同组的字母都不会相同，如果出现这种字符必是乱码和虚码。</span><br></pre></td></tr></table></figure>
+<p>在线解密&amp;工具：<a href="http://www.atoolbox.net/Tool.php?Id=912">普莱费尔密码加密/解密 - 一个工具箱 - 好用的在线工具都在这里！</a></p>
+<h2 id="Hill密码（希尔密码）"><a href="#Hill密码（希尔密码）" class="headerlink" title="Hill密码（希尔密码）"></a>Hill密码（希尔密码）</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">特征：希尔密码由于采用矩阵运算加密，因此在相同的密文加密时，可能会出现不同的密文，因此可以很好的抵御字母频率攻击法。</span><br></pre></td></tr></table></figure>
+<p>在线解密&amp;工具：<a href="https://ctf.bugku.com/tool/hill">希尔(Hill Cipher)加密/解密 - Bugku CTF</a></p>
+<h2 id="云影密码"><a href="#云影密码" class="headerlink" title="云影密码"></a>云影密码</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">云影密码仅包含01248五个数字，其中0用于分割，其余数字用于做加和操作之后转换为明文。</span><br></pre></td></tr></table></figure>
+<p> 题目：8842101220480224404014224202480122</p>
+<p>  解析：云影加密中0是间隔符，所以把以0开头的全部分隔开然后再看就会得到8个小块，得到数字：88421  122  48  2244  4  142242  248  122。然后把上面的数字相加可以得到八组小于等于26的数，按照字母表顺序，即分别代表八个字母：23-W、5-E、12-L、12-L、4-D、15-O、14-N，5-E，就求得密文为：WELLDONE。</p>
+<h2 id="RSA"><a href="#RSA" class="headerlink" title="RSA"></a>RSA</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="DSA"><a href="#DSA" class="headerlink" title="DSA"></a>DSA</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+<h2 id="AES"><a href="#AES" class="headerlink" title="AES"></a>AES</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line"></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="serpent加密"><a href="#serpent加密" class="headerlink" title="serpent加密"></a>serpent加密</h2><p>在线解密&amp;工具：<a href="http://tool.chacuo.net/cryptserpent">在线Serpent加密解密、Serpent在线加密解密、Serpent encryption and decryption–查错网</a></p>
+<h2 id="博福特密码（Beaufort-Cipher）"><a href="#博福特密码（Beaufort-Cipher）" class="headerlink" title="博福特密码（Beaufort Cipher）"></a><strong>博福特密码（Beaufort Cipher）</strong></h2><figure class="highlight objectivec"><table><tr><td class="code"><pre><span class="line">明文：ILOVEBEAUFORTCIPHER</span><br><span class="line">密钥：KEYSKEYSKEYSKEYSKEY</span><br><span class="line">密文：<span class="built_in">CTKXGDUSQZKBRCQDDAH</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://img.npfs06.top/20231124112506.png"></p>
+<h2 id="滚动密钥密码"><a href="#滚动密钥密码" class="headerlink" title="滚动密钥密码"></a>滚动密钥密码</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">滚动密钥密码和维吉尼亚密码有着相同的加密机制，区别是密钥的选取,滚动密钥密码使用很长的密钥</span><br></pre></td></tr></table></figure>
+<p>在线解密&amp;工具：[CTF在线工具-在线滚动密钥加密|在线滚动密钥解密|滚动密钥密码算法|Running Key Cipher](<a href="http://www.hiencode.com/runkey.html#:~:text=CTF%E5%9C%A8%E7%BA%BF%E5%B7%A5%E5%85%B7-%E5%9C%A8%E7%BA%BF%E6%BB%9A%E5%8A%A8%E5%AF%86%E9%92%A5%E5%8A%A0%E5%AF%86|%E5%9C%A8%E7%BA%BF%E6%BB%9A%E5%8A%A8%E5%AF%86%E9%92%A5%E8%A7%A3%E5%AF%86|%E6%BB%9A%E5%8A%A8%E5%AF%86%E9%92%A5%E5%AF%86%E7%A0%81%E7%AE%97%E6%B3%95|Running,Key">http://www.hiencode.com/runkey.html#:~:text=CTF在线工具-在线滚动密钥加密|在线滚动密钥解密|滚动密钥密码算法|Running,Key</a> Cipher)</p>
+<h2 id="维吉尼亚密码"><a href="#维吉尼亚密码" class="headerlink" title="维吉尼亚密码"></a>维吉尼亚密码</h2><p>特征：古密码使用秘钥的，按秘钥移动26个英文字母</p>
+<p><img src="https://img.npfs06.top/20231124112930.png"></p>
+<p><a href="https://www.qqxiuzi.cn/bianma/weijiniyamima.php">维吉尼亚密码在线加密解密 - 千千秀字</a></p>
+<h2 id="同音替换密码"><a href="#同音替换密码" class="headerlink" title="同音替换密码"></a>同音替换密码</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">同音替换密码是单字母可以被其他几种密文字母同时替换的密码</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.npfs06.top/20231124141015.png"></p>
+<h2 id="培根密码"><a href="#培根密码" class="headerlink" title="培根密码"></a>培根密码</h2><p><img src="https://img.npfs06.top/20231124104449.png"></p>
+<h2 id="摩斯密码"><a href="#摩斯密码" class="headerlink" title="摩斯密码"></a>摩斯密码</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">…-…-…-…-</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.npfs06.top/20231124104531.png"></p>
+<p>在线解密&amp;工具：<a href="https://tool.bugku.com/mosi/">摩斯密码在线加密解密 - Bugku</a></p>
+<h2 id="栅栏密码"><a href="#栅栏密码" class="headerlink" title="栅栏密码"></a>栅栏密码</h2><figure class="highlight excel"><table><tr><td class="code"><pre><span class="line">所谓栅栏密码，就是把要加密的明文分成<span class="built_in">N</span>个一组，然后把每组的第<span class="number">1</span>个字连起来，形成一段无规律的话。</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.npfs06.top/20231124103451.png"></p>
+<p><a href="http://www.metools.info/code/fence155.html">栅栏密码_栅栏密码加密解密【基础型】-ME2在线工具</a></p>
+<p><img src="https://img.npfs06.top/20231124103520.png"></p>
+<h2 id="栅栏密码变种W型"><a href="#栅栏密码变种W型" class="headerlink" title="栅栏密码变种W型"></a>栅栏密码变种W型</h2><p><img src="https://img.npfs06.top/20231124103602.png"></p>
+<p><a href="http://www.atoolbox.net/Tool.php?Id=777">栅栏密码加密/解密【W型】 - 一个工具箱 - 好用的在线工具都在这里！</a></p>
+<h2 id="标准银河字母"><a href="#标准银河字母" class="headerlink" title="标准银河字母"></a>标准银河字母</h2><p><img src="https://img.npfs06.top/20231124103304.png"></p>
+<h2 id="圣堂武士密码"><a href="#圣堂武士密码" class="headerlink" title="圣堂武士密码"></a>圣堂武士密码</h2><p><img src="https://img.npfs06.top/20231124111637.png"></p>
+<h2 id="键盘密码·QWE替换"><a href="#键盘密码·QWE替换" class="headerlink" title="键盘密码·QWE替换"></a>键盘密码·QWE替换</h2><p><img src="https://img.npfs06.top/20231124103729.png"></p>
+<h2 id="键盘密码·QWE包围"><a href="#键盘密码·QWE包围" class="headerlink" title="键盘密码·QWE包围"></a>键盘密码·QWE包围</h2><figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">解密方式：每组密文所围住的按键上的字符</span><br><span class="line">例: yujnbg, 观察键盘发现这六个字母围住了<span class="built_in">h</span>，故明文为<span class="built_in">h</span>。</span><br></pre></td></tr></table></figure>
+<h2 id="键盘密码·九一"><a href="#键盘密码·九一" class="headerlink" title="键盘密码·九一"></a>键盘密码·九一</h2><figure class="highlight clean"><table><tr><td class="code"><pre><span class="line">此类键盘密码的特征是有两种形式，重复的数字、重复的英文。</span><br><span class="line"></span><br><span class="line">ooo yyy ii w uuu ee uuuu yyy uuuu y w uuu </span><br><span class="line"></span><br><span class="line">·发现密文全在键盘字母第一行，若再上一行，则会得到字母与数字的映射关系，例如：q对应<span class="number">1</span>，w对映<span class="number">2</span>。</span><br><span class="line"></span><br><span class="line">·此时会发现数字全都是小于<span class="number">10</span>的，对应九宫格拼音，又重复次数在四次以内，则重复次数是一宫中的行坐标。</span><br><span class="line"></span><br><span class="line">例：ooo -&gt; <span class="number">999</span> -&gt; y</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.npfs06.top/20231124104042.png"></p>
+<h2 id="猪圈密码"><a href="#猪圈密码" class="headerlink" title="猪圈密码"></a>猪圈密码</h2><p><img src="https://img.npfs06.top/20231124104621.png"></p>
+<h2 id="猪圈密码变种"><a href="#猪圈密码变种" class="headerlink" title="猪圈密码变种"></a>猪圈密码变种</h2><p><img src="https://img.npfs06.top/20231124104647.png"></p>
+<h2 id="棋盘密码Polybius密码"><a href="#棋盘密码Polybius密码" class="headerlink" title="棋盘密码Polybius密码"></a>棋盘密码Polybius密码</h2><p><img src="https://img.npfs06.top/20231124105155.png"></p>
+<figure class="highlight tap"><table><tr><td class="code"><pre><span class="line">·明文：HELLO 密文：23<span class="number"> 15 </span>31<span class="number"> 31 </span>34</span><br></pre></td></tr></table></figure>
+<h2 id="棋盘密码变种（ADFGX-密码）"><a href="#棋盘密码变种（ADFGX-密码）" class="headerlink" title="棋盘密码变种（ADFGX 密码）"></a>棋盘密码变种（ADFGX 密码）</h2><p><img src="https://img.npfs06.top/20231124105239.png"></p>
+<figure class="highlight css"><table><tr><td class="code"><pre><span class="line">·使用这种密码表的加密也叫作 ADFGX 密码（密文中只有 <span class="selector-tag">A</span> D F G X）</span><br><span class="line">·明文：HELLO 密文：<span class="selector-tag">DD</span> XF AG AG DF</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.npfs06.top/20231124141102.png"></p>
+<h2 id="ADFGVX密码"><a href="#ADFGVX密码" class="headerlink" title="ADFGVX密码"></a>ADFGVX密码</h2><p><img src="https://img.npfs06.top/20231124141127.png"></p>
+<p>在线解密&amp;工具：<a href="http://www.atoolbox.net/Tool.php?Id=917">ADFGVX密码加密/解密 - 一个工具箱 - 好用的在线工具都在这里！</a></p>
+<h2 id="棋盘密码变种-关键字密码Nihilist"><a href="#棋盘密码变种-关键字密码Nihilist" class="headerlink" title="棋盘密码变种 (关键字密码Nihilist)"></a>棋盘密码变种 (关键字密码Nihilist)</h2><figure class="highlight brainfuck"><table><tr><td class="code"><pre><span class="line"><span class="comment">关键字就是一种秘钥，由字母组成，由加密双方约定而成。密码表有25个位置，依次不重复的填入秘钥，在不重复的填入a~z</span><span class="string">.</span></span><br></pre></td></tr></table></figure>
+<p>如：秘钥为<a href="https://so.csdn.net/so/search?q=linux&spm=1001.2101.3001.7020">linux</a>，则密码表为：</p>
+<p><img src="https://img.npfs06.top/20231124105538.png"></p>
+<h2 id="双密码"><a href="#双密码" class="headerlink" title="双密码"></a>双密码</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">两个密钥进行加密</span><br></pre></td></tr></table></figure>
+<p>密阵:</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">  <span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">4</span> <span class="number">5</span></span><br><span class="line"><span class="number">1</span>| p h q g m</span><br><span class="line"><span class="number">2</span>| e a y l n</span><br><span class="line"><span class="number">3</span>| o f d x k</span><br><span class="line"><span class="number">4</span>| r c v s z</span><br><span class="line"><span class="number">5</span>| w b u t i/j</span><br></pre></td></tr></table></figure>
+<p>明文:<code>THE QUICK BROWN FOX</code> </p>
+<p>经过密阵转换： </p>
+<p>行:<code>512 15543 54352 333</code></p>
+<p> 列:<code>421 33525 21115 214</code> </p>
+<p>分组:</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="number">51215</span> <span class="number">54354</span> <span class="number">35233</span> <span class="number">3</span></span><br><span class="line"><span class="number">42133</span> <span class="number">52521</span> <span class="number">11521</span> <span class="number">4</span></span><br></pre></td></tr></table></figure>
+<p>合并：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="number">5121542133</span> <span class="number">5435452521</span> <span class="number">3523311521</span> <span class="number">34</span></span><br></pre></td></tr></table></figure>
+<p>在经过密阵转换后密文:<code>WETED TKZNE KYOME X</code></p>
+<p>在线解密&amp;工具：<a href="http://www.hiencode.com/bifid.html">CTF在线工具-在线双密码加密|在线双密码解密|双密码算法|Bifid Cipher</a></p>
+<h2 id="三分密码"><a href="#三分密码" class="headerlink" title="三分密码"></a>三分密码</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">三分密码与双密码非常相似，差别之处就是用除了3×3×3的密阵代替5×5密阵。</span><br></pre></td></tr></table></figure>
+<p>示例密阵:</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">密阵顺序 = EPSDUCVWYM.ZLKXNBTFGORIJHAQ</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">密阵顺序 = EPSDUCVWYM.ZLKXNBTFGORIJHAQ      </span><br><span class="line"> </span><br><span class="line">方阵 <span class="number">1</span>      方阵 <span class="number">2</span>      方阵 <span class="number">3</span>                                     </span><br><span class="line">  <span class="number">1</span> <span class="number">2</span> <span class="number">3</span>      <span class="number">1</span> <span class="number">2</span> <span class="number">3</span>      <span class="number">1</span> <span class="number">2</span> <span class="number">3</span>    </span><br><span class="line"><span class="number">1</span> E P S    <span class="number">1</span> M . Z    <span class="number">1</span> F G O    </span><br><span class="line"><span class="number">2</span> D U C    <span class="number">2</span> L K X    <span class="number">2</span> R I J    </span><br><span class="line"><span class="number">3</span> V W Y    <span class="number">3</span> N B T    <span class="number">3</span> H A Q </span><br></pre></td></tr></table></figure>
+<p>明文:<code>THE QUICK BROWN FOX.</code> 经过密阵转换：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">T H E Q U I C K B R O W N F O X .</span><br><span class="line"><span class="number">2</span> <span class="number">3</span> <span class="number">1</span> <span class="number">3</span> <span class="number">1</span> <span class="number">3</span> <span class="number">1</span> <span class="number">2</span> <span class="number">2</span> <span class="number">3</span> <span class="number">3</span> <span class="number">1</span> <span class="number">2</span> <span class="number">3</span> <span class="number">3</span> <span class="number">2</span> <span class="number">2</span></span><br><span class="line"><span class="number">3</span> <span class="number">3</span> <span class="number">1</span> <span class="number">3</span> <span class="number">2</span> <span class="number">2</span> <span class="number">2</span> <span class="number">2</span> <span class="number">3</span> <span class="number">2</span> <span class="number">1</span> <span class="number">3</span> <span class="number">3</span> <span class="number">1</span> <span class="number">1</span> <span class="number">2</span> <span class="number">1</span></span><br><span class="line"><span class="number">3</span> <span class="number">1</span> <span class="number">1</span> <span class="number">3</span> <span class="number">2</span> <span class="number">2</span> <span class="number">3</span> <span class="number">2</span> <span class="number">2</span> <span class="number">1</span> <span class="number">3</span> <span class="number">2</span> <span class="number">1</span> <span class="number">1</span> <span class="number">3</span> <span class="number">3</span> <span class="number">2</span></span><br><span class="line">T(<span class="number">233</span>)表示T在第一个方阵第三行第三列的</span><br></pre></td></tr></table></figure>
+<p>位置 分组(分组密钥以5为例):</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">THEQU ICKBR OWNFO X.</span><br><span class="line"><span class="number">23131</span> <span class="number">31223</span> <span class="number">31233</span> <span class="number">22</span></span><br><span class="line"><span class="number">33132</span> <span class="number">22232</span> <span class="number">13311</span> <span class="number">21</span></span><br><span class="line"><span class="number">31132</span> <span class="number">23221</span> <span class="number">32113</span> <span class="number">32</span></span><br></pre></td></tr></table></figure>
+<p>合并：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="number">23131</span> <span class="number">33132</span> <span class="number">31132</span> <span class="number">31223</span> <span class="number">22232</span> <span class="number">23221</span> <span class="number">31233</span> <span class="number">13311</span> <span class="number">32113</span> <span class="number">22</span> <span class="number">21</span> <span class="number">32</span></span><br></pre></td></tr></table></figure>
+<p>在经过密阵转换后密文:</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="number">231313313231132312232223223221312331331132113222132</span></span><br><span class="line">N  O  O  N  W  G  B  X  X  L  G  H  H  W  S  K  W</span><br></pre></td></tr></table></figure>
+<h2 id="四方密码"><a href="#四方密码" class="headerlink" title="四方密码"></a>四方密码</h2><p>示例矩阵：</p>
+<p><img src="https://ask.qcloudimg.com/http-save/yehe-8581257/900b0eec86d85dfb07bd182d62269b02.png" alt="img"></p>
+<p>明文：<code>THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG</code> 整理明文(分组不够时用’X’填充)：<code>TH EQ UI CK BR OW NF OX JU MP SO VE RT HE LA ZY DO GX</code> </p>
+<p>加密过程：分别在明文矩阵中找到’TH’，分别找到他们在右上矩阵有左下矩阵的交点字母’ES’就是密文，以此类推。 </p>
+<p>密文：<code>ESZWQAFHGTDKWHRKUENYQOLMQTUNWMBPTGHQ</code></p>
+<p>在线解密&amp;工具：<a href="http://www.metools.info/code/four-square244.html">四方密码在线加密解密转换器-ME2在线工具</a></p>
+<h2 id="Porta密码"><a href="#Porta密码" class="headerlink" title="Porta密码"></a><strong>Porta密码</strong></h2><p>Porta密码(Porta Cipher)是一个由意大利那不勒斯的医生Giovanni Battista della Porta发明的多表代换密码 Porta密码具有加密解密过程的是相同的特点</p>
+<p><img src="https://img.npfs06.top/20231124152817.png"></p>
+<p>明文：<code>THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG</code> 密钥(循环使用，密钥越长相对破解难度越大)：<code>CULTURE</code> 加密过程：明文字母’T’列与密钥字母’C’行交点就是密文字母’F’,以此类推。 密文：<code>FRW HKQRY YMFMF UAA OLWHD ALWI JPT ZXHC NGV</code></p>
+<h2 id="Bazeries密码"><a href="#Bazeries密码" class="headerlink" title="Bazeries密码"></a>Bazeries密码</h2><p>Bazeries密码(Bazeries Cipher)是换位密码和替换密码的组合</p>
+<ul>
+<li>使用两个波利比奥斯方阵，一个明文字母方阵</li>
+<li>使用一个随机的数字(一般小于1000000)的生成一个密钥矩阵同时作为第一轮明文划分分组，比如2333这个数字翻译为英文便是TWO THOUSAND THREE HUNDRED THIRTY THREE,从第一个字母T开始选取不重复的字母，之后再从字母表中按序选取没有出现的字母组成密钥矩阵。</li>
+</ul>
+<p>明文:<code>THE QUICK BROWN FOX JUMPS OVER THE LAZY DOG</code> 随机数字:<code>2333</code> 明文矩阵:</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">A  F  L  Q  V</span><br><span class="line">B  G  M  R  W</span><br><span class="line">C  H  N  S  X</span><br><span class="line">D I/J O  T  Y</span><br><span class="line">E  K  P  U  Z</span><br></pre></td></tr></table></figure>
+<p>复制</p>
+<p>示例密钥矩阵：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">T  W  O  H  U</span><br><span class="line">S  A  N  D  R</span><br><span class="line">E I/J Y  B  C</span><br><span class="line">F  G  K  L  M</span><br><span class="line">P  Q  V  X  Z</span><br></pre></td></tr></table></figure>
+<p>复制</p>
+<p>明文分组：</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line"><span class="number">2</span>  <span class="number">3</span>   <span class="number">3</span>   <span class="number">3</span>    <span class="number">2</span>  <span class="number">3</span>   <span class="number">3</span>   <span class="number">3</span>  <span class="number">2</span>   <span class="number">3</span>   <span class="number">3</span>   <span class="number">3</span>  <span class="number">3</span></span><br><span class="line">TH EQU ICK BRO WN FOX JUM PSO VE RTH ELA ZYD OG</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">分组明文反序:</span><br><span class="line">HT UQE KCI ORB WN XOF MUJ OSP EV EHT ALE DYZ GO</span><br></pre></td></tr></table></figure>
+<p>使用密钥矩阵替换:</p>
+<figure class="highlight javascript"><table><tr><td class="code"><pre><span class="line">IL XHP QEG KDS YR CKW NXG KBV PU ILD TOP FMZ AK</span><br><span class="line">(比如’H’在明文矩阵对应到密钥矩阵的位置就是’I’）</span><br></pre></td></tr></table></figure>
+<h2 id="Digrafid密码"><a href="#Digrafid密码" class="headerlink" title="Digrafid密码"></a>Digrafid密码</h2><p>简介：Digrafid密码使用两个密钥生成分别生成类似波利比奥斯方阵的3×9方格的密表。</p>
+<h2 id="格朗普雷密码"><a href="#格朗普雷密码" class="headerlink" title="格朗普雷密码"></a>格朗普雷密码</h2><p>简介：格朗普雷密码是替换密码的一种，一般使用8个8字母的单词横向填充8x8方阵，且第一列为一个单词，并且在方阵中26个字母都必须出现一次以上。</p>
+<p>举例：</p>
+<p>说明：明文中的字母在密阵位置可能不止一个，所以加密结果可能有多种，但是不影响解密。密阵还有6×6、7×7、9×9、10×10、几种。显然密阵越大每个字母被替换的情况就可能越多，那么加密效果就更好。</p>
+<h2 id="比尔密码"><a href="#比尔密码" class="headerlink" title="比尔密码"></a>比尔密码</h2><p>简介：比尔密码是在1885年出版的一本小册子中提到的三份密码。比尔密码的三份密码都由1-4位的数字组成。第一份密码说明了财宝的位置，第二份密码则说明了财宝的内容，第三份密码则列出了财宝所有者的姓名。</p>
+<h2 id="曲路密码"><a href="#曲路密码" class="headerlink" title="曲路密码"></a>曲路密码</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">需要事先双方约定密钥（也就是曲路路径）</span><br><span class="line">解题的时候将明文填入表中，并按照一定的曲路遍历。</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.npfs06.top/20231124105800.png"></p>
+<h2 id="曲折密码-夏多密码"><a href="#曲折密码-夏多密码" class="headerlink" title="曲折密码/夏多密码"></a>曲折密码/夏多密码</h2><p><img src="https://img.npfs06.top/20231124145621.png"></p>
+<h2 id="狄德拉密码"><a href="#狄德拉密码" class="headerlink" title="狄德拉密码"></a>狄德拉密码</h2><p><img src="https://img.npfs06.top/20231124145647.png"></p>
+<h2 id="埃及文字"><a href="#埃及文字" class="headerlink" title="埃及文字"></a>埃及文字</h2><p><img src="https://img.npfs06.top/20231124151848.png"></p>
+<h2 id="外星人密码"><a href="#外星人密码" class="headerlink" title="外星人密码"></a>外星人密码</h2><p><img src="https://img.npfs06.top/20231124145702.png"></p>
+<h2 id="克林贡语密码"><a href="#克林贡语密码" class="headerlink" title="克林贡语密码"></a>克林贡语密码</h2><p><img src="https://img.npfs06.top/20231124145723.png"></p>
+<h2 id="多斯拉克语"><a href="#多斯拉克语" class="headerlink" title="多斯拉克语"></a>多斯拉克语</h2><p><img src="https://img.npfs06.top/20231124145744.png"></p>
+<h2 id="模拟语"><a href="#模拟语" class="headerlink" title="模拟语"></a>模拟语</h2><p><img src="https://img.npfs06.top/20231124145820.png"></p>
+<h2 id="海利亚语"><a href="#海利亚语" class="headerlink" title="海利亚语"></a>海利亚语</h2><p><img src="https://img.npfs06.top/20231124145839.png"></p>
+<h2 id="樊凡语"><a href="#樊凡语" class="headerlink" title="樊凡语"></a>樊凡语</h2><p><img src="https://img.npfs06.top/20231124145855.png"></p>
+<h2 id="跳舞的小人"><a href="#跳舞的小人" class="headerlink" title="跳舞的小人"></a>跳舞的小人</h2><p><img src="https://img.npfs06.top/20231124145910.png"></p>
+<h2 id="神奇宝贝密码"><a href="#神奇宝贝密码" class="headerlink" title="神奇宝贝密码"></a>神奇宝贝密码</h2><p><img src="https://img.npfs06.top/20231124145930.png"></p>
+<h2 id="音符加密"><a href="#音符加密" class="headerlink" title="音符加密"></a>音符加密</h2><p><img src="https://img.npfs06.top/20231124145959.png"></p>
+<h2 id="音乐密码"><a href="#音乐密码" class="headerlink" title="音乐密码"></a>音乐密码</h2><p><img src="https://img.npfs06.top/20231124151946.png"></p>
+<h2 id="海军手旗旗语"><a href="#海军手旗旗语" class="headerlink" title="海军手旗旗语"></a>海军手旗旗语</h2><p><img src="https://img.npfs06.top/20231124150012.png"></p>
+<h2 id="六十甲子"><a href="#六十甲子" class="headerlink" title="六十甲子"></a>六十甲子</h2><p><img src="https://img.npfs06.top/20231124150029.png"></p>
+<h2 id="国际船用信号旗密码"><a href="#国际船用信号旗密码" class="headerlink" title="国际船用信号旗密码"></a>国际船用信号旗密码</h2><p><img src="https://img.npfs06.top/20231124150044.png"></p>
+<h2 id="Covenant字体"><a href="#Covenant字体" class="headerlink" title="Covenant字体"></a>Covenant字体</h2><p><img src="https://img.npfs06.top/20231124150115.png"></p>
+<h2 id="费兹象形文字"><a href="#费兹象形文字" class="headerlink" title="费兹象形文字"></a>费兹象形文字</h2><p><img src="https://img.npfs06.top/20231124150131.png"></p>
+<h2 id="提瓦特文"><a href="#提瓦特文" class="headerlink" title="提瓦特文"></a>提瓦特文</h2><p><img src="https://img.npfs06.top/20231124150143.png"></p>
+<h2 id="古精灵语"><a href="#古精灵语" class="headerlink" title="古精灵语"></a>古精灵语</h2><p><img src="https://img.npfs06.top/20231124150201.png"></p>
+<h2 id="盲文"><a href="#盲文" class="headerlink" title="盲文"></a>盲文</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">⡁⡇⡂⡁⡓⠁⠂⠃⠁⠂⠃</span><br></pre></td></tr></table></figure>
+<p>英文字母盲文-英语字母盲文a-j都只用了1245点位即上半截，和数字的一样；k-t是a-j下面加上了3号点位。</p>
+<p><img src="https://img.npfs06.top/20231124110034.png"></p>
+<p>数字盲文-每个数字的盲文前面都有各“3456”点符形，是数字，表示后面的读作阿拉伯数字。</p>
+<p><img src="https://img.npfs06.top/20231124110228.png"></p>
+<p>汉语拼音盲文-声母、韵母（注意：声母g/k/h在韵母i/u/ü时变读为j/q/x，z/c/s/zh/ch/sh/r后面的i省略）、声调。</p>
+<p><img src="https://img.npfs06.top/20231124110309.png"></p>
+<p>声母盲文对照表1</p>
+<p><img src="https://img.npfs06.top/20231124110330.png"></p>
+<p>声母盲文对照表2</p>
+<p><img src="https://img.npfs06.top/20231124110348.png"></p>
+<p>声调盲文对照表</p>
+<p><img src="https://img.npfs06.top/20231124110436.png"></p>
+<p>在线解密&amp;工具：<a href="https://symbl.cc/cn/tools/braille/">盲文翻译器：转换器和解码器 🔥 (◉‿◉) SYMBL</a></p>
+<h2 id="当铺密码"><a href="#当铺密码" class="headerlink" title="当铺密码"></a>当铺密码</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">原理：根据当前汉字有多少笔画出头，对应的明文就是数字几。</span><br></pre></td></tr></table></figure>
+<p>在线解密&amp;工具：<a href="https://dsb.ink/ctf/dangpu.html">当铺密码</a></p>
+<h2 id="颜文字符号"><a href="#颜文字符号" class="headerlink" title="颜文字符号"></a>颜文字符号</h2><figure class="highlight x86asm"><table><tr><td class="code"><pre><span class="line">特征：一堆颜文字构成的<span class="keyword">js</span>代码</span><br></pre></td></tr></table></figure>
+<p>在线解密&amp;工具：<a href="http://www.atoolbox.net/Tool.php?Id=703">AAEncode加密/解密 - 一个工具箱 - 好用的在线工具都在这里！</a></p>
+<h2 id="JJEncode编码"><a href="#JJEncode编码" class="headerlink" title="JJEncode编码"></a><strong>JJEncode编码</strong></h2><figure class="highlight powershell"><table><tr><td class="code"><pre><span class="line">特征：大量 <span class="variable">$</span>、_ 符号，大量重复的自定义变量</span><br><span class="line"></span><br><span class="line">[]()!+,\<span class="string">&quot;<span class="variable">$</span>.:;_&#123;&#125;~=</span></span><br></pre></td></tr></table></figure>
+<p><img src="https://img.npfs06.top/20231124111045.png"></p>
+<p>在线解密&amp;工具：<a href="https://www.toolkk.com/tools/jjencode-encode-decode">JJEncode编码解码 - 工具匠</a></p>
+<h2 id="jother编码"><a href="#jother编码" class="headerlink" title="jother编码"></a>jother编码</h2><figure class="highlight scss"><table><tr><td class="code"><pre><span class="line">特征：只用! + ( ) <span class="selector-attr">[ ]</span> &#123; &#125;这八个字符就能完成对任意字符串的编码。也可在F12中解密执行</span><br></pre></td></tr></table></figure>
+<p><img src="https://img.npfs06.top/20231124111128.png"></p>
+<p>在线解密&amp;工具：<a href="https://vulsee.com/tools/jother/index.htm">Ｊother编码工具-tmxk.org</a></p>
+<h2 id="JSFuck编码"><a href="#JSFuck编码" class="headerlink" title="JSFuck编码"></a>JSFuck编码</h2><figure class="highlight inform7"><table><tr><td class="code"><pre><span class="line">特征：<span class="comment">[]</span>()!+组成</span><br><span class="line"></span><br><span class="line">(!<span class="comment">[]</span>+<span class="comment">[]</span>)<span class="comment">[+<span class="comment">[]</span>]</span>+(!<span class="comment">[]</span>+<span class="comment">[]</span>)<span class="comment">[!+<span class="comment">[]</span>+!+<span class="comment">[]</span>]</span>+(!<span class="comment">[]</span>+<span class="comment">[]</span>)<span class="comment">[+!+<span class="comment">[]</span>]</span>+(!<span class="comment">[]</span>+<span class="comment">[+<span class="comment">[]</span>]</span>+(<span class="comment">[]</span>+<span class="comment">[]</span>)<span class="comment">[(<span class="comment">[]</span><span class="comment">[(!<span class="comment">[]</span>+<span class="comment">[]</span>)<span class="comment">[+<span class="comment">[]</span>]</span>+(<span class="comment">[!<span class="comment">[]</span>]</span>+<span class="comment">[]</span><span class="comment">[<span class="comment">[]</span>]</span>)<span class="comment">[+!+<span class="comment">[]</span>+<span class="comment">[+<span class="comment">[]</span>]</span>]</span>+(!<span class="comment">[]</span>+<span class="comment">[]</span>)<span class="comment">[!+<span class="comment">[]</span>+!+<span class="comment">[]</span>]</span>+(!<span class="comment">[]</span>+<span class="comment">[]</span>)<span class="comment">[!+<span class="comment">[]</span>+!+<span class="comment">[]</span>]</span>]</span>+<span class="comment">[]</span>)<span class="comment">[!+<span class="comment">[]</span>+!+<span class="comment">[]</span>+!+<span class="comment">[]</span>]</span>+(!!<span class="comment">[]</span>+<span class="comment">[]</span><span class="comment">[(!<span class="comment">[]</span>+<span class="comment">[]</span>)<span class="comment">[+<span class="comment">[]</span>]</span>+(<span class="comment">[!<span class="comment">[]</span>]</span>+<span class="comment">[]</span><span class="comment">[<span class="comment">[]</span>]</span>)<span class="comment">[+!+<span class="comment">[]</span>+<span class="comment">[+<span class="comment">[]</span>]</span>]</span>+(!<span class="comment">[]</span>+<span class="comment">[]</span>)<span class="comment">[!+<span class="comment">[]</span>+!+<span class="comment">[]</span>]</span>+(!<span class="comment">[]</span>+<span class="comment">[]</span>)<span class="comment">[!+<span class="comment">[]</span>+!+<span class="comment">[]</span>]</span>]</span>)<span class="comment">[+!+<span class="comment">[]</span>+</span></span></span><br></pre></td></tr></table></figure>
+<p>在线解密&amp;工具：<a href="http://www.hiencode.com/jsfuck.html">CTF在线工具-在线JSfuck加密|在线JSfuck解密|JSfuck|JSfuck原理|JSfuck算法</a></p>
+<h2 id="Brainfuck"><a href="#Brainfuck" class="headerlink" title="Brainfuck"></a>Brainfuck</h2><figure class="highlight brainfuck"><table><tr><td class="code"><pre><span class="line">++<span class="literal">+</span><span class="literal">+</span><span class="literal">+</span><span class="literal">+</span><span class="literal">+</span><span class="literal">+</span><span class="literal">+</span><span class="literal">+</span><span class="title">[</span>&gt;++<span class="literal">+</span><span class="literal">+</span><span class="literal">+</span><span class="literal">+</span><span class="literal">+</span>&gt;++<span class="literal">+</span><span class="literal">+</span><span class="literal">+</span><span class="literal">+</span><span class="literal">+</span><span class="literal">+</span><span class="literal">+</span><span class="literal">+</span>&gt;++<span class="literal">+</span>&gt;<span class="literal">+</span>&lt;&lt;&lt;&lt;<span class="literal">-</span><span class="title">]</span>++<span class="string">.</span>&gt;<span class="literal">+</span><span class="string">.</span>++<span class="literal">+</span><span class="literal">+</span><span class="literal">+</span><span class="literal">+</span><span class="literal">+</span><span class="comment">…</span>++<span class="literal">+</span><span class="string">.</span>&gt;++<span class="string">.</span>&lt;&lt;++<span class="literal">+</span><span class="literal">+</span><span class="literal">+</span><span class="literal">+</span><span class="literal">+</span><span class="literal">+</span><span class="literal">+</span><span class="literal">+</span><span class="literal">+</span><span class="literal">+</span><span class="literal">+</span><span class="literal">+</span><span class="literal">+</span><span class="comment">…</span>++<span class="literal">+</span><span class="string">.</span>--<span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="string">.</span>--<span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="literal">-</span><span class="string">.</span>&gt;<span class="literal">+</span><span class="string">.</span>&gt;</span><br></pre></td></tr></table></figure>
+<p>在线解密&amp;工具：<a href="https://ctf.bugku.com/tool/brainfuck">Brainfuck/OoK加密解密 - Bugku CTF</a></p>
+<h2 id="Ook加密"><a href="#Ook加密" class="headerlink" title="Ook加密"></a>Ook加密</h2><figure class="highlight erlang-repl"><table><tr><td class="code"><pre><span class="line">Ook! Ook!</span><br></pre></td></tr></table></figure>
+<p>在线解密&amp;工具：<a href="https://ctf.bugku.com/tool/brainfuck">Brainfuck/OoK加密解密 - Bugku CTF</a></p>
+<h2 id="加密"><a href="#加密" class="headerlink" title=".!?加密"></a>.!?加密</h2><figure class="highlight ruby"><table><tr><td class="code"><pre><span class="line">特征：.!<span class="string">?密</span>码中只含有.!<span class="string">?三</span>个不同的语法元素，使用Ook解密即可。</span><br></pre></td></tr></table></figure>
+<h2 id="BubbleBabble"><a href="#BubbleBabble" class="headerlink" title="BubbleBabble"></a>BubbleBabble</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">编码格式每5个字符中间以-来分隔</span><br><span class="line">xinik-samak-loxox</span><br></pre></td></tr></table></figure>
+<p><a href="http://www.hiencode.com/bubble.html">http://www.hiencode.com/bubble.html</a></p>
+<h2 id="敲击码"><a href="#敲击码" class="headerlink" title="敲击码"></a>敲击码</h2><p><img src="https://img.npfs06.top/20231124111557.png"></p>
+<p>在线解密&amp;工具：<a href="http://www.hiencode.com/tapcode.html">CTF在线工具-在线敲击码|敲击码编码|敲击码算法|tap code</a></p>
+<h2 id="变异凯撒"><a href="#变异凯撒" class="headerlink" title="变异凯撒"></a>变异凯撒</h2><p><img src="https://img.npfs06.top/20231124151423.png"></p>
+<h2 id="Type7混淆加密"><a href="#Type7混淆加密" class="headerlink" title="Type7混淆加密"></a>Type7混淆加密</h2><p>简介：Type 7 是一种 Cisco 设备密码加密算法，用于将明文密码加密为不可逆的形式。这种加密算法采用了 XOR 和 MD5 哈希的混合方式，使用一个给定的密钥和额外的固定字符串来生成加密后的密码，因此也被称为 Type 7 混淆加密。</p>
+<p>原理：从一个有26个ASCII字符表中，产生一个种子值（Seed Value）（0-52之间）随机抽取一个用来和明文密码的第一个字符异或，产生的结果用16进制表示，放在加密后字符串的第2、3位，然后种子值+1，再去抽取一个用来和明文密码第二个字符异或，16进制结果放在随后的位置位……。</p>
+<p>在线解密&amp;工具：<a href="http://www.atoolbox.net/Tool.php?Id=992&ac=csdn">Type7密码加密/解密 - 一个工具箱 - 好用的在线工具都在这里！</a></p>
+<h2 id="博多密码"><a href="#博多密码" class="headerlink" title="博多密码"></a>博多密码</h2><p>简介：博多密码，也叫巴拿马密码，是一种古典密码学中的替换密码。它采用了多个字母表，并通过一个基准词来确定加密和解密使用的具体字母表。</p>
+<p>原理：将基准词中出现的所有字母按照顺序排列并去除重复字母，得到字母表A；然后将剩余的字母按照字母表顺序排列并去除重复字母，得到字母表B，字母表A和B都包含26个字母；接下来，将明文中的每个字母在字母表A中的位置作为行数，将该字母在字母表B中的位置作为列数，找到对应的密文字母。同理，将密文中的每个字母在字母表B中的位置作为行数，在字母表A中的位置作为列数，找到对应的明文字母。</p>
+<p>博多密码的优点是具有较好的安全性，但缺点也很明显，即容易受到频率分析攻击等各种攻击手段的攻击。因此，它已经被更安全的加密算法所取代。</p>
+<p>在线解密&amp;工具：<a href="https://www.boxentriq.com/code-breaking/baudot-code">Baudot Code, Baudot-Murray Code (online tool) | Boxentriq</a></p>
 ]]></content>
       <categories>
         <category>web入门</category>
@@ -14736,7 +14973,10 @@ payload:
   <entry>
     <title>ctfshow-crypto</title>
     <url>/2023/11/24/ctfshow-crypto/</url>
-    <content><![CDATA[<h2 id="crypto2"><a href="#crypto2" class="headerlink" title="crypto2"></a>crypto2</h2><p>jsfuck</p>
+    <content><![CDATA[<p>crypto</p>
+<a id="more"></a>
+
+<h2 id="crypto2"><a href="#crypto2" class="headerlink" title="crypto2"></a>crypto2</h2><p>jsfuck</p>
 <p><img src="https://img.npfs06.top/20231124091004.png"></p>
 <h2 id="crypto3"><a href="#crypto3" class="headerlink" title="crypto3"></a>crypto3</h2><p>颜文字</p>
 <h2 id="crypto4"><a href="#crypto4" class="headerlink" title="crypto4"></a>crypto4</h2><p><img src="https://img.npfs06.top/20231124091921.png"></p>
