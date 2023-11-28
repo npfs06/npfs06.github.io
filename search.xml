@@ -14986,6 +14986,12 @@ payload:
 <h2 id="国际船用信号旗密码"><a href="#国际船用信号旗密码" class="headerlink" title="国际船用信号旗密码"></a>国际船用信号旗密码</h2><p><img src="https://img.npfs06.top/20231124150044.png"></p>
 <h2 id="Covenant字体"><a href="#Covenant字体" class="headerlink" title="Covenant字体"></a>Covenant字体</h2><p><img src="https://img.npfs06.top/20231124150115.png"></p>
 <h2 id="费兹象形文字"><a href="#费兹象形文字" class="headerlink" title="费兹象形文字"></a>费兹象形文字</h2><p><img src="https://img.npfs06.top/20231124150131.png"></p>
+<h2 id="wingdings字体"><a href="#wingdings字体" class="headerlink" title="wingdings字体"></a>wingdings字体</h2><p>wingding编码是一种用于打印的字体，不具有可读性，类似的系列编码还有web dings、wingding 2、wingding3编码</p>
+<p>根据编码的特征，doc文档设置字体为宋体、黑体即可看到原文内容</p>
+<p><img src="https://img.npfs06.top/20231128084215.png"></p>
+<p>解密网站：<a href="https://lingojam.com/WingDing">https://lingojam.com/WingDing</a></p>
+<h2 id="LaTeX"><a href="#LaTeX" class="headerlink" title="LaTeX"></a>LaTeX</h2><p><img src="https://img-blog.csdnimg.cn/72c8b958e8ae499d9dc2e1b50ceb5259.png?x-oss-process=image/watermark,type_d3F5LXplbmhlaQ,shadow_50,text_Q1NETiBASGFyZHdvcmtpbmc2NjY=,size_20,color_FFFFFF,t_70,g_se,x_16" alt="在这里插入图片描述"><br><a href="https://blog.csdn.net/zgj926503/article/details/52757631/">LaTex常见符号对照表</a><br>查阅表：<br><a href="https://detexify.kirelabs.org/symbols.html">https://detexify.kirelabs.org/symbols.html</a></p>
+<p><a href="https://www.latexlive.com/">LaTex在线编辑器</a></p>
 <h2 id="提瓦特文"><a href="#提瓦特文" class="headerlink" title="提瓦特文"></a>提瓦特文</h2><p><img src="https://img.npfs06.top/20231124150143.png"></p>
 <h2 id="古精灵语"><a href="#古精灵语" class="headerlink" title="古精灵语"></a>古精灵语</h2><p><img src="https://img.npfs06.top/20231124150201.png"></p>
 <h2 id="盲文"><a href="#盲文" class="headerlink" title="盲文"></a>盲文</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">⡁⡇⡂⡁⡓⠁⠂⠃⠁⠂⠃</span><br></pre></td></tr></table></figure>
@@ -15023,6 +15029,39 @@ payload:
 ]]></content>
       <categories>
         <category>Crypto</category>
+      </categories>
+  </entry>
+  <entry>
+    <title>magnetos--一款贼牛逼的CTF工具</title>
+    <url>/2023/11/28/magnetos-%E4%B8%80%E6%AC%BE%E8%B4%BC%E7%89%9B%E9%80%BC%E7%9A%84CTF%E5%B7%A5%E5%85%B7/</url>
+    <content><![CDATA[<p>一款帮你在 CTF 比赛中加速解题的工具</p>
+<a id="more"></a>
+
+<p><a href="https://github.com/restran/magnetos/blob/master/docs/icon/magnetos.png"><img src="https://github.com/restran/magnetos/raw/master/docs/icon/magnetos.png" alt="img"></a></p>
+<h2 id="依赖的第三方工具"><a href="#依赖的第三方工具" class="headerlink" title="依赖的第三方工具"></a>依赖的第三方工具</h2><ul>
+<li><a href="https://github.com/zed-0xff/zsteg">zsteg</a></li>
+<li>pngcheck</li>
+<li><a href="https://github.com/abeluck/stegdetect">stegdetect</a></li>
+<li>exiftool</li>
+</ul>
+<figure class="highlight apache"><table><tr><td class="code"><pre><span class="line"><span class="attribute">apt</span> install pngcheck</span><br><span class="line"><span class="attribute">apt</span> install libimage-exiftool-perl</span><br><span class="line"><span class="attribute">gem</span> install zsteg</span><br><span class="line"><span class="attribute">wget</span> http://launchpadlibrarian.net/<span class="number">16746333</span>/stegdetect_<span class="number">0</span>.<span class="number">6</span>-<span class="number">6</span>_amd<span class="number">64</span>.deb</span><br><span class="line"><span class="attribute">dpkg</span> -i stegdetect_<span class="number">0</span>.<span class="number">6</span>-<span class="number">6</span>_amd<span class="number">64</span>.deb</span><br></pre></td></tr></table></figure>
+<h2 id="安装方法"><a href="#安装方法" class="headerlink" title="安装方法"></a>安装方法</h2><figure class="highlight cmake"><table><tr><td class="code"><pre><span class="line">pip3 <span class="keyword">install</span> magnetos</span><br></pre></td></tr></table></figure>
+<h2 id="提供的工具"><a href="#提供的工具" class="headerlink" title="提供的工具"></a>提供的工具</h2><p>以下工具可以在命令行下直接执行</p>
+<ul>
+<li>what_format，类似 binwalk 和 foremost，但可以分离出一些其他文件，例如 psd</li>
+<li>what_code_scheme，检测编码类型</li>
+<li>what_encode，自动检测文件编码并进行模糊测试</li>
+<li>what_steg，隐写题目自动化解题工具</li>
+<li>web_get，自动下载指定 URL 的所有资源到本地</li>
+<li>file_hash，计算文件 hash</li>
+<li>file_strings，与 strings 命令相同，但是会自动过滤掉\0</li>
+<li>find_ctf_flag，根据 flag 特征从文本文件或目录中查找可能的 flag</li>
+<li>reverse_proxy，反向代理</li>
+<li>steg_hide_cracker，爆破 steghide 密码</li>
+</ul>
+]]></content>
+      <categories>
+        <category>工具</category>
       </categories>
   </entry>
 </search>
