@@ -15003,6 +15003,7 @@ payload:
 <h2 id="Ook加密"><a href="#Ook加密" class="headerlink" title="Ook加密"></a>Ook加密</h2><figure class="highlight erlang-repl"><table><tr><td class="code"><pre><span class="line">Ook! Ook!</span><br></pre></td></tr></table></figure>
 <p>在线解密&amp;工具：<a href="https://ctf.bugku.com/tool/brainfuck">Brainfuck/OoK加密解密 - Bugku CTF</a></p>
 <h2 id="加密"><a href="#加密" class="headerlink" title=".!?加密"></a>.!?加密</h2><figure class="highlight ruby"><table><tr><td class="code"><pre><span class="line">特征：.!<span class="string">?密</span>码中只含有.!<span class="string">?三</span>个不同的语法元素，使用Ook解密即可。</span><br></pre></td></tr></table></figure>
+<p><a href="https://www.splitbrain.org/services/ook">https://www.splitbrain.org/services/ook</a></p>
 <h2 id="BubbleBabble"><a href="#BubbleBabble" class="headerlink" title="BubbleBabble"></a>BubbleBabble</h2><figure class="highlight plain"><table><tr><td class="code"><pre><span class="line">编码格式每5个字符中间以-来分隔</span><br><span class="line">xinik-samak-loxox</span><br></pre></td></tr></table></figure>
 <p><a href="http://www.hiencode.com/bubble.html">http://www.hiencode.com/bubble.html</a></p>
 <h2 id="敲击码"><a href="#敲击码" class="headerlink" title="敲击码"></a>敲击码</h2><p><img src="https://img.npfs06.top/20231124111557.png"></p>
