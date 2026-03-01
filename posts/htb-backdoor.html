@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.3.0">
+<meta name="generator" content="Hexo 8.1.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
@@ -218,68 +218,70 @@
       
       <div class="post-body">
           <p>htb-backdoor</p>
-<a id="more"></a>
+<span id="more"></span>
 
 <p>openvpn连上</p>
-<img src="http://img.npfs06.top/20220331144754.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20220331144754.png" style="zoom:80%;" />
 
 
 
 <h1 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h1><blockquote>
 <p>nmap -sV   -p-  –min-rate 5000 10.10.11.125</p>
 </blockquote>
-<img src="http://img.npfs06.top/20220331144928.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20220331144928.png" style="zoom:80%;" />
 
 <p>开放了22和80端口，同时80端口是使用wordpress进行搭建的</p>
 <p>dirsearch目录扫描下</p>
-<img src="http://img.npfs06.top/20220331150440.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20220331150440.png" style="zoom:80%;" />
 
 <p>发现存在目录遍历漏洞</p>
-<img src="http://img.npfs06.top/20220331150816.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20220331150816.png" style="zoom:80%;" />
 
-<img src="http://img.npfs06.top/20220331150910.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20220331150910.png" style="zoom:80%;" />
 
 <p>并在plugins目录下发现一个ebook插件，找下相关漏洞</p>
-<img src="http://img.npfs06.top/20220331151047.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20220331151047.png" style="zoom:80%;" />
 
 <p>相关漏洞：</p>
 <blockquote>
 <p>WordPress Plugin eBook Download 1.1 - Directory Traversal  </p>
 </blockquote>
-<img src="http://img.npfs06.top/20220331151242.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20220331151242.png" style="zoom:80%;" />
 
 <p>存在任意文件下载</p>
 <p>POC：</p>
 <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="regexp">/wp-content/</span>plugins<span class="regexp">/ebook-download/</span>filedownload.php?ebookdownloadurl=..<span class="regexp">/../</span>../wp-config.php</span><br></pre></td></tr></table></figure>
-<img src="http://img.npfs06.top/20220331151743.png" style="zoom:80%;">
+
+<img src="http://img.npfs06.top/20220331151743.png" style="zoom:80%;" />
 
 <p>下载下来发现了数据库密码，但是连不上没什么用</p>
 <p>卡住了，不知道怎么进行下去，参考了下网上的思路，发现在端口扫描的步骤漏扫的一个1337端口…</p>
 <p>换rustscan (<a target="_blank" rel="noopener" href="https://github.com/RustScan/RustScan">https://github.com/RustScan/RustScan</a>) 之后扫到1337端口</p>
-<img src="http://img.npfs06.top/20220331160007.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20220331160007.png" style="zoom:80%;" />
 
-<p>仅凭1337端口，判断不出来什么服务架设在该端口上，结合前面ebook插件的任意文件读取漏洞，尝试爆破<code>/proc/&#123;PID&#125;/cmdline</code>对进程信息进行读取</p>
-<img src="http://img.npfs06.top/20220331162525.png" style="zoom:80%;">
+<p>仅凭1337端口，判断不出来什么服务架设在该端口上，结合前面ebook插件的任意文件读取漏洞，尝试爆破<code>/proc/{PID}/cmdline</code>对进程信息进行读取</p>
+<img src="http://img.npfs06.top/20220331162525.png" style="zoom:80%;" />
 
 <p>1337端口上架设的是一个gdbserver的服务</p>
 <p>之后就是使用msf的相应模块进行攻击</p>
-<img src="http://img.npfs06.top/20220331164440.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20220331164440.png" style="zoom:80%;" />
 
 <p>获得交互式shell </p>
 <blockquote>
 <p>python3 -c ‘import pty; pty.spawn(“/bin/bash”)’</p>
 </blockquote>
-<img src="http://img.npfs06.top/20220331164847.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20220331164847.png" style="zoom:80%;" />
 
 <p>得到第一个flag</p>
-<h1 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h1><img src="http://img.npfs06.top/20220331212945.png" style="zoom:80%;">
+<h1 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h1><img src="http://img.npfs06.top/20220331212945.png" style="zoom:80%;" />
 
 <p>前面爆破进程的时候注意到一个screen ,考虑利用screen进行提权</p>
 <figure class="highlight gauss"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">Screen</span>可以看作是窗口管理器的命令行界面版本。它提供了统一的管理多个会话的界面和相应的功能，用户可以建立多个<span class="keyword">screen</span>会话，每个<span class="keyword">screen</span>会话又可以建立多个<span class="built_in">window</span>窗口，每一个窗口就像一个可操作的真实的ssh终端一样。</span><br></pre></td></tr></table></figure>
-<p>因为使用screen时，需要先配置xterm，因此设置环境变量TREM为<code>xterm</code>：<br><code>export TERM=xterm</code><br>然后通过使用<code>-x</code>参数来进入到root的session中：<br><code>screen -x root/root</code><br>这样就可以获得root权限：</p>
-<img src="http://img.npfs06.top/20220331165645.png" style="zoom:80%;">
 
-<img src="http://img.npfs06.top/20220331165219.png" style="zoom:80%;">
+<p>因为使用screen时，需要先配置xterm，因此设置环境变量TREM为<code>xterm</code>：<br><code>export TERM=xterm</code><br>然后通过使用<code>-x</code>参数来进入到root的session中：<br><code>screen -x root/root</code><br>这样就可以获得root权限：</p>
+<img src="http://img.npfs06.top/20220331165645.png" style="zoom:80%;" />
+
+<img src="http://img.npfs06.top/20220331165219.png" style="zoom:80%;" />
       </div>
       
       
@@ -357,7 +359,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-count">110</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -421,7 +423,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2026</span>
 
 
 <!--

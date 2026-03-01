@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.3.0">
+<meta name="generator" content="Hexo 8.1.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
@@ -296,7 +296,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>计算机网络(第七版)<a id="more"></a></p>
+        <p>计算机网络(第七版)<span id="more"></span></p>
 <h1 id="第一章-概述"><a href="#第一章-概述" class="headerlink" title="第一章 概述"></a>第一章 概述</h1><p><img src="https://img.npfs06.top/20210315124919.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
 <h2 id="计算机网络在信息时代的作用"><a href="#计算机网络在信息时代的作用" class="headerlink" title="计算机网络在信息时代的作用"></a>计算机网络在信息时代的作用</h2><p>互联网基本特点：</p>
 <p>​    连通性：互联网上用户不管距离多远，都能通信，就像这些用户终端都彼此连通</p>
@@ -463,6 +463,7 @@
 <p>​    (2)数据长度为10^3 bit，数据发送速率为1 Gbit/s</p>
 <p>​    解：</p>
 <figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"></span><br><span class="line">(1)发送时延=数据长度/发送速率=10^7/100<span class="number">*10</span>^<span class="attribute">3</span>=100s</span><br><span class="line"></span><br><span class="line">  传播时延=距离/传播速率=1000<span class="number">*10</span>^3/2<span class="number">*10</span>^<span class="attribute">8</span>=5*10^-3 s</span><br><span class="line"></span><br><span class="line">(2)发送时延=10^3/10^<span class="attribute">9</span>=1*10^-6 s</span><br><span class="line"></span><br><span class="line">  传播时延=5 ms</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
 <p>18.假设信号在媒体上的传播速率为2.3*10^8 m/s。媒体长度L分别为：</p>
 <p>​    (1)10cm</p>
 <p>​    (2)100m</p>
@@ -472,8 +473,10 @@
 <figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">解：即求带宽时延积</span><br><span class="line"></span><br><span class="line">  (1)传播时延=长度/传播速率=10<span class="number">*10</span>^-2 / 2.3<span class="number">*10</span>^8 = 4.35<span class="number">*10</span>^-10</span><br><span class="line"></span><br><span class="line">数据率为1Mbit/s时：带宽时延积=带宽*传播时延=1<span class="number">*10</span>^6<span class="number">*4</span>.35<span class="number">*10</span>^<span class="attribute">-10</span>=4.35*10^-4</span><br><span class="line"></span><br><span class="line">数据率为10Gbit/s时：带宽时延积=10<span class="number">*10</span>^9<span class="number">*4</span>.35<span class="number">*10</span>^<span class="attribute">-10</span>=4.35</span><br><span class="line">   (2)(3)(4)<span class="built_in">..</span><span class="built_in">..</span><span class="built_in">..</span></span><br></pre></td></tr></table></figure>
 
 
+
 <p>29.有一个点对点链路，长度为50km。若数据在此链路上传播速度为2*10^8 m/s，求链路的带宽应为多少才能使传播时延和发送100字节的分组发送时延一样大？如果发送的是512字节长的分组，结果又如何？</p>
   <figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br></pre></td><td class="code"><pre><span class="line">  解：</span><br><span class="line"></span><br><span class="line">传播时延=长度/传播速率=50<span class="number">*10</span>^3/2<span class="number">*10</span>^8 = 2.5<span class="number">*10</span>^-4 s</span><br><span class="line"></span><br><span class="line">发送时延=数据长度/发送速率=100<span class="number">*8</span>/ x = 2.5<span class="number">*10</span>^-4 ；<span class="attribute">x</span>=3.2*10^6 bis/s = 3.2 Mbit/s</span><br><span class="line"></span><br><span class="line">若发送512字节分组：</span><br><span class="line"></span><br><span class="line">发送时延=数据长度/发送速率 = 512<span class="number">*8</span>/ x = 2.5<span class="number">*10</span>^-4 </span><br><span class="line"></span><br><span class="line"><span class="attribute">x</span>=16.38*10^6 bit/s = 16.38 Mbit/s</span><br></pre></td></tr></table></figure>
+
 
 
 <h1 id="第二章-物理层"><a href="#第二章-物理层" class="headerlink" title="第二章 物理层"></a>第二章 物理层</h1><p><img src="https://img.npfs06.top/20210315125018.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
@@ -1096,7 +1099,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-count">110</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -1160,7 +1163,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2026</span>
 
 
 <!--

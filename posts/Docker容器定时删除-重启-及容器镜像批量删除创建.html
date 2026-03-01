@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.3.0">
+<meta name="generator" content="Hexo 8.1.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
@@ -203,25 +203,30 @@
       
       
       <div class="post-body">
-          <p>关于Docker容器的定时删除（重启）及容器镜像的批量删除和批量创建<a id="more"></a></p>
-<figure class="highlight prolog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">镜像创建：</span><br><span class="line">docker build -f <span class="symbol">Dockerfile</span> -t [随意命名] .</span><br><span class="line">容器创建:</span><br><span class="line">docker run -itd -p <span class="number">12345</span>:<span class="number">80</span> --nmae [随意命名] [镜像名]</span><br></pre></td></tr></table></figure>
+          <p>关于Docker容器的定时删除（重启）及容器镜像的批量删除和批量创建<span id="more"></span></p>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">镜像创建：</span><br><span class="line">docker build -f Dockerfile -t <span class="selector-attr">[随意命名]</span> .</span><br><span class="line">容器创建:</span><br><span class="line">docker run -itd -<span class="selector-tag">p</span> <span class="number">12345</span>:<span class="number">80</span> <span class="attr">--nmae</span> <span class="selector-attr">[随意命名]</span> <span class="selector-attr">[镜像名]</span></span><br></pre></td></tr></table></figure>
 
 
-<h1 id="直接删除所有镜像或容器"><a href="#直接删除所有镜像或容器" class="headerlink" title="直接删除所有镜像或容器"></a>直接删除所有镜像或容器</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 直接删除所有镜像</span></span><br><span class="line">docker rmi `docker images -q`</span><br><span class="line"></span><br><span class="line"><span class="comment"># 直接删除所有容器</span></span><br><span class="line">docker rm `docker ps -aq`</span><br></pre></td></tr></table></figure>
-<h1 id="按条件筛选之后删除"><a href="#按条件筛选之后删除" class="headerlink" title="按条件筛选之后删除"></a>按条件筛选之后删除</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 按条件筛选之后删除镜像</span></span><br><span class="line">docker rmi `docker images | grep xxxxx | awk <span class="string">&#x27;&#123;print $3&#125;&#x27;</span>`</span><br><span class="line"></span><br><span class="line"><span class="comment"># 按条件筛选之后删除容器</span></span><br><span class="line">docker rm `docker ps -a | grep xxxxx | awk <span class="string">&#x27;&#123;print $1&#125;&#x27;</span>`</span><br></pre></td></tr></table></figure>
+
+<h1 id="直接删除所有镜像或容器"><a href="#直接删除所有镜像或容器" class="headerlink" title="直接删除所有镜像或容器"></a>直接删除所有镜像或容器</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 直接删除所有镜像</span></span><br><span class="line">docker rmi `docker images -q`</span><br><span class="line"></span><br><span class="line"><span class="comment"># 直接删除所有容器</span></span><br><span class="line">docker <span class="built_in">rm</span> `docker ps -aq`</span><br></pre></td></tr></table></figure>
+
+<h1 id="按条件筛选之后删除"><a href="#按条件筛选之后删除" class="headerlink" title="按条件筛选之后删除"></a>按条件筛选之后删除</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># 按条件筛选之后删除镜像</span></span><br><span class="line">docker rmi `docker images | grep xxxxx | awk <span class="string">&#x27;&#123;print $3&#125;&#x27;</span>`</span><br><span class="line"></span><br><span class="line"><span class="comment"># 按条件筛选之后删除容器</span></span><br><span class="line">docker <span class="built_in">rm</span> `docker ps -a | grep xxxxx | awk <span class="string">&#x27;&#123;print $1&#125;&#x27;</span>`</span><br></pre></td></tr></table></figure>
+
 
 
 <h1 id="Docker容器的定时删除重建（重启）"><a href="#Docker容器的定时删除重建（重启）" class="headerlink" title="Docker容器的定时删除重建（重启）"></a>Docker容器的定时删除重建（重启）</h1><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line"><span class="comment"># python脚本实现</span></span><br><span class="line"><span class="keyword">import</span> os</span><br><span class="line">os.system(<span class="string">&#x27;docker rm -f sqli-labs&#x27;</span>)   //删除容器</span><br><span class="line">os.system(<span class="string">&#x27;docker run -itd -p 12345:80 --name sqli-labs [镜像id]&#x27;</span>)  //新建容器</span><br></pre></td></tr></table></figure>
+
 <p>然后利用crontab设定时任务，定时执行py脚本</p>
 <p><strong>ubuntu安装cron</strong></p>
-<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">安装：apt-<span class="built_in">get</span> install cron</span><br><span class="line">启动：service cron <span class="built_in">start</span></span><br><span class="line">重启：service cron restart</span><br><span class="line">停止：service cron <span class="built_in">stop</span></span><br><span class="line">检查状态：service cron status</span><br><span class="line">查询cron可用的命令：service cron</span><br><span class="line">检查Cronta工具是否安装：crontab -l</span><br></pre></td></tr></table></figure>
+<figure class="highlight protobuf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line">安装：apt-get install cron</span><br><span class="line">启动：<span class="keyword">service </span><span class="title class_">cron</span> start</span><br><span class="line">重启：<span class="keyword">service </span><span class="title class_">cron</span> restart</span><br><span class="line">停止：<span class="keyword">service </span><span class="title class_">cron</span> stop</span><br><span class="line">检查状态：<span class="keyword">service </span><span class="title class_">cron</span> status</span><br><span class="line">查询cron可用的命令：<span class="keyword">service </span><span class="title class_">cron</span></span><br><span class="line">检查Cronta工具是否安装：crontab -l</span><br></pre></td></tr></table></figure>
 <p>第一次进入的时候要选择编辑器，选择后你可以配置新cron作业了，一般是选3</p>
 <blockquote>
 <p>crontab -e   //vim编辑器</p>
 </blockquote>
 <p><img src="https://img.npfs06.top/20210404154527.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
 <p>图中命令的意思是每天23:59 执行/root/dingshi.py脚本（脚本内容就是上文的python内容）</p>
-<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">//crontab 时间设置</span><br><span class="line"></span><br><span class="line"><span class="symbol">*</span>    <span class="symbol">*</span>    <span class="symbol">*</span>    <span class="symbol">*</span>    <span class="symbol">*</span></span><br><span class="line">-    -    -    -    -</span><br><span class="line">|<span class="string">    </span>|<span class="string">    </span>|<span class="string">    </span>|<span class="string">    </span>|</span><br><span class="line">|<span class="string">    </span>|<span class="string">    </span>|<span class="string">    </span>|<span class="string">    +----- 星期中星期几 (0 - 6) (星期天 为0)</span></span><br><span class="line">|<span class="string">    </span>|<span class="string">    </span>|<span class="string">    +---------- 月份 (1 - 12) </span></span><br><span class="line">|<span class="string">    </span>|<span class="string">    +--------------- 一个月中的第几天 (1 - 31)</span></span><br><span class="line">|<span class="string">    +-------------------- 小时 (0 - 23)</span></span><br><span class="line"><span class="string">+------------------------- 分钟 (0 - 59)</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight gherkin"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br></pre></td><td class="code"><pre><span class="line">//crontab 时间设置</span><br><span class="line"></span><br><span class="line"><span class="symbol">*</span>    <span class="symbol">*</span>    <span class="symbol">*</span>    <span class="symbol">*</span>    <span class="symbol">*</span></span><br><span class="line">-    -    -    -    -</span><br><span class="line">|<span class="string">    </span>|<span class="string">    </span>|<span class="string">    </span>|<span class="string">    </span>|</span><br><span class="line">|<span class="string">    </span>|<span class="string">    </span>|<span class="string">    </span>|<span class="string">    +----- 星期中星期几 (0 - 6) (星期天 为0)</span></span><br><span class="line"><span class="string"></span>|<span class="string">    </span>|<span class="string">    </span>|<span class="string">    +---------- 月份 (1 - 12) </span></span><br><span class="line"><span class="string"></span>|<span class="string">    </span>|<span class="string">    +--------------- 一个月中的第几天 (1 - 31)</span></span><br><span class="line"><span class="string"></span>|<span class="string">    +-------------------- 小时 (0 - 23)</span></span><br><span class="line"><span class="string">+------------------------- 分钟 (0 - 59)</span></span><br></pre></td></tr></table></figure>
+
 
       </div>
       
@@ -300,7 +305,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-count">110</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -364,7 +369,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2026</span>
 
 
 <!--

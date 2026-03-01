@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.3.0">
+<meta name="generator" content="Hexo 8.1.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
@@ -261,43 +261,43 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>本来想着将博客从github迁移到云服务器之后，访问速度能够快一点的，但是发现实际访问还是很慢。这是因为google浏览器会强制转换为https协议，意思就是说需要配置ssl证书啦<a id="more"></a></p>
-<h1 id="免费ssl证书获取"><a href="#免费ssl证书获取" class="headerlink" title="免费ssl证书获取"></a>免费ssl证书获取</h1><img src="http://img.npfs06.top/20210827212755.png" style="zoom:80%;">
+        <p>本来想着将博客从github迁移到云服务器之后，访问速度能够快一点的，但是发现实际访问还是很慢。这是因为google浏览器会强制转换为https协议，意思就是说需要配置ssl证书啦<span id="more"></span></p>
+<h1 id="免费ssl证书获取"><a href="#免费ssl证书获取" class="headerlink" title="免费ssl证书获取"></a>免费ssl证书获取</h1><img src="http://img.npfs06.top/20210827212755.png" style="zoom:80%;" />
 
 
 
 <p>在这里可以获得免费的ssl证书，使用期限一年</p>
-<img src="http://img.npfs06.top/20210827212816.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20210827212816.png" style="zoom:80%;" />
 
 
 
 <p>点击【立即购买】即可免费获得20张证书</p>
-<img src="http://img.npfs06.top/20210827213151.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20210827213151.png" style="zoom:80%;" />
 
 
 
 <p>购买之后，点击【创建证书】，就会生成下面框中的内容</p>
-<img src="http://img.npfs06.top/20210827213339.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20210827213339.png" style="zoom:80%;" />
 
 
 
 <p>点击【证书申请】</p>
-<img src="http://img.npfs06.top/20210827213457.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20210827213457.png" style="zoom:80%;" />
 
 
 
 <p>点击【下一步】。这里会自动添加DNS解析，我们直接点【验证】，提交即可</p>
-<img src="http://img.npfs06.top/20210827213527.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20210827213527.png" style="zoom:80%;" />
 
 
 
 <p>过了一会就会发现申请通过，就像这样</p>
-<img src="http://img.npfs06.top/20210827213652.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20210827213652.png" style="zoom:80%;" />
 
 
 
 <p>我们点击下载，选择nginx</p>
-<img src="http://img.npfs06.top/20210827213726.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20210827213726.png" style="zoom:80%;" />
 
 
 
@@ -306,29 +306,32 @@
 
 
 <h1 id="Nginx上的配置"><a href="#Nginx上的配置" class="headerlink" title="Nginx上的配置"></a>Nginx上的配置</h1><p>nginx的相关配置一般都在<code>/etc/nginx/</code>目录，因为nginx版本的不同，该目录中的内容一般都会不同，该目录在我机子上的内容如下所示：</p>
-<img src="http://img.npfs06.top/20210827214319.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20210827214319.png" style="zoom:80%;" />
 
 <p><code>nginx.conf</code>是最最最重要的配置文件，其中<code>nginx.conf</code>文件又会把<code>conf.d/</code>目录中<code>.conf</code>文件内容和<code>sites-enabled/</code>目录中的文件内容直接include进来，include语句主要是这几句：</p>
 <figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">include</span> <span class="regexp">/etc/</span>nginx<span class="regexp">/conf.d/</span>*.conf;</span><br><span class="line"><span class="keyword">include</span> <span class="regexp">/etc/</span>nginx<span class="regexp">/sites-enabled/</span>*;</span><br></pre></td></tr></table></figure>
 
 
+
 <p>下面介绍一下我机子上<code>nginx.conf</code>文件的内容，主要是一些基础配置。我们可以看到最后两行include的内容，就是上面的内容。<strong>个人建议把一些站点的配置都放到<code>./sites-enabled/</code>或者<code>./conf.d</code>目录中，方便日后管理</strong>（增删只有删除相应文件即可）。</p>
 <p>接下来开始正式配置。为了方便日后SSL证书的管理，我们在<code>etc/nginx</code>目录中创建一个<code>cert</code>目录，然后把下载下来的证书拷贝到<code>/etc/nginx/cert</code>目录中。为了方便，改了下证书名字</p>
-<img src="http://img.npfs06.top/20210827213920.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20210827213920.png" style="zoom:80%;" />
 
 
 
 <p>之后进入<code>./sites-enabled/</code>目录，创建一个文件为<code>www.npfs06.top</code>（取名为这个，是为了方便管理）</p>
-<img src="http://img.npfs06.top/20210827214639.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20210827214639.png" style="zoom:80%;" />
 
 
 
 <p>之后把下面的内容复制粘贴到 <code>www.npfs06.top</code>这个文件中</p>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">443</span> ssl;</span><br><span class="line">    <span class="comment">#配置HTTPS的默认访问端口为443。</span></span><br><span class="line">    <span class="comment">#如果未在此处配置HTTPS的默认访问端口，可能会造成Nginx无法启动。</span></span><br><span class="line">    <span class="comment">#如果您使用Nginx 1.15.0及以上版本，请使用listen 443 ssl代替listen 443和ssl on。</span></span><br><span class="line">    <span class="attribute">server_name</span> www.npfs06.top; <span class="comment">#需要将yourdomain.com替换成证书绑定的域名。</span></span><br><span class="line">    <span class="attribute">root</span> html;</span><br><span class="line">    <span class="attribute">index</span> index.html index.htm;</span><br><span class="line">    <span class="attribute">ssl_certificate</span> cert/www.npfs06.top.pem;  <span class="comment">#需要将cert-file-name.pem替换成已上传的证书文件的名称。</span></span><br><span class="line">    <span class="attribute">ssl_certificate_key</span> cert/www.npfs06.top.key; <span class="comment">#需要将cert-file-name.key替换成已上传的证书密钥文件的名称。</span></span><br><span class="line">    <span class="attribute">ssl_session_timeout</span> <span class="number">5m</span>;</span><br><span class="line">    <span class="attribute">ssl_ciphers</span> ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;</span><br><span class="line">    <span class="comment">#表示使用的加密套件的类型。</span></span><br><span class="line">    <span class="attribute">ssl_protocols</span> TLSv1 TLSv1.<span class="number">1</span> TLSv1.<span class="number">2</span>; <span class="comment">#表示使用的TLS协议的类型。</span></span><br><span class="line">    <span class="attribute">ssl_prefer_server_ciphers</span> <span class="literal">on</span>;</span><br><span class="line">    <span class="attribute">location</span> / &#123;</span><br><span class="line">        <span class="attribute">root</span> /var/www/html/npfs06.github.io;  <span class="comment">#站点目录。</span></span><br><span class="line">        <span class="attribute">index</span> index.html index.htm;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span> www.npfs06.top;</span><br><span class="line">    <span class="attribute">rewrite</span><span class="regexp"> ^(.*)$</span> https://www.npfs06.top;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">443</span> ssl;</span><br><span class="line">    <span class="comment">#配置HTTPS的默认访问端口为443。</span></span><br><span class="line">    <span class="comment">#如果未在此处配置HTTPS的默认访问端口，可能会造成Nginx无法启动。</span></span><br><span class="line">    <span class="comment">#如果您使用Nginx 1.15.0及以上版本，请使用listen 443 ssl代替listen 443和ssl on。</span></span><br><span class="line">    <span class="attribute">server_name</span> www.npfs06.top; <span class="comment">#需要将yourdomain.com替换成证书绑定的域名。</span></span><br><span class="line">    <span class="attribute">root</span> html;</span><br><span class="line">    <span class="attribute">index</span> index.html index.htm;</span><br><span class="line">    <span class="attribute">ssl_certificate</span> cert/www.npfs06.top.pem;  <span class="comment">#需要将cert-file-name.pem替换成已上传的证书文件的名称。</span></span><br><span class="line">    <span class="attribute">ssl_certificate_key</span> cert/www.npfs06.top.key; <span class="comment">#需要将cert-file-name.key替换成已上传的证书密钥文件的名称。</span></span><br><span class="line">    <span class="attribute">ssl_session_timeout</span> <span class="number">5m</span>;</span><br><span class="line">    <span class="attribute">ssl_ciphers</span> ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;</span><br><span class="line">    <span class="comment">#表示使用的加密套件的类型。</span></span><br><span class="line">    <span class="attribute">ssl_protocols</span> TLSv1 TLSv1.<span class="number">1</span> TLSv1.<span class="number">2</span>; <span class="comment">#表示使用的TLS协议的类型。</span></span><br><span class="line">    <span class="attribute">ssl_prefer_server_ciphers</span> <span class="literal">on</span>;</span><br><span class="line">    <span class="section">location</span> / &#123;</span><br><span class="line">        <span class="attribute">root</span> /var/www/html/npfs06.github.io;  <span class="comment">#站点目录。</span></span><br><span class="line">        <span class="attribute">index</span> index.html index.htm;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span> www.npfs06.top;</span><br><span class="line">    <span class="attribute">rewrite</span><span class="regexp"> ^(.*)$</span> https://www.npfs06.top;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 
 
 <p>同理配置<code>https://npfs06.top</code>,只需要在文件中增加一下内容</p>
-<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">443</span> ssl;</span><br><span class="line">    <span class="comment">#配置HTTPS的默认访问端口为443。</span></span><br><span class="line">    <span class="comment">#如果未在此处配置HTTPS的默认访问端口，可能会造成Nginx无法启动。</span></span><br><span class="line">    <span class="comment">#如果您使用Nginx 1.15.0及以上版本，请使用listen 443 ssl代替listen 443和ssl on。</span></span><br><span class="line">    <span class="attribute">server_name</span> npfs06.top; <span class="comment">#需要将yourdomain.com替换成证书绑定的域名。</span></span><br><span class="line">    <span class="attribute">root</span> html;</span><br><span class="line">    <span class="attribute">index</span> index.html index.htm;</span><br><span class="line">    <span class="attribute">ssl_certificate</span> cert/www.npfs06.top.pem;  <span class="comment">#需要将cert-file-name.pem替换成已上传的证书文件的名称。</span></span><br><span class="line">    <span class="attribute">ssl_certificate_key</span> cert/www.npfs06.top.key; <span class="comment">#需要将cert-file-name.key替换成已上传的证书密钥文件的名称。</span></span><br><span class="line">    <span class="attribute">ssl_session_timeout</span> <span class="number">5m</span>;</span><br><span class="line">    <span class="attribute">ssl_ciphers</span> ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;</span><br><span class="line">    <span class="comment">#表示使用的加密套件的类型。</span></span><br><span class="line">    <span class="attribute">ssl_protocols</span> TLSv1 TLSv1.<span class="number">1</span> TLSv1.<span class="number">2</span>; <span class="comment">#表示使用的TLS协议的类型。</span></span><br><span class="line">    <span class="attribute">ssl_prefer_server_ciphers</span> <span class="literal">on</span>;</span><br><span class="line">    <span class="attribute">location</span> / &#123;</span><br><span class="line">        <span class="attribute">root</span> /var/www/html/npfs06.github.io;  <span class="comment">#站点目录。</span></span><br><span class="line">        <span class="attribute">index</span> index.html index.htm;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span> npfs06.top;</span><br><span class="line">    <span class="attribute">rewrite</span><span class="regexp"> ^(.*)$</span> https://npfs06.top;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">443</span> ssl;</span><br><span class="line">    <span class="comment">#配置HTTPS的默认访问端口为443。</span></span><br><span class="line">    <span class="comment">#如果未在此处配置HTTPS的默认访问端口，可能会造成Nginx无法启动。</span></span><br><span class="line">    <span class="comment">#如果您使用Nginx 1.15.0及以上版本，请使用listen 443 ssl代替listen 443和ssl on。</span></span><br><span class="line">    <span class="attribute">server_name</span> npfs06.top; <span class="comment">#需要将yourdomain.com替换成证书绑定的域名。</span></span><br><span class="line">    <span class="attribute">root</span> html;</span><br><span class="line">    <span class="attribute">index</span> index.html index.htm;</span><br><span class="line">    <span class="attribute">ssl_certificate</span> cert/www.npfs06.top.pem;  <span class="comment">#需要将cert-file-name.pem替换成已上传的证书文件的名称。</span></span><br><span class="line">    <span class="attribute">ssl_certificate_key</span> cert/www.npfs06.top.key; <span class="comment">#需要将cert-file-name.key替换成已上传的证书密钥文件的名称。</span></span><br><span class="line">    <span class="attribute">ssl_session_timeout</span> <span class="number">5m</span>;</span><br><span class="line">    <span class="attribute">ssl_ciphers</span> ECDHE-RSA-AES128-GCM-SHA256:ECDHE:ECDH:AES:HIGH:!NULL:!aNULL:!MD5:!ADH:!RC4;</span><br><span class="line">    <span class="comment">#表示使用的加密套件的类型。</span></span><br><span class="line">    <span class="attribute">ssl_protocols</span> TLSv1 TLSv1.<span class="number">1</span> TLSv1.<span class="number">2</span>; <span class="comment">#表示使用的TLS协议的类型。</span></span><br><span class="line">    <span class="attribute">ssl_prefer_server_ciphers</span> <span class="literal">on</span>;</span><br><span class="line">    <span class="section">location</span> / &#123;</span><br><span class="line">        <span class="attribute">root</span> /var/www/html/npfs06.github.io;  <span class="comment">#站点目录。</span></span><br><span class="line">        <span class="attribute">index</span> index.html index.htm;</span><br><span class="line">    &#125;</span><br><span class="line">&#125;</span><br><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span> npfs06.top;</span><br><span class="line">    <span class="attribute">rewrite</span><span class="regexp"> ^(.*)$</span> https://npfs06.top;</span><br><span class="line">&#125;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
 
 
 
@@ -344,6 +347,7 @@
 </li>
 </ul>
 <h2 id="http的重定向"><a href="#http的重定向" class="headerlink" title="http的重定向"></a>http的重定向</h2><figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">server</span> &#123;</span><br><span class="line">    <span class="attribute">listen</span> <span class="number">80</span>;</span><br><span class="line">    <span class="attribute">server_name</span> npfs06.top;</span><br><span class="line">    <span class="attribute">rewrite</span><span class="regexp"> ^(.*)$</span> https://npfs06.top;</span><br><span class="line">&#125;</span><br></pre></td></tr></table></figure>
+
 <p>上面代码中的这样部分是为了在使用http访问站点时，能自动跳转到https访问</p>
 <p>nginx配置文件配置完成之后需要重启nginx</p>
 <figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">service nginx restart</span></span><br></pre></td></tr></table></figure>
@@ -351,9 +355,11 @@
 
 
 
+
 <h1 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h1><p>在重启配置nginx的时候，可以会遇到报错，这是因为在某些细节山有错误，不如说忘记加分号</p>
 <p>我们可以通过如下命令查看详细的报错信息</p>
 <figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">nginx -t</span></span><br></pre></td></tr></table></figure>
+
 
     </div>
 
@@ -468,7 +474,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-count">110</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -532,7 +538,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2026</span>
 
 
 <!--

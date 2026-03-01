@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.3.0">
+<meta name="generator" content="Hexo 8.1.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
@@ -201,8 +201,9 @@
       
       
       <div class="post-body">
-          <p>web中常见的源码泄露<a id="more"></a></p>
+          <p>web中常见的源码泄露<span id="more"></span></p>
 <h1 id="vim临时文件"><a href="#vim临时文件" class="headerlink" title="vim临时文件"></a>vim临时文件</h1><figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">程序员使用vim编辑器编写一个`index.php`文件时，会有一个`.index.php.swp`文件，如果文件正常退出，则该文件被删除，如果异常退出，该文件则会保存下来，该文件可以用来恢复异常退出的index.php，同时多次意外退出并不会覆盖旧的`.swp`文件，而是会生成一个新的，例如`.swo`文件。</span><br></pre></td></tr></table></figure>
+
 <h2 id="恢复文件"><a href="#恢复文件" class="headerlink" title="恢复文件"></a>恢复文件</h2><blockquote>
 <p>vim -r  恢复的文件名</p>
 <blockquote>
@@ -229,27 +230,34 @@
 <h1 id="git源码泄漏"><a href="#git源码泄漏" class="headerlink" title="git源码泄漏"></a>git源码泄漏</h1><p>git在初始化项目的时候, 会在项目的根目录(可用<code>git rev-parse --show-toplevel</code>查看)创建一个名为<code>.git</code>的隐藏文件夹, 里面包含了本地所有commit的历史记录. 如果无意间将这个目录置于WEB的路径下让用户可以访问,那么这也就泄露了几乎所有的源代码和其他其他敏感信息.</p>
 <p>该文件可以来恢复源代码</p>
 <h2 id="fuzz："><a href="#fuzz：" class="headerlink" title="fuzz："></a>fuzz：</h2><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:<span class="regexp">//u</span>rl<span class="regexp">/.git/</span>config</span><br></pre></td></tr></table></figure>
+
 <p>若存在该页面，可以看到配置信息，说明存在该漏洞</p>
 <h2 id="漏洞利用："><a href="#漏洞利用：" class="headerlink" title="漏洞利用："></a>漏洞利用：</h2><p>工具：<a target="_blank" rel="noopener" href="https://github.com/lijiejie/GitHack">GitHack</a></p>
 <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python GitHack.py http:<span class="regexp">//u</span>rl<span class="regexp">/.git/</span></span><br></pre></td></tr></table></figure>
+
 <blockquote>
 <p>git log可以查看提交历史<br>git diff查看git提交的不同处<br>stash命令可用于临时保存和恢复修改，可跨分支<br>git stash list查看所有保存的记录列表<br>git stash pop，从 git 栈中弹出来一个文件</p>
 </blockquote>
 <p>工具：<a target="_blank" rel="noopener" href="https://github.com/kost/dvcs-ripper">dvcs-ripper</a></p>
-<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rip-hg.pl -v -u http:<span class="regexp">//u</span>rl/.git</span><br></pre></td></tr></table></figure>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rip-hg.<span class="keyword">pl</span> -v -<span class="keyword">u</span> http:<span class="comment">//url/.git</span></span><br></pre></td></tr></table></figure>
+
 
 
 <h1 id="hg泄露"><a href="#hg泄露" class="headerlink" title="hg泄露"></a>hg泄露</h1><p>与git类似, hg在初始化项目时, 会在项目的根目录下创建一个名为<code>.hg</code>的隐藏文件夹,里面包含了代码和分支的修改记录和开发人员的相关信息. 当开发人员使用 Mercurial 进行版本控制，对站点自动部署。如果配置不当,可能会将.hg 文件夹直接部署到线上环境。这就引起了 hg 泄露漏洞。</p>
 <p><code>http://www.example.com/.hg/</code></p>
 <h2 id="fuzz：-1"><a href="#fuzz：-1" class="headerlink" title="fuzz："></a>fuzz：</h2><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:<span class="regexp">//u</span>rl<span class="regexp">/.hg/</span></span><br></pre></td></tr></table></figure>
+
 <h2 id="漏洞利用：-1"><a href="#漏洞利用：-1" class="headerlink" title="漏洞利用："></a>漏洞利用：</h2><p>工具：<a target="_blank" rel="noopener" href="https://github.com/kost/dvcs-ripper">dvcs-ripper</a></p>
-<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rip-hg.pl -v -u http:<span class="regexp">//u</span>rl/.hg</span><br></pre></td></tr></table></figure>
+<figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rip-hg.<span class="keyword">pl</span> -v -<span class="keyword">u</span> http:<span class="comment">//url/.hg</span></span><br></pre></td></tr></table></figure>
+
 
 
 <h1 id="SVN泄露"><a href="#SVN泄露" class="headerlink" title="SVN泄露"></a>SVN泄露</h1><p>svn同样在项目根目录下会创建一个名为<code>.svn</code>的隐藏文件夹, 包含了所有分支commit信息和代码记录.</p>
 <h2 id="fuzz：-2"><a href="#fuzz：-2" class="headerlink" title="fuzz："></a>fuzz：</h2><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:<span class="regexp">//u</span>rl<span class="regexp">/.svn/</span>entries</span><br></pre></td></tr></table></figure>
+
 <h2 id="漏洞利用：-2"><a href="#漏洞利用：-2" class="headerlink" title="漏洞利用："></a>漏洞利用：</h2><p>工具：<a target="_blank" rel="noopener" href="https://github.com/kost/dvcs-ripper">dvcs-ripper</a></p>
 <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rip-svn.pl -v -u http:<span class="regexp">//</span>www.example.com<span class="regexp">/.svn/</span></span><br></pre></td></tr></table></figure>
+
 
 
 <h1 id="bzr-Bazaar泄露"><a href="#bzr-Bazaar泄露" class="headerlink" title="bzr/Bazaar泄露"></a>bzr/Bazaar泄露</h1><p>bzr在初始化项目时(bzr init/init-repo), 会在项目根目录产生名为<code>.bzr</code>的隐藏目录, 同样暴露了源代码和用户信息.</p>
@@ -257,16 +265,22 @@
 <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">rip-bzr.pl -v -u http:<span class="regexp">//</span>www.example.com<span class="regexp">/.bzr/</span></span><br></pre></td></tr></table></figure>
 
 
+
 <h1 id="CVS泄漏"><a href="#CVS泄漏" class="headerlink" title="CVS泄漏"></a>CVS泄漏</h1><p>cvs项目在初始化(cvs checkout <code>project</code>)的时候, 会在<code>project</code>目录下创建一个名为<code>CVS</code>的目录,<br>其中保存了各个文件的修改和commit记录. 通过此目录可以获取代码的历史版本. 其中两个关键文件为:<br><code>CVS/Root</code>和<code>CVS/Entries</code>, 分别记录了项目的根信息和所有文件的结构</p>
 <h2 id="fuzz"><a href="#fuzz" class="headerlink" title="fuzz"></a>fuzz</h2><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">http:<span class="regexp">//u</span>rl<span class="regexp">/CVS/</span>Root 返回根信息</span><br><span class="line">http:<span class="regexp">//u</span>rl<span class="regexp">/CVS/</span>Entries 返回所有文件的结构</span><br></pre></td></tr></table></figure>
+
 <h2 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a>漏洞利用</h2><p>取回源码的命令，这个命令的意思就是把远端一个名为name的repo clone到本地名为dir的目录下。</p>
-<figure class="highlight crmsh"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bk <span class="keyword">clone</span> <span class="title">http</span>://url/name dir</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">bk <span class="built_in">clone</span> http://url/name <span class="built_in">dir</span></span><br></pre></td></tr></table></figure>
+
 <p>查看所有的改变的命令，转到download的目录</p>
 <figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">bk changes</span></span><br></pre></td></tr></table></figure>
+
 <h1 id="DS-Store文件泄漏"><a href="#DS-Store文件泄漏" class="headerlink" title=".DS_Store文件泄漏"></a>.DS_Store文件泄漏</h1><p>.DS_Store是Mac下Finder用来保存如何展示 文件/文件夹 的数据文件，每个文件夹下对应一个。如果开发/设计人员在发布代码时未删除文件夹中隐藏的.DS_store，则有可能会造成文件泄露</p>
-<h2 id="fuzz：-3"><a href="#fuzz：-3" class="headerlink" title="fuzz："></a>fuzz：</h2><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:<span class="regexp">//u</span>rl/.DS_Store</span><br></pre></td></tr></table></figure>
+<h2 id="fuzz：-3"><a href="#fuzz：-3" class="headerlink" title="fuzz："></a>fuzz：</h2><figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">http:</span><span class="comment">//url/.DS_Store</span></span><br></pre></td></tr></table></figure>
+
 <h2 id="漏洞利用：-4"><a href="#漏洞利用：-4" class="headerlink" title="漏洞利用："></a>漏洞利用：</h2><p>工具：<a target="_blank" rel="noopener" href="https://github.com/lijiejie/ds_store_exp">dsstoreexp</a></p>
-<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python ds_store_exp.py http:<span class="regexp">//u</span>rl/.DS_Store</span><br></pre></td></tr></table></figure>
+<figure class="highlight mel"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">python</span> ds_store_exp.py http:<span class="comment">//url/.DS_Store</span></span><br></pre></td></tr></table></figure>
+
 
 
 <h1 id="WEB-INF-web-xml泄露"><a href="#WEB-INF-web-xml泄露" class="headerlink" title="WEB-INF/web.xml泄露"></a>WEB-INF/web.xml泄露</h1><p>WEB-INF是Java的WEB应用的安全目录。如果想在页面中直接访问其中的文件，必须通过web.xml文件对要访问的文件进行相应映射才能访问。</p>
@@ -281,6 +295,7 @@
 </ul>
 <h2 id="漏洞检测以及利用方法"><a href="#漏洞检测以及利用方法" class="headerlink" title="漏洞检测以及利用方法"></a>漏洞检测以及利用方法</h2><p>通过找到web.xml文件，推断class文件的路径，最后直接class文件，在通过反编译class文件，得到网站源码。</p>
 <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:<span class="regexp">//u</span>rl<span class="regexp">/WEB-INF/</span>web.xml</span><br></pre></td></tr></table></figure>
+
 <h1 id="reference"><a href="#reference" class="headerlink" title="reference"></a>reference</h1><p><a href="https://0clickjacking0.github.io/2019/04/17/web%E5%B8%B8%E8%A7%81%E6%BA%90%E7%A0%81%E6%B3%84%E9%9C%B2/" target="_blank">https://0clickjacking0.github.io/2019/04/17/web常见源码泄露/</a><br><a href="https://www.secpulse.com/archives/55286.html" target="_blank">https://www.secpulse.com/archives/55286.html</a><br><a href="https://www.cnblogs.com/pannengzhi/p/2017-09-23-web-file-disclosure.html" target="_blank">WEB中的敏感文件泄漏</a></p>
 
       </div>
@@ -360,7 +375,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-count">110</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -424,7 +439,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2026</span>
 
 
 <!--

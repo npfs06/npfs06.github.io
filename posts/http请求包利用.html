@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.3.0">
+<meta name="generator" content="Hexo 8.1.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
@@ -202,16 +202,22 @@
       
       <div class="post-body">
           <p>HTTP请求包利用</p>
-<a id="more"></a>
+<span id="more"></span>
 
-<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">某些页面要求你必须要通过http:<span class="regexp">//</span>www.xxxx.com进行访问?</span><br><span class="line"></span><br><span class="line">增加一个referer字段</span><br><span class="line">Referrer:http:<span class="regexp">//</span>www.xxxx.com  (题目要求的url) </span><br></pre></td></tr></table></figure>
-<figure class="highlight dns"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">题目要求必须是某个ip地址如<span class="number">127.0.0.1</span>，才允许访问。</span><br><span class="line"></span><br><span class="line">增加一个X-Forwarded-For字段</span><br><span class="line">X-Forwarded-For：<span class="number">127.0.0.1</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight lasso"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">某些页面要求你必须要通过http:<span class="comment">//www.xxxx.com进行访问?</span></span><br><span class="line"></span><br><span class="line">增加一个<span class="keyword">referer</span>字段</span><br><span class="line"><span class="keyword">Referrer</span>:http:<span class="comment">//www.xxxx.com  (题目要求的url) </span></span><br></pre></td></tr></table></figure>
+
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">题目要求必须是某个ip地址如<span class="number">127.0</span>.<span class="number">0.1</span>，才允许访问。</span><br><span class="line"></span><br><span class="line">增加一个<span class="attribute">X</span>-Forwarded-For字段</span><br><span class="line"><span class="attribute">X</span>-Forwarded-For：<span class="number">127.0</span>.<span class="number">0.1</span></span><br></pre></td></tr></table></figure>
+
 <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">某些题目要求必须使用某个浏览器如HAHA浏览器，才允许访问。</span><br><span class="line"></span><br><span class="line">增加<span class="keyword">User</span>-Agent字段</span><br><span class="line"><span class="keyword">User</span>-Agent:HAHA</span><br></pre></td></tr></table></figure>
+
 <figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">页面要求必须要安装了.net <span class="number">9.0</span>版本了才能访问。</span><br><span class="line"></span><br><span class="line">修改<span class="keyword">User</span>-Agent字段</span><br><span class="line"><span class="keyword">User</span>-Agent:.NET CLR <span class="number">9</span></span><br></pre></td></tr></table></figure>
+
 <figure class="highlight stata"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">题目要求只能外国人才能访问这个页面。</span><br><span class="line"></span><br><span class="line">修改Accept-Language字段</span><br><span class="line">Accept-Language: <span class="keyword">en</span>-<span class="keyword">US</span>,<span class="keyword">en</span>;q=0.8</span><br></pre></td></tr></table></figure>
 
 
+
 <figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">还要做一点补充</span><br><span class="line">请求方式不对的时候，可以尝试把<span class="meta">GET</span>改为POST、PUT等，会有意外的发现</span><br></pre></td></tr></table></figure>
+
 
       </div>
       
@@ -289,7 +295,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-count">110</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -353,7 +359,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2026</span>
 
 
 <!--

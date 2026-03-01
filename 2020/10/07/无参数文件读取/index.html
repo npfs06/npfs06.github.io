@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.3.0">
+<meta name="generator" content="Hexo 8.1.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
@@ -251,7 +251,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>无参数的意思可以是a()、a(b())或a(b(c()))，但不能是a(‘b’)或a(‘b’,’c’)，<strong>不能带参数</strong><a id="more"></a></p>
+        <p>无参数的意思可以是a()、a(b())或a(b(c()))，但不能是a(‘b’)或a(‘b’,’c’)，<strong>不能带参数</strong><span id="more"></span></p>
 <h2 id="print-r-scandir-‘-’"><a href="#print-r-scandir-‘-’" class="headerlink" title="print_r(scandir(‘.’))"></a>print_r(scandir(‘.’))</h2><p>可以用来查看当前目录所有文件名</p>
 <p>但是我们这里说的是要构造无参数的函数，所以我们要做的就是去掉这个点号</p>
 <ul>
@@ -275,6 +275,7 @@
 <p>我们可以通过读取该小数点代替print_r(scandir(‘.’))中的小数点 ，读取数组第一项可以的函数有current()、pos() 、reset()</p>
 <p>所以最终我们可以构造如下：</p>
 <figure class="highlight isbl"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="function"><span class="title">print_r</span>(<span class="title">scandir</span>(<span class="title">current</span>(<span class="title">localeconv</span>())));</span></span><br><span class="line"><span class="function"><span class="title">print_r</span>(<span class="title">scandir</span>(<span class="title">pos</span>(<span class="title">localeconv</span>())));</span></span><br><span class="line"><span class="function"><span class="title">print_r</span>(<span class="title">scandir</span>(<span class="title">reset</span>(<span class="title">localeconv</span>())));</span></span><br></pre></td></tr></table></figure>
+
 
 
 
@@ -399,7 +400,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-count">110</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -463,7 +464,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2026</span>
 
 
 <!--

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.3.0">
+<meta name="generator" content="Hexo 8.1.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
@@ -250,12 +250,14 @@
 
       
         <p>git 连接报错 fatal: unable to access ‘<a target="_blank" rel="noopener" href="https://github.com/xxxxxx.git/&#39;">https://github.com/xxxxxx.git/&#39;</a>: Failed to connect to github.com port 443: Timed out 解决办法</p>
-<a id="more"></a>
+<span id="more"></span>
 
 <p>但是我把这两个文件删除，重新执行<code>hexo g -d</code>命令之后，出现了新的报错</p>
 <figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">fatal: unable <span class="keyword">to</span> <span class="keyword">access</span> <span class="string">&#x27;https://github.com/npfs06/npfs06.github.io.git/&#x27;</span>: Failed <span class="keyword">to</span> <span class="keyword">connect</span> <span class="keyword">to</span> github.com port <span class="number">443</span>: Timed <span class="keyword">out</span></span><br></pre></td></tr></table></figure>
+
 <h2 id="解决方法"><a href="#解决方法" class="headerlink" title="解决方法"></a>解决方法</h2><p>本地cmd开个命令窗口，清下缓存</p>
-<figure class="highlight dos"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="built_in">ipconfig</span> /flushdns </span><br></pre></td></tr></table></figure>
+<figure class="highlight bash"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">ipconfig /flushdns </span><br></pre></td></tr></table></figure>
+
 <p>请问缓存等个30秒</p>
 <p>再执行<code>hexo g -d</code> 就不会报超时了</p>
 
@@ -372,7 +374,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-count">110</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -436,7 +438,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2026</span>
 
 
 <!--

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.3.0">
+<meta name="generator" content="Hexo 8.1.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
@@ -208,7 +208,7 @@
       
       
       <div class="post-body">
-          <p>Ciphey–解密神器<a id="more"></a></p>
+          <p>Ciphey–解密神器<span id="more"></span></p>
 <h1 id="Ciphey是什么？"><a href="#Ciphey是什么？" class="headerlink" title="Ciphey是什么？"></a>Ciphey是什么？</h1><p>输入加密文本，取回解密文本。</p>
 <blockquote>
 <p>“什么类型的加密？”</p>
@@ -316,22 +316,26 @@
 </ol>
 <p>检查 Python 是否已经安装。运行这两个命令：</p>
 <figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python -<span class="keyword">c</span> <span class="string">&quot;import sys; print(sys.version)&quot;</span></span><br></pre></td></tr></table></figure>
+
 <p>或</p>
-<figure class="highlight gcode"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">pytho<span class="symbol">n3</span> -c <span class="string">&quot;import sys; print(sys.version)&quot;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight llvm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python<span class="number">3</span> -<span class="keyword">c</span> <span class="string">&quot;import sys; print(sys.version)&quot;</span></span><br></pre></td></tr></table></figure>
+
 <p>如果安装了 Python，这些命令之一将运行并输出版本号。Ciphey 只支持大于 3.7 的数字。如果您看到“2”或“3.7”以下的任何内容，我们将需要安装更新的版本。</p>
 <h2 id="安装Ciphey"><a href="#安装Ciphey" class="headerlink" title="安装Ciphey"></a>安装Ciphey</h2><p>在 Linux 上运行以下命令：</p>
 <figure class="highlight cmake"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">python3 -m pip <span class="keyword">install</span> -U ciphey</span><br></pre></td></tr></table></figure>
+
 <p><strong>Ciphey 仅支持 Python3.7 及以上版本。如果您的版本低于 3.7，请升级 Python 或使用 Docker 镜像。</strong></p>
 <p><strong>⚠️ Windows Python 默认安装 32 位。Ciphey 仅支持 64 位。确保您使用的是 64 位 Python。</strong></p>
-<h1 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h1><h2 id="ciphey命令参数"><a href="#ciphey命令参数" class="headerlink" title="ciphey命令参数"></a>ciphey命令参数</h2><figure class="highlight livecodeserver"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">ciphey <span class="comment">--help</span></span><br><span class="line">用法: ciphey [选项] [TEXT_STDIN]</span><br><span class="line"></span><br><span class="line">  Ciphey - 自动解密工具</span><br><span class="line"></span><br><span class="line">  文档地址: <span class="keyword">https</span>://github.com/Ciphey/Ciphey/wiki</span><br><span class="line"></span><br><span class="line">  Discord (这里支持，我们大部分时间都在线):</span><br><span class="line">  <span class="keyword">https</span>://discord.ciphey.online/</span><br><span class="line"></span><br><span class="line">  GitHub: <span class="keyword">https</span>://github.com/ciphey/ciphey</span><br><span class="line"></span><br><span class="line"> cipher是一种使用智能人工智能的自动解密工具</span><br><span class="line">和自然语言处理。输入加密文本，获取解密文本</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  例如:</span><br><span class="line"></span><br><span class="line">      基本用法: ciphey -t <span class="string">&quot;aGVsbG8gbXkgbmFtZSBpcyBiZWU=&quot;</span></span><br><span class="line"></span><br><span class="line">选项:</span><br><span class="line">  -t, <span class="comment">--text TEXT            您想要解密的密文。</span></span><br><span class="line">  -q, <span class="comment">--quiet                减少冗长的显示,直接给结果</span></span><br><span class="line">  -g, <span class="comment">--greppable            只输出答案(对于grep很有用)</span></span><br><span class="line">  -v, <span class="comment">--verbose</span></span><br><span class="line">  -C, <span class="comment">--checker TEXT         使用给定的检查器</span></span><br><span class="line">  -c, <span class="comment">--config TEXT          使用给定的配置文件。默认为</span></span><br><span class="line">                             appdirs.user_config_dir(<span class="string">&#x27;ciphey&#x27;</span>,</span><br><span class="line">                             <span class="string">&#x27;ciphey&#x27;</span>)/<span class="string">&#x27;config.yml&#x27;</span></span><br><span class="line"></span><br><span class="line">  -w, <span class="comment">--wordlist TEXT        使用给定的密码字典</span></span><br><span class="line">  -p, <span class="comment">--param TEXT           将参数传递给语言检查器</span></span><br><span class="line">  -l, <span class="comment">--list-params BOOLEAN  列出所选模块的参数</span></span><br><span class="line">  <span class="comment">--searcher TEXT            选择要使用的搜索算法</span></span><br><span class="line">  -b, <span class="comment">--bytes                强制密码使用二进制模式作为输入</span></span><br><span class="line">  <span class="comment">--default-dist TEXT        设置默认的字符/字节分布</span></span><br><span class="line">  -m, <span class="comment">--module PATH          从给定路径添加模块</span></span><br><span class="line">  -A, <span class="comment">--appdirs              输出密码到想要的文件位置</span></span><br><span class="line"></span><br><span class="line">  -f, <span class="comment">--file FILENAME</span></span><br><span class="line">  <span class="comment">--help                     显示此帮助消息并退出。</span></span><br></pre></td></tr></table></figure>
+<h1 id="使用方法"><a href="#使用方法" class="headerlink" title="使用方法"></a>使用方法</h1><h2 id="ciphey命令参数"><a href="#ciphey命令参数" class="headerlink" title="ciphey命令参数"></a>ciphey命令参数</h2><figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br><span class="line">24</span><br><span class="line">25</span><br><span class="line">26</span><br><span class="line">27</span><br><span class="line">28</span><br><span class="line">29</span><br><span class="line">30</span><br><span class="line">31</span><br><span class="line">32</span><br><span class="line">33</span><br><span class="line">34</span><br><span class="line">35</span><br><span class="line">36</span><br><span class="line">37</span><br><span class="line">38</span><br><span class="line">39</span><br><span class="line">40</span><br><span class="line">41</span><br></pre></td><td class="code"><pre><span class="line">ciphey <span class="attr">--help</span></span><br><span class="line">用法: ciphey <span class="selector-attr">[选项]</span> <span class="selector-attr">[TEXT_STDIN]</span></span><br><span class="line"></span><br><span class="line">  Ciphey - 自动解密工具</span><br><span class="line"></span><br><span class="line">  文档地址: https:<span class="comment">//github.com/Ciphey/Ciphey/wiki</span></span><br><span class="line"></span><br><span class="line">  Discord (这里支持，我们大部分时间都在线):</span><br><span class="line">  https:<span class="comment">//discord.ciphey.online/</span></span><br><span class="line"></span><br><span class="line">  GitHub: https:<span class="comment">//github.com/ciphey/ciphey</span></span><br><span class="line"></span><br><span class="line"> cipher是一种使用智能人工智能的自动解密工具</span><br><span class="line">和自然语言处理。输入加密文本，获取解密文本</span><br><span class="line"></span><br><span class="line"></span><br><span class="line">  例如:</span><br><span class="line"></span><br><span class="line">      基本用法: ciphey -t <span class="string">&quot;aGVsbG8gbXkgbmFtZSBpcyBiZWU=&quot;</span></span><br><span class="line"></span><br><span class="line">选项:</span><br><span class="line">  -t, <span class="attr">--text</span> TEXT            您想要解密的密文。</span><br><span class="line">  -<span class="selector-tag">q</span>, <span class="attr">--quiet</span>                减少冗长的显示,直接给结果</span><br><span class="line">  -<span class="selector-tag">g</span>, <span class="attr">--greppable</span>            只输出答案(对于grep很有用)</span><br><span class="line">  -v, <span class="attr">--verbose</span></span><br><span class="line">  -C, <span class="attr">--checker</span> TEXT         使用给定的检查器</span><br><span class="line">  -c, <span class="attr">--config</span> TEXT          使用给定的配置文件。默认为</span><br><span class="line">                             appdirs<span class="selector-class">.user_config_dir</span>(<span class="string">&#x27;ciphey&#x27;</span>,</span><br><span class="line">                             <span class="string">&#x27;ciphey&#x27;</span>)/<span class="string">&#x27;config.yml&#x27;</span></span><br><span class="line"></span><br><span class="line">  -w, <span class="attr">--wordlist</span> TEXT        使用给定的密码字典</span><br><span class="line">  -<span class="selector-tag">p</span>, <span class="attr">--param</span> TEXT           将参数传递给语言检查器</span><br><span class="line">  -l, <span class="attr">--list-params</span> BOOLEAN  列出所选模块的参数</span><br><span class="line">  <span class="attr">--searcher</span> TEXT            选择要使用的搜索算法</span><br><span class="line">  -<span class="selector-tag">b</span>, <span class="attr">--bytes</span>                强制密码使用二进制模式作为输入</span><br><span class="line">  <span class="attr">--default-dist</span> TEXT        设置默认的字符/字节分布</span><br><span class="line">  -m, <span class="attr">--module</span> PATH          从给定路径添加模块</span><br><span class="line">  -A, <span class="attr">--appdirs</span>              输出密码到想要的文件位置</span><br><span class="line"></span><br><span class="line">  -f, <span class="attr">--file</span> FILENAME</span><br><span class="line">  <span class="attr">--help</span>                     显示此帮助消息并退出。</span><br></pre></td></tr></table></figure>
+
 
 
 <p>这里以前几天鹤城杯的一道题目为例进行演示</p>
-<img src="http://img.npfs06.top/20211010003132.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20211010003132.png" style="zoom:80%;" />
 
 
 
-<img src="http://img.npfs06.top/20211010003329.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20211010003329.png" style="zoom:80%;" />
 
 <p>成功解密</p>
 
@@ -412,7 +416,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-count">110</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -476,7 +480,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2026</span>
 
 
 <!--

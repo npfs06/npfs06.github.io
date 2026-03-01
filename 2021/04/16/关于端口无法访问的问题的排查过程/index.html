@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.3.0">
+<meta name="generator" content="Hexo 8.1.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
@@ -254,7 +254,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>关于端口无法访问的问题的排查过程，自己有台服务器无法反弹shell，在CTF中做到像反弹shell这类涉及到VPS的题目，<del>（懒的排查）</del>我都是拿另一台可以反弹的VPS做的<a id="more"></a></p>
+        <p>关于端口无法访问的问题的排查过程，自己有台服务器无法反弹shell，在CTF中做到像反弹shell这类涉及到VPS的题目，<del>（懒的排查）</del>我都是拿另一台可以反弹的VPS做的<span id="more"></span></p>
 <p>趁着闲的无聊，抽空看了下 （这里以23180端口为例）</p>
 <p>一下排查，均在开启http.server的前提下</p>
 <blockquote>
@@ -270,16 +270,20 @@
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">sudo apt-get install firewalld</span><br></pre></td></tr></table></figure>
 
 
+
 <p><strong>查看开放的端口</strong></p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd  --list-all</span><br></pre></td></tr></table></figure>
+
 <p>会得到如下图，其中<strong>ports</strong>为开放的端口，可以看到23180端口没有开放</p>
 <p><img src="https://img.npfs06.top/20210416174440.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
 <p><strong>开放端口（比如开放23180）</strong></p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd --add-port=23180/tcp --permanent</span><br><span class="line">firewall-cmd --reload   //重启</span><br></pre></td></tr></table></figure>
+
 <p><img src="https://img.npfs06.top/20210416174550.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
 <p>这个时候23180端口已经可以访问了，排查结束</p>
 <p><strong>关闭端口</strong></p>
 <figure class="highlight shell"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">firewall-cmd --remove-port=23180/tcp --permanent</span><br><span class="line">firewall-cmd --reload</span><br></pre></td></tr></table></figure>
+
 
 
 
@@ -396,7 +400,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-count">110</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -460,7 +464,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2026</span>
 
 
 <!--

@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.3.0">
+<meta name="generator" content="Hexo 8.1.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
@@ -254,17 +254,19 @@
 
       
         <p>htb-CozyHosting</p>
-<a id="more"></a>
+<span id="more"></span>
 
 <p><img src="https://img.npfs06.top/20230919143339.png"></p>
 <p>openvpn连上</p>
 <p><img src="https://img.npfs06.top/20230919143612.png"></p>
 <p>nmap扫描</p>
 <figure class="highlight nginx"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">nmap</span> -sC -sV -Pn <span class="number">10.10.11.230</span></span><br></pre></td></tr></table></figure>
+
 <p><img src="https://img.npfs06.top/20230919143658.png"></p>
 <p>开放了22和80端口，同时80端口指向<a target="_blank" rel="noopener" href="http://cozyhosting.htb/">http://cozyhosting.htb</a></p>
 <p>修改host文件</p>
 <figure class="highlight accesslog"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br></pre></td><td class="code"><pre><span class="line">┌──(root💀kali)-<span class="string">[~]</span></span><br><span class="line">└─# vim /etc/hosts</span><br><span class="line"></span><br><span class="line"><span class="number">10.10.11.230</span> cozyhosting.htb</span><br></pre></td></tr></table></figure>
+
 
     </div>
 
@@ -378,7 +380,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-count">110</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -442,7 +444,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2026</span>
 
 
 <!--

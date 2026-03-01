@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.3.0">
+<meta name="generator" content="Hexo 8.1.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
@@ -45,7 +45,7 @@
 <meta property="og:image" content="http://img.npfs06.top/20210223150853.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
 <meta property="og:image" content="http://img.npfs06.top/20210223150908.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
 <meta property="article:published_time" content="2020-10-10T07:17:26.000Z">
-<meta property="article:modified_time" content="2021-02-23T07:20:39.362Z">
+<meta property="article:modified_time" content="2021-02-23T07:20:38.000Z">
 <meta property="article:author" content="安小琪">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://img.npfs06.top/1999159-20201031182159184-2133244042.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
@@ -229,7 +229,7 @@
                   <i class="far fa-calendar-check"></i>
                 </span>
                 <span class="post-meta-item-text">Edited on</span>
-                <time title="Modified: 2021-02-23 15:20:39" itemprop="dateModified" datetime="2021-02-23T15:20:39+08:00">2021-02-23</time>
+                <time title="Modified: 2021-02-23 15:20:38" itemprop="dateModified" datetime="2021-02-23T15:20:38+08:00">2021-02-23</time>
               </span>
             <span class="post-meta-item">
               <span class="post-meta-item-icon">
@@ -274,16 +274,18 @@
 
       
         <p>CTFshow web入门之信息收集篇</p>
-<a id="more"></a>
+<span id="more"></span>
 
 <p><img src="http://img.npfs06.top/1999159-20201031182159184-2133244042.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
 <h2 id="Web1"><a href="#Web1" class="headerlink" title="Web1"></a>Web1</h2><figure class="highlight sqf"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">右键</span><br><span class="line">查看源码得到<span class="built_in">flag</span></span><br></pre></td></tr></table></figure>
-<h2 id="Web2"><a href="#Web2" class="headerlink" title="Web2"></a>Web2</h2><figure class="highlight awk"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Ctrl+U或者 view-source:http:<span class="regexp">//</span>网站/ 查看源码得到flag</span><br></pre></td></tr></table></figure>
+
+<h2 id="Web2"><a href="#Web2" class="headerlink" title="Web2"></a>Web2</h2><figure class="highlight cos"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">Ctrl+U或者 <span class="keyword">view</span>-source:http:<span class="comment">//网站/ 查看源码得到flag</span></span><br></pre></td></tr></table></figure>
+
 <h2 id="Web3"><a href="#Web3" class="headerlink" title="Web3"></a>Web3</h2><p>响应头获取flag</p>
 <p>拿burpsuite抓包看响应头，或者之间谷歌F12   network看响应头</p>
 <h2 id="Web4"><a href="#Web4" class="headerlink" title="Web4"></a>Web4</h2><p>访问 robots.txt     <strong><a target="_blank" rel="noopener" href="http://url/robots.txt">http://url/robots.txt</a></strong></p>
 <p>有个/flagishere.txt目录，访问下得到flag       <strong><a target="_blank" rel="noopener" href="http://url/flagishere.txt">http://url/flagishere.txt</a></strong></p>
-<h2 id="Web5"><a href="#Web5" class="headerlink" title="Web5"></a>Web5</h2><p><strong>注：web5 –web10 考察点均为源码泄露，可参考文章    <a href="https://www.cnblogs.com/NPFS/p/12746349.html" target="_blanket">源码泄露</a></strong></p>
+<h2 id="Web5"><a href="#Web5" class="headerlink" title="Web5"></a>Web5</h2><p><strong>注：web5 –web10 考察点均为源码泄露，可参考文章    <a href='https://www.cnblogs.com/NPFS/p/12746349.html' target='_blanket' >源码泄露</a></strong></p>
 <p>题目提示 phps源码泄露有时候能帮上忙</p>
 <p>直接访问 index.phps</p>
 <p>得到源码，就能看到flag</p>
@@ -297,6 +299,7 @@
 <p>做法同上，访问 <strong><a target="_blank" rel="noopener" href="http://url/.svn">http://url/.svn</a></strong>页面直接得到flag</p>
 <h2 id="Web9"><a href="#Web9" class="headerlink" title="Web9"></a>Web9</h2><p>考察点：  vim 临时文件泄露</p>
 <figure class="highlight autohotkey"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">程序员使用vim编辑器编写一个`index.php`文件时，会有一个`.index.php.swp`文件，如果文件正常退出，则该文件被删除，如果异常退出，该文件则会保存下来，该文件可以用来恢复异常退出的index.php，同时多次意外退出并不会覆盖旧的`.swp`文件，而是会生成一个新的，例如`.swo`文件。</span><br></pre></td></tr></table></figure>
+
 <p>做法同上 ，访问<strong><a target="_blank" rel="noopener" href="http://url/index.php.swp">http://url/index.php.swp</a></strong>,下载文件，得到flag</p>
 <h2 id="Web10"><a href="#Web10" class="headerlink" title="Web10"></a>Web10</h2><p>flag在cookie那</p>
 <p><img src="http://img.npfs06.top/1999159-20200903231734977-350417039.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
@@ -336,7 +339,8 @@
 <p>访问110.php  </p>
 <p>得到flag</p>
 <h2 id="Web19"><a href="#Web19" class="headerlink" title="Web19"></a>Web19</h2><p>查看源码</p>
-<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;/script&gt;</span><br><span class="line">    &lt;!--</span><br><span class="line">    error_reporting(<span class="number">0</span>);</span><br><span class="line">    <span class="variable">$flag</span>=<span class="string">&quot;fakeflag&quot;</span></span><br><span class="line">    <span class="variable">$u</span> = <span class="variable">$_POST</span>[<span class="string">&#x27;username&#x27;</span>];</span><br><span class="line">    <span class="variable">$p</span> = <span class="variable">$_POST</span>[<span class="string">&#x27;pazzword&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$u</span>) &amp;&amp; <span class="keyword">isset</span>(<span class="variable">$p</span>))&#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="variable">$u</span>===<span class="string">&#x27;admin&#x27;</span> &amp;&amp; <span class="variable">$p</span> ===<span class="string">&#x27;a599ac85a73384ee3219fa684296eaa62667238d608efa81837030bd1ce1bf04&#x27;</span>)&#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="variable">$flag</span>;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line">    --&gt;</span><br></pre></td></tr></table></figure>
+<figure class="highlight php"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br><span class="line">8</span><br><span class="line">9</span><br><span class="line">10</span><br><span class="line">11</span><br><span class="line">12</span><br></pre></td><td class="code"><pre><span class="line">&lt;/script&gt;</span><br><span class="line">    &lt;!--</span><br><span class="line">    <span class="title function_ invoke__">error_reporting</span>(<span class="number">0</span>);</span><br><span class="line">    <span class="variable">$flag</span>=<span class="string">&quot;fakeflag&quot;</span></span><br><span class="line">    <span class="variable">$u</span> = <span class="variable">$_POST</span>[<span class="string">&#x27;username&#x27;</span>];</span><br><span class="line">    <span class="variable">$p</span> = <span class="variable">$_POST</span>[<span class="string">&#x27;pazzword&#x27;</span>];</span><br><span class="line">    <span class="keyword">if</span>(<span class="keyword">isset</span>(<span class="variable">$u</span>) &amp;&amp; <span class="keyword">isset</span>(<span class="variable">$p</span>))&#123;</span><br><span class="line">        <span class="keyword">if</span>(<span class="variable">$u</span>===<span class="string">&#x27;admin&#x27;</span> &amp;&amp; <span class="variable">$p</span> ===<span class="string">&#x27;a599ac85a73384ee3219fa684296eaa62667238d608efa81837030bd1ce1bf04&#x27;</span>)&#123;</span><br><span class="line">            <span class="keyword">echo</span> <span class="variable">$flag</span>;</span><br><span class="line">        &#125;</span><br><span class="line">&#125;</span><br><span class="line">    --&gt;</span><br></pre></td></tr></table></figure>
+
 <p>抓包修改下password值为a599ac85a73384ee3219fa684296eaa62667238d608efa81837030bd1ce1bf04，即可得到flag</p>
 <h2 id="web20"><a href="#web20" class="headerlink" title="web20"></a>web20</h2><p>mdb文件是早期asp+access构架的数据库文件 直接查看url路径添加/db/db.mdb 下载文件通过txt打开或者通过EasyAccess.exe打开搜索flag </p>
 <p><img src="http://img.npfs06.top/20210223150908.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
@@ -455,7 +459,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-count">110</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -519,7 +523,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2026</span>
 
 
 <!--

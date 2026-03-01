@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.3.0">
+<meta name="generator" content="Hexo 8.1.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
@@ -257,7 +257,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>y11由于比赛和期末考试周冲突到了就没去打，现在考试结束了特来复现<a id="more"></a></p>
+        <p>y11由于比赛和期末考试周冲突到了就没去打，现在考试结束了特来复现<span id="more"></span></p>
 <h2 id="GKCTF-2021-easycms"><a href="#GKCTF-2021-easycms" class="headerlink" title="[GKCTF 2021]easycms"></a>[GKCTF 2021]easycms</h2><p>admin.php存在后台登入</p>
 <p>账号admin</p>
 <p>密码12345</p>
@@ -266,34 +266,35 @@
 <p><a target="_blank" rel="noopener" href="http://b5d12352-545d-4461-a8e3-47732d9fc7ce.node4.buuoj.cn/admin.php?m=ui&amp;f=downloadtheme&amp;theme=L3Zhci93d3cvaHRtbC9zeXN0ZW0vdG1wL3RoZW1lL2RlZmF1bHQvaXkyOC56aXA=">http://b5d12352-545d-4461-a8e3-47732d9fc7ce.node4.buuoj.cn/admin.php?m=ui&amp;f=downloadtheme&amp;theme=L3Zhci93d3cvaHRtbC9zeXN0ZW0vdG1wL3RoZW1lL2RlZmF1bHQvaXkyOC56aXA=</a></p>
 </blockquote>
 <p>后面那串解码发现为</p>
-<img src="http://img.npfs06.top/20210716091827.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10" style="zoom:67%;">
+<img src="http://img.npfs06.top/20210716091827.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10" style="zoom:67%;" />
 
 <p>直接改为/flag ，base64加密后下载即为flag文件</p>
 <h2 id="GKCTF-2021-babycat"><a href="#GKCTF-2021-babycat" class="headerlink" title="[GKCTF 2021]babycat"></a>[GKCTF 2021]babycat</h2><p>sign up时alert了</p>
-<img src="http://img.npfs06.top/20210717104628.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10" style="zoom:67%;">
+<img src="http://img.npfs06.top/20210717104628.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10" style="zoom:67%;" />
 
 <p>通过查看源代码，知道注册信息的组成，可以抓包绕过alert,进行注册</p>
 <p>data={“username”:”admin”,”password”:”123”}</p>
-<img src="http://img.npfs06.top/20210717104329.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10" style="zoom:67%;">
+<img src="http://img.npfs06.top/20210717104329.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10" style="zoom:67%;" />
 
 <p>注册后，发现role为guest,没有upload权限，提示需要role为admin</p>
-<img src="http://img.npfs06.top/20210717104531.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10" style="zoom:67%;">
+<img src="http://img.npfs06.top/20210717104531.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10" style="zoom:67%;" />
 
 
 
 <p>不过在Download Test处发现存在任意文件下载  ,可以读web.xml -&gt; class ,没发现利用点javaweb 目录</p>
 <figure class="highlight gradle"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line"><span class="regexp">/WEB-INF/</span>web.xml：Web应用程序配置文件，描述了 servlet 和其他的应用组件配置及命名规则。</span><br><span class="line"><span class="regexp">/WEB-INF/</span>classes/：含了站点所有用的 <span class="keyword">class</span> 文件，包括 servlet <span class="keyword">class</span> 和非servlet <span class="keyword">class</span>，他们不能包含在 .jar文件中</span><br><span class="line"><span class="regexp">/WEB-INF/</span>lib/：存放web应用需要的各种JAR文件，放置仅在这个应用中要求使用的jar文件,如数据库驱动jar文件</span><br><span class="line"><span class="regexp">/WEB-INF/</span>src/：源码目录，按照包名结构放置各个java文件。</span><br><span class="line"><span class="regexp">/WEB-INF/</span>database.properties：数据库配置文件</span><br></pre></td></tr></table></figure>
+
 <p>在注册页面的源代码钟，role是控制权限的，而且在代码处可能存在拼接，这里尝试拼接json进行注入。</p>
 <p>data={“username”:”123″,”password”:”123″,”\u0072\u006F\u006C\u0065″:”admin”,”123″:{“role”:”guest”}}                     </p>
 <p><img src="http://img.npfs06.top/20210717114805.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
 <p>注册成功，变成admin，这里可以进入upload进行上传文件</p>
 <p>通过之前的报错，知道网站是tomcat，可以传jsp🐎</p>
 <p>默认目录无法上传，前面图片存在的位置是../../static/，所以尝试来个目录穿越</p>
-<img src="http://img.npfs06.top/20210717134613.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10" style="zoom:67%;">
+<img src="http://img.npfs06.top/20210717134613.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10" style="zoom:67%;" />
 
 
 
-<img src="http://img.npfs06.top/20210717134551.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10" style="zoom:67%;">
+<img src="http://img.npfs06.top/20210717134551.png?imageView2/0/q/75|watermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10" style="zoom:67%;" />
     </div>
 
     
@@ -407,7 +408,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-count">110</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -471,7 +472,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2026</span>
 
 
 <!--

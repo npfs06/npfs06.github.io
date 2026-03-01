@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.3.0">
+<meta name="generator" content="Hexo 8.1.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
@@ -35,7 +35,7 @@
 <meta property="og:image" content="http://img.npfs06.top/20210224112539.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
 <meta property="og:image" content="http://img.npfs06.top/20210224113023.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
 <meta property="article:published_time" content="2021-02-24T02:55:59.000Z">
-<meta property="article:modified_time" content="2021-02-26T03:56:12.892Z">
+<meta property="article:modified_time" content="2021-02-26T03:56:12.000Z">
 <meta property="article:author" content="安小琪">
 <meta name="twitter:card" content="summary">
 <meta name="twitter:image" content="http://img.npfs06.top/20210224110039.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10">
@@ -263,16 +263,19 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>在我企图在<code>github</code>的xxx.github.io仓库新建分支对基于hexo搭建的blog通过hexo-git-backup插件进<a id="more"></a>行备份时出现了以下的问题</p>
+        <p>在我企图在<code>github</code>的xxx.github.io仓库新建分支对基于hexo搭建的blog通过hexo-git-backup插件进<span id="more"></span>行备份时出现了以下的问题</p>
 <h2 id="问题出现"><a href="#问题出现" class="headerlink" title="问题出现"></a>问题出现</h2><p>根据网上教程，我查看了本地hexo版本</p>
 <figure class="highlight applescript"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">hexo <span class="built_in">version</span></span><br></pre></td></tr></table></figure>
+
 <p><img src="http://img.npfs06.top/20210224110039.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
 <p>因此我使用了这条命令：</p>
 <figure class="highlight mipsasm"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">npm <span class="keyword">install </span>hexo-git-<span class="keyword">backup </span>--save</span><br></pre></td></tr></table></figure>
+
 <p>进行博客备份插件安装</p>
 <p>同时我在github仓库建立新分支，我创建的分支名为backup</p>
 <p>然后我在本地博客根目录的配置文件<code>_config.yml</code>最下方加入以下内容</p>
 <figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># backup</span></span><br><span class="line"><span class="symbol">backup:</span></span><br><span class="line"><span class="symbol">  type:</span> git</span><br><span class="line"><span class="symbol">  theme:</span> next-reloaded</span><br><span class="line"><span class="symbol">  message:</span> Back up my www.npfs06.top blog</span><br><span class="line"><span class="symbol">  repository:</span></span><br><span class="line"><span class="symbol">    github:</span> https:<span class="comment">//github.com/xxxx/xxxx.github.io.git,backup</span></span><br></pre></td></tr></table></figure>
+
 <blockquote>
 <p><strong>theme</strong> 是主题名<br><strong>message</strong> 是自定义信息<br><strong>branchName</strong> 是分支名，用英文逗号和仓库名隔开备份</p>
 </blockquote>
@@ -291,6 +294,7 @@
 <p><img src="http://img.npfs06.top/20210224112539.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
 <p>然后在博客根目录配置文件<code>_config.yml</code>中将<code>github</code> 更改为<code>origin</code></p>
 <figure class="highlight dts"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="meta"># backup</span></span><br><span class="line"><span class="symbol">backup:</span></span><br><span class="line"><span class="symbol">  type:</span> git</span><br><span class="line"><span class="symbol">  theme:</span> next-reloaded</span><br><span class="line"><span class="symbol">  message:</span> Back up my www.npfs06.top blog</span><br><span class="line"><span class="symbol">  repository:</span></span><br><span class="line"><span class="symbol">    origin:</span> https:<span class="comment">//github.com/xxxx/xxxx.github.io.git,backup</span></span><br></pre></td></tr></table></figure>
+
 <p>重新运行<code>hexo b</code></p>
 <p><img src="http://img.npfs06.top/20210224113023.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
 <p>问题解决！</p>
@@ -408,7 +412,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-count">110</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -472,7 +476,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2026</span>
 
 
 <!--

