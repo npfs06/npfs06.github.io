@@ -295,7 +295,7 @@
 <p>先拿seay审下（第一次用，发现真是神器啊2333）</p>
 <p><img src="https://img.npfs06.top/20210306095552.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
 <p>可以发现config.php里有个flag<br><img src="https://img.npfs06.top/20210306095603.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
-<p>我们在register.php页面注册，在index.php页面登入之后，来到update.php页面，我们可以看到这个页面是一个文件上传页面，结合seay，审计代码，发现这里有一个序列化的过程，同时在序列化之前会对我们输入的Phone、Email、Nickname、Photo进行正则匹配（phone要类似于11位数组的构造，email要类似于<a href="mailto:&#x31;&#50;&#x33;&#x40;&#113;&#113;&#x2e;&#99;&#x6f;&#x6d;">&#x31;&#50;&#x33;&#x40;&#113;&#113;&#x2e;&#99;&#x6f;&#x6d;</a>这样邮箱的构造，这两种都是不符合则die，而Nickname恰恰相反，它是如果匹配到非字符数字下划线或者长度超过10则die，这里可以用数组绕过）</p>
+<p>我们在register.php页面注册，在index.php页面登入之后，来到update.php页面，我们可以看到这个页面是一个文件上传页面，结合seay，审计代码，发现这里有一个序列化的过程，同时在序列化之前会对我们输入的Phone、Email、Nickname、Photo进行正则匹配（phone要类似于11位数组的构造，email要类似于<a href="mailto:&#x31;&#x32;&#51;&#x40;&#113;&#113;&#46;&#99;&#x6f;&#x6d;">&#x31;&#x32;&#51;&#x40;&#113;&#113;&#46;&#99;&#x6f;&#x6d;</a>这样邮箱的构造，这两种都是不符合则die，而Nickname恰恰相反，它是如果匹配到非字符数字下划线或者长度超过10则die，这里可以用数组绕过）</p>
 <p><img src="https://img.npfs06.top/20210306095618.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
 <p>这里有个update_profile函数，我们追溯看看</p>
 <p><img src="https://img.npfs06.top/20210306095631.png?imageView2/0/q/75%7Cwatermark/2/text/bnBmczA2LnRvcA==/font/5b6u6L2v6ZuF6buR/fontsize/340/fill/IzAwMDAwMA==/dissolve/62/gravity/SouthEast/dx/10/dy/10"></p>
